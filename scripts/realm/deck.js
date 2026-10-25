@@ -1,5 +1,5 @@
-import { CARD_DEADLINE_DAYS, MODULE_ID } from "../constants.js";
-import { getEvents } from "../content/data.js";
+import { CARD_DEADLINE_DAYS, MODULE_ID, SEATS } from "../constants.js";
+import { getEvents, getMatters, matterTier } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
 import {
   getAllHexStates,
@@ -144,7 +144,8 @@ function isAlreadyActive(event, realm) {
   return realm.cards.some((c) => c.eventId === event.id && ["open", "assigned"].includes(c.status));
 }
 
-export function createCard(event, { now = game.time.worldTime } = {}) {
+export function createCard(event, { now = game.time.worldTime, tier = null } = {}) {
+  const version = tier && event.tiers ? { ...event, ...event.tiers[tier] } : event;
   const target = {};
   if (event.placement?.type === "hex") target.hexKey = chooseHex(event.placement.rule);
   if (event.placement?.type === "settlement") {
@@ -157,13 +158,15 @@ export function createCard(event, { now = game.time.worldTime } = {}) {
   return {
     id: newId(),
     eventId: event.id,
-    name: event.name,
-    kind: event.kind,
+    tier,
+    matter: !!event.tiers,
+    name: version.name,
+    kind: version.kind,
     seat: event.seat,
     stage: 0,
     status: "open",
     drawnAt: now,
-    deadline: now + (event.deadlineDays ?? CARD_DEADLINE_DAYS) * secondsPerDay(),
+    deadline: now + (version.deadlineDays ?? CARD_DEADLINE_DAYS) * secondsPerDay(),
     target,
     revealed: false,
     assignee: null,
@@ -201,4 +204,56 @@ export function drawMonthlyEvents(realm) {
 
   Hooks.callAll(`${MODULE_ID}.eventsDrawn`, drawn);
   return drawn;
+}
+
+const MATTER_LOOKBACK_DAYS = 56;
+const MATTER_COOLDOWN_DAYS = 180;
+
+/** How busy each desk has been lately, counting every card drawn to it. */
+function deskActivity(realm, now) {
+  const since = now - MATTER_LOOKBACK_DAYS * secondsPerDay();
+  const counts = Object.fromEntries(SEATS.map((s) => [s, 0]));
+  for (const card of realm.cards) {
+    if (card.drawnAt >= since && counts[card.seat] !== undefined) counts[card.seat] += 1;
+    if (["open", "assigned", "rolled", "escalated"].includes(card.status) && counts[card.seat] !== undefined) counts[card.seat] += 1;
+  }
+  return counts;
+}
+
+/**
+ * One small matter a week, sent to whichever desk has been quietest. Matters
+ * seen recently are held back so the same one doesn't come round too soon.
+ */
+export function drawWeeklyMatter(realm, { now = game.time.worldTime } = {}) {
+  const matters = getMatters();
+  if (!matters.length) return null;
+  const tier = matterTier(getKingdom()?.level ?? 1);
+  const history = (realm.matterHistory ??= {});
+  const cooldown = MATTER_COOLDOWN_DAYS * secondsPerDay();
+  const activity = deskActivity(realm, now);
+
+  const available = (seat) =>
+    matters.filter(
+      (m) =>
+        m.seat === seat &&
+        m.tiers?.[tier] &&
+        !isAlreadyActive(m, realm) &&
+        requirementsMet(m, realm) &&
+        !(history[m.id] && now - history[m.id] < cooldown)
+    );
+
+  const seats = SEATS.filter((s) => available(s).length).sort((a, b) => activity[a] - activity[b] || Math.random() - 0.5);
+  for (const seat of seats) {
+    const matter = pickWeighted(available(seat), (m) => m.weight ?? 1);
+    if (!matter) continue;
+    const card = createCard(matter, { now, tier });
+    const placement = matter.placement?.type;
+    if (["hex", "settlement"].includes(placement) && !card.target.hexKey) continue;
+    history[matter.id] = now;
+    realm.cards.push(card);
+    addLog(realm, { type: "event-drawn", card: card.id, seat: card.seat, text: card.name });
+    Hooks.callAll(`${MODULE_ID}.eventsDrawn`, [card]);
+    return card;
+  }
+  return null;
 }

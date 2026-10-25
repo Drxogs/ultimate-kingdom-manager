@@ -1,8 +1,8 @@
 import { MISSED_PROBLEM_POINTS, MODULE_ID, SKILL_TO_STAT } from "../constants.js";
-import { getEvent } from "../content/data.js";
+import { getCardEvent } from "../content/data.js";
 import { getKingdom, isKingdomActive } from "../integrations/party.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
-import { drawMonthlyEvents } from "./deck.js";
+import { drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
 import { addStatPoints, routinePoints, weeklyFoodShortfall, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { monthKey, secondsPerDay, weekNumber } from "./time.js";
@@ -10,6 +10,7 @@ import { syncPins } from "./pins.js";
 import { resolveDue } from "./resolve.js";
 
 const MAX_CATCH_UP_WEEKS = 26;
+const MAX_MATTERS_PER_TICK = 2;
 
 let running = false;
 
@@ -46,6 +47,12 @@ export async function tick() {
       for (let i = 0; i < weeks; i++) unrest += runWeek(realm);
       expireCards(realm);
       if (newMonth) drawn = drawMonthlyEvents(realm);
+      if (weeks && getSetting(SETTINGS.deskMatters)) {
+        for (let i = 0; i < Math.min(weeks, MAX_MATTERS_PER_TICK); i++) {
+          const card = drawWeeklyMatter(realm);
+          if (card) drawn.push(card);
+        }
+      }
     });
     await setSetting(SETTINGS.clock, { week, month });
     if (unrest) await addUnrest(unrest);
@@ -116,7 +123,7 @@ function expireCards(realm) {
   for (const card of realm.cards) {
     if (!isExpiring(card, now)) continue;
 
-    const event = getEvent(card.eventId);
+    const event = getCardEvent(card);
     card.status = "expired";
     card.resolvedAt = now;
     if (card.kind === "problem") {

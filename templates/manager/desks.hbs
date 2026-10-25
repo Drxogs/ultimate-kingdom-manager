@@ -18,6 +18,7 @@
                 <strong>{{name}}</strong>
                 <span class="ukm-tag {{kind}}">{{localize (concat "UKM.Card.Kind." kind)}}</span>
                 {{#if continuous}}<span class="ukm-tag">{{localize "UKM.Card.Continuous"}}</span>{{/if}}
+                {{#if matter}}<span class="ukm-tag">{{localize "UKM.Card.Matter"}}</span>{{/if}}
                 {{#if escalate}}<span class="ukm-tag" data-tooltip="{{localize "UKM.Card.EscalateHint"}}"><i class="fa-solid fa-dragon"></i></span>{{/if}}
                 {{#if stageLabel}}<span class="ukm-tag">{{stageLabel}}</span>{{/if}}
                 {{#if (gt months 1)}}<span class="ukm-tag">{{localize "UKM.Card.Month" n=months}}</span>{{/if}}

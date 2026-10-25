@@ -35,6 +35,10 @@
         "Hint": "What happens to a map pin once its event is over.",
         "Remove": "Remove it",
         "Keep": "Keep a small marker"
+      },
+      "DeskMatters": {
+        "Name": "Weekly desk matters",
+        "Hint": "Each week, a small matter lands on whichever desk has been quietest. The month's major events are drawn as usual."
       }
     },
     "Setup": {
@@ -136,7 +140,10 @@
       "Routine": "+{n} a week",
       "RoutineHint": "Everyday life in the realm. Grows faster when the stat is well behind what the kingdom's level allows.",
       "NoRoutine": "seat empty, no weekly growth",
-      "AtCap": "at the cap for this level"
+      "AtCap": "at the cap for this level",
+      "DrawMatter": "Draw desk matter",
+      "MatterDrawn": "New desk matter: {name}.",
+      "MatterNone": "No desk matter fits right now."
     },
     "Card": {
       "Kind": {
@@ -168,7 +175,8 @@
       "Outcomes": "Possible outcomes",
       "NoEffect": "Nothing happens",
       "Rolled": "{name}'s roll: {result}. Reroll from the chat card, or accept it. It applies on its own after a day.",
-      "Accept": "Accept"
+      "Accept": "Accept",
+      "Matter": "Desk matter"
     },
     "Log": {
       "income": "Treasury collected {amount} BP.",

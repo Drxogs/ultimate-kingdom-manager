@@ -11,7 +11,7 @@ async function load(name) {
 }
 
 export async function preloadData() {
-  await Promise.all(["events", "companions", "quests"].map(load));
+  await Promise.all(["events", "matters", "companions", "quests"].map(load));
 }
 
 export function getEvents() {
@@ -22,8 +22,32 @@ export function getStoryEvents() {
   return cache.events?.storyEvents ?? [];
 }
 
+export function getMatters() {
+  return cache.matters?.matters ?? [];
+}
+
 export function getEvent(id) {
-  return getEvents().find((e) => e.id === id) ?? getStoryEvents().find((e) => e.id === id) ?? null;
+  return (
+    getEvents().find((e) => e.id === id) ??
+    getStoryEvents().find((e) => e.id === id) ??
+    getMatters().find((e) => e.id === id) ??
+    null
+  );
+}
+
+/** The level band a desk matter is written for. */
+export function matterTier(level) {
+  if (level >= 14) return "late";
+  if (level >= 7) return "middle";
+  return "early";
+}
+
+/** The event behind a card, with a desk matter's level version folded in. */
+export function getCardEvent(card) {
+  const event = getEvent(card.eventId);
+  if (!event?.tiers) return event;
+  const { tiers, ...base } = event;
+  return { ...base, ...(tiers[card.tier] ?? tiers.early) };
 }
 
 export function getCompanions() {

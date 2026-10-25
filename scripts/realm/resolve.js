@@ -1,5 +1,5 @@
 import { DEGREE_POINTS, DEGREES, LEVEL_DC, MODULE_ID, SKILL_ABILITY, SKILL_TO_STAT } from "../constants.js";
-import { getCompanion, getEvent } from "../content/data.js";
+import { getCardEvent, getCompanion, getEvent } from "../content/data.js";
 import { getControlDC, getKingdom, getPartyLevel } from "../integrations/party.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { createCard } from "./deck.js";
@@ -13,7 +13,7 @@ const ACTIVE = ["open", "assigned", "rolled"];
 const loc = (key, data) => (data ? game.i18n.format(`UKM.Resolve.${key}`, data) : game.i18n.localize(`UKM.Resolve.${key}`));
 
 export function cardStage(card) {
-  const event = getEvent(card.eventId);
+  const event = getCardEvent(card);
   const stage = event?.stages?.[card.stage ?? 0] ?? null;
   return {
     event,
@@ -24,7 +24,7 @@ export function cardStage(card) {
 }
 
 export function cardLevelMod(card, realm = getRealm()) {
-  const event = getEvent(card.eventId);
+  const event = getCardEvent(card);
   return (event?.mod ?? 0) + (realm.levelModBoosts?.[card.eventId] ?? 0);
 }
 

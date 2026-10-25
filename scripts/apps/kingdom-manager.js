@@ -1,9 +1,9 @@
 import { DEGREES, MODULE_ID, PERSONAL_SKILLS, REALM_STATS, SEATS } from "../constants.js";
-import { getCompanion, getEvent } from "../content/data.js";
+import { getCardEvent, getCompanion } from "../content/data.js";
 import { getImportedPage } from "../content/story-import.js";
 import { focusHex, getHexDefinitions, getZone } from "../integrations/kingmaker.js";
 import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnrest } from "../integrations/party.js";
-import { drawMonthlyEvents } from "../realm/deck.js";
+import { drawMonthlyEvents, drawWeeklyMatter } from "../realm/deck.js";
 import { syncPins } from "../realm/pins.js";
 import { canRankUp, rankBonus, rankCap, routinePoints, statProgress, weeklyIncome } from "../realm/rules.js";
 import { getRealm, updateRealm } from "../realm/state.js";
@@ -104,6 +104,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       openCard: KingdomManager.#openCard,
       focusHex: KingdomManager.#focusHex,
       drawEvents: KingdomManager.#drawEvents,
+      drawMatter: KingdomManager.#drawMatter,
       openSetup: KingdomManager.#openSetup,
       delegate: KingdomManager.#delegate,
       handlePersonally: KingdomManager.#handlePersonally,
@@ -231,7 +232,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         .filter((c) => c.seat === seat && ["open", "assigned", "escalated", "rolled"].includes(c.status))
         .sort((a, b) => a.deadline - b.deadline)
         .map((card) => {
-          const event = getEvent(card.eventId);
+          const event = getCardEvent(card);
           const hex = card.target?.hexKey ? hexes.get(card.target.hexKey) : null;
           const zone = hex ? getZone(hex.zone) : null;
           const showPlace = game.user.isGM || !card.target?.hidden || card.revealed;
@@ -406,6 +407,15 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const id = target.closest("[data-task]")?.dataset.task;
     const task = getRealm().gmTasks.find((t) => t.id === id);
     if (task && game.user.isActiveGM) await completeGmTask(id, !task.done);
+  }
+
+  static async #drawMatter() {
+    if (!game.user.isActiveGM) return;
+    let card = null;
+    await updateRealm((realm) => {
+      card = drawWeeklyMatter(realm);
+    });
+    ui.notifications.info(card ? game.i18n.format("UKM.Manager.MatterDrawn", { name: card.name }) : game.i18n.localize("UKM.Manager.MatterNone"));
   }
 
   static #openSetup() {

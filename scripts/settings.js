@@ -14,7 +14,8 @@ export const SETTINGS = {
   costGradient: "costGradient",
   pinResolved: "pinResolved",
   clock: "clock",
-  seatAssignments: "seatAssignments"
+  seatAssignments: "seatAssignments",
+  deskMatters: "deskMatters"
 };
 
 export function registerSettings() {
@@ -48,6 +49,14 @@ export function registerSettings() {
       auto: "UKM.Settings.Approval.Auto"
     },
     default: "review"
+  });
+
+  world(SETTINGS.deskMatters, {
+    name: "UKM.Settings.DeskMatters.Name",
+    hint: "UKM.Settings.DeskMatters.Hint",
+    config: true,
+    type: Boolean,
+    default: true
   });
 
   world(SETTINGS.tapTreasury, {
