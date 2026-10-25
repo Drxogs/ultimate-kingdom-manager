@@ -30,7 +30,27 @@ export function getProjects() {
   return cache.projects?.projects ?? [];
 }
 
+/** A companion's signature ability, shaped like a project. */
+export function getSignature(companionId) {
+  const companion = getCompanion(companionId);
+  const sig = companion?.signature;
+  if (!sig) return null;
+  return {
+    id: `signature-${companion.id}`,
+    kind: "project",
+    seat: null,
+    target: "none",
+    advisorOnly: true,
+    signature: true,
+    companion: companion.id,
+    costBP: sig.cost ?? 0,
+    ...sig,
+    name: `${sig.name} (${companion.name})`
+  };
+}
+
 export function getProject(type) {
+  if (typeof type === "string" && type.startsWith("signature-")) return getSignature(type.slice(10));
   return getProjects().find((p) => p.id === type) ?? null;
 }
 

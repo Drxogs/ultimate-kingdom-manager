@@ -1,5 +1,5 @@
 import { COMMODITY_BP, FLAG_SCOPE, MODULE_ID } from "../constants.js";
-import { getProject, getProjects } from "../content/data.js";
+import { getCompanion, getProject, getProjects, getSignature } from "../content/data.js";
 import {
   getAllHexStates,
   getClaimedHexes,
@@ -85,6 +85,8 @@ export function projectTargets(def, realm = getRealm()) {
     case "claimed-no-camp":
       hexes = claimed.filter((h) => !h.camp && !isSettlement(h));
       break;
+    case "none":
+      return [{ hexKey: null, label: "", factor: 1 }];
     case "settlement":
       return settlementHexes().map((s) => ({
         hexKey: s.key,
@@ -118,6 +120,7 @@ function baseCost(def) {
 /** BP cost and working days for a project at a target. */
 export function projectQuote(def, target, structure = null) {
   const factor = target?.factor ?? 1;
+  if (def.target === "none") return { cost: def.costBP ?? 0, days: def.workDays ?? 7 };
   if (def.target === "settlement") {
     const bp = structure?.bp ?? Math.max(4, (structure?.level ?? 1) * 6);
     const days = def.workDays + Math.max(0, (structure?.level ?? 1) - 4);
@@ -126,8 +129,22 @@ export function projectQuote(def, target, structure = null) {
   return { cost: Math.max(1, Math.round(baseCost(def) * factor)), days: Math.max(3, Math.round(def.workDays * factor)) };
 }
 
+/** The signature ability of the companion advising a seat, if they have one and it's usable now. */
+export function signatureForSeat(seat, realm = getRealm()) {
+  const companionId = getSetting(SETTINGS.seatAssignments)?.[seat]?.companion;
+  const def = companionId ? getSignature(companionId) : null;
+  if (!def) return null;
+  if (def.requiresSeat && !getCompanion(companionId)?.seats?.includes(seat)) return null;
+  const readyAt = realm.cooldowns?.[def.id] ?? 0;
+  const busy = realm.cards.some((c) => c.eventId === `project:${def.id}` && ["open", "assigned", "rolled"].includes(c.status));
+  return { ...def, seat, readyAt, available: !busy && readyAt <= game.time.worldTime };
+}
+
 export function projectsForSeat(seat) {
-  return getProjects().filter((p) => p.seat === seat);
+  const list = getProjects().filter((p) => p.seat === seat);
+  const signature = signatureForSeat(seat);
+  if (signature?.available) list.push(signature);
+  return list;
 }
 
 /* ---------- Structures ---------- */
@@ -198,12 +215,18 @@ export function buildableStructures() {
  */
 export async function startProject(request, { canActForSeat }) {
   const user = game.users.get(request.userId) ?? game.user;
-  const def = getProject(request.type);
+  let def = getProject(request.type);
+  if (def?.signature) {
+    const seat = Object.entries(getSetting(SETTINGS.seatAssignments) ?? {}).find(([, a]) => a?.companion === def.companion)?.[0];
+    const usable = seat ? signatureForSeat(seat) : null;
+    if (!usable?.available) return { ok: false, reason: "NotReady" };
+    def = usable;
+  }
   if (!def) return { ok: false, reason: "Unknown" };
   if (!canActForSeat(user, def.seat)) return { ok: false, reason: "NotYourSeat" };
 
   const realm = getRealm();
-  const target = projectTargets(def, realm).find((t) => t.hexKey === request.hexKey);
+  const target = projectTargets(def, realm).find((t) => t.hexKey === (request.hexKey ?? null));
   if (!target) return { ok: false, reason: "NoTarget" };
   let structure = null;
   if (def.target === "settlement") {
@@ -219,6 +242,7 @@ export async function startProject(request, { canActForSeat }) {
 
   const now = game.time.worldTime;
   const label = structure ? `${structure.name}, ${target.settlement}` : target.label;
+  const name = label ? `${def.name}: ${label}` : def.name;
   await updateRealm((r) => {
     r.treasury -= quote.cost;
     const card = {
@@ -226,7 +250,7 @@ export async function startProject(request, { canActForSeat }) {
       eventId: `project:${def.id}`,
       tier: null,
       matter: false,
-      name: `${def.name}: ${label}`,
+      name,
       kind: "project",
       seat: def.seat,
       stage: 0,
@@ -249,6 +273,10 @@ export async function startProject(request, { canActForSeat }) {
         by: user.id
       }
     };
+    if (def.signature) {
+      r.cooldowns ??= {};
+      r.cooldowns[def.id] = now + (def.cooldownDays ?? 30) * secondsPerDay();
+    }
     r.cards.push(card);
     addLog(r, { type: "project-start", card: card.id, seat: def.seat, text: card.name, amount: -quote.cost });
   });

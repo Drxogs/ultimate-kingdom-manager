@@ -74,6 +74,7 @@ export async function assignCard(request) {
   const skill = skills.includes(request.skill) ? request.skill : skills[0];
   let assignee;
 
+  if (request.type === "pc" && cardStage(card).event?.advisorOnly) return { ok: false, reason: "AdvisorOnly" };
   if (request.type === "pc") {
     const actor = fromUuidSync(request.actorUuid);
     if (!actor || (!user.isGM && !actor.testUserPermission(user, "OWNER"))) return { ok: false, reason: "NotYourCharacter" };

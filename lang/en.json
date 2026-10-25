@@ -285,7 +285,8 @@
         "TapDenied": "The GM said no.",
         "InDebt": "Economy can't rank up while the realm is in debt.",
         "NothingOwed": "Nothing is owed.",
-        "NotEnoughGold": "That character doesn't have that much gold."
+        "NotEnoughGold": "That character doesn't have that much gold.",
+        "AdvisorOnly": "Only the advisor can do this one."
       }
     },
     "Effect": {

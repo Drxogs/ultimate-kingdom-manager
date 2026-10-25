@@ -264,7 +264,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             assigneePersonal: card.assignee?.type === "pc",
             canDelegate: open && canAct && !!holderName && !advisorBusy,
             advisorBusy: open && !!advisorBusy,
-            canHandle: open && canAct,
+            canHandle: open && canAct && !event?.advisorOnly,
             canUnassign: card.status === "assigned" && canAct,
             canEscalate: open && canAct && !!event?.escalate,
             outcomes: outcomePreview(card),
@@ -428,7 +428,9 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             .join("")}</select><p class="hint">${game.i18n.localize("UKM.Project.CampHint")}</p></div>`
         : "";
     const content = `<p>${esc(def.hook)}</p>${odds ? `<p class="hint">${game.i18n.localize("UKM.Difficulty.Advisor")} ${odds.label}</p>` : ""}
-      <div class="form-group"><label>${game.i18n.localize(def.target === "settlement" ? "UKM.Project.Where" : "UKM.Project.Hex")}</label><select name="target">${targetOptions}</select></div>
+      ${def.target === "none"
+        ? `<input type="hidden" name="target" value="0"><p>${quoteText(projectQuote(def, targets[0]))}</p>`
+        : `<div class="form-group"><label>${game.i18n.localize(def.target === "settlement" ? "UKM.Project.Where" : "UKM.Project.Hex")}</label><select name="target">${targetOptions}</select></div>`}
       ${structureField}${campField}<p class="hint">${game.i18n.format("UKM.Project.Treasury", { bp: getRealm().treasury })}</p>`;
     const choice = await DialogV2.prompt({
       window: { title: def.name },
