@@ -63,6 +63,21 @@
 .ukm .ukm-checklist li.warn i { color: var(--ukm-gold); }
 .ukm .ukm-checklist a { margin-left: 0.4rem; text-decoration: underline; cursor: pointer; }
 
+.ukm-setup .window-content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ukm-setup .ukm-setup-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.ukm-setup .form-footer { flex: 0 0 auto; margin-top: 0.5rem; }
+
 .ukm-setup section + section { margin-top: 0.75rem; }
 
 .ukm-setup .ukm-seats { width: 100%; border-collapse: collapse; }

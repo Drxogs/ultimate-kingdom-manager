@@ -57,7 +57,14 @@
       "Supervisor": "Supervised by",
       "None": "—",
       "Save": "Save",
-      "Saved": "Kingdom setup saved."
+      "Saved": "Kingdom setup saved.",
+      "GroupCharacters": "Player characters",
+      "GroupCompanions": "Companions",
+      "GroupOthers": "Other actors",
+      "ShowingCompanions": "Holders are limited to the party and Kingmaker companions.",
+      "ShowingAll": "Showing every actor in the world.",
+      "ShowAll": "Show other actors",
+      "ShowFewer": "Show only party and companions"
     },
     "Import": {
       "Title": "Import Story Content",

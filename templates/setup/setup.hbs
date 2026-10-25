@@ -48,6 +48,10 @@
   <section>
     <h3>{{localize "UKM.Setup.Seats"}}</h3>
     <p class="hint">{{localize "UKM.Setup.SeatsHint"}}</p>
+    <p class="hint">
+      {{#if showAllActors}}{{localize "UKM.Setup.ShowingAll"}}{{else}}{{localize "UKM.Setup.ShowingCompanions"}}{{/if}}
+      <a data-action="toggleActors">{{#if showAllActors}}{{localize "UKM.Setup.ShowFewer"}}{{else}}{{localize "UKM.Setup.ShowAll"}}{{/if}}</a>
+    </p>
     {{#unless kingdomActive}}<p class="ukm-notice">{{localize "UKM.Setup.SeatsNeedKingdom"}}</p>{{/unless}}
     <table class="ukm-seats">
       <thead>
@@ -65,7 +69,9 @@
           <td>
             <select name="seats.{{seat}}.holder">
               <option value="">{{localize "UKM.Setup.None"}}</option>
-              {{selectOptions @root.holderChoices selected=holder}}
+              {{#each @root.holderGroups}}
+                <optgroup label="{{label}}">{{selectOptions choices selected=../holder}}</optgroup>
+              {{/each}}
             </select>
           </td>
           <td>
