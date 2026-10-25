@@ -8,7 +8,7 @@ import { rankBonus, cardWorkDays } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
 
-const ACTIVE = ["open", "assigned"];
+const ACTIVE = ["open", "assigned", "rolled"];
 
 const loc = (key, data) => (data ? game.i18n.format(`UKM.Resolve.${key}`, data) : game.i18n.localize(`UKM.Resolve.${key}`));
 
@@ -115,7 +115,7 @@ export async function unassignCard({ cardId, userId }) {
 export async function escalateCard({ cardId, userId }) {
   const user = game.users.get(userId) ?? game.user;
   const card = getRealm().cards.find((c) => c.id === cardId);
-  if (!card || !ACTIVE.includes(card.status) || !canActForSeat(user, card.seat)) return { ok: false, reason: "NotOpen" };
+  if (!card || !["open", "assigned"].includes(card.status) || !canActForSeat(user, card.seat)) return { ok: false, reason: "NotOpen" };
   await updateRealm((r) => {
     const target = r.cards.find((c) => c.id === cardId);
     target.status = "escalated";
@@ -176,7 +176,7 @@ async function rollCheck(card, realm) {
   const modifiers = timedModifiers(realm, skill, card.eventId);
   const fortune = takeFortune(realm, skill);
   const label = `${card.name}${card.assignee ? ` — ${card.assignee.name}` : ""}`;
-  const options = { skipDialog: true, rollTwice: fortune ? "keep-higher" : false, label, extraRollOptions: [`ukm:event:${card.eventId}`] };
+  const options = { skipDialog: true, rollTwice: fortune ? "keep-higher" : false, label, extraRollOptions: [`ukm:event:${card.eventId}`, `ukm:card:${card.id}`] };
 
   if (card.assignee?.type === "pc") {
     const actor = fromUuidSync(card.assignee.actorUuid);
@@ -185,9 +185,7 @@ async function rollCheck(card, realm) {
     const dc = (LEVEL_DC[Math.clamp(kingdom?.level ?? 1, 0, 20)] ?? 14) + mod;
     const roll = await statistic.roll({ ...options, dc: { value: dc }, modifiers: toModifiers(modifiers) });
     if (!roll) return null;
-    let degree = roll.degreeOfSuccess;
-    if (degree === 2) degree = 3;
-    return { degree, skill, stat, personal: true, fame: roll.degreeOfSuccess === 3 ? 1 : 0, total: roll.total, dc };
+    return { degree: roll.degreeOfSuccess, skill, stat, personal: true, total: roll.total, dc };
   }
 
   const statistic = kingdom?.skills?.[skill];
@@ -197,7 +195,7 @@ async function rollCheck(card, realm) {
   const dc = getControlDC() + mod;
   const roll = await statistic.roll({ ...options, dc: { value: dc }, modifiers: toModifiers(modifiers) });
   if (!roll) return null;
-  return { degree: roll.degreeOfSuccess, skill, stat, personal: false, fame: 0, total: roll.total, dc };
+  return { degree: roll.degreeOfSuccess, skill, stat, personal: false, total: roll.total, dc };
 }
 
 function endsOn(event, card, degreeName) {
@@ -281,31 +279,93 @@ async function finish(card, degreeName, ctx, check) {
   Hooks.callAll(`${MODULE_ID}.cardResolved`, { card, degree: degreeName });
 }
 
-/** Roll a card whose work time is up. */
+/**
+ * Roll a card whose work time is up. The result waits on the card so it can
+ * still be rerolled from its chat card; it applies when accepted, when a
+ * reroll comes in, or a day later.
+ */
 export async function rollCard(cardId) {
-  const before = getRealm();
-  const original = before.cards.find((c) => c.id === cardId);
+  const original = getRealm().cards.find((c) => c.id === cardId);
   if (!original || original.status !== "assigned") return null;
-  const assignee = original.assignee;
 
-  let ctx = null;
   let check = null;
-  let card = null;
   await updateRealm(async (realm) => {
-    card = realm.cards.find((c) => c.id === cardId);
+    const card = realm.cards.find((c) => c.id === cardId);
     check = await rollCheck(card, realm);
     if (!check) return;
-    check.name = assignee?.name;
-    ctx = await settleCard(realm, card, DEGREES[check.degree], { skill: check.skill });
-    ctx.fame += check.fame;
+    card.status = "rolled";
+    card.pendingRoll = { ...check, rolledAt: game.time.worldTime };
   });
-  if (!ctx) {
+  if (!check) {
     ui.notifications.warn(loc("RollFailed", { name: original.name }));
     return null;
   }
-  card.assignee = assignee;
-  await finish(card, DEGREES[check.degree], ctx, check);
+  await handRollToPlayer(original);
   return DEGREES[check.degree];
+}
+
+function rollMessageFor(cardId) {
+  const option = `ukm:card:${cardId}`;
+  return game.messages.contents.findLast((m) => [m.flags?.pf2e?.context?.options ?? []].flat().includes(option)) ?? null;
+}
+
+/** Let the player who asked for the work reroll it with their own hero points. */
+async function handRollToPlayer(card) {
+  const user = game.users.get(card.assignee?.by);
+  if (!user || user.isGM) return;
+  const message = rollMessageFor(card.id);
+  if (message && message.author?.id !== user.id) await message.update({ author: user.id });
+}
+
+function finalDegree(roll) {
+  if (roll.personal && roll.degree === 2) return 3;
+  return roll.degree;
+}
+
+/** Apply a rolled card's result. A new degree replaces the pending one (after a reroll). */
+export async function acceptRoll(cardId, rerolledDegree = null) {
+  let ctx = null;
+  let card = null;
+  let roll = null;
+  let assignee = null;
+  await updateRealm(async (realm) => {
+    card = realm.cards.find((c) => c.id === cardId);
+    if (!card || card.status !== "rolled" || !card.pendingRoll) return;
+    roll = { ...card.pendingRoll };
+    if (Number.isInteger(rerolledDegree)) roll.degree = rerolledDegree;
+    assignee = card.assignee;
+    card.pendingRoll = null;
+    const degreeName = DEGREES[finalDegree(roll)];
+    ctx = await settleCard(realm, card, degreeName, { skill: roll.skill });
+    if (roll.personal && roll.degree === 3) ctx.fame += 1;
+  });
+  if (!ctx) return null;
+  card.assignee = assignee;
+  const degreeName = DEGREES[finalDegree(roll)];
+  await finish(card, degreeName, ctx, { personal: roll.personal, name: assignee?.name });
+  return degreeName;
+}
+
+export async function acceptRequest({ cardId, userId }) {
+  const user = game.users.get(userId) ?? game.user;
+  const card = getRealm().cards.find((c) => c.id === cardId);
+  if (!card || card.status !== "rolled" || !canActForSeat(user, card.seat)) return { ok: false, reason: "NotOpen" };
+  await acceptRoll(cardId);
+  return { ok: true };
+}
+
+const DEGREE_NAMES = ["criticalFailure", "failure", "success", "criticalSuccess"];
+
+/** A card's check was rerolled from its chat card: use the kept result. */
+export function onRerollMessage(message) {
+  if (!game.user.isActiveGM) return;
+  const context = message.flags?.pf2e?.context;
+  if (!context?.isReroll) return;
+  const options = [context.options ?? []].flat();
+  const cardOption = options.find((o) => typeof o === "string" && o.startsWith("ukm:card:"));
+  if (!cardOption) return;
+  const degree = DEGREE_NAMES.indexOf(context.outcome);
+  acceptRoll(cardOption.slice("ukm:card:".length), degree >= 0 ? degree : null);
 }
 
 /** GM records an outcome directly: an escalated card the party played out, or an override. */
@@ -314,7 +374,8 @@ export async function recordOutcome(cardId, degreeName) {
   let card = null;
   await updateRealm(async (realm) => {
     card = realm.cards.find((c) => c.id === cardId);
-    if (!card || !["open", "assigned", "escalated"].includes(card.status)) return;
+    if (!card || !["open", "assigned", "escalated", "rolled"].includes(card.status)) return;
+    card.pendingRoll = null;
     const wasEscalated = card.status === "escalated";
     ctx = await settleCard(realm, card, degreeName);
     if (wasEscalated && card.status === "open") card.deadline = game.time.worldTime + (card.pausedDays ?? 30) * secondsPerDay();
@@ -382,6 +443,8 @@ export async function resolveDue() {
   const now = game.time.worldTime;
   const due = getRealm().cards.filter((c) => c.status === "assigned" && c.workUntil && c.workUntil <= now);
   for (const card of due.sort((a, b) => a.workUntil - b.workUntil)) await rollCard(card.id);
+  const waiting = getRealm().cards.filter((c) => c.status === "rolled" && c.pendingRoll && c.pendingRoll.rolledAt + secondsPerDay() <= now);
+  for (const card of waiting) await acceptRoll(card.id);
 }
 
 export async function completeGmTask(taskId, done = true) {

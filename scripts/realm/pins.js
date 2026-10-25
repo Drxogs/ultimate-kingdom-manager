@@ -31,7 +31,7 @@ export async function syncPins() {
   for (const card of realm.cards) {
     const note = existing.get(card.id);
     existing.delete(card.id);
-    const active = ["open", "assigned", "escalated"].includes(card.status);
+    const active = ["open", "assigned", "escalated", "rolled"].includes(card.status);
 
     if (!active) {
       if (!note) continue;

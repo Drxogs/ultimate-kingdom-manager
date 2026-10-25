@@ -38,6 +38,9 @@
                   {{localize "UKM.Card.Working" name=assigneeName days=workDays}}
                 </p>
               {{/if}}
+              {{#if isRolled}}
+                <p class="ukm-working"><i class="fa-solid fa-dice-d20"></i> {{localize "UKM.Card.Rolled" name=assigneeName result=rolledResult}}</p>
+              {{/if}}
               {{#if advisorBusy}}<p class="hint">{{localize "UKM.Card.AdvisorBusy"}}</p>{{/if}}
               <details class="ukm-outcomes">
                 <summary>{{localize "UKM.Card.Outcomes"}}</summary>
@@ -52,6 +55,7 @@
                 {{#if canDelegate}}<button type="button" data-action="delegate"><i class="fa-solid fa-user-tie"></i> {{localize "UKM.Card.Delegate"}}</button>{{/if}}
                 {{#if canHandle}}<button type="button" data-action="handlePersonally"><i class="fa-solid fa-user"></i> {{localize "UKM.Card.HandlePersonally"}}</button>{{/if}}
                 {{#if canEscalate}}<button type="button" data-action="escalate" data-tooltip="{{localize "UKM.Card.EscalateHint"}}"><i class="fa-solid fa-dragon"></i></button>{{/if}}
+                {{#if canAccept}}<button type="button" data-action="accept"><i class="fa-solid fa-check"></i> {{localize "UKM.Card.Accept"}}</button>{{/if}}
                 {{#if canUnassign}}<button type="button" data-action="unassign" data-tooltip="{{localize "UKM.Card.Unassign"}}"><i class="fa-solid fa-rotate-left"></i></button>{{/if}}
                 {{#if @root.isGM}}
                   {{#if isAssigned}}<button type="button" data-action="rollNow" data-tooltip="{{localize "UKM.Card.RollNow"}}"><i class="fa-solid fa-dice-d20"></i></button>{{/if}}

@@ -155,7 +155,9 @@
       "Working": "{name} is on it — done in {days} days",
       "AdvisorBusy": "The advisor is busy with another matter.",
       "Outcomes": "Possible outcomes",
-      "NoEffect": "Nothing happens"
+      "NoEffect": "Nothing happens",
+      "Rolled": "{name}'s roll: {result}. Reroll from the chat card, or accept it. It applies on its own after a day.",
+      "Accept": "Accept"
     },
     "Log": {
       "income": "Treasury collected {amount} BP.",

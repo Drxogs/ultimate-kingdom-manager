@@ -92,6 +92,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       delegate: KingdomManager.#delegate,
       handlePersonally: KingdomManager.#handlePersonally,
       unassign: KingdomManager.#unassign,
+      accept: KingdomManager.#accept,
       escalate: KingdomManager.#escalate,
       rollNow: KingdomManager.#rollNow,
       recordOutcome: KingdomManager.#recordOutcome,
@@ -207,7 +208,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       const advisorBusy = realm.cards.find((c) => c.status === "assigned" && c.assignee?.type === "advisor" && c.assignee.seat === seat);
 
       const cards = realm.cards
-        .filter((c) => c.seat === seat && ["open", "assigned", "escalated"].includes(c.status))
+        .filter((c) => c.seat === seat && ["open", "assigned", "escalated", "rolled"].includes(c.status))
         .sort((a, b) => a.deadline - b.deadline)
         .map((card) => {
           const event = getEvent(card.eventId);
@@ -223,6 +224,9 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             isOpen: open,
             isAssigned: card.status === "assigned",
             isEscalated: card.status === "escalated",
+            isRolled: card.status === "rolled",
+            rolledResult: card.pendingRoll ? game.i18n.localize(`UKM.Degree.${DEGREES[card.pendingRoll.personal && card.pendingRoll.degree === 2 ? 3 : card.pendingRoll.degree]}`) : null,
+            canAccept: card.status === "rolled" && canAct,
             workDays: card.workUntil ? Math.max(0, daysUntil(card.workUntil, now)) : null,
             assigneeName: card.assignee?.name ?? null,
             assigneePersonal: card.assignee?.type === "pc",
@@ -325,6 +329,11 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #unassign(event, target) {
     const card = findCard(target);
     if (card) await sendRequest("unassign", { cardId: card.id });
+  }
+
+  static async #accept(event, target) {
+    const card = findCard(target);
+    if (card) await sendRequest("accept", { cardId: card.id });
   }
 
   static async #escalate(event, target) {

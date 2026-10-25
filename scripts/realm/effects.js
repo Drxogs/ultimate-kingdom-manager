@@ -217,7 +217,7 @@ function endCards(realm, eventIds) {
   const now = game.time.worldTime;
   const ended = [];
   for (const card of realm.cards) {
-    if (!eventIds.includes(card.eventId) || !["open", "assigned"].includes(card.status)) continue;
+    if (!eventIds.includes(card.eventId) || !["open", "assigned", "rolled"].includes(card.status)) continue;
     card.status = "resolved";
     card.outcome = "ended";
     card.resolvedAt = now;
@@ -339,7 +339,7 @@ export async function applyEffects(ctx, effects = []) {
         break;
       }
       case "endEventOneOf": {
-        const active = realm.cards.filter((c) => value.includes(c.eventId) && ["open", "assigned"].includes(c.status));
+        const active = realm.cards.filter((c) => value.includes(c.eventId) && ["open", "assigned", "rolled"].includes(c.status));
         if (!active.length) break;
         const pick = await DialogV2.wait({
           window: { title: ctx.card?.name ?? "" },

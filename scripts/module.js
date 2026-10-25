@@ -7,6 +7,7 @@ import { getParty, syncKingdomLevel } from "./integrations/party.js";
 import { registerClock, tick } from "./realm/clock.js";
 import { getRealm } from "./realm/state.js";
 import { processQueuedRequests, registerRequests } from "./realm/requests.js";
+import { onRerollMessage } from "./realm/resolve.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
 import { SetupWizard } from "./apps/setup-wizard.js";
 import { StoryImportApp } from "./apps/story-import-app.js";
@@ -68,6 +69,8 @@ Hooks.on("updateActor", (actor, changes) => {
   const levelChanged = foundry.utils.hasProperty(changes, "system.details.level");
   if (levelChanged && party.members.some((m) => m.id === actor.id)) syncKingdomLevel();
 });
+
+Hooks.on("createChatMessage", (message) => onRerollMessage(message));
 
 Hooks.on("updateSetting", (setting) => {
   if (setting.key.startsWith(`${MODULE_ID}.`)) Hooks.callAll(`${MODULE_ID}.refresh`);

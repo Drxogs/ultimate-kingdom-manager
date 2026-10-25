@@ -1,6 +1,6 @@
 import { FLAG_SCOPE, MODULE_ID } from "../constants.js";
 import { getSetting, SETTINGS } from "../settings.js";
-import { assignCard, escalateCard, unassignCard } from "./resolve.js";
+import { acceptRequest, assignCard, escalateCard, unassignCard } from "./resolve.js";
 import { getRealm } from "./state.js";
 
 const SOCKET = `module.${MODULE_ID}`;
@@ -10,7 +10,8 @@ const QUEUE_FLAG = "queue";
 const HANDLERS = {
   assign: assignCard,
   unassign: unassignCard,
-  escalate: escalateCard
+  escalate: escalateCard,
+  accept: acceptRequest
 };
 
 const pending = new Map();
