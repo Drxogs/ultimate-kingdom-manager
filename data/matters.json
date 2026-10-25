@@ -2550,6 +2550,4377 @@
           }
         }
       }
+    },
+    {
+      "id": "petitioners-line",
+      "seat": "ruler",
+      "skill": [
+        "politics"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "The Long Line",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "The line of petitioners at the door stretches round the building. Folks are getting tired of waiting.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "Grievance Day",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Every village has sent someone with a complaint, and they all want to be heard the same afternoon.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Petition of a Thousand",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "A petition with a thousand marks demands the crown hear it in public.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "whisper-campaign",
+      "seat": "ruler",
+      "skill": [
+        "intrigue"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Tavern Talk",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Someone's spreading a story in the taverns that the leaders are skimming the grain stores.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Pamphleteer",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Unsigned pamphlets accuse the council of crimes. They're well written, which is worse.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "A Rival Claimant",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "A noble with a thin claim to the land is quietly gathering supporters.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "local-election",
+      "seat": "ruler",
+      "skill": [
+        "politics"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Choosing a Reeve",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A village wants to pick its own reeve and asks the crown to bless the choice.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Town Charter",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A growing town asks for a charter and a council of its own.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Great Assembly",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "Delegates from every settlement ask to meet as one assembly before the throne.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "bribed-official",
+      "seat": "ruler",
+      "skill": [
+        "intrigue"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "The Greedy Reeve",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A village reeve is taking a cut of every fine, and the villagers know it.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "corruption": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "A Judge for Hire",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Word is a magistrate can be bought, and the price isn't even high.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "corruption": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "Rot in the Ministry",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "An entire office of the government is selling favors to the highest bidder.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "corruption": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "royal-progress",
+      "seat": "ruler",
+      "skill": [
+        "politics"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "A Visit to the Mill",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "The miller's family would be honored if a leader came to see the new wheel.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Royal Progress",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "The crown is invited to tour the provinces and be seen by its people.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Grand Progress",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "A season-long progress through every corner of the realm could bind it together.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "informants",
+      "seat": "ruler",
+      "skill": [
+        "intrigue"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Ears in the Tavern",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A barkeep offers to pass on what she hears, for a small fee.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "A Network of Eyes",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A former spy offers to build the crown a network of informants.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Silent Office",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "Your spymaster proposes a proper intelligence service, if the crown can stomach it.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "succession-gossip",
+      "seat": "ruler",
+      "skill": [
+        "politics",
+        "intrigue"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Who's Next?",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Folks keep asking who would rule if something happened to the leaders. Nobody has a good answer.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Heir Question",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Noble houses are lining up behind different heirs before anyone's even named one.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "Factions at Court",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "The court has split into factions over the succession, and both are recruiting.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "amnesty",
+      "seat": "ruler",
+      "skill": [
+        "politics"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Poachers' Pardon",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "Some poachers say they'd go straight if the crown forgave the last winter's deer.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "Bandits Come In",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A bandit crew offers to lay down its arms in exchange for a pardon and land.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Great Amnesty",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "A general pardon could empty the hills of outlaws, or fill the towns with them.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "traveling-players",
+      "seat": "counselor",
+      "skill": [
+        "arts"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "The Traveling Players",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A troupe of players wants somewhere to perform and a meal after.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "A Season of Plays",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A Mivoni company offers a whole season of plays if a stage can be found.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Royal Theater",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "A famous playwright wants to premiere a work about your realm's founding.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "shrine-dispute",
+      "seat": "counselor",
+      "skill": [
+        "folklore"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Two Faiths, One Shrine",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Two congregations both claim the village shrine and keep moving each other's candles.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Heretic Preacher",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A street preacher is drawing crowds with sermons the temples call heresy.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "Schism",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "A great temple has split down the middle, and the faithful are taking sides in the streets.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "harvest-festival",
+      "seat": "counselor",
+      "skill": [
+        "arts",
+        "folklore"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Harvest Supper",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "The village wants a harvest supper and a bonfire, and someone to bless the bread.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Lantern Festival",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "Townsfolk want to float lanterns on the river for the dead, as their grandparents did.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Feast of the Realm",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "A realm-wide festival could have every settlement celebrating on the same night.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "bad-omen",
+      "seat": "counselor",
+      "skill": [
+        "folklore"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "A Two-Headed Calf",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A calf was born with two heads, and the whole village thinks it means something.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "corruption": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Weeping Statue",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A statue in the square has started weeping, and pilgrims are sleeping in the street.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "corruption": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Red Comet",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "A red comet hangs in the sky, and every prophet in the realm has an opinion.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "corruption": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "local-legend",
+      "seat": "counselor",
+      "skill": [
+        "folklore",
+        "arts"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "The Old Woman's Tales",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "An old woman knows every story about the land, and nobody has written them down.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Founding Ballad",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A bard wants to write the ballad of the realm's founding, if someone will tell it right.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Chronicle",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "Scholars and poets propose a proper chronicle of the realm, to be read for centuries.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "vandalized-statue",
+      "seat": "counselor",
+      "skill": [
+        "arts"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Paint on the Well",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Someone painted rude pictures of the leaders on the village well.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Broken Monument",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "The founders' monument was smashed in the night.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Burned Gallery",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "A gallery of the realm's finest art went up in flames, and it wasn't an accident.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "wedding",
+      "seat": "counselor",
+      "skill": [
+        "arts"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "A Village Wedding",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "Two families want a leader to stand witness at their wedding.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "A Noble Match",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "Two noble houses are marrying and want the crown's blessing in public.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "A Royal Wedding",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "A marriage between your court and a foreign house would be the event of the decade.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "burial-rites",
+      "seat": "counselor",
+      "skill": [
+        "folklore"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "No Room in the Graveyard",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "The village graveyard is full, and folks don't like the new plot by the river.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "Restless Dead",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Families say their dead won't rest because the rites were done wrong.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Plague Pits",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "Old plague pits have been dug up for a new road, and the whole city is frightened.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "foreign-envoy",
+      "seat": "emissary",
+      "skill": [
+        "statecraft"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "A Letter from Restov",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A minor Restov noble writes asking about trade and a visit.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Mivoni Envoy",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "An envoy from Mivon has arrived with gifts and questions.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Grand Embassy",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "A great embassy from a powerful neighbor wants a treaty, and it's watching how it's treated.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "river-pirates",
+      "seat": "emissary",
+      "skill": [
+        "boating"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Trouble on the Sellen",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Someone's been cutting barges loose at night on the Sellen.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "River Raiders",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Raiders in fast boats are hitting river traffic and vanishing downstream.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Pirate Fleet",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "A pirate captain has a fleet on the river and is calling it a kingdom.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "border-dispute",
+      "seat": "emissary",
+      "skill": [
+        "statecraft"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Whose Field Is It?",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A farmer on the border swears his field belongs to you. His neighbor swears it doesn't.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Moved Stones",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Someone moved the border stones in the night, and a neighbor's soldiers have noticed.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "A Claim on Your Land",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "A neighboring ruler has published a claim to one of your provinces.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "ferry-service",
+      "seat": "emissary",
+      "skill": [
+        "boating"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "The Ferryman's Offer",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A ferryman wants to run a regular crossing if the crown backs him.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "bpDice": 2
+              }
+            ],
+            "success": [
+              {
+                "bpDice": 1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "A River Packet",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A boatwright proposes a packet boat running between your river towns.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "bpDice": 3
+              }
+            ],
+            "success": [
+              {
+                "bpDice": 2
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The River Fleet",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "Shipwrights propose a fleet of barges to carry the realm's trade downriver.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "bpDice": 4
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "bpDice": 3
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "insulted-guest",
+      "seat": "emissary",
+      "skill": [
+        "statecraft"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "The Offended Merchant",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A visiting merchant says he was insulted at the inn and is threatening to tell everyone.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "A Diplomatic Slight",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A foreign guest was seated badly at a feast, and their country has taken notice.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Envoy's Fury",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "An ambassador was humiliated in public, and war talk has started.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "lost-boat",
+      "seat": "emissary",
+      "skill": [
+        "boating"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "A Boat Gone Missing",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A fishing boat didn't come home from the lake last night.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "Wreck on the Rapids",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A cargo barge broke up on the rapids, and the crew are stranded.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Sunken Convoy",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "A whole convoy sank in a storm, with goods three nations were waiting on.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "hostage-exchange",
+      "seat": "emissary",
+      "skill": [
+        "statecraft"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Captives to Trade",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "Kobolds have a captured trapper and want one of theirs back.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "Prisoners of War",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A neighbor offers to trade prisoners from the last skirmish.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Exchange of Wards",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "A powerful house offers to swap fostered children with your court as a pledge of peace.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -2
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "unrest": -1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "river-festival",
+      "seat": "emissary",
+      "skill": [
+        "boating",
+        "statecraft"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Boat Races",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "Fisherfolk want to hold boat races on the lake.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Regatta",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "River towns from three nations want to race on your stretch of water.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The River Kings' Gathering",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "Rulers along the river propose a gathering on your shore. Everyone will be watching.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 30
+                }
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "counterfeit-coin",
+      "seat": "treasurer",
+      "skill": [
+        "trade"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Funny Money",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Merchants are finding light coins in their tills.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Counterfeit Ring",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Somebody's minting fake coin, and it's good enough to fool the moneychangers.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "A Flood of False Coin",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "False coin is everywhere, and folks have stopped trusting the realm's money.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "new-workshop",
+      "seat": "treasurer",
+      "skill": [
+        "industry"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "A Smith Settles",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A blacksmith wants to set up a forge if the crown helps with the first year's iron.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "bpDice": 2
+              }
+            ],
+            "success": [
+              {
+                "bpDice": 1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Weavers' Hall",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "Weavers want to build a hall and work together.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "bpDice": 3
+              }
+            ],
+            "success": [
+              {
+                "bpDice": 2
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Great Works",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "Investors propose great workshops that could make the realm rich, or make a mess.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "bpDice": 4
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "bpDice": 3
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "price-gouging",
+      "seat": "treasurer",
+      "skill": [
+        "trade"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "The Salt Seller",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "The only salt seller in the village has tripled his prices.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Grain Hoarders",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Merchants are hoarding grain to drive up the price before winter.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Cartel",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "The big merchant houses have fixed prices across the realm, and folks are going hungry.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "guild-charter",
+      "seat": "treasurer",
+      "skill": [
+        "industry",
+        "trade"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "The Carpenters Ask",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "The village carpenters want to form a guild and set fair wages.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "A Guild Charter",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "Craft guilds ask for royal charters and the rights that come with them.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Guild Council",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "Every guild in the realm wants a seat on a council of trade.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 30
+                }
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "tax-dodgers",
+      "seat": "treasurer",
+      "skill": [
+        "trade"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Missing Tithes",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A whole village swears its tithes got lost on the road.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Hidden Ledgers",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A merchant house has been keeping two sets of books.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Tax Revolt",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "A province refuses to pay, and they've got good reasons and bad tempers.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "mine-accident",
+      "seat": "treasurer",
+      "skill": [
+        "industry"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "A Cave-In",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A small dig collapsed, and two miners are trapped.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "Flooded Shafts",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "The mine's lower shafts have flooded, and work has stopped.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Deep Collapse",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "A whole mine has caved in, and the workers who got out won't go back.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "merchant-caravan",
+      "seat": "treasurer",
+      "skill": [
+        "trade"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "A Peddler's Cart",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A peddler wants to sell here every month if the road is safe.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "bpDice": 2
+              }
+            ],
+            "success": [
+              {
+                "bpDice": 1
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Caravan Master",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A caravan master offers to make your capital a regular stop.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "bpDice": 3
+              }
+            ],
+            "success": [
+              {
+                "bpDice": 2
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Trade Road",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "Great merchant houses propose a trade road through your realm.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "bpDice": 4
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "bpDice": 3
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "debt-collector",
+      "seat": "treasurer",
+      "skill": [
+        "trade",
+        "industry"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "The Moneylender",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A moneylender is calling in debts all at once, and families are losing their homes.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "Old Loans",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A Brevic bank claims the realm owes it for loans taken before the founding.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Creditors' Ships",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "Foreign creditors have seized your merchants' goods downriver.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "trail-markers",
+      "seat": "warden",
+      "skill": [
+        "exploration"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Blaze the Trail",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "Trappers want the forest trails marked so folks stop getting lost.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Survey",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A surveyor offers to map the land between your settlements properly.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Great Survey",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "Cartographers propose mapping the whole realm, every hill and ford.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 30
+                }
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "lost-hunters",
+      "seat": "warden",
+      "skill": [
+        "wilderness"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Lost in the Woods",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Two hunters went into the Narlmarches three days ago and haven't come out.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Missing Patrol",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A ranger patrol missed its check-in and its trail goes cold at a river.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "Swallowed by the Wild",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "A whole village's hunting party vanished, and something is leaving signs at the treeline.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "poachers",
+      "seat": "warden",
+      "skill": [
+        "wilderness"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Snares in the Royal Wood",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Someone's setting snares in the woods the crown keeps for itself.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Poaching Gang",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A gang is taking deer by the cartload and selling the meat across the border.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Great Hunt",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "Foreign nobles are holding hunts on your land without asking.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "crime": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "wild-harvest",
+      "seat": "warden",
+      "skill": [
+        "wilderness"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Mushroom Season",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "The mushrooms are in, and the foragers say it's the best year in memory.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "consumption": -2,
+                "days": 30
+              }
+            ],
+            "success": [
+              {
+                "consumption": -1,
+                "days": 30
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "Honey and Wax",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "Wild hives in the hills could supply the whole realm with honey and wax.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "consumption": -2,
+                "days": 30
+              }
+            ],
+            "success": [
+              {
+                "consumption": -1,
+                "days": 30
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Golden Wood",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "A rare tree has come into bloom across the forest, and its fruit is worth a fortune.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "consumption": -2,
+                "days": 30
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "consumption": -1,
+                "days": 30
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "strange-tracks",
+      "seat": "warden",
+      "skill": [
+        "exploration",
+        "wilderness"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Strange Tracks",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Herders found tracks by the pond that nobody can name.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "Something in the Hills",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "Livestock keep going missing near the hills, and the tracks are getting bigger.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Beast's Trail",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "A trail of broken trees runs across three provinces, and it's heading for a town.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "ruins-found",
+      "seat": "warden",
+      "skill": [
+        "exploration"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Stones in the Grass",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "A shepherd found carved stones in a meadow.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Hidden Ruin",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "Explorers found a ruin nobody knew about, half buried in the hills.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Lost City",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "An expedition swears it found the edge of a lost city past the frontier.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "forest-fire",
+      "seat": "warden",
+      "skill": [
+        "wilderness"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "Smoke on the Ridge",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "There's smoke on the ridge, and the wind is turning toward the village.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Wildfire",
+          "kind": "problem",
+          "mod": 0,
+          "hook": "A wildfire is burning through the woods and the farms beyond them.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              },
+              {
+                "bpDice": -1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Burning Forest",
+          "kind": "problem",
+          "mod": 1,
+          "hook": "A great forest is on fire, and the smoke can be seen from the capital.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": -1
+              }
+            ],
+            "success": [],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d2"
+              },
+              {
+                "ruin": {
+                  "decay": 1
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "frontier-scouts",
+      "seat": "warden",
+      "skill": [
+        "exploration"
+      ],
+      "traits": [
+        "matter"
+      ],
+      "weight": 1,
+      "deadlineDays": 14,
+      "tiers": {
+        "early": {
+          "name": "A Look Over the Hill",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "Young folks want to scout the land past the border.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "middle": {
+          "name": "The Frontier Rangers",
+          "kind": "opportunity",
+          "mod": 0,
+          "hook": "Veteran rangers offer to patrol the frontier if the crown pays them.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        "late": {
+          "name": "The Wardens' Order",
+          "kind": "opportunity",
+          "mod": 1,
+          "hook": "Rangers propose a proper order of wardens to watch the whole realm's edges.",
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 2,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 30
+                }
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "success": [
+              {
+                "modifier": {
+                  "type": "circumstance",
+                  "value": 1,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 30
+                }
+              }
+            ],
+            "failure": [],
+            "criticalFailure": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        }
+      }
     }
   ]
 }
