@@ -9,6 +9,7 @@ import { canRankUp, rankBonus, rankCap, routinePoints, statProgress, weeklyIncom
 import { getRealm, updateRealm } from "../realm/state.js";
 import { finishRankUpNow, rankUpChoices, rankUpCost, rankUpProject } from "../realm/ranks.js";
 import { buildableStructures, projectQuote, projectsForSeat, projectTargets } from "../realm/projects.js";
+import { tapCostBP, tapLimit, tapMode } from "../realm/treasury.js";
 import { getProject } from "../content/data.js";
 import { sendRequest } from "../realm/requests.js";
 import {
@@ -120,6 +121,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       toggleTask: KingdomManager.#toggleTask,
       beginRankUp: KingdomManager.#beginRankUp,
       startProject: KingdomManager.#startProject,
+      tapTreasury: KingdomManager.#tapTreasury,
+      repayDebt: KingdomManager.#repayDebt,
       chooseRankUp: KingdomManager.#chooseRankUp,
       finishRankUp: KingdomManager.#finishRankUp,
       openImport: KingdomManager.#openImport,
@@ -174,6 +177,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     context.treasury = realm.treasury;
     context.income = income;
     context.debt = realm.debt;
+    context.canRepay = realm.debt.amount > 0 && getPlayerCharacters().some((a) => game.user.isGM || a.isOwner);
     context.stats = Object.entries(REALM_STATS).map(([key, def]) => {
       const stat = realm.stats[key];
       return {
@@ -289,6 +293,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         supervisor: supervisor?.name ?? null,
         mine,
         canStartProject: canAct && projectsForSeat(seat).length > 0,
+        canTap: seat === "treasurer" && canAct && tapMode() !== "disabled",
         cards,
         empty: !cards.length
       };
@@ -442,6 +447,51 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!choice) return;
     const picked = targets[Number(choice.target)];
     await sendRequest("startProject", { type: def.id, hexKey: picked.hexKey, structure: choice.structure, camp: choice.camp });
+  }
+
+  static #characterOptions() {
+    return getPlayerCharacters()
+      .filter((a) => game.user.isGM || a.isOwner)
+      .map((a) => `<option value="${a.uuid}">${Handlebars.escapeExpression(a.name)}</option>`)
+      .join("");
+  }
+
+  static async #tapTreasury() {
+    const options = KingdomManager.#characterOptions();
+    if (!options) return;
+    const limit = tapLimit();
+    const cost = tapCostBP(limit);
+    const debt = getRealm().debt.amount;
+    const content = `<p>${game.i18n.format("UKM.Tap.Explain", { gold: limit, cost })}</p>
+      ${debt ? `<p class="ukm-urgent">${game.i18n.format("UKM.Tap.DebtWarning", { debt })}</p>` : ""}
+      ${tapMode() === "approval" && !game.user.isGM ? `<p class="hint">${game.i18n.localize("UKM.Tap.NeedsApproval")}</p>` : ""}
+      <div class="form-group"><label>${game.i18n.localize("UKM.Tap.Recipient")}</label><select name="actor">${options}</select></div>`;
+    const actorUuid = await DialogV2.prompt({
+      window: { title: game.i18n.localize("UKM.Tap.Title") },
+      position: { width: 480 },
+      content,
+      ok: { label: game.i18n.localize("UKM.Tap.Confirm"), callback: (event, button) => button.form.elements.actor.value },
+      rejectClose: false
+    });
+    if (actorUuid) await sendRequest("tapTreasury", { actorUuid });
+  }
+
+  static async #repayDebt() {
+    const options = KingdomManager.#characterOptions();
+    const debt = getRealm().debt.amount;
+    if (!options || !debt) return;
+    const choice = await DialogV2.prompt({
+      window: { title: game.i18n.localize("UKM.Tap.RepayTitle") },
+      content: `<p>${game.i18n.format("UKM.Tap.RepayExplain", { debt })}</p>
+        <div class="form-group"><label>${game.i18n.localize("UKM.Tap.Payer")}</label><select name="actor">${options}</select></div>
+        <div class="form-group"><label>${game.i18n.localize("UKM.Tap.Amount")}</label><input type="number" name="amount" min="1" max="${debt}" value="${debt}"></div>`,
+      ok: {
+        label: game.i18n.localize("UKM.Tap.Repay"),
+        callback: (event, button) => ({ actorUuid: button.form.elements.actor.value, amount: Number(button.form.elements.amount.value) })
+      },
+      rejectClose: false
+    });
+    if (choice) await sendRequest("repayDebt", choice);
   }
 
   static async #beginRankUp(event, target) {

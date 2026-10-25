@@ -191,7 +191,9 @@
       "rank-up": "Rank up: {name}.",
       "founding": "Founding focus: {name}.",
       "rank-start": "Rank-up begun: {name}.",
-      "project-start": "Project started: {name}."
+      "project-start": "Project started: {name}.",
+      "tap": "Treasury tapped by {name}: {amount} gp.",
+      "repay": "{name} repaid {amount} gp."
     },
     "Seat": {
       "ruler": "Ruler",
@@ -278,7 +280,12 @@
         "AdvisorBusy": "The advisor is busy with {card}.",
         "TooPoor": "The treasury needs {cost} BP for that.",
         "NoTarget": "That place isn't available for this project.",
-        "NoStructure": "That structure can't be built yet."
+        "NoStructure": "That structure can't be built yet.",
+        "TapDisabled": "Tapping the treasury is turned off.",
+        "TapDenied": "The GM said no.",
+        "InDebt": "Economy can't rank up while the realm is in debt.",
+        "NothingOwed": "Nothing is owed.",
+        "NotEnoughGold": "That character doesn't have that much gold."
       }
     },
     "Effect": {
@@ -412,6 +419,31 @@
         "camp": "Add a {camp} on {where}.",
         "structure": "Add {name} to {where}."
       }
+    },
+    "Tap": {
+      "Title": "Tap the treasury",
+      "Hint": "The only way to turn kingdom money into gold for the party. It leaves a debt.",
+      "Explain": "Draw up to {gold} gp for one character. It costs {cost} BP, and on any draw the realm gains 1 Unrest and 1 Corruption, a debt of the gold taken, and a public record of who took it. Until the debt is repaid, weekly income drops by a quarter, Economy can't rank up, and every further draw is two degrees worse with a chance of scandal.",
+      "DebtWarning": "The realm already owes {debt} gp. This draw is two degrees worse and may cause a scandal.",
+      "NeedsApproval": "The GM has to approve this.",
+      "Recipient": "Gold goes to",
+      "Confirm": "Draw the gold",
+      "ApprovalAsk": "{user} wants to tap the treasury: {gold} gp for {actor}, costing {cost} BP. Allow it?",
+      "RollLabel": "Tap the treasury for {actor}",
+      "Result": "{actor} draws {gold} gp from the treasury ({degree}).",
+      "Consequences": "The treasury loses {cost} BP. Unrest +1, Corruption +1, and the realm now owes the gold back.",
+      "WorseInDebt": "With the realm already in debt, it went two degrees worse.",
+      "Scandal": "Word got out. A Public Scandal has landed on the Ruler's desk.",
+      "GiveByHand": "Add the gold to the character sheet by hand.",
+      "Owed": "Owes {debt} gp",
+      "DebtHint": "Repay it with gold from the party. Until then: income −25%, Economy can't rank up, further draws are worse.",
+      "Repay": "Repay",
+      "RepayTitle": "Repay the treasury",
+      "RepayExplain": "The realm owes {debt} gp. Gold comes off the character's sheet.",
+      "Payer": "Paid by",
+      "Amount": "Gold",
+      "Repaid": "{actor} pays {gold} gp back into the treasury. {left} gp still owed.",
+      "Cleared": "{actor} pays {gold} gp and clears the realm's debt."
     }
   }
 }

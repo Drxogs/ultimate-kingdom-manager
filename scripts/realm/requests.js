@@ -2,11 +2,14 @@ import { FLAG_SCOPE, MODULE_ID } from "../constants.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { acceptRequest, assignCard, canActForSeat, escalateCard, unassignCard } from "./resolve.js";
 import { startProject } from "./projects.js";
+import { repayDebt, tapTreasury } from "./treasury.js";
 import { chooseRankUp, startRankUp } from "./ranks.js";
 import { getRealm } from "./state.js";
 
 const SOCKET = `module.${MODULE_ID}`;
 const TIMEOUT = 15000;
+const SLOW_TIMEOUT = 180000;
+const SLOW = new Set(["tapTreasury"]);
 const QUEUE_FLAG = "queue";
 
 const HANDLERS = {
@@ -15,6 +18,8 @@ const HANDLERS = {
   escalate: escalateCard,
   accept: acceptRequest,
   startRankUp,
+  tapTreasury,
+  repayDebt,
   startProject: (payload) => startProject(payload, { canActForSeat }),
   chooseRankUp
 };
@@ -85,7 +90,7 @@ export async function sendRequest(action, payload) {
     game.socket.emit(SOCKET, { type: "request", id, userId: game.user.id, action, payload });
     setTimeout(() => {
       if (pending.delete(id)) resolve({ ok: false, reason: "Timeout" });
-    }, TIMEOUT);
+    }, SLOW.has(action) ? SLOW_TIMEOUT : TIMEOUT);
   });
   report(result, action);
   return result;

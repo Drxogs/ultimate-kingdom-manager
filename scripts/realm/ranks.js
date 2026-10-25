@@ -60,6 +60,7 @@ export async function startRankUp({ stat, userId }) {
   const level = getKingdom()?.level ?? 1;
   if (!canRankUp(realm.stats[stat], level)) return { ok: false, reason: "NotReady" };
   if (rankUpProject(realm, stat)) return { ok: false, reason: "AlreadyUnderway" };
+  if (stat === "economy" && realm.debt.amount > 0) return { ok: false, reason: "InDebt" };
   const busy = busyWith(realm, `seat:${def.seat}`);
   if (busy) return { ok: false, reason: "AdvisorBusy", data: { card: busy.name } };
   const cost = rankUpCost(realm);

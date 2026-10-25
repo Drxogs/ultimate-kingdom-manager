@@ -14,7 +14,10 @@
       <span class="hint" data-tooltip="{{localize "UKM.Manager.IncomeBreakdown" base=income.base worksites=income.worksites ranks=income.ranks trade=income.trade}}">
         {{ukmSigned income.total}} {{localize "UKM.Manager.PerWeek"}}
       </span>
-      {{#if debt.amount}}<span class="ukm-debt">{{localize "UKM.Manager.InDebt"}}</span>{{/if}}
+      {{#if debt.amount}}
+        <span class="ukm-debt" data-tooltip="{{localize "UKM.Tap.DebtHint"}}">{{localize "UKM.Tap.Owed" debt=debt.amount}}</span>
+        {{#if canRepay}}<button type="button" class="ukm-rank-up" data-action="repayDebt"><i class="fa-solid fa-coins"></i> {{localize "UKM.Tap.Repay"}}</button>{{/if}}
+      {{/if}}
     </div>
   </header>
 

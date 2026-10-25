@@ -7,6 +7,7 @@
           {{#if holder}}{{holder}}{{#if isCompanion}} <span class="ukm-tag">{{localize "UKM.Manager.Advisor"}}</span>{{/if}}{{else}}<em>{{localize "UKM.Manager.Vacant"}}</em>{{/if}}
           {{#if supervisor}}<span class="hint"> · {{localize "UKM.Manager.SupervisedBy" name=supervisor}}</span>{{/if}}
         </span>
+        {{#if canTap}}<button type="button" class="ukm-desk-action" data-action="tapTreasury" data-tooltip="{{localize "UKM.Tap.Hint"}}"><i class="fa-solid fa-sack-dollar"></i> {{localize "UKM.Tap.Title"}}</button>{{/if}}
         {{#if canStartProject}}<button type="button" class="ukm-desk-action" data-action="startProject"><i class="fa-solid fa-trowel-bricks"></i> {{localize "UKM.Project.Start"}}</button>{{/if}}
       </header>
       {{#if empty}}
