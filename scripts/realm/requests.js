@@ -1,6 +1,7 @@
 import { FLAG_SCOPE, MODULE_ID } from "../constants.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { acceptRequest, assignCard, escalateCard, unassignCard } from "./resolve.js";
+import { raiseRank } from "./ranks.js";
 import { getRealm } from "./state.js";
 
 const SOCKET = `module.${MODULE_ID}`;
@@ -11,7 +12,8 @@ const HANDLERS = {
   assign: assignCard,
   unassign: unassignCard,
   escalate: escalateCard,
-  accept: acceptRequest
+  accept: acceptRequest,
+  rankUp: raiseRank
 };
 
 const pending = new Map();

@@ -261,3 +261,5 @@
 .ukm-manager .ukm-odds.even { color: #9a7b00; }
 .ukm-manager .ukm-odds.hard { color: #c75b12; }
 .ukm-manager .ukm-odds.veryHard { color: var(--ukm-red); }
+
+.ukm-manager .ukm-rank-up { margin-top: 0.3rem; width: auto; height: 1.7rem; padding: 0 0.5rem; font-size: var(--font-size-12, 12px); }

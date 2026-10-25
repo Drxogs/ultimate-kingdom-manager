@@ -103,3 +103,7 @@ export const SKILL_ABILITY = {
 export const RUINS = ["corruption", "crime", "decay", "strife"];
 
 export const RUIN_ABILITY = { corruption: "culture", crime: "economy", decay: "stability", strife: "loyalty" };
+
+export const ROUTINE_POINTS = 0.5;
+export const ROUTINE_ADVISOR_BONUS = 0.25;
+export const FOUNDING_PICKS = 2;

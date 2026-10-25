@@ -4,7 +4,7 @@ import { getControlDC, getKingdom, getPartyLevel } from "../integrations/party.j
 import { getSetting, SETTINGS } from "../settings.js";
 import { createCard } from "./deck.js";
 import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
-import { rankBonus, cardWorkDays } from "./rules.js";
+import { addStatPoints, cardWorkDays, rankBonus } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
 
@@ -309,9 +309,7 @@ async function settleCard(realm, card, degreeName, { points = true, skill = null
   await applyEffects(ctx, outcomes[degreeName] ?? []);
 
   const stat = SKILL_TO_STAT[skill ?? cardStage(card).skills[0]];
-  if (points && stat && realm.stats[stat]) {
-    realm.stats[stat].points = Math.max(0, realm.stats[stat].points + (DEGREE_POINTS[degreeName] ?? 0));
-  }
+  if (points && stat) addStatPoints(realm, stat, DEGREE_POINTS[degreeName] ?? 0, getKingdom()?.level ?? 1);
 
   const advancedStage = (card.stage ?? 0) !== stageBefore && event?.stages?.[card.stage];
   const continuous = !!event?.continuous || ctx.continueCard;

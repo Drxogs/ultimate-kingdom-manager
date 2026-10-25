@@ -64,7 +64,13 @@
       "ShowingCompanions": "Holders are limited to the party and Kingmaker companions.",
       "ShowingAll": "Showing every actor in the world.",
       "ShowAll": "Show other actors",
-      "ShowFewer": "Show only party and companions"
+      "ShowFewer": "Show only party and companions",
+      "Founding": "Founding focus",
+      "FoundingHint": "The party picks two realm stats the kingdom was built around. Each starts at rank 1. This is set once; you can undo it and pick again.",
+      "FoundingPick": "Focus {n}",
+      "FoundingReset": "Pick again",
+      "FoundingResetConfirm": "Take back the founding focus? Both stats lose the rank and points it gave them.",
+      "FoundingIncomplete": "Pick two different stats for the founding focus, or leave both empty."
     },
     "Import": {
       "Title": "Import Story Content",
@@ -125,7 +131,12 @@
       "DrawnOne": "A new event has arrived.",
       "DrawnNone": "No events could be drawn right now.",
       "GmTasks": "GM tasks",
-      "NoTasks": "Nothing waiting on you."
+      "NoTasks": "Nothing waiting on you.",
+      "RaiseRank": "Raise rank",
+      "Routine": "+{n} a week",
+      "RoutineHint": "Everyday life in the realm. Grows faster when the stat is well behind what the kingdom's level allows.",
+      "NoRoutine": "seat empty, no weekly growth",
+      "AtCap": "at the cap for this level"
     },
     "Card": {
       "Kind": {
@@ -168,7 +179,9 @@
       "card-assigned": "Assigned: {name}.",
       "card-escalated": "Taken to the party: {name}.",
       "card-resolved": "{name}.",
-      "card-dismissed": "Dismissed: {name}."
+      "card-dismissed": "Dismissed: {name}.",
+      "rank-up": "Rank up: {name}.",
+      "founding": "Founding focus: {name}."
     },
     "Seat": {
       "ruler": "Ruler",
@@ -249,7 +262,8 @@
         "Unknown": "Unknown request.",
         "Timeout": "The GM didn't answer. Try again.",
         "NoGM": "No GM is online.",
-        "Error": "Something went wrong."
+        "Error": "Something went wrong.",
+        "NotReady": "That stat isn't ready to rank up."
       }
     },
     "Effect": {
@@ -317,6 +331,10 @@
       "veryHard": "Very hard",
       "Advisor": "Advisor's odds:",
       "Detail": "{mod} against DC {dc} ({chance}% to succeed)"
+    },
+    "Rank": {
+      "Raised": "{stat} rises to rank {rank}",
+      "RaisedDetail": "+{bonus} to {skills} checks."
     }
   }
 }

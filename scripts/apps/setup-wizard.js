@@ -1,8 +1,10 @@
-import { MODULE_ID, SEATS } from "../constants.js";
+import { FOUNDING_PICKS, MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
 import { getCompanions } from "../content/data.js";
 import { inspectSources } from "../content/story-import.js";
 import { getKingdom, getPlayerCharacters, syncKingdomLevel } from "../integrations/party.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
+import { applyFounding, foundingPicks, resetFounding } from "../realm/ranks.js";
+import { getRealm } from "../realm/state.js";
 import { StoryImportApp } from "./story-import-app.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -34,7 +36,8 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     actions: {
       openImport: SetupWizard.#openImport,
       openKingdom: SetupWizard.#openKingdom,
-      toggleActors: SetupWizard.#toggleActors
+      toggleActors: SetupWizard.#toggleActors,
+      resetFounding: SetupWizard.#resetFounding
     }
   };
 
@@ -73,8 +76,22 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       .filter((a) => this.#showAllActors || assigned.has(a.uuid) || isCompanionActor(a, companions))
       .sort((a, b) => a.name.localeCompare(b.name));
 
+    const picked = foundingPicks(getRealm());
+    const statChoices = Object.fromEntries(
+      Object.entries(REALM_STATS).map(([key, def]) => [
+        key,
+        `${game.i18n.localize(`UKM.Stat.${key}`)} (${def.skills.map((s) => game.i18n.localize(`UKM.Skill.${s}`)).join(", ")})`
+      ])
+    );
+
     return {
       sources,
+      founding: {
+        picked: picked.map((s) => game.i18n.localize(`UKM.Stat.${s}`)).join(", "),
+        done: picked.length > 0,
+        slots: Array.from({ length: FOUNDING_PICKS }, (_, i) => ({ index: i, number: i + 1, selected: draft?.founding?.[i] ?? "" })),
+        choices: statChoices
+      },
       kingdomActive: !!kingdom?.active,
       storyImported: getSetting(SETTINGS.storyImported),
       betweenSessions: draft ? !!draft.betweenSessions : getSetting(SETTINGS.betweenSessions),
@@ -128,6 +145,9 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     if (kingdom?.active) {
       await kingdom.update(foundry.utils.expandObject(leadership));
       await syncKingdomLevel();
+      const picks = Object.values(data.founding ?? {}).filter(Boolean);
+      if (picks.length === FOUNDING_PICKS && new Set(picks).size === FOUNDING_PICKS) await applyFounding(picks);
+      else if (picks.length) ui.notifications.warn(game.i18n.localize("UKM.Setup.FoundingIncomplete"));
     }
 
     await setSetting(SETTINGS.setupComplete, true);
@@ -142,6 +162,18 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
   static #toggleActors() {
     this.#draft = foundry.utils.expandObject(new foundry.applications.ux.FormDataExtended(this.element).object);
     this.#showAllActors = !this.#showAllActors;
+    this.render();
+  }
+
+  static async #resetFounding() {
+    const ok = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize("UKM.Setup.Founding") },
+      content: `<p>${game.i18n.localize("UKM.Setup.FoundingResetConfirm")}</p>`,
+      rejectClose: false
+    });
+    if (!ok) return;
+    this.#draft = foundry.utils.expandObject(new foundry.applications.ux.FormDataExtended(this.element).object);
+    await resetFounding();
     this.render();
   }
 

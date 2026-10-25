@@ -39,7 +39,7 @@
   <h3>{{localize "UKM.Manager.RealmStats"}}</h3>
   <ol class="ukm-stats">
     {{#each stats}}
-      <li class="ukm-stat {{#if ready}}ready{{/if}}">
+      <li class="ukm-stat {{#if ready}}ready{{/if}}" data-stat="{{key}}">
         <div class="ukm-stat-head">
           <strong>{{label}}</strong>
           <span class="hint">{{seat}} · {{skills}}</span>
@@ -49,7 +49,12 @@
           {{#if bonus}}<span class="ukm-tag">{{ukmSigned bonus}}</span>{{/if}}
         </div>
         <div class="ukm-bar"><span style="width: {{progress.percent}}%"></span></div>
-        <span class="hint">{{progress.value}} / {{progress.max}}{{#if ready}} · {{localize "UKM.Manager.RankReady"}}{{/if}}</span>
+        <span class="hint">
+          {{progress.value}} / {{progress.max}}
+          {{#if routine}} · <span data-tooltip="{{localize "UKM.Manager.RoutineHint"}}">{{localize "UKM.Manager.Routine" n=routine}}</span>{{else}} · {{localize "UKM.Manager.NoRoutine"}}{{/if}}
+          {{#if ready}} · {{localize "UKM.Manager.RankReady"}}{{else}}{{#if atCap}} · {{localize "UKM.Manager.AtCap"}}{{/if}}{{/if}}
+        </span>
+        {{#if canRaise}}<button type="button" class="ukm-rank-up" data-action="rankUp"><i class="fa-solid fa-arrow-up"></i> {{localize "UKM.Manager.RaiseRank"}}</button>{{/if}}
       </li>
     {{/each}}
   </ol>

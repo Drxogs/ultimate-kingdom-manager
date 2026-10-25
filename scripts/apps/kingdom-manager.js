@@ -5,7 +5,7 @@ import { focusHex, getHexDefinitions, getZone } from "../integrations/kingmaker.
 import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnrest } from "../integrations/party.js";
 import { drawMonthlyEvents } from "../realm/deck.js";
 import { syncPins } from "../realm/pins.js";
-import { canRankUp, rankBonus, statProgress, weeklyIncome } from "../realm/rules.js";
+import { canRankUp, rankBonus, rankCap, routinePoints, statProgress, weeklyIncome } from "../realm/rules.js";
 import { getRealm, updateRealm } from "../realm/state.js";
 import { sendRequest } from "../realm/requests.js";
 import {
@@ -114,6 +114,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       recordOutcome: KingdomManager.#recordOutcome,
       dismiss: KingdomManager.#dismiss,
       toggleTask: KingdomManager.#toggleTask,
+      rankUp: KingdomManager.#rankUp,
       openImport: KingdomManager.#openImport,
       toggleBetweenSessions: KingdomManager.#toggleBetweenSessions
     }
@@ -177,7 +178,10 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         points: stat.points,
         bonus: rankBonus(stat.rank),
         progress: statProgress(stat),
-        ready: canRankUp(stat, level)
+        ready: canRankUp(stat, level),
+        canRaise: canRankUp(stat, level) && canActForSeat(game.user, def.seat),
+        routine: Math.round(routinePoints(realm, key, level) * 100) / 100,
+        atCap: stat.rank >= rankCap(level)
       };
     });
     context.desks = this.#prepareDesks(realm, kingdom);
@@ -347,6 +351,11 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #unassign(event, target) {
     const card = findCard(target);
     if (card) await sendRequest("unassign", { cardId: card.id });
+  }
+
+  static async #rankUp(event, target) {
+    const stat = target.closest("[data-stat]")?.dataset.stat;
+    if (stat) await sendRequest("rankUp", { stat });
   }
 
   static async #accept(event, target) {

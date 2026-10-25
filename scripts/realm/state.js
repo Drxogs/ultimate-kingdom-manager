@@ -22,6 +22,7 @@ export function defaultRealm() {
     gmTasks: [],
     structures: [],
     levelModBoosts: {},
+    founding: null,
     log: []
   };
 }

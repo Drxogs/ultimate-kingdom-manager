@@ -1,4 +1,6 @@
-import { DIE_AVERAGE, POINTS_PER_RANK, REALM_STATS } from "../constants.js";
+import { DIE_AVERAGE, POINTS_PER_RANK, REALM_STATS, ROUTINE_ADVISOR_BONUS, ROUTINE_POINTS } from "../constants.js";
+import { getCompanion } from "../content/data.js";
+import { getSetting, SETTINGS } from "../settings.js";
 import { getKingdom, getResourceDie } from "../integrations/party.js";
 import { summarizeRealm, isKingmakerActive } from "../integrations/kingmaker.js";
 
@@ -22,7 +24,7 @@ export function canRankUp(stat, kingdomLevel) {
 export function statProgress(stat) {
   const floor = stat.rank * POINTS_PER_RANK;
   const ceiling = (stat.rank + 1) * POINTS_PER_RANK;
-  const value = Math.clamp(stat.points, floor, ceiling) - floor;
+  const value = Math.floor(Math.clamp(stat.points, floor, ceiling) - floor);
   return { value, max: POINTS_PER_RANK, percent: Math.round((value / POINTS_PER_RANK) * 100) };
 }
 
@@ -82,4 +84,42 @@ export function weeklyFoodShortfall(realm) {
 /** Work time for an event card, in days. */
 export function cardWorkDays(levelModifier) {
   return Math.max(3, 5 + 2 * (levelModifier ?? 0));
+}
+
+/** Whether someone sits in a seat, and whether it's a companion in a role they're suited to. */
+export function seatFilled(seat) {
+  const leader = getKingdom()?.leadership?.[seat];
+  const companionId = getSetting(SETTINGS.seatAssignments)?.[seat]?.companion;
+  const companion = companionId ? getCompanion(companionId) : null;
+  return {
+    filled: !!leader?.uuid || !!companion,
+    suited: !!companion?.seats?.includes(seat)
+  };
+}
+
+/**
+ * Weekly progress from everyday life in the realm. A stat two or more ranks
+ * behind what the kingdom's level allows grows faster, so a kingdom founded
+ * late or a desk left alone for a while can catch up.
+ */
+export function routinePoints(realm, statKey, kingdomLevel) {
+  const def = REALM_STATS[statKey];
+  const stat = realm.stats[statKey];
+  if (!def || !stat) return 0;
+  const seat = seatFilled(def.seat);
+  if (!seat.filled) return 0;
+  const behind = rankCap(kingdomLevel) - stat.rank;
+  const catchUp = 1 + Math.max(0, behind - 1);
+  return (ROUTINE_POINTS + (seat.suited ? ROUTINE_ADVISOR_BONUS : 0)) * catchUp;
+}
+
+/** A stat can bank a full rank past its cap, ready for when the kingdom's level rises. */
+export function pointCeiling(kingdomLevel) {
+  return (rankCap(kingdomLevel) + 1) * POINTS_PER_RANK;
+}
+
+export function addStatPoints(realm, statKey, amount, kingdomLevel) {
+  const stat = realm.stats[statKey];
+  if (!stat || !amount) return;
+  stat.points = Math.clamp(stat.points + amount, 0, Math.max(stat.points, pointCeiling(kingdomLevel)));
 }

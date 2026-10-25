@@ -3,7 +3,7 @@ import { getEvent } from "../content/data.js";
 import { getKingdom, isKingdomActive } from "../integrations/party.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { drawMonthlyEvents } from "./deck.js";
-import { weeklyFoodShortfall, weeklyIncome } from "./rules.js";
+import { addStatPoints, routinePoints, weeklyFoodShortfall, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { monthKey, secondsPerDay, weekNumber } from "./time.js";
 import { syncPins } from "./pins.js";
@@ -82,6 +82,9 @@ function runWeek(realm) {
       addLog(realm, { type: "food-shortfall" });
     }
   }
+
+  const level = getKingdom()?.level ?? 1;
+  for (const statKey of Object.keys(realm.stats)) addStatPoints(realm, statKey, routinePoints(realm, statKey, level), level);
 
   realm.incomeAdjustments = realm.incomeAdjustments
     .map((a) => ({ ...a, weeks: a.weeks - 1 }))

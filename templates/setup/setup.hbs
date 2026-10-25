@@ -46,6 +46,24 @@
   </section>
 
   <section>
+    <h3>{{localize "UKM.Setup.Founding"}}</h3>
+    <p class="hint">{{localize "UKM.Setup.FoundingHint"}}</p>
+    {{#if founding.done}}
+      <p>{{founding.picked}} · <a data-action="resetFounding">{{localize "UKM.Setup.FoundingReset"}}</a></p>
+    {{else}}
+      {{#each founding.slots}}
+        <div class="form-group">
+          <label>{{localize "UKM.Setup.FoundingPick" n=number}}</label>
+          <select name="founding.{{index}}">
+            <option value="">{{localize "UKM.Setup.None"}}</option>
+            {{selectOptions @root.founding.choices selected=selected}}
+          </select>
+        </div>
+      {{/each}}
+    {{/if}}
+  </section>
+
+  <section>
     <h3>{{localize "UKM.Setup.Seats"}}</h3>
     <p class="hint">{{localize "UKM.Setup.SeatsHint"}}</p>
     <p class="hint">
