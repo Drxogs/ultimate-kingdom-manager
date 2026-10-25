@@ -5,8 +5,9 @@ import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { drawMonthlyEvents } from "./deck.js";
 import { weeklyFoodShortfall, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
-import { monthKey, weekNumber } from "./time.js";
+import { monthKey, secondsPerDay, weekNumber } from "./time.js";
 import { syncPins } from "./pins.js";
+import { resolveDue } from "./resolve.js";
 
 const MAX_CATCH_UP_WEEKS = 26;
 
@@ -33,10 +34,9 @@ export async function tick() {
     const weeks = Math.min(Math.max(0, week - clock.week), MAX_CATCH_UP_WEEKS);
     const newMonth = month !== clock.month;
     if (!weeks && !newMonth) {
-      if (hasExpiring(getRealm())) {
-        await updateRealm((realm) => expireCards(realm));
-        await syncPins();
-      }
+      if (hasExpiring(getRealm())) await updateRealm((realm) => expireCards(realm));
+      await resolveDue();
+      await syncPins();
       return;
     }
 
@@ -49,6 +49,7 @@ export async function tick() {
     });
     await setSetting(SETTINGS.clock, { week, month });
     if (unrest) await addUnrest(unrest);
+    await resolveDue();
     await syncPins();
 
     if (newMonth) Hooks.callAll(`${MODULE_ID}.newMonth`, { month, drawn });
@@ -101,8 +102,14 @@ function hasExpiring(realm) {
   return realm.cards.some((card) => isExpiring(card, now));
 }
 
+const KEEP_CLOSED_DAYS = 60;
+
 function expireCards(realm) {
   const now = game.time.worldTime;
+  const cutoff = now - KEEP_CLOSED_DAYS * secondsPerDay();
+  realm.cards = realm.cards.filter((c) => !c.resolvedAt || c.pendingEffects || ["open", "assigned", "escalated"].includes(c.status) || c.resolvedAt > cutoff);
+  realm.timedModifiers = realm.timedModifiers.filter((m) => m.expires > now);
+  realm.fortunes = realm.fortunes.filter((f) => f.expires > now && f.uses > 0);
   for (const card of realm.cards) {
     if (!isExpiring(card, now)) continue;
 

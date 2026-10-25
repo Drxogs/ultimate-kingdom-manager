@@ -19,14 +19,45 @@
                 <span class="ukm-tag {{kind}}">{{localize (concat "UKM.Card.Kind." kind)}}</span>
                 {{#if continuous}}<span class="ukm-tag">{{localize "UKM.Card.Continuous"}}</span>{{/if}}
                 {{#if escalate}}<span class="ukm-tag" data-tooltip="{{localize "UKM.Card.EscalateHint"}}"><i class="fa-solid fa-dragon"></i></span>{{/if}}
+                {{#if stageLabel}}<span class="ukm-tag">{{stageLabel}}</span>{{/if}}
+                {{#if (gt months 1)}}<span class="ukm-tag">{{localize "UKM.Card.Month" n=months}}</span>{{/if}}
               </div>
               <p class="ukm-hook">{{hook}}</p>
               <div class="ukm-card-meta">
                 <span><i class="fa-solid fa-dice-d20"></i> {{skill}} ({{ukmSigned mod}})</span>
                 {{#if place}}<span><i class="fa-solid fa-location-dot"></i> {{place}}</span>{{/if}}
-                <span class="{{#if urgent}}ukm-urgent{{/if}}"><i class="fa-solid fa-hourglass-half"></i> {{localize "UKM.Card.DaysLeft" days=daysLeft}}</span>
+                {{#if isEscalated}}
+                  <span><i class="fa-solid fa-dragon"></i> {{localize "UKM.Card.WithParty"}}</span>
+                {{else}}
+                  <span class="{{#if urgent}}ukm-urgent{{/if}}"><i class="fa-solid fa-hourglass-half"></i> {{localize "UKM.Card.DaysLeft" days=daysLeft}}</span>
+                {{/if}}
               </div>
+              {{#if isAssigned}}
+                <p class="ukm-working">
+                  <i class="fa-solid {{#if assigneePersonal}}fa-user{{else}}fa-user-tie{{/if}}"></i>
+                  {{localize "UKM.Card.Working" name=assigneeName days=workDays}}
+                </p>
+              {{/if}}
+              {{#if advisorBusy}}<p class="hint">{{localize "UKM.Card.AdvisorBusy"}}</p>{{/if}}
+              <details class="ukm-outcomes">
+                <summary>{{localize "UKM.Card.Outcomes"}}</summary>
+                <dl>
+                  {{#each outcomes}}
+                    <dt>{{label}}</dt>
+                    <dd>{{#each effects}}{{this}}{{#unless @last}}; {{/unless}}{{else}}<span class="hint">{{localize "UKM.Card.NoEffect"}}</span>{{/each}}</dd>
+                  {{/each}}
+                </dl>
+              </details>
               <div class="ukm-card-actions">
+                {{#if canDelegate}}<button type="button" data-action="delegate"><i class="fa-solid fa-user-tie"></i> {{localize "UKM.Card.Delegate"}}</button>{{/if}}
+                {{#if canHandle}}<button type="button" data-action="handlePersonally"><i class="fa-solid fa-user"></i> {{localize "UKM.Card.HandlePersonally"}}</button>{{/if}}
+                {{#if canEscalate}}<button type="button" data-action="escalate" data-tooltip="{{localize "UKM.Card.EscalateHint"}}"><i class="fa-solid fa-dragon"></i></button>{{/if}}
+                {{#if canUnassign}}<button type="button" data-action="unassign" data-tooltip="{{localize "UKM.Card.Unassign"}}"><i class="fa-solid fa-rotate-left"></i></button>{{/if}}
+                {{#if @root.isGM}}
+                  {{#if isAssigned}}<button type="button" data-action="rollNow" data-tooltip="{{localize "UKM.Card.RollNow"}}"><i class="fa-solid fa-dice-d20"></i></button>{{/if}}
+                  <button type="button" data-action="recordOutcome" data-tooltip="{{localize "UKM.Card.Record"}}"><i class="fa-solid fa-gavel"></i></button>
+                  <button type="button" data-action="dismiss" data-tooltip="{{localize "UKM.Card.Dismiss"}}"><i class="fa-solid fa-xmark"></i></button>
+                {{/if}}
                 {{#if canFocus}}<button type="button" data-action="focusHex" data-tooltip="{{localize "UKM.Card.Focus"}}"><i class="fa-solid fa-map-location-dot"></i></button>{{/if}}
                 {{#if hasPage}}<button type="button" data-action="openCard" data-tooltip="{{localize "UKM.Card.Read"}}"><i class="fa-solid fa-book"></i></button>{{/if}}
               </div>

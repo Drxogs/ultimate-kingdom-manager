@@ -6,6 +6,7 @@ import { onRegionChange } from "./integrations/kingmaker.js";
 import { getParty, syncKingdomLevel } from "./integrations/party.js";
 import { registerClock, tick } from "./realm/clock.js";
 import { getRealm } from "./realm/state.js";
+import { processQueuedRequests, registerRequests } from "./realm/requests.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
 import { SetupWizard } from "./apps/setup-wizard.js";
 import { StoryImportApp } from "./apps/story-import-app.js";
@@ -35,6 +36,7 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", async () => {
   await preloadData();
+  registerRequests();
   registerClock();
   onRegionChange(() => KingdomManager.refresh());
 
@@ -42,6 +44,7 @@ Hooks.once("ready", async () => {
 
   await syncKingdomLevel();
   await tick();
+  await processQueuedRequests();
 
   if (!getSetting(SETTINGS.setupComplete)) {
     new SetupWizard().render(true);

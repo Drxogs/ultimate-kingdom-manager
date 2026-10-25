@@ -123,7 +123,9 @@
       "Unknown": "Location unknown",
       "LogEmpty": "Nothing has happened yet.",
       "DrawnOne": "A new event has arrived.",
-      "DrawnNone": "No events could be drawn right now."
+      "DrawnNone": "No events could be drawn right now.",
+      "GmTasks": "GM tasks",
+      "NoTasks": "Nothing waiting on you."
     },
     "Card": {
       "Kind": {
@@ -134,14 +136,37 @@
       "EscalateHint": "Can be taken on by the party as an adventure",
       "DaysLeft": "{days} days left",
       "Focus": "Show on map",
-      "Read": "Read event"
+      "Read": "Read event",
+      "Delegate": "Delegate",
+      "HandlePersonally": "Handle personally",
+      "Unassign": "Call back",
+      "RollNow": "Roll now",
+      "Record": "Record outcome",
+      "Dismiss": "Dismiss",
+      "ChooseSkill": "Which approach should be taken?",
+      "NoPersonalSkill": "None of your characters has a skill that fits this event.",
+      "PersonalHint": "Your character takes this on in person, rolling their own skill against a level-based DC. A success counts as a critical success, and a critical success earns Fame.",
+      "Who": "Character and skill",
+      "EscalateConfirm": "Take this to the table? The deadline pauses until the GM records how the party fared.",
+      "RecordPrompt": "How did it go?",
+      "DismissConfirm": "Remove this card without applying any outcome?",
+      "Month": "Month {n}",
+      "WithParty": "With the party",
+      "Working": "{name} is on it — done in {days} days",
+      "AdvisorBusy": "The advisor is busy with another matter.",
+      "Outcomes": "Possible outcomes",
+      "NoEffect": "Nothing happens"
     },
     "Log": {
       "income": "Treasury collected {amount} BP.",
       "food": "Food upkeep cost {amount} BP.",
       "food-shortfall": "The treasury could not cover food upkeep. Unrest rises.",
       "event-drawn": "New event: {name}.",
-      "card-expired": "{name} was left unattended."
+      "card-expired": "{name} was left unattended.",
+      "card-assigned": "Assigned: {name}.",
+      "card-escalated": "Taken to the party: {name}.",
+      "card-resolved": "{name}.",
+      "card-dismissed": "Dismissed: {name}."
     },
     "Seat": {
       "ruler": "Ruler",
@@ -186,6 +211,101 @@
       "crime": "Crime",
       "decay": "Decay",
       "strife": "Strife"
+    },
+    "Degree": {
+      "criticalSuccess": "Critical success",
+      "success": "Success",
+      "failure": "Failure",
+      "criticalFailure": "Critical failure"
+    },
+    "Resolve": {
+      "HandledBy": "handled by {name}",
+      "AdvisedBy": "advised by {name}",
+      "Continues": "This matter isn't over. It returns next month.",
+      "GmTasks": "To do: {name}",
+      "RollFailed": "Couldn't roll {name}. Check that the kingdom and skill are set up."
+    },
+    "Request": {
+      "Assigned": "On it. Expect a result in {days} days.",
+      "NoGM": "No GM is online, and between-session play is off.",
+      "Queued": "No GM is online. Your request will be handled when the GM returns.",
+      "ReviewTitle": "Between-session request",
+      "TheAdvisor": "the advisor",
+      "Describe": {
+        "assign": "{user} asked {who} to handle {card}.",
+        "unassign": "{user} called back the work on {card}.",
+        "escalate": "{user} wants the party to take on {card}."
+      },
+      "Reason": {
+        "NotOpen": "That card is no longer open.",
+        "NotYourSeat": "That desk isn't yours.",
+        "NotYourCharacter": "You don't own that character.",
+        "NoSkill": "That character doesn't have that skill.",
+        "SeatVacant": "Nobody holds this seat.",
+        "Busy": "{name} is already working on {card}.",
+        "NotAssigned": "Nobody is working on that card.",
+        "Unknown": "Unknown request.",
+        "Timeout": "The GM didn't answer. Try again.",
+        "NoGM": "No GM is online.",
+        "Error": "Something went wrong."
+      }
+    },
+    "Effect": {
+      "Unrest": "Unrest {amount}",
+      "Fame": "Fame {amount}",
+      "IncomeHalved": "Next month's income halved (at least 4 dice lost)",
+      "BpDice": "{amount} resource dice over the next month",
+      "Bp": "{amount} BP",
+      "Commodity": "{amount} {kind}",
+      "CommodityBp": "{count} {kind} ({bp} BP)",
+      "Kind": {
+        "luxuries": "luxuries",
+        "food": "food",
+        "commodities": "commodities"
+      },
+      "ConsumptionSkip": "No food upkeep for a month",
+      "Consumption": "Consumption {amount} for a month",
+      "Modifier": "{value} to {selector} checks for a month",
+      "Selector": {
+        "culture": "Culture",
+        "economy": "Economy",
+        "loyalty": "Loyalty",
+        "stability": "Stability",
+        "events": "event"
+      },
+      "Reroll": "A reroll to use within the month",
+      "TradeAgreement": "A new trade agreement",
+      "End": "The matter ends",
+      "Manual": "Special (see the event)",
+      "ManualDetail": "Apply by hand: {key} {detail}",
+      "RuinAll": "{amount} to every Ruin",
+      "RuinChoice": "{amount} Ruin of your choice",
+      "RuinChoiceMany": "{amount} to {count} Ruins of your choice",
+      "RuinSplit": "Ruin split between two kinds",
+      "RuinNamed": "{ruin} {amount}",
+      "RuinManual": "Adjust {ruin} by hand ({detail})",
+      "ChooseRuinTitle": "Choose a Ruin",
+      "ChooseRuinUp": "Which Ruin rises by {amount}?",
+      "ChooseRuinDown": "Which Ruin falls by {amount}?",
+      "ChooseOne": "Choose one.",
+      "ChooseMany": "Choose {n} (pick {i}).",
+      "ChoosePreview": "Choose {n}: {options}",
+      "ChooseEnd": "Which ongoing matter ends?",
+      "Ended": "{name} is over.",
+      "Flat": "Flat check DC {dc}: {total}, {result}",
+      "FlatPreview": "A flat check (DC {dc}) decides",
+      "Pass": "passed",
+      "Fail": "failed",
+      "Spawn": "Leads to: {name}",
+      "SpawnOneOf": "Leads to a new event",
+      "ThisEvent": "this event again",
+      "Repeat": "It will come up again next month",
+      "Revealed": "The location is revealed",
+      "NextStage": "Moves to the next stage",
+      "EndsOther": "Ends an ongoing problem",
+      "BecomesOngoing": "Becomes ongoing",
+      "Harder": "Harder next time",
+      "AskBreached": "Did the threat break into {place}?"
     }
   }
 }

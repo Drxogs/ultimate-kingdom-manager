@@ -18,6 +18,10 @@ export function defaultRealm() {
     fortunes: [],
     debt: { amount: 0, draws: 0 },
     tradeAgreements: [],
+    scheduled: [],
+    gmTasks: [],
+    structures: [],
+    levelModBoosts: {},
     log: []
   };
 }
@@ -31,15 +35,21 @@ export function getRealm() {
  * Apply a change to the realm. Only the active GM writes; everyone else
  * receives the update through the actor and re-renders.
  */
-export async function updateRealm(mutator) {
-  if (!game.user.isActiveGM) throw new Error(`${MODULE_ID} | only the active GM can change the realm`);
-  const party = getParty();
-  if (!party) return null;
-  const realm = getRealm();
-  await mutator(realm);
-  if (realm.log.length > LOG_LIMIT) realm.log = realm.log.slice(-LOG_LIMIT);
-  await party.setFlag(FLAG_SCOPE, FLAG_KEY, realm);
-  return realm;
+let queue = Promise.resolve();
+
+export function updateRealm(mutator) {
+  if (!game.user.isActiveGM) return Promise.reject(new Error(`${MODULE_ID} | only the active GM can change the realm`));
+  const run = queue.then(async () => {
+    const party = getParty();
+    if (!party) return null;
+    const realm = getRealm();
+    await mutator(realm);
+    if (realm.log.length > LOG_LIMIT) realm.log = realm.log.slice(-LOG_LIMIT);
+    await party.setFlag(FLAG_SCOPE, FLAG_KEY, realm);
+    return realm;
+  });
+  queue = run.catch(() => null);
+  return run;
 }
 
 export function addLog(realm, entry) {

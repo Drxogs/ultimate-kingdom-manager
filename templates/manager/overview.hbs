@@ -55,6 +55,21 @@
   </ol>
 
   {{#if isGM}}
+    <h3>{{localize "UKM.Manager.GmTasks"}}{{#if openTasks}} <span class="ukm-tag">{{openTasks}}</span>{{/if}}</h3>
+    {{#if gmTasks.length}}
+      <ul class="ukm-tasks">
+        {{#each gmTasks}}
+          <li class="ukm-task {{#if done}}done{{/if}}" data-task="{{id}}">
+            <button type="button" class="ukm-check" data-action="toggleTask"><i class="fa-regular {{#if done}}fa-square-check{{else}}fa-square{{/if}}"></i></button>
+            <span class="ukm-task-text">{{text}}{{#if cardName}} <span class="hint">— {{cardName}}, {{date}}</span>{{/if}}</span>
+            {{#if canFocus}}<button type="button" data-action="focusHex" data-tooltip="{{localize "UKM.Card.Focus"}}"><i class="fa-solid fa-map-location-dot"></i></button>{{/if}}
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p class="hint">{{localize "UKM.Manager.NoTasks"}}</p>
+    {{/if}}
+
     <footer class="ukm-gm-tools">
       <button type="button" data-action="openSetup"><i class="fa-solid fa-gear"></i> {{localize "UKM.Manager.Setup"}}</button>
       <button type="button" data-action="openImport"><i class="fa-solid fa-book-open"></i> {{#if storyImported}}{{localize "UKM.Setup.Reimport"}}{{else}}{{localize "UKM.Setup.Import"}}{{/if}}</button>

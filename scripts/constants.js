@@ -55,3 +55,51 @@ export const KINGMAKER_JOURNAL_NAMES = {
   characters: "Appendix 5: Characters",
   structures: "Appendix 2b: Settlements"
 };
+
+/** Standard DC by level (Core Rulebook table 10-5). */
+export const LEVEL_DC = [14, 15, 16, 18, 19, 20, 22, 23, 24, 26, 27, 28, 30, 31, 32, 34, 35, 36, 38, 39, 40];
+
+export const DEGREES = ["criticalFailure", "failure", "success", "criticalSuccess"];
+
+/** Character skills a leader can use when handling a card personally. */
+export const PERSONAL_SKILLS = {
+  agriculture: ["nature", "farming-lore"],
+  arts: ["performance", "crafting"],
+  boating: ["athletics", "sailing-lore"],
+  defense: ["athletics", "intimidation"],
+  engineering: ["crafting", "engineering-lore"],
+  exploration: ["survival"],
+  folklore: ["religion", "society"],
+  industry: ["crafting"],
+  intrigue: ["deception", "thievery"],
+  magic: ["arcana", "nature", "occultism", "religion"],
+  politics: ["diplomacy", "society"],
+  scholarship: ["society"],
+  statecraft: ["diplomacy", "society"],
+  trade: ["diplomacy", "mercantile-lore"],
+  warfare: ["warfare-lore", "intimidation"],
+  wilderness: ["survival", "nature"]
+};
+
+export const SKILL_ABILITY = {
+  agriculture: "stability",
+  arts: "culture",
+  boating: "economy",
+  defense: "stability",
+  engineering: "stability",
+  exploration: "economy",
+  folklore: "culture",
+  industry: "economy",
+  intrigue: "loyalty",
+  magic: "culture",
+  politics: "loyalty",
+  scholarship: "culture",
+  statecraft: "loyalty",
+  trade: "economy",
+  warfare: "loyalty",
+  wilderness: "stability"
+};
+
+export const RUINS = ["corruption", "crime", "decay", "strife"];
+
+export const RUIN_ABILITY = { corruption: "culture", crime: "economy", decay: "stability", strife: "loyalty" };

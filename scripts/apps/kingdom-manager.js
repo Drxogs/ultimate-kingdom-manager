@@ -1,18 +1,68 @@
-import { MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
+import { DEGREES, MODULE_ID, PERSONAL_SKILLS, REALM_STATS, SEATS } from "../constants.js";
 import { getCompanion, getEvent } from "../content/data.js";
 import { getImportedPage } from "../content/story-import.js";
 import { focusHex, getHexDefinitions, getZone } from "../integrations/kingmaker.js";
-import { getControlDC, getFame, getKingdom, getRuin, getUnrest } from "../integrations/party.js";
+import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnrest } from "../integrations/party.js";
 import { drawMonthlyEvents } from "../realm/deck.js";
 import { syncPins } from "../realm/pins.js";
 import { canRankUp, rankBonus, statProgress, weeklyIncome } from "../realm/rules.js";
 import { getRealm, updateRealm } from "../realm/state.js";
+import { sendRequest } from "../realm/requests.js";
+import {
+  canActForSeat,
+  cardLevelMod,
+  cardStage,
+  completeGmTask,
+  dismissCard,
+  outcomePreview,
+  recordOutcome,
+  rollCard
+} from "../realm/resolve.js";
 import { daysUntil, formatDate } from "../realm/time.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { SetupWizard } from "./setup-wizard.js";
 import { StoryImportApp } from "./story-import-app.js";
 
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+const { ApplicationV2, DialogV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+function findCard(target) {
+  const id = target.closest("[data-card]")?.dataset.card;
+  return getRealm().cards.find((c) => c.id === id) ?? null;
+}
+
+async function pickKingdomSkill(card) {
+  const { skills } = cardStage(card);
+  if (skills.length < 2) return skills[0];
+  return DialogV2.wait({
+    window: { title: card.name },
+    content: `<p>${game.i18n.localize("UKM.Card.ChooseSkill")}</p>`,
+    buttons: skills.map((s) => ({ action: s, label: game.i18n.localize(`UKM.Skill.${s}`) })),
+    rejectClose: false
+  });
+}
+
+function personalChoices(card) {
+  const { skills } = cardStage(card);
+  const actors = getPlayerCharacters().filter((a) => game.user.isGM || a.isOwner);
+  return actors
+    .map((actor) => {
+      const options = [];
+      for (const kingdomSkill of skills) {
+        for (const slug of PERSONAL_SKILLS[kingdomSkill] ?? []) {
+          const statistic = actor.skills?.[slug];
+          if (!statistic) continue;
+          options.push({
+            value: `${actor.uuid}|${kingdomSkill}|${slug}`,
+            label: `${statistic.label} (${statistic.mod >= 0 ? "+" : ""}${statistic.mod}) — ${game.i18n.localize(`UKM.Skill.${kingdomSkill}`)}`,
+            mod: statistic.mod
+          });
+        }
+      }
+      options.sort((a, b) => b.mod - a.mod);
+      return { actor, options };
+    })
+    .filter((g) => g.options.length);
+}
 
 const LOG_SHOWN = 40;
 
@@ -39,6 +89,14 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       focusHex: KingdomManager.#focusHex,
       drawEvents: KingdomManager.#drawEvents,
       openSetup: KingdomManager.#openSetup,
+      delegate: KingdomManager.#delegate,
+      handlePersonally: KingdomManager.#handlePersonally,
+      unassign: KingdomManager.#unassign,
+      escalate: KingdomManager.#escalate,
+      rollNow: KingdomManager.#rollNow,
+      recordOutcome: KingdomManager.#recordOutcome,
+      dismiss: KingdomManager.#dismiss,
+      toggleTask: KingdomManager.#toggleTask,
       openImport: KingdomManager.#openImport,
       toggleBetweenSessions: KingdomManager.#toggleBetweenSessions
     }
@@ -106,6 +164,18 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       };
     });
     context.desks = this.#prepareDesks(realm, kingdom);
+    context.gmTasks = game.user.isGM
+      ? realm.gmTasks
+          .slice()
+          .sort((a, b) => Number(a.done) - Number(b.done) || b.created - a.created)
+          .map((t) => ({
+            ...t,
+            date: formatDate(t.created),
+            cardName: realm.cards.find((c) => c.id === t.card)?.name ?? "",
+            canFocus: !!t.hexKey
+          }))
+      : [];
+    context.openTasks = context.gmTasks.filter((t) => !t.done).length;
     context.log = realm.log
       .slice(-LOG_SHOWN)
       .reverse()
@@ -132,9 +202,12 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       const supervisor = assignment.supervisor ? fromUuidSync(assignment.supervisor) : null;
       const mine =
         (leader?.isOwner && !game.user.isGM) || (supervisor?.isOwner && !game.user.isGM) || false;
+      const canAct = canActForSeat(game.user, seat);
+      const holderName = leader?.name ?? companion?.name ?? null;
+      const advisorBusy = realm.cards.find((c) => c.status === "assigned" && c.assignee?.type === "advisor" && c.assignee.seat === seat);
 
       const cards = realm.cards
-        .filter((c) => c.seat === seat && ["open", "assigned"].includes(c.status))
+        .filter((c) => c.seat === seat && ["open", "assigned", "escalated"].includes(c.status))
         .sort((a, b) => a.deadline - b.deadline)
         .map((card) => {
           const event = getEvent(card.eventId);
@@ -142,11 +215,26 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
           const zone = hex ? getZone(hex.zone) : null;
           const showPlace = game.user.isGM || !card.target?.hidden || card.revealed;
           const days = daysUntil(card.deadline, now);
+          const stage = cardStage(card);
+          const open = card.status === "open";
           return {
             ...card,
+            stageLabel: stage.stage?.label ?? null,
+            isOpen: open,
+            isAssigned: card.status === "assigned",
+            isEscalated: card.status === "escalated",
+            workDays: card.workUntil ? Math.max(0, daysUntil(card.workUntil, now)) : null,
+            assigneeName: card.assignee?.name ?? null,
+            assigneePersonal: card.assignee?.type === "pc",
+            canDelegate: open && canAct && !!holderName && !advisorBusy,
+            advisorBusy: open && !!advisorBusy,
+            canHandle: open && canAct,
+            canUnassign: card.status === "assigned" && canAct,
+            canEscalate: open && canAct && !!event?.escalate,
+            outcomes: outcomePreview(card),
             hook: event?.hook ?? "",
-            skill: (event?.skill ?? []).map((s) => game.i18n.localize(`UKM.Skill.${s}`)).join(" / "),
-            mod: event?.mod ?? 0,
+            skill: stage.skills.map((s) => game.i18n.localize(`UKM.Skill.${s}`)).join(" / "),
+            mod: cardLevelMod(card, realm) + (card.dcAdjust ?? 0),
             continuous: event?.traits?.includes("continuous"),
             escalate: !!event?.escalate,
             daysLeft: days,
@@ -162,7 +250,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       return {
         seat,
         label: game.i18n.localize(`UKM.Seat.${seat}`),
-        holder: leader?.name ?? companion?.name ?? null,
+        holder: holderName,
         isCompanion: !leader && !!companion,
         supervisor: supervisor?.name ?? null,
         mine,
@@ -185,8 +273,11 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #focusHex(event, target) {
-    const card = getRealm().cards.find((c) => c.id === target.closest("[data-card]")?.dataset.card);
-    if (card?.target?.hexKey) await focusHex(card.target.hexKey);
+    const taskId = target.closest("[data-task]")?.dataset.task;
+    const hexKey = taskId
+      ? getRealm().gmTasks.find((t) => t.id === taskId)?.hexKey
+      : findCard(target)?.target?.hexKey;
+    if (hexKey) await focusHex(hexKey);
   }
 
   static async #drawEvents() {
@@ -198,6 +289,87 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     await syncPins();
     const key = drawn.length === 0 ? "DrawnNone" : drawn.length === 1 ? "DrawnOne" : "Drawn";
     ui.notifications.info(game.i18n.format(`UKM.Manager.${key}`, { count: drawn.length }));
+  }
+
+  static async #delegate(event, target) {
+    const card = findCard(target);
+    if (!card) return;
+    const skill = await pickKingdomSkill(card);
+    if (!skill) return;
+    await sendRequest("assign", { cardId: card.id, type: "advisor", skill });
+  }
+
+  static async #handlePersonally(event, target) {
+    const card = findCard(target);
+    if (!card) return;
+    const groups = personalChoices(card);
+    if (!groups.length) {
+      ui.notifications.warn(game.i18n.localize("UKM.Card.NoPersonalSkill"));
+      return;
+    }
+    const select = groups
+      .map(({ actor, options }) => `<optgroup label="${Handlebars.escapeExpression(actor.name)}">${options.map((o) => `<option value="${o.value}">${Handlebars.escapeExpression(o.label)}</option>`).join("")}</optgroup>`)
+      .join("");
+    const dc = game.i18n.localize("UKM.Card.PersonalHint");
+    const choice = await DialogV2.prompt({
+      window: { title: card.name },
+      content: `<p class="hint">${dc}</p><div class="form-group"><label>${game.i18n.localize("UKM.Card.Who")}</label><select name="choice">${select}</select></div>`,
+      ok: { label: game.i18n.localize("UKM.Card.HandlePersonally"), callback: (event, button) => button.form.elements.choice.value },
+      rejectClose: false
+    });
+    if (!choice) return;
+    const [actorUuid, skill, personalSkill] = choice.split("|");
+    await sendRequest("assign", { cardId: card.id, type: "pc", actorUuid, skill, personalSkill });
+  }
+
+  static async #unassign(event, target) {
+    const card = findCard(target);
+    if (card) await sendRequest("unassign", { cardId: card.id });
+  }
+
+  static async #escalate(event, target) {
+    const card = findCard(target);
+    if (!card) return;
+    const ok = await DialogV2.confirm({
+      window: { title: card.name },
+      content: `<p>${game.i18n.localize("UKM.Card.EscalateConfirm")}</p>`,
+      rejectClose: false
+    });
+    if (ok) await sendRequest("escalate", { cardId: card.id });
+  }
+
+  static async #rollNow(event, target) {
+    const card = findCard(target);
+    if (card && game.user.isActiveGM) await rollCard(card.id);
+  }
+
+  static async #recordOutcome(event, target) {
+    const card = findCard(target);
+    if (!card || !game.user.isActiveGM) return;
+    const degree = await DialogV2.wait({
+      window: { title: card.name },
+      content: `<p>${game.i18n.localize("UKM.Card.RecordPrompt")}</p>`,
+      buttons: DEGREES.slice().reverse().map((d) => ({ action: d, label: game.i18n.localize(`UKM.Degree.${d}`) })),
+      rejectClose: false
+    });
+    if (degree) await recordOutcome(card.id, degree);
+  }
+
+  static async #dismiss(event, target) {
+    const card = findCard(target);
+    if (!card || !game.user.isActiveGM) return;
+    const ok = await DialogV2.confirm({
+      window: { title: card.name },
+      content: `<p>${game.i18n.localize("UKM.Card.DismissConfirm")}</p>`,
+      rejectClose: false
+    });
+    if (ok) await dismissCard(card.id);
+  }
+
+  static async #toggleTask(event, target) {
+    const id = target.closest("[data-task]")?.dataset.task;
+    const task = getRealm().gmTasks.find((t) => t.id === id);
+    if (task && game.user.isActiveGM) await completeGmTask(id, !task.done);
   }
 
   static #openSetup() {
