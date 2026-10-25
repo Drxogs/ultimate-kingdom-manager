@@ -54,7 +54,13 @@
           {{#if routine}} · <span data-tooltip="{{localize "UKM.Manager.RoutineHint"}}">{{localize "UKM.Manager.Routine" n=routine}}</span>{{else}} · {{localize "UKM.Manager.NoRoutine"}}{{/if}}
           {{#if ready}} · {{localize "UKM.Manager.RankReady"}}{{else}}{{#if atCap}} · {{localize "UKM.Manager.AtCap"}}{{/if}}{{/if}}
         </span>
-        {{#if canRaise}}<button type="button" class="ukm-rank-up" data-action="rankUp"><i class="fa-solid fa-arrow-up"></i> {{localize "UKM.Manager.RaiseRank"}}</button>{{/if}}
+        {{#if rankUpWorking}}
+          <span class="ukm-working"><i class="fa-solid fa-hammer"></i> {{localize "UKM.Rank.Underway" days=rankUpDays}}</span>
+          {{#if @root.isGM}}<button type="button" class="ukm-rank-up" data-action="finishRankUp" data-tooltip="{{localize "UKM.Rank.FinishNow"}}"><i class="fa-solid fa-forward"></i></button>{{/if}}
+        {{/if}}
+        {{#if rankUpChoosing}}<span class="ukm-working"><i class="fa-solid fa-scroll"></i> {{localize "UKM.Rank.Choosing"}}</span>{{/if}}
+        {{#if canBegin}}<button type="button" class="ukm-rank-up" data-action="beginRankUp"><i class="fa-solid fa-arrow-up"></i> {{localize "UKM.Rank.Begin" cost=cost}}</button>{{/if}}
+        {{#if canChoose}}<button type="button" class="ukm-rank-up" data-action="chooseRankUp"><i class="fa-solid fa-scroll"></i> {{localize "UKM.Rank.Choose"}}</button>{{/if}}
       </li>
     {{/each}}
   </ol>

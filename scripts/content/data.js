@@ -11,7 +11,7 @@ async function load(name) {
 }
 
 export async function preloadData() {
-  await Promise.all(["events", "matters", "companions", "quests"].map(load));
+  await Promise.all(["events", "matters", "rankups", "companions", "quests"].map(load));
 }
 
 export function getEvents() {
@@ -48,6 +48,14 @@ export function getCardEvent(card) {
   if (!event?.tiers) return event;
   const { tiers, ...base } = event;
   return { ...base, ...(tiers[card.tier] ?? tiers.early) };
+}
+
+export function getRankUpScene(stat) {
+  return cache.rankups?.stats?.[stat] ?? null;
+}
+
+export function getRankUpAlways(stat) {
+  return cache.rankups?.always?.[stat] ?? [];
 }
 
 export function getCompanions() {

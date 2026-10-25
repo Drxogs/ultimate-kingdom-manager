@@ -35,7 +35,10 @@ function assigneeKey(assignee) {
 
 /** Who is already working a card. An advisor or PC takes on one card at a time. */
 export function busyWith(realm, key) {
-  return realm.cards.find((c) => c.status === "assigned" && assigneeKey(c.assignee) === key) ?? null;
+  const card = realm.cards.find((c) => c.status === "assigned" && assigneeKey(c.assignee) === key);
+  if (card) return card;
+  const project = realm.projects.find((p) => p.status === "working" && `seat:${p.seat}` === key);
+  return project ? { name: project.name } : null;
 }
 
 /** Whether a user may act for a seat: the GM, an owner of the seat holder, or the seat's supervising player. */

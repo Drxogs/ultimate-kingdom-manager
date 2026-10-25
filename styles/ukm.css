@@ -263,3 +263,7 @@
 .ukm-manager .ukm-odds.veryHard { color: var(--ukm-red); }
 
 .ukm-manager .ukm-rank-up { margin-top: 0.3rem; width: auto; height: 1.7rem; padding: 0 0.5rem; font-size: var(--font-size-12, 12px); }
+
+.ukm-manager .ukm-stat .ukm-working { display: block; margin-top: 0.25rem; }
+.ukm-scene .ukm-scene-text { font-style: italic; }
+.ukm-scene .ukm-scene-options { margin: 0.5rem 0; padding-left: 1.1rem; display: grid; gap: 0.4rem; }

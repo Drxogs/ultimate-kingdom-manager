@@ -1,7 +1,7 @@
 import { FLAG_SCOPE, MODULE_ID } from "../constants.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { acceptRequest, assignCard, escalateCard, unassignCard } from "./resolve.js";
-import { raiseRank } from "./ranks.js";
+import { chooseRankUp, startRankUp } from "./ranks.js";
 import { getRealm } from "./state.js";
 
 const SOCKET = `module.${MODULE_ID}`;
@@ -13,7 +13,8 @@ const HANDLERS = {
   unassign: unassignCard,
   escalate: escalateCard,
   accept: acceptRequest,
-  rankUp: raiseRank
+  startRankUp,
+  chooseRankUp
 };
 
 const pending = new Map();
@@ -48,6 +49,7 @@ async function handle(action, payload) {
 function report(result, action) {
   if (result?.ok) {
     if (action === "assign") ui.notifications.info(game.i18n.format("UKM.Request.Assigned", { days: result.days }));
+    if (action === "startRankUp") ui.notifications.info(game.i18n.format("UKM.Rank.Started", { days: result.days }));
     return;
   }
   const key = `UKM.Request.Reason.${result?.reason ?? "Error"}`;

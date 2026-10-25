@@ -8,6 +8,7 @@ import { addLog, getRealm, updateRealm } from "./state.js";
 import { monthKey, secondsPerDay, weekNumber } from "./time.js";
 import { syncPins } from "./pins.js";
 import { resolveDue } from "./resolve.js";
+import { advanceRankUps } from "./ranks.js";
 
 const MAX_CATCH_UP_WEEKS = 26;
 const MAX_MATTERS_PER_TICK = 2;
@@ -37,6 +38,7 @@ export async function tick() {
     if (!weeks && !newMonth) {
       if (hasExpiring(getRealm())) await updateRealm((realm) => expireCards(realm));
       await resolveDue();
+      await advanceRankUps();
       await syncPins();
       return;
     }
@@ -57,6 +59,7 @@ export async function tick() {
     await setSetting(SETTINGS.clock, { week, month });
     if (unrest) await addUnrest(unrest);
     await resolveDue();
+    await advanceRankUps();
     await syncPins();
 
     if (newMonth) Hooks.callAll(`${MODULE_ID}.newMonth`, { month, drawn });

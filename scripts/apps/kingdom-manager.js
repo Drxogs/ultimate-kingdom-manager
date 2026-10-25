@@ -7,6 +7,7 @@ import { drawMonthlyEvents, drawWeeklyMatter } from "../realm/deck.js";
 import { syncPins } from "../realm/pins.js";
 import { canRankUp, rankBonus, rankCap, routinePoints, statProgress, weeklyIncome } from "../realm/rules.js";
 import { getRealm, updateRealm } from "../realm/state.js";
+import { finishRankUpNow, rankUpChoices, rankUpCost, rankUpProject } from "../realm/ranks.js";
 import { sendRequest } from "../realm/requests.js";
 import {
   canActForSeat,
@@ -115,7 +116,9 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       recordOutcome: KingdomManager.#recordOutcome,
       dismiss: KingdomManager.#dismiss,
       toggleTask: KingdomManager.#toggleTask,
-      rankUp: KingdomManager.#rankUp,
+      beginRankUp: KingdomManager.#beginRankUp,
+      chooseRankUp: KingdomManager.#chooseRankUp,
+      finishRankUp: KingdomManager.#finishRankUp,
       openImport: KingdomManager.#openImport,
       toggleBetweenSessions: KingdomManager.#toggleBetweenSessions
     }
@@ -179,8 +182,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         points: stat.points,
         bonus: rankBonus(stat.rank),
         progress: statProgress(stat),
-        ready: canRankUp(stat, level),
-        canRaise: canRankUp(stat, level) && canActForSeat(game.user, def.seat),
+        ...this.#rankUpView(realm, key, def, stat, level),
         routine: Math.round(routinePoints(realm, key, level) * 100) / 100,
         atCap: stat.rank >= rankCap(level)
       };
@@ -226,7 +228,9 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         (leader?.isOwner && !game.user.isGM) || (supervisor?.isOwner && !game.user.isGM) || false;
       const canAct = canActForSeat(game.user, seat);
       const holderName = leader?.name ?? companion?.name ?? null;
-      const advisorBusy = realm.cards.find((c) => c.status === "assigned" && c.assignee?.type === "advisor" && c.assignee.seat === seat);
+      const advisorBusy =
+        realm.cards.find((c) => c.status === "assigned" && c.assignee?.type === "advisor" && c.assignee.seat === seat) ??
+        realm.projects.find((p) => p.status === "working" && p.seat === seat);
 
       const cards = realm.cards
         .filter((c) => c.seat === seat && ["open", "assigned", "escalated", "rolled"].includes(c.status))
@@ -354,9 +358,58 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     if (card) await sendRequest("unassign", { cardId: card.id });
   }
 
-  static async #rankUp(event, target) {
+  #rankUpView(realm, key, def, stat, level) {
+    const project = rankUpProject(realm, key);
+    const canAct = canActForSeat(game.user, def.seat);
+    const ready = canRankUp(stat, level);
+    return {
+      ready: ready && !project,
+      rankUpWorking: project?.status === "working",
+      rankUpChoosing: project?.status === "choosing",
+      rankUpDays: project?.status === "working" ? Math.max(0, daysUntil(project.until)) : null,
+      projectId: project?.id ?? null,
+      canBegin: ready && !project && canAct,
+      canChoose: project?.status === "choosing" && canAct,
+      cost: rankUpCost(realm)
+    };
+  }
+
+  static async #beginRankUp(event, target) {
     const stat = target.closest("[data-stat]")?.dataset.stat;
-    if (stat) await sendRequest("rankUp", { stat });
+    if (!stat) return;
+    const cost = rankUpCost();
+    const ok = await DialogV2.confirm({
+      window: { title: game.i18n.format("UKM.Rank.ProjectName", { stat: game.i18n.localize(`UKM.Stat.${stat}`) }) },
+      content: `<p>${game.i18n.format("UKM.Rank.BeginConfirm", { cost, days: 14 })}</p>`,
+      rejectClose: false
+    });
+    if (ok) await sendRequest("startRankUp", { stat });
+  }
+
+  static async #chooseRankUp(event, target) {
+    const stat = target.closest("[data-stat]")?.dataset.stat;
+    const project = stat ? rankUpProject(getRealm(), stat) : null;
+    const choices = project ? rankUpChoices(project) : null;
+    if (!choices) return;
+    const esc = Handlebars.escapeExpression;
+    const always = choices.always.length ? `<p class="hint">${game.i18n.format("UKM.Rank.Always", { effects: choices.always.join(", ") })}</p>` : "";
+    const content = `<div class="ukm-scene"><p class="ukm-scene-text">${esc(choices.scene)}</p>${always}<ul class="ukm-scene-options">${choices.options
+      .map((o) => `<li><strong>${esc(o.label)}</strong> ${esc(o.text)}<br><span class="hint">${o.lines.map(esc).join("; ")}</span></li>`)
+      .join("")}</ul></div>`;
+    const option = await DialogV2.wait({
+      window: { title: `${choices.title} — ${game.i18n.format("UKM.Rank.ToRank", { stat: game.i18n.localize(`UKM.Stat.${stat}`), rank: project.rank })}` },
+      position: { width: 520 },
+      content,
+      buttons: choices.options.map((o) => ({ action: o.id, label: o.label })),
+      rejectClose: false
+    });
+    if (option) await sendRequest("chooseRankUp", { projectId: project.id, option });
+  }
+
+  static async #finishRankUp(event, target) {
+    const stat = target.closest("[data-stat]")?.dataset.stat;
+    const project = stat ? rankUpProject(getRealm(), stat) : null;
+    if (project && game.user.isActiveGM) await finishRankUpNow(project.id);
   }
 
   static async #accept(event, target) {

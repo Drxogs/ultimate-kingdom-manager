@@ -1,0 +1,930 @@
+{
+  "version": 1,
+  "always": {
+    "stability": [
+      {
+        "unrest": -1
+      }
+    ]
+  },
+  "stats": {
+    "loyalty": {
+      "title": "The Crown's Promise",
+      "scene": "Word goes out that the leaders will make the realm a new promise. Folks crowd the square to hear what it is.",
+      "options": [
+        {
+          "id": "petitions",
+          "label": "A Day of Petitions",
+          "text": "Every grievance gets a hearing, however small.",
+          "effects": {
+            "low": [
+              {
+                "unrest": "-1d4"
+              }
+            ],
+            "mid": [
+              {
+                "unrest": "-2d4"
+              }
+            ],
+            "high": [
+              {
+                "unrest": "-3d4"
+              }
+            ]
+          }
+        },
+        {
+          "id": "honors",
+          "label": "Honors for the Loyal",
+          "text": "Medals and titles for those who stood by the realm.",
+          "effects": {
+            "low": [
+              {
+                "fame": 1
+              }
+            ],
+            "mid": [
+              {
+                "fame": 1
+              },
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 1,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 90
+                }
+              }
+            ],
+            "high": [
+              {
+                "fame": 2
+              },
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 2,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 90
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "iron-law",
+          "label": "The Iron Law",
+          "text": "Harsh new laws and the guards to enforce them. Order, at a price.",
+          "effects": {
+            "low": [
+              {
+                "ruin": {
+                  "strife": -2
+                }
+              },
+              {
+                "unrest": 1
+              }
+            ],
+            "mid": [
+              {
+                "ruin": {
+                  "strife": -3,
+                  "corruption": -1
+                }
+              },
+              {
+                "unrest": 1
+              }
+            ],
+            "high": [
+              {
+                "ruin": {
+                  "strife": -4,
+                  "corruption": -2
+                }
+              },
+              {
+                "unrest": 2
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "culture": {
+      "title": "A Flowering of the Arts",
+      "scene": "Artists, priests and storytellers ask the Counselor what the realm should be remembered for.",
+      "options": [
+        {
+          "id": "festival",
+          "label": "A Festival for Everyone",
+          "text": "A week of music, food and dancing in every settlement.",
+          "effects": {
+            "low": [
+              {
+                "unrest": "-1d4"
+              }
+            ],
+            "mid": [
+              {
+                "unrest": "-2d4"
+              }
+            ],
+            "high": [
+              {
+                "unrest": "-3d4"
+              },
+              {
+                "fame": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "patronage",
+          "label": "Royal Patronage",
+          "text": "The crown pays the best artists to stay and work here.",
+          "effects": {
+            "low": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 1,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 90
+                }
+              }
+            ],
+            "mid": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 2,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 90
+                }
+              }
+            ],
+            "high": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 2,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 180
+                }
+              },
+              {
+                "fame": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "temples",
+          "label": "Renew the Temples",
+          "text": "Repair the shrines and let the faithful guide the realm's conscience.",
+          "effects": {
+            "low": [
+              {
+                "ruin": {
+                  "corruption": -2
+                }
+              }
+            ],
+            "mid": [
+              {
+                "ruin": {
+                  "corruption": -3
+                }
+              },
+              {
+                "unrest": -1
+              }
+            ],
+            "high": [
+              {
+                "ruin": {
+                  "corruption": -4
+                }
+              },
+              {
+                "unrest": -2
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "military": {
+      "title": "The Realm's Shield",
+      "scene": "The General gathers the captains to decide what kind of force the realm will keep.",
+      "options": [
+        {
+          "id": "watch",
+          "label": "A Standing Watch",
+          "text": "Patrols on every road, night and day.",
+          "effects": {
+            "low": [
+              {
+                "ruin": {
+                  "crime": -1,
+                  "decay": -1
+                }
+              }
+            ],
+            "mid": [
+              {
+                "ruin": {
+                  "crime": -2,
+                  "decay": -1
+                }
+              }
+            ],
+            "high": [
+              {
+                "ruin": {
+                  "crime": -3,
+                  "decay": -2
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "parade",
+          "label": "Pride of Arms",
+          "text": "A great parade of the realm's soldiers. Folks sleep easier.",
+          "effects": {
+            "low": [
+              {
+                "unrest": -2
+              }
+            ],
+            "mid": [
+              {
+                "unrest": "-1d4"
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "high": [
+              {
+                "unrest": "-2d4"
+              },
+              {
+                "fame": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "drill",
+          "label": "Hard Drilling",
+          "text": "The troops train until they drop. Ready for anything.",
+          "effects": {
+            "low": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 1,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 90
+                }
+              }
+            ],
+            "mid": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 2,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 90
+                }
+              }
+            ],
+            "high": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 2,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 180
+                }
+              },
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 1,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 180
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "relations": {
+      "title": "Friends Abroad",
+      "scene": "Envoys and river captains wait to hear how the realm means to deal with its neighbors.",
+      "options": [
+        {
+          "id": "treaty",
+          "label": "A Trade Treaty",
+          "text": "Open the borders to honest merchants.",
+          "effects": {
+            "low": [
+              {
+                "tradeAgreement": true
+              }
+            ],
+            "mid": [
+              {
+                "tradeAgreement": true
+              },
+              {
+                "bpDice": 1
+              }
+            ],
+            "high": [
+              {
+                "tradeAgreement": true
+              },
+              {
+                "tradeAgreement": true
+              }
+            ]
+          }
+        },
+        {
+          "id": "goodwill",
+          "label": "Gifts of Goodwill",
+          "text": "Lavish gifts to every neighbor. It isn't cheap.",
+          "effects": {
+            "low": [
+              {
+                "fame": 1
+              },
+              {
+                "bpDice": -1
+              }
+            ],
+            "mid": [
+              {
+                "fame": 1
+              },
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 1,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 90
+                }
+              }
+            ],
+            "high": [
+              {
+                "fame": 2
+              },
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 2,
+                  "selector": [
+                    "loyalty"
+                  ],
+                  "days": 90
+                }
+              },
+              {
+                "bpDice": -2
+              }
+            ]
+          }
+        },
+        {
+          "id": "river-law",
+          "label": "Law on the River",
+          "text": "Patrol boats and fair tolls on every waterway.",
+          "effects": {
+            "low": [
+              {
+                "ruin": {
+                  "crime": -2
+                }
+              }
+            ],
+            "mid": [
+              {
+                "ruin": {
+                  "crime": -2
+                }
+              },
+              {
+                "income": {
+                  "perWeek": 1,
+                  "weeks": 26
+                }
+              }
+            ],
+            "high": [
+              {
+                "ruin": {
+                  "crime": -3
+                }
+              },
+              {
+                "income": {
+                  "perWeek": 2,
+                  "weeks": 26
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "arcane": {
+      "title": "The Arcane Charter",
+      "scene": "Wizards, witches and scholars wait to hear what the realm will ask of its magic.",
+      "options": [
+        {
+          "id": "wards",
+          "label": "Wards on the Realm",
+          "text": "Protective wards on settlements and roads.",
+          "effects": {
+            "low": [
+              {
+                "ruin": {
+                  "corruption": -1,
+                  "decay": -1
+                }
+              }
+            ],
+            "mid": [
+              {
+                "ruin": {
+                  "corruption": -2,
+                  "decay": -1
+                }
+              }
+            ],
+            "high": [
+              {
+                "ruin": {
+                  "corruption": -3,
+                  "decay": -2
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "academy",
+          "label": "Open the Academies",
+          "text": "Lessons for anyone with the spark.",
+          "effects": {
+            "low": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 1,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 90
+                }
+              }
+            ],
+            "mid": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 2,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 90
+                }
+              }
+            ],
+            "high": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 2,
+                  "selector": [
+                    "culture"
+                  ],
+                  "days": 180
+                }
+              },
+              {
+                "fame": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "wonders",
+          "label": "Public Wonders",
+          "text": "Lights, fountains and floating lanterns for everyone to see.",
+          "effects": {
+            "low": [
+              {
+                "unrest": -2
+              }
+            ],
+            "mid": [
+              {
+                "unrest": "-1d4"
+              },
+              {
+                "fame": 1
+              }
+            ],
+            "high": [
+              {
+                "unrest": "-2d4"
+              },
+              {
+                "fame": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "economy": {
+      "title": "The Treasury's Plan",
+      "scene": "The Treasurer lays out the ledgers and asks where the realm's money should go next.",
+      "options": [
+        {
+          "id": "markets",
+          "label": "New Markets",
+          "text": "Market days and fair weights in every town.",
+          "effects": {
+            "low": [
+              {
+                "income": {
+                  "perWeek": 1,
+                  "weeks": 26
+                }
+              }
+            ],
+            "mid": [
+              {
+                "income": {
+                  "perWeek": 2,
+                  "weeks": 26
+                }
+              }
+            ],
+            "high": [
+              {
+                "income": {
+                  "perWeek": 3,
+                  "weeks": 26
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "windfall",
+          "label": "Call In the Debts",
+          "text": "Collect every coin owed to the crown, now.",
+          "effects": {
+            "low": [
+              {
+                "bpDice": 2
+              },
+              {
+                "unrest": 1
+              }
+            ],
+            "mid": [
+              {
+                "bpDice": 4
+              },
+              {
+                "unrest": 1
+              }
+            ],
+            "high": [
+              {
+                "bpDice": 6
+              },
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "audit",
+          "label": "A Clean Audit",
+          "text": "Every ledger opened, every cheat named.",
+          "effects": {
+            "low": [
+              {
+                "ruin": {
+                  "crime": -2
+                }
+              }
+            ],
+            "mid": [
+              {
+                "ruin": {
+                  "crime": -3
+                }
+              },
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 1,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 90
+                }
+              }
+            ],
+            "high": [
+              {
+                "ruin": {
+                  "crime": -4
+                }
+              },
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 2,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 90
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "community": {
+      "title": "Building for the People",
+      "scene": "Farmers and builders gather to tell the Viceroy what their towns need most.",
+      "options": [
+        {
+          "id": "granaries",
+          "label": "Fill the Granaries",
+          "text": "Stock up against lean years.",
+          "effects": {
+            "low": [
+              {
+                "consumption": -1,
+                "days": 90
+              }
+            ],
+            "mid": [
+              {
+                "consumption": -2,
+                "days": 90
+              }
+            ],
+            "high": [
+              {
+                "consumption": -2,
+                "days": 180
+              }
+            ]
+          }
+        },
+        {
+          "id": "repairs",
+          "label": "Mend Everything",
+          "text": "Roofs, wells and bridges, all fixed at once.",
+          "effects": {
+            "low": [
+              {
+                "ruin": {
+                  "decay": -2
+                }
+              }
+            ],
+            "mid": [
+              {
+                "ruin": {
+                  "decay": -3
+                }
+              },
+              {
+                "unrest": -1
+              }
+            ],
+            "high": [
+              {
+                "ruin": {
+                  "decay": -4
+                }
+              },
+              {
+                "unrest": -2
+              }
+            ]
+          }
+        },
+        {
+          "id": "homes",
+          "label": "Homes for Newcomers",
+          "text": "Cheap land and timber for anyone who'll settle.",
+          "effects": {
+            "low": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 1,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 90
+                }
+              }
+            ],
+            "mid": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 2,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 90
+                }
+              }
+            ],
+            "high": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 2,
+                  "selector": [
+                    "economy"
+                  ],
+                  "days": 180
+                }
+              },
+              {
+                "income": {
+                  "perWeek": 1,
+                  "weeks": 26
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "stability": {
+      "title": "Taming the Wild",
+      "scene": "Rangers and trappers come in from the frontier to tell the Warden what's out there.",
+      "options": [
+        {
+          "id": "roads",
+          "label": "Safe Roads",
+          "text": "Clear the brush, post the rangers, light the waystations.",
+          "effects": {
+            "low": [
+              {
+                "ruin": {
+                  "decay": -1,
+                  "crime": -1
+                }
+              }
+            ],
+            "mid": [
+              {
+                "ruin": {
+                  "decay": -2,
+                  "crime": -1
+                }
+              }
+            ],
+            "high": [
+              {
+                "ruin": {
+                  "decay": -3,
+                  "crime": -2
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "hunt",
+          "label": "The Great Hunt",
+          "text": "A realm-wide hunt brings meat and furs home.",
+          "effects": {
+            "low": [
+              {
+                "food": "1d4"
+              },
+              {
+                "unrest": -1
+              }
+            ],
+            "mid": [
+              {
+                "food": "2d4"
+              },
+              {
+                "unrest": -1
+              }
+            ],
+            "high": [
+              {
+                "food": "3d4"
+              },
+              {
+                "luxuries": 2
+              },
+              {
+                "unrest": -1
+              }
+            ]
+          }
+        },
+        {
+          "id": "wardens",
+          "label": "Wardens on Every Border",
+          "text": "Rangers who know the land watch every edge of the realm.",
+          "effects": {
+            "low": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 1,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 90
+                }
+              }
+            ],
+            "mid": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 2,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 90
+                }
+              }
+            ],
+            "high": [
+              {
+                "modifier": {
+                  "type": "status",
+                  "value": 2,
+                  "selector": [
+                    "stability"
+                  ],
+                  "days": 180
+                }
+              },
+              {
+                "fame": 1
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

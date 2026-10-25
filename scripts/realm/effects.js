@@ -54,6 +54,8 @@ export function describeEffect(effect) {
       return loc("Reroll");
     case "tradeAgreement":
       return loc("TradeAgreement");
+    case "income":
+      return loc("Income", { amount: formatAmount(value.perWeek), weeks: value.weeks });
     case "end":
       return loc("End");
     case "flat":
@@ -422,6 +424,11 @@ export async function applyEffects(ctx, effects = []) {
       case "nextLevelMod": {
         realm.levelModBoosts ??= {};
         realm.levelModBoosts[ctx.card.eventId] = (realm.levelModBoosts[ctx.card.eventId] ?? 0) + value;
+        break;
+      }
+      case "income": {
+        realm.incomeAdjustments.push({ id: newId(), perWeek: value.perWeek, weeks: value.weeks });
+        ctx.note(describeEffect(effect));
         break;
       }
       case "tradeAgreement": {
