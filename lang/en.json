@@ -308,6 +308,15 @@
       "BecomesOngoing": "Becomes ongoing",
       "Harder": "Harder next time",
       "AskBreached": "Did the threat break into {place}?"
+    },
+    "Difficulty": {
+      "veryEasy": "Very easy",
+      "easy": "Easy",
+      "even": "Even odds",
+      "hard": "Hard",
+      "veryHard": "Very hard",
+      "Advisor": "Advisor's odds:",
+      "Detail": "{mod} against DC {dc} ({chance}% to succeed)"
     }
   }
 }

@@ -133,8 +133,7 @@ function timedModifiers(realm, skill, eventId) {
   return realm.timedModifiers
     .filter((m) => m.expires > now)
     .filter((m) => [m.selector].flat().some((s) => s === "events" || s === ability || s === skill))
-    .map((m) => ({ slug: `ukm-${m.id}`, label: m.label, modifier: m.value, type: m.type }))
-    .concat(companionModifiers(realm, eventId));
+    .map((m) => ({ slug: `ukm-${m.id}`, label: m.label, modifier: m.value, type: m.type }));
 }
 
 function companionModifiers(realm, eventId) {
@@ -152,6 +151,80 @@ function companionModifiers(realm, eventId) {
     if (bonus.event === eventId) mods.push({ slug: `ukm-advisor-${companion.id}-${eventId}`, label: companion.name, modifier: bonus.value, type: bonus.type });
   }
   return mods;
+}
+
+function advisorModifiers(realm, card, stat) {
+  const mods = companionModifiers(realm, card.eventId);
+  const bonus = rankBonus(realm.stats[stat]?.rank ?? 0);
+  if (bonus) mods.push({ slug: `ukm-rank-${stat}`, label: game.i18n.localize(`UKM.Stat.${stat}`), modifier: bonus, type: "circumstance" });
+  return mods;
+}
+
+/** Highest of each bonus type and lowest of each penalty type, as PF2e stacks them. */
+function stackedTotal(list) {
+  const best = {};
+  let untyped = 0;
+  for (const m of list) {
+    if (!m.type || m.type === "untyped") {
+      untyped += m.modifier;
+      continue;
+    }
+    const key = `${m.type}:${m.modifier >= 0 ? "bonus" : "penalty"}`;
+    best[key] = key.endsWith("bonus") ? Math.max(best[key] ?? 0, m.modifier) : Math.min(best[key] ?? 0, m.modifier);
+  }
+  return untyped + Object.values(best).reduce((a, b) => a + b, 0);
+}
+
+/** Chance of at least a success on d20 + mod against dc, with PF2e's natural 1 and 20 rules. */
+export function successChance(mod, dc) {
+  let hits = 0;
+  for (let die = 1; die <= 20; die++) {
+    const total = die + mod;
+    let degree = total >= dc + 10 ? 3 : total >= dc ? 2 : total <= dc - 10 ? 0 : 1;
+    if (die === 20) degree = Math.min(3, degree + 1);
+    if (die === 1) degree = Math.max(0, degree - 1);
+    if (degree >= 2) hits++;
+  }
+  return hits / 20;
+}
+
+export function difficultyLabel(chance) {
+  if (chance >= 0.8) return "veryEasy";
+  if (chance >= 0.6) return "easy";
+  if (chance >= 0.4) return "even";
+  if (chance >= 0.2) return "hard";
+  return "veryHard";
+}
+
+/**
+ * How a check would likely go before anyone commits to it.
+ * choice: { type: "advisor", skill } or { type: "pc", actorUuid, personalSkill }
+ */
+export function estimateCheck(card, choice, realm = getRealm()) {
+  const kingdom = getKingdom();
+  const skill = choice.skill ?? cardStage(card).skills[0];
+  const mod = cardLevelMod(card, realm) + (card.dcAdjust ?? 0);
+  const extras = timedModifiers(realm, skill, card.eventId);
+  let base;
+  let dc;
+  let personal = false;
+  if (choice.type === "pc") {
+    const statistic = fromUuidSync(choice.actorUuid)?.skills?.[choice.personalSkill];
+    if (!statistic) return null;
+    base = statistic.mod;
+    dc = (LEVEL_DC[Math.clamp(kingdom?.level ?? 1, 0, 20)] ?? 14) + mod;
+    personal = true;
+  } else {
+    const statistic = kingdom?.skills?.[skill];
+    if (!statistic) return null;
+    base = statistic.mod;
+    extras.push(...advisorModifiers(realm, card, SKILL_TO_STAT[skill]));
+    dc = getControlDC() + mod;
+  }
+  const total = base + stackedTotal(extras);
+  const chance = successChance(total, dc);
+  const key = difficultyLabel(chance);
+  return { skill, total, dc, chance, personal, key, label: game.i18n.localize(`UKM.Difficulty.${key}`) };
 }
 
 function takeFortune(realm, skill) {
@@ -190,8 +263,7 @@ async function rollCheck(card, realm) {
 
   const statistic = kingdom?.skills?.[skill];
   if (!statistic) return null;
-  const bonus = rankBonus(realm.stats[stat]?.rank ?? 0);
-  if (bonus) modifiers.push({ slug: `ukm-rank-${stat}`, label: game.i18n.localize(`UKM.Stat.${stat}`), modifier: bonus, type: "circumstance" });
+  modifiers.push(...advisorModifiers(realm, card, stat));
   const dc = getControlDC() + mod;
   const roll = await statistic.roll({ ...options, dc: { value: dc }, modifiers: toModifiers(modifiers) });
   if (!roll) return null;

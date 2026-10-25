@@ -36,6 +36,13 @@
                 <p class="ukm-working">
                   <i class="fa-solid {{#if assigneePersonal}}fa-user{{else}}fa-user-tie{{/if}}"></i>
                   {{localize "UKM.Card.Working" name=assigneeName days=workDays}}
+                  {{#if currentOdds}}<span class="ukm-odds {{currentOdds.key}}" data-tooltip="{{currentOdds.detail}}">{{currentOdds.label}}</span>{{/if}}
+                </p>
+              {{/if}}
+              {{#if advisorOdds.length}}
+                <p class="ukm-odds-line">
+                  {{localize "UKM.Difficulty.Advisor"}}
+                  {{#each advisorOdds}}<span class="ukm-odds {{key}}" data-tooltip="{{detail}}">{{label}}{{#if (gt ../advisorOdds.length 1)}} ({{skill}}){{/if}}</span>{{/each}}
                 </p>
               {{/if}}
               {{#if isRolled}}

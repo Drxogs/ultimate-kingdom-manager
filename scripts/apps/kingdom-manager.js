@@ -14,6 +14,7 @@ import {
   cardStage,
   completeGmTask,
   dismissCard,
+  estimateCheck,
   outcomePreview,
   recordOutcome,
   rollCard
@@ -36,9 +37,23 @@ async function pickKingdomSkill(card) {
   return DialogV2.wait({
     window: { title: card.name },
     content: `<p>${game.i18n.localize("UKM.Card.ChooseSkill")}</p>`,
-    buttons: skills.map((s) => ({ action: s, label: game.i18n.localize(`UKM.Skill.${s}`) })),
+    buttons: skills.map((s) => {
+      const odds = estimateCheck(card, { type: "advisor", skill: s });
+      return { action: s, label: `${game.i18n.localize(`UKM.Skill.${s}`)}${odds ? ` — ${odds.label}` : ""}` };
+    }),
     rejectClose: false
   });
+}
+
+function oddsView(odds) {
+  if (!odds) return null;
+  const sign = odds.total >= 0 ? "+" : "";
+  return {
+    key: odds.key,
+    label: odds.label,
+    skill: game.i18n.localize(`UKM.Skill.${odds.skill}`),
+    detail: game.user.isGM ? game.i18n.format("UKM.Difficulty.Detail", { mod: `${sign}${odds.total}`, dc: odds.dc, chance: Math.round(odds.chance * 100) }) : ""
+  };
 }
 
 function personalChoices(card) {
@@ -51,9 +66,10 @@ function personalChoices(card) {
         for (const slug of PERSONAL_SKILLS[kingdomSkill] ?? []) {
           const statistic = actor.skills?.[slug];
           if (!statistic) continue;
+          const odds = estimateCheck(card, { type: "pc", actorUuid: actor.uuid, personalSkill: slug, skill: kingdomSkill });
           options.push({
             value: `${actor.uuid}|${kingdomSkill}|${slug}`,
-            label: `${statistic.label} (${statistic.mod >= 0 ? "+" : ""}${statistic.mod}) — ${game.i18n.localize(`UKM.Skill.${kingdomSkill}`)}`,
+            label: `${statistic.label} (${statistic.mod >= 0 ? "+" : ""}${statistic.mod}) — ${game.i18n.localize(`UKM.Skill.${kingdomSkill}`)}${odds ? ` — ${odds.label}` : ""}`,
             mod: statistic.mod
           });
         }
@@ -236,6 +252,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             canUnassign: card.status === "assigned" && canAct,
             canEscalate: open && canAct && !!event?.escalate,
             outcomes: outcomePreview(card),
+            advisorOdds: open && holderName ? stage.skills.map((sk) => oddsView(estimateCheck(card, { type: "advisor", skill: sk }, realm))).filter(Boolean) : [],
+            currentOdds: card.status === "assigned" && card.assignee ? oddsView(estimateCheck(card, card.assignee, realm)) : null,
             hook: event?.hook ?? "",
             skill: stage.skills.map((s) => game.i18n.localize(`UKM.Skill.${s}`)).join(" / "),
             mod: cardLevelMod(card, realm) + (card.dcAdjust ?? 0),
