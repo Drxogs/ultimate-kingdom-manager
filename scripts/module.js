@@ -18,6 +18,7 @@ const TEMPLATES = [
   "import/import.hbs",
   "manager/overview.hbs",
   "manager/desks.hbs",
+  "manager/council.hbs",
   "manager/log.hbs"
 ].map((t) => `modules/${MODULE_ID}/templates/${t}`);
 

@@ -1,0 +1,40 @@
+<section class="tab ukm-council {{tab.cssClass}}" data-tab="council" data-group="primary">
+  {{#if council.enabled}}
+    <header class="ukm-council-head">
+      <p>{{localize "UKM.Council.Intro"}}</p>
+      <p class="hint">{{localize "UKM.Council.Budget" bp=council.treasury asked=council.asked}}</p>
+    </header>
+    {{#if council.empty}}
+      <p class="hint">{{localize "UKM.Council.Empty"}}</p>
+    {{else}}
+      <ul class="ukm-proposals">
+        {{#each council.open}}
+          <li class="ukm-proposal {{#unless affordable}}poor{{/unless}}" data-proposal="{{id}}">
+            <div class="ukm-card-head">
+              <strong>{{name}}</strong>
+              <span class="ukm-tag">{{seatLabel}}</span>
+              <span class="ukm-tag">{{cost}} BP · {{localize "UKM.Card.DaysLeft" days=days}}</span>
+            </div>
+            <p class="hint">{{localize "UKM.Council.ProposedBy" name=byName}}{{#unless affordable}} · <span class="ukm-urgent">{{localize "UKM.Council.TooCostly"}}</span>{{/unless}}</p>
+            <div class="ukm-card-actions">
+              <button type="button" class="{{#if (gt myVote 0)}}active{{/if}}" data-action="vote" data-vote="1"><i class="fa-solid fa-thumbs-up"></i> {{yes}}</button>
+              <button type="button" class="{{#if (lt myVote 0)}}active{{/if}}" data-action="vote" data-vote="-1"><i class="fa-solid fa-thumbs-down"></i> {{no}}</button>
+              {{#if canFund}}<button type="button" data-action="fundProposal" {{#unless affordable}}disabled{{/unless}}><i class="fa-solid fa-coins"></i> {{localize "UKM.Council.Fund"}}</button>{{/if}}
+              {{#if canReject}}<button type="button" data-action="rejectProposal"><i class="fa-solid fa-xmark"></i> {{localize "UKM.Council.Reject"}}</button>{{/if}}
+            </div>
+          </li>
+        {{/each}}
+      </ul>
+    {{/if}}
+    {{#if council.recent.length}}
+      <h3>{{localize "UKM.Council.Recent"}}</h3>
+      <ul class="ukm-proposals recent">
+        {{#each council.recent}}
+          <li><strong>{{name}}</strong> <span class="hint">· {{statusLabel}} · {{yes}}/{{no}}</span></li>
+        {{/each}}
+      </ul>
+    {{/if}}
+  {{else}}
+    <p class="hint">{{localize "UKM.Council.Off"}}</p>
+  {{/if}}
+</section>

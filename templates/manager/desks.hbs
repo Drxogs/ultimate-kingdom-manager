@@ -52,6 +52,7 @@
                 <p class="ukm-working"><i class="fa-solid fa-dice-d20"></i> {{localize "UKM.Card.Rolled" name=assigneeName result=rolledResult}}</p>
               {{/if}}
               {{#if advisorBusy}}<p class="hint">{{localize "UKM.Card.AdvisorBusy"}}</p>{{/if}}
+              {{#unless isAudience}}
               <details class="ukm-outcomes">
                 <summary>{{localize "UKM.Card.Outcomes"}}</summary>
                 <dl>
@@ -61,7 +62,9 @@
                   {{/each}}
                 </dl>
               </details>
+              {{/unless}}
               <div class="ukm-card-actions">
+                {{#if canHear}}<button type="button" data-action="hearAudience"><i class="fa-solid fa-comments"></i> {{localize "UKM.Audience.Hear"}}</button>{{/if}}
                 {{#if canDelegate}}<button type="button" data-action="delegate"><i class="fa-solid fa-user-tie"></i> {{localize "UKM.Card.Delegate"}}</button>{{/if}}
                 {{#if canHandle}}<button type="button" data-action="handlePersonally"><i class="fa-solid fa-user"></i> {{localize "UKM.Card.HandlePersonally"}}</button>{{/if}}
                 {{#if canEscalate}}<button type="button" data-action="escalate" data-tooltip="{{localize "UKM.Card.EscalateHint"}}"><i class="fa-solid fa-dragon"></i></button>{{/if}}

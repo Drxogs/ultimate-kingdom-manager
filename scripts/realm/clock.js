@@ -3,6 +3,8 @@ import { getCardEvent } from "../content/data.js";
 import { getKingdom, isKingdomActive } from "../integrations/party.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
+import { drawAudience } from "./audiences.js";
+import { announceCouncil } from "./council.js";
 import { addStatPoints, routinePoints, weeklyFoodShortfall, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { monthKey, secondsPerDay, weekNumber } from "./time.js";
@@ -49,6 +51,10 @@ export async function tick() {
       for (let i = 0; i < weeks; i++) unrest += runWeek(realm);
       expireCards(realm);
       if (newMonth) drawn = drawMonthlyEvents(realm);
+      if (newMonth && getSetting(SETTINGS.audiences)) {
+        const card = drawAudience(realm);
+        if (card) drawn.push(card);
+      }
       if (weeks && getSetting(SETTINGS.deskMatters)) {
         for (let i = 0; i < Math.min(weeks, MAX_MATTERS_PER_TICK); i++) {
           const card = drawWeeklyMatter(realm);
@@ -62,6 +68,7 @@ export async function tick() {
     await advanceRankUps();
     await syncPins();
 
+    if (newMonth && getSetting(SETTINGS.council)) await announceCouncil();
     if (newMonth) Hooks.callAll(`${MODULE_ID}.newMonth`, { month, drawn });
   } finally {
     running = false;
@@ -129,6 +136,10 @@ function expireCards(realm) {
     const event = getCardEvent(card);
     card.status = "expired";
     card.resolvedAt = now;
+    if (card.kind === "audience") {
+      card.outcome = "failure";
+      card.pendingEffects = true;
+    }
     if (card.kind === "problem") {
       card.outcome = "failure";
       card.pendingEffects = true;

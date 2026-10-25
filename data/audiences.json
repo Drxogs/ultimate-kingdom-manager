@@ -1,0 +1,1359 @@
+{
+  "version": 1,
+  "audiences": [
+    {
+      "id": "widow-land",
+      "seat": "ruler",
+      "petitioner": "A farmer's widow",
+      "request": "My husband's brother says the farm is his now. I've worked that land twenty years. Who does it belong to?",
+      "responses": [
+        {
+          "id": "widow",
+          "label": "It's hers. She worked it.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": -1
+            }
+          ]
+        },
+        {
+          "id": "brother",
+          "label": "Custom gives it to the brother.",
+          "text": "",
+          "effects": [
+            {
+              "ruin": {
+                "strife": -1
+              }
+            },
+            {
+              "unrest": 1
+            }
+          ]
+        },
+        {
+          "id": "split",
+          "label": "Split it between them.",
+          "text": "",
+          "effects": [
+            {
+              "bp": -2
+            },
+            {
+              "note": "Neither is happy, but nobody riots."
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "tax-relief",
+      "seat": "ruler",
+      "petitioner": "Village elders",
+      "request": "The harvest was poor. We ask to be spared this season's levy.",
+      "responses": [
+        {
+          "id": "grant",
+          "label": "Spare them.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": -1
+            },
+            {
+              "bpDice": -1
+            }
+          ]
+        },
+        {
+          "id": "refuse",
+          "label": "Everyone pays.",
+          "text": "",
+          "effects": [
+            {
+              "bpDice": 1
+            },
+            {
+              "unrest": 1
+            }
+          ]
+        },
+        {
+          "id": "labor",
+          "label": "They can pay in labor instead.",
+          "text": "",
+          "effects": [
+            {
+              "ruin": {
+                "decay": -1
+              }
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "old-noble",
+      "seat": "ruler",
+      "petitioner": "An old Brevic noble",
+      "request": "My family held a title here before your kingdom. I'd like it back, and a seat at your table.",
+      "responses": [
+        {
+          "id": "honor",
+          "label": "Grant the title, without the seat.",
+          "text": "",
+          "effects": [
+            {
+              "fame": 1
+            },
+            {
+              "unrest": 1
+            }
+          ]
+        },
+        {
+          "id": "refuse",
+          "label": "Titles here are earned.",
+          "text": "",
+          "effects": [
+            {
+              "ruin": {
+                "strife": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "seat",
+          "label": "Welcome them to the court.",
+          "text": "",
+          "effects": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "loyalty"
+                ],
+                "days": 30
+              }
+            },
+            {
+              "ruin": {
+                "corruption": 1
+              }
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "temple-funds",
+      "seat": "counselor",
+      "petitioner": "A temple priest",
+      "request": "Our roof is falling in. The faithful have given what they can.",
+      "responses": [
+        {
+          "id": "pay",
+          "label": "The crown will pay.",
+          "text": "",
+          "effects": [
+            {
+              "bp": -3
+            },
+            {
+              "unrest": -1
+            }
+          ]
+        },
+        {
+          "id": "festival",
+          "label": "Hold a festival to raise the money.",
+          "text": "",
+          "effects": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "culture"
+                ],
+                "days": 30
+              }
+            }
+          ]
+        },
+        {
+          "id": "refuse",
+          "label": "The temple can fend for itself.",
+          "text": "",
+          "effects": [
+            {
+              "ruin": {
+                "corruption": 1
+              }
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "banned-play",
+      "seat": "counselor",
+      "petitioner": "A playwright",
+      "request": "My play mocks the powerful. The town reeve wants it banned. Will you let it run?",
+      "responses": [
+        {
+          "id": "allow",
+          "label": "Let it run.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": -1
+            },
+            {
+              "ruin": {
+                "strife": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "ban",
+          "label": "Ban it.",
+          "text": "",
+          "effects": [
+            {
+              "ruin": {
+                "strife": -1
+              }
+            },
+            {
+              "unrest": 1
+            }
+          ]
+        },
+        {
+          "id": "attend",
+          "label": "Attend the opening and laugh loudest.",
+          "text": "",
+          "effects": [
+            {
+              "fame": 1
+            },
+            {
+              "note": "The leaders are seen as good sports."
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "foreign-faith",
+      "seat": "counselor",
+      "petitioner": "Pilgrims of a foreign faith",
+      "request": "We'd like to build a small shrine to our god. We've heard you're tolerant here.",
+      "responses": [
+        {
+          "id": "welcome",
+          "label": "Welcome them.",
+          "text": "",
+          "effects": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "culture"
+                ],
+                "days": 30
+              }
+            },
+            {
+              "unrest": 1
+            }
+          ]
+        },
+        {
+          "id": "quiet",
+          "label": "Allowed, but outside town.",
+          "text": "",
+          "effects": [
+            {
+              "note": "A shrine goes up by the crossroads."
+            }
+          ]
+        },
+        {
+          "id": "refuse",
+          "label": "Not here.",
+          "text": "",
+          "effects": [
+            {
+              "ruin": {
+                "corruption": 1
+              }
+            },
+            {
+              "unrest": -1
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "militia-pay",
+      "seat": "general",
+      "petitioner": "A militia sergeant",
+      "request": "The militia hasn't been paid in two months. The men are talking about going home.",
+      "responses": [
+        {
+          "id": "pay",
+          "label": "Pay them in full.",
+          "text": "",
+          "effects": [
+            {
+              "bp": -3
+            },
+            {
+              "ruin": {
+                "strife": -1
+              }
+            }
+          ]
+        },
+        {
+          "id": "promise",
+          "label": "Promise pay after the harvest.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": 1
+            }
+          ]
+        },
+        {
+          "id": "land",
+          "label": "Offer land instead of coin.",
+          "text": "",
+          "effects": [
+            {
+              "note": "A few take the deal and settle down."
+            },
+            {
+              "ruin": {
+                "crime": -1
+              }
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "prisoner-mercy",
+      "seat": "general",
+      "petitioner": "A captured raider's mother",
+      "request": "My son rode with raiders, but he's young and stupid. Spare his life.",
+      "responses": [
+        {
+          "id": "spare",
+          "label": "Spare him; he'll serve in the militia.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": -1
+            }
+          ]
+        },
+        {
+          "id": "hang",
+          "label": "The law is the law.",
+          "text": "",
+          "effects": [
+            {
+              "ruin": {
+                "crime": -1
+              }
+            },
+            {
+              "unrest": 1
+            }
+          ]
+        },
+        {
+          "id": "exile",
+          "label": "Send him over the border.",
+          "text": "",
+          "effects": [
+            {
+              "note": "He's gone. Nobody's sure that's better."
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "watch-post",
+      "seat": "general",
+      "petitioner": "Frightened villagers",
+      "request": "Something moves in the woods at night. We want soldiers posted here.",
+      "responses": [
+        {
+          "id": "post",
+          "label": "Post a squad.",
+          "text": "",
+          "effects": [
+            {
+              "bp": -2
+            },
+            {
+              "unrest": -1
+            }
+          ]
+        },
+        {
+          "id": "train",
+          "label": "Train the villagers to watch themselves.",
+          "text": "",
+          "effects": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "stability"
+                ],
+                "days": 30
+              }
+            }
+          ]
+        },
+        {
+          "id": "dismiss",
+          "label": "It's only deer.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": 1
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "trade-envoy",
+      "seat": "emissary",
+      "petitioner": "A Mivoni merchant envoy",
+      "request": "Our guild will trade with you, if you lower your river tolls.",
+      "responses": [
+        {
+          "id": "lower",
+          "label": "Lower the tolls.",
+          "text": "",
+          "effects": [
+            {
+              "tradeAgreement": true
+            },
+            {
+              "bpDice": -1
+            }
+          ]
+        },
+        {
+          "id": "hold",
+          "label": "The tolls stay.",
+          "text": "",
+          "effects": [
+            {
+              "bpDice": 1
+            }
+          ]
+        },
+        {
+          "id": "counter",
+          "label": "Lower them for their guild only.",
+          "text": "",
+          "effects": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "economy"
+                ],
+                "days": 30
+              }
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "refugees",
+      "seat": "emissary",
+      "petitioner": "A refugee leader",
+      "request": "We fled a war across the border. We ask for shelter.",
+      "responses": [
+        {
+          "id": "welcome",
+          "label": "Take them in.",
+          "text": "",
+          "effects": [
+            {
+              "consumption": 1,
+              "days": 30
+            },
+            {
+              "fame": 1
+            }
+          ]
+        },
+        {
+          "id": "pass",
+          "label": "Feed them and send them on.",
+          "text": "",
+          "effects": [
+            {
+              "bp": -2
+            }
+          ]
+        },
+        {
+          "id": "turn",
+          "label": "Turn them away.",
+          "text": "",
+          "effects": [
+            {
+              "ruin": {
+                "corruption": 1
+              }
+            },
+            {
+              "unrest": -1
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "boat-dispute",
+      "seat": "emissary",
+      "petitioner": "Two boat captains",
+      "request": "He rammed my barge. He says I cut him off. We both want damages from the other.",
+      "responses": [
+        {
+          "id": "first",
+          "label": "The first captain is right.",
+          "text": "",
+          "effects": [
+            {
+              "note": "One happy captain, one sulking one."
+            }
+          ]
+        },
+        {
+          "id": "second",
+          "label": "The second captain is right.",
+          "text": "",
+          "effects": [
+            {
+              "note": "One happy captain, one sulking one."
+            }
+          ]
+        },
+        {
+          "id": "rules",
+          "label": "Write rules for the river, and both pay a fine.",
+          "text": "",
+          "effects": [
+            {
+              "bp": 1
+            },
+            {
+              "ruin": {
+                "crime": -1
+              }
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "wizard-tower",
+      "seat": "magister",
+      "petitioner": "A wandering wizard",
+      "request": "I'd like to build a tower on that hill. I'll teach your folk a little magic in return.",
+      "responses": [
+        {
+          "id": "yes",
+          "label": "Build it.",
+          "text": "",
+          "effects": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "culture"
+                ],
+                "days": 30
+              }
+            }
+          ]
+        },
+        {
+          "id": "conditions",
+          "label": "Build it, with a royal inspector visiting.",
+          "text": "",
+          "effects": [
+            {
+              "note": "The wizard grumbles but agrees."
+            }
+          ]
+        },
+        {
+          "id": "no",
+          "label": "No towers.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": -1
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cursed-family",
+      "seat": "magister",
+      "petitioner": "A frightened family",
+      "request": "Our neighbors say we're cursed and want us gone. Can you prove we're not?",
+      "responses": [
+        {
+          "id": "test",
+          "label": "Have them tested publicly.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": -1
+            }
+          ]
+        },
+        {
+          "id": "protect",
+          "label": "Put them under the crown's protection.",
+          "text": "",
+          "effects": [
+            {
+              "ruin": {
+                "strife": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "move",
+          "label": "Help them move somewhere new.",
+          "text": "",
+          "effects": [
+            {
+              "bp": -1
+            },
+            {
+              "note": "They start over two villages away."
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "scholar-grant",
+      "seat": "magister",
+      "petitioner": "A young scholar",
+      "request": "I want to study the old ruins. I need a grant and a guard.",
+      "responses": [
+        {
+          "id": "fund",
+          "label": "Fund the study.",
+          "text": "",
+          "effects": [
+            {
+              "bp": -2
+            },
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "culture"
+                ],
+                "days": 30
+              }
+            }
+          ]
+        },
+        {
+          "id": "guard",
+          "label": "A guard, but no money.",
+          "text": "",
+          "effects": [
+            {
+              "note": "The scholar goes anyway, poorer."
+            }
+          ]
+        },
+        {
+          "id": "refuse",
+          "label": "The ruins are dangerous.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": -1
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "loan-request",
+      "seat": "treasurer",
+      "petitioner": "A struggling baker",
+      "request": "My oven cracked. If the crown lends me the coin, I'll pay it back with interest.",
+      "responses": [
+        {
+          "id": "lend",
+          "label": "Lend it.",
+          "text": "",
+          "effects": [
+            {
+              "bp": -2
+            },
+            {
+              "income": {
+                "perWeek": 0.5,
+                "weeks": 8
+              }
+            }
+          ]
+        },
+        {
+          "id": "gift",
+          "label": "Give it as a gift.",
+          "text": "",
+          "effects": [
+            {
+              "bp": -2
+            },
+            {
+              "unrest": -1
+            }
+          ]
+        },
+        {
+          "id": "refuse",
+          "label": "The crown isn't a bank.",
+          "text": "",
+          "effects": [
+            {
+              "note": "The baker closes for a month."
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "weights",
+      "seat": "treasurer",
+      "petitioner": "Angry shoppers",
+      "request": "The market's scales are rigged. Every merchant cheats.",
+      "responses": [
+        {
+          "id": "inspect",
+          "label": "Send inspectors to every stall.",
+          "text": "",
+          "effects": [
+            {
+              "bp": -1
+            },
+            {
+              "ruin": {
+                "crime": -1
+              }
+            }
+          ]
+        },
+        {
+          "id": "royal",
+          "label": "Use royal weights only.",
+          "text": "",
+          "effects": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "economy"
+                ],
+                "days": 30
+              }
+            },
+            {
+              "unrest": 1
+            }
+          ]
+        },
+        {
+          "id": "ignore",
+          "label": "Buyer beware.",
+          "text": "",
+          "effects": [
+            {
+              "ruin": {
+                "crime": 1
+              }
+            },
+            {
+              "bp": 1
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "monopoly",
+      "seat": "treasurer",
+      "petitioner": "A wealthy merchant",
+      "request": "Grant me sole rights to sell salt in the realm, and I'll pay handsomely.",
+      "responses": [
+        {
+          "id": "grant",
+          "label": "Grant it.",
+          "text": "",
+          "effects": [
+            {
+              "bpDice": 3
+            },
+            {
+              "unrest": 1
+            },
+            {
+              "ruin": {
+                "corruption": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "refuse",
+          "label": "No monopolies.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": -1
+            }
+          ]
+        },
+        {
+          "id": "license",
+          "label": "Sell licenses to anyone who wants one.",
+          "text": "",
+          "effects": [
+            {
+              "bpDice": 1
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "mill-rights",
+      "seat": "viceroy",
+      "petitioner": "Two millers",
+      "request": "We both want to build on the same stretch of river. Only one mill fits.",
+      "responses": [
+        {
+          "id": "first",
+          "label": "The older family gets it.",
+          "text": "",
+          "effects": [
+            {
+              "note": "Tradition is pleased."
+            }
+          ]
+        },
+        {
+          "id": "second",
+          "label": "The better builder gets it.",
+          "text": "",
+          "effects": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "economy"
+                ],
+                "days": 30
+              }
+            }
+          ]
+        },
+        {
+          "id": "share",
+          "label": "Build one mill and run it together.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": -1
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "field-fence",
+      "seat": "viceroy",
+      "petitioner": "Shepherds and farmers",
+      "request": "The farmers fenced the common pasture. The shepherds want it torn down.",
+      "responses": [
+        {
+          "id": "farmers",
+          "label": "The fences stay.",
+          "text": "",
+          "effects": [
+            {
+              "consumption": -1,
+              "days": 30
+            },
+            {
+              "unrest": 1
+            }
+          ]
+        },
+        {
+          "id": "shepherds",
+          "label": "Tear them down.",
+          "text": "",
+          "effects": [
+            {
+              "ruin": {
+                "strife": -1
+              }
+            }
+          ]
+        },
+        {
+          "id": "both",
+          "label": "Split the pasture.",
+          "text": "",
+          "effects": [
+            {
+              "note": "Nobody is thrilled. Nobody is furious."
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "new-village",
+      "seat": "viceroy",
+      "petitioner": "Settlers at a crossroads",
+      "request": "We want to found a village here. Will the crown recognize it?",
+      "responses": [
+        {
+          "id": "yes",
+          "label": "Recognize it and send tools.",
+          "text": "",
+          "effects": [
+            {
+              "bp": -2
+            },
+            {
+              "gm": "Settlers want to found a village. Consider a new settlement on the map."
+            }
+          ]
+        },
+        {
+          "id": "later",
+          "label": "When it has a well and a wall.",
+          "text": "",
+          "effects": [
+            {
+              "note": "The settlers get to work."
+            }
+          ]
+        },
+        {
+          "id": "no",
+          "label": "Settle in an existing village.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": 1
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "hunting-rights",
+      "seat": "warden",
+      "petitioner": "Village hunters",
+      "request": "The crown's woods are full of deer and our children are hungry. Let us hunt.",
+      "responses": [
+        {
+          "id": "open",
+          "label": "Open the woods.",
+          "text": "",
+          "effects": [
+            {
+              "consumption": -1,
+              "days": 30
+            },
+            {
+              "ruin": {
+                "decay": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "season",
+          "label": "A short season, with limits.",
+          "text": "",
+          "effects": [
+            {
+              "note": "The hunters are grateful."
+            },
+            {
+              "unrest": -1
+            }
+          ]
+        },
+        {
+          "id": "closed",
+          "label": "The woods stay closed.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": 1
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "guide-pay",
+      "seat": "warden",
+      "petitioner": "A frontier guide",
+      "request": "I've led three expeditions for the realm and never been paid.",
+      "responses": [
+        {
+          "id": "pay",
+          "label": "Pay him, and hire him.",
+          "text": "",
+          "effects": [
+            {
+              "bp": -2
+            },
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "stability"
+                ],
+                "days": 30
+              }
+            }
+          ]
+        },
+        {
+          "id": "half",
+          "label": "Pay half; the records are unclear.",
+          "text": "",
+          "effects": [
+            {
+              "bp": -1
+            }
+          ]
+        },
+        {
+          "id": "refuse",
+          "label": "No proof, no pay.",
+          "text": "",
+          "effects": [
+            {
+              "unrest": 1
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "fey-ring",
+      "seat": "warden",
+      "petitioner": "A nervous woodcutter",
+      "request": "There's a fairy ring where we cut timber. Do we cut around it or through it?",
+      "responses": [
+        {
+          "id": "around",
+          "label": "Cut around it.",
+          "text": "",
+          "effects": [
+            {
+              "bpDice": -1
+            },
+            {
+              "note": "The woods feel friendlier."
+            }
+          ]
+        },
+        {
+          "id": "through",
+          "label": "Cut through it.",
+          "text": "",
+          "effects": [
+            {
+              "bpDice": 1
+            },
+            {
+              "spawn": "monster-activity",
+              "days": 30
+            }
+          ]
+        },
+        {
+          "id": "ask",
+          "label": "Ask a druid what it wants.",
+          "text": "",
+          "effects": [
+            {
+              "note": "The druid says to leave milk. They do."
+            },
+            {
+              "unrest": -1
+            }
+          ]
+        }
+      ],
+      "kind": "audience",
+      "deadlineDays": 14,
+      "outcomes": {
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    }
+  ]
+}

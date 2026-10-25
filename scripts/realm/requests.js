@@ -3,6 +3,8 @@ import { getSetting, SETTINGS } from "../settings.js";
 import { acceptRequest, assignCard, canActForSeat, escalateCard, unassignCard } from "./resolve.js";
 import { startProject } from "./projects.js";
 import { repayDebt, tapTreasury } from "./treasury.js";
+import { answerAudience } from "./audiences.js";
+import { fundProposal, proposeProject, rejectProposal, voteProposal } from "./council.js";
 import { chooseRankUp, startRankUp } from "./ranks.js";
 import { getRealm } from "./state.js";
 
@@ -19,6 +21,11 @@ const HANDLERS = {
   accept: acceptRequest,
   startRankUp,
   tapTreasury,
+  answerAudience,
+  proposeProject,
+  voteProposal,
+  fundProposal,
+  rejectProposal,
   repayDebt,
   startProject: (payload) => startProject(payload, { canActForSeat }),
   chooseRankUp
@@ -56,6 +63,7 @@ async function handle(action, payload) {
 function report(result, action) {
   if (result?.ok) {
     if (action === "assign") ui.notifications.info(game.i18n.format("UKM.Request.Assigned", { days: result.days }));
+    if (action === "proposeProject") ui.notifications.info(game.i18n.localize("UKM.Council.Proposed"));
     if (action === "startProject") ui.notifications.info(game.i18n.format("UKM.Project.Started", { cost: result.cost }));
     if (action === "startRankUp") ui.notifications.info(game.i18n.format("UKM.Rank.Started", { days: result.days }));
     return;

@@ -39,6 +39,14 @@
       "DeskMatters": {
         "Name": "Weekly desk matters",
         "Hint": "Each week, a small matter lands on whichever desk has been quietest. The month's major events are drawn as usual."
+      },
+      "Audiences": {
+        "Name": "Monthly audiences",
+        "Hint": "Each month a petitioner comes before one seat holder, who answers in person."
+      },
+      "Council": {
+        "Name": "Council",
+        "Hint": "Projects can be proposed to the council for votes, and a reminder posts at the start of each month."
       }
     },
     "Setup": {
@@ -107,7 +115,8 @@
       "Tab": {
         "Overview": "Realm",
         "Desks": "Desks",
-        "Log": "Chronicle"
+        "Log": "Chronicle",
+        "Council": "Council"
       },
       "Level": "Level",
       "Size": "Size",
@@ -142,13 +151,15 @@
       "AtCap": "at the cap for this level",
       "DrawMatter": "Draw desk matter",
       "MatterDrawn": "New desk matter: {name}.",
-      "MatterNone": "No desk matter fits right now."
+      "MatterNone": "No desk matter fits right now.",
+      "DrawAudience": "Draw audience"
     },
     "Card": {
       "Kind": {
         "problem": "Problem",
         "opportunity": "Opportunity",
-        "project": "Project"
+        "project": "Project",
+        "audience": "Audience"
       },
       "Continuous": "Ongoing",
       "EscalateHint": "Can be taken on by the party as an adventure",
@@ -193,7 +204,12 @@
       "rank-start": "Rank-up begun: {name}.",
       "project-start": "Project started: {name}.",
       "tap": "Treasury tapped by {name}: {amount} gp.",
-      "repay": "{name} repaid {amount} gp."
+      "repay": "{name} repaid {amount} gp.",
+      "audience": "{name}.",
+      "proposal": "Proposed: {name}.",
+      "proposal-funded": "Funded: {name}.",
+      "proposal-rejected": "Rejected: {name}.",
+      "proposal-withdrawn": "Withdrawn: {name}."
     },
     "Seat": {
       "ruler": "Ruler",
@@ -250,7 +266,8 @@
       "AdvisedBy": "advised by {name}",
       "Continues": "This matter isn't over. It returns next month.",
       "GmTasks": "To do: {name}",
-      "RollFailed": "Couldn't roll {name}. Check that the kingdom and skill are set up."
+      "RollFailed": "Couldn't roll {name}. Check that the kingdom and skill are set up.",
+      "Ignored": "Nobody heard them out, and they went home angry."
     },
     "Request": {
       "Assigned": "On it. Expect a result in {days} days.",
@@ -286,7 +303,8 @@
         "InDebt": "Economy can't rank up while the realm is in debt.",
         "NothingOwed": "Nothing is owed.",
         "NotEnoughGold": "That character doesn't have that much gold.",
-        "AdvisorOnly": "Only the advisor can do this one."
+        "AdvisorOnly": "Only the advisor can do this one.",
+        "NotRuler": "Only the Ruler or the GM can do that."
       }
     },
     "Effect": {
@@ -445,6 +463,33 @@
       "Amount": "Gold",
       "Repaid": "{actor} pays {gold} gp back into the treasury. {left} gp still owed.",
       "Cleared": "{actor} pays {gold} gp and clears the realm's debt."
+    },
+    "Audience": {
+      "Name": "Audience: {petitioner}",
+      "Hear": "Hear them",
+      "Answered": "{holder} answers: {answer}."
+    },
+    "Council": {
+      "Intro": "Projects proposed to the council wait here. Everyone can vote; the Ruler decides what gets funded.",
+      "Budget": "Treasury: {bp} BP. Asked for: {asked} BP.",
+      "Empty": "Nothing before the council. Propose a project from a desk's Start project button.",
+      "ProposedBy": "Proposed by {name}",
+      "TooCostly": "the treasury can't cover this",
+      "Fund": "Fund",
+      "Reject": "Reject",
+      "Recent": "Recently decided",
+      "Propose": "Propose to council",
+      "Off": "The council is turned off in the module settings.",
+      "Status": {
+        "open": "Open",
+        "funded": "Funded",
+        "rejected": "Rejected",
+        "withdrawn": "Withdrawn"
+      },
+      "MeetsTitle": "The council meets",
+      "MeetsWaiting": "{count} proposals are waiting, and the treasury holds {bp} BP.",
+      "MeetsEmpty": "Nothing is waiting on the council this month. The treasury holds {bp} BP.",
+      "Proposed": "Proposed to the council."
     }
   }
 }

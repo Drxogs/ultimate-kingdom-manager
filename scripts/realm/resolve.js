@@ -334,7 +334,8 @@ async function postSummary(card, degreeName, ctx, check) {
   const lines = ctx.lines.map((l) => `<li>${l}</li>`).join("");
   const by = check?.personal ? loc("HandledBy", { name: check.name }) : card.assignee?.name ? loc("AdvisedBy", { name: card.assignee.name }) : "";
   const status = card.status === "open" ? `<p class="hint">${loc("Continues")}</p>` : "";
-  const content = `<div class="ukm-chat"><h3>${card.name}</h3><p><strong>${game.i18n.localize(`UKM.Degree.${degreeName}`)}</strong>${by ? ` · ${by}` : ""}</p>${lines ? `<ul>${lines}</ul>` : ""}${status}</div>`;
+  const result = card.kind === "audience" ? loc("Ignored") : game.i18n.localize(`UKM.Degree.${degreeName}`);
+  const content = `<div class="ukm-chat"><h3>${card.name}</h3><p><strong>${result}</strong>${by ? ` · ${by}` : ""}</p>${lines ? `<ul>${lines}</ul>` : ""}${status}</div>`;
   await ChatMessage.create({ content, speaker: { alias: kingdom?.name || game.i18n.localize("UKM.Manager.Unnamed") } });
 
   if (ctx.gmTasks.length) {

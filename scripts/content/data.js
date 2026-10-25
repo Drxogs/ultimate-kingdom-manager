@@ -11,7 +11,7 @@ async function load(name) {
 }
 
 export async function preloadData() {
-  await Promise.all(["events", "matters", "rankups", "projects", "companions", "quests"].map(load));
+  await Promise.all(["events", "matters", "rankups", "projects", "audiences", "companions", "quests"].map(load));
 }
 
 export function getEvents() {
@@ -54,8 +54,20 @@ export function getProject(type) {
   return getProjects().find((p) => p.id === type) ?? null;
 }
 
+export function getAudiences() {
+  return cache.audiences?.audiences ?? [];
+}
+
+export function getAudience(id) {
+  return getAudiences().find((a) => a.id === id) ?? null;
+}
+
 export function getEvent(id) {
   if (typeof id === "string" && id.startsWith("project:")) return getProject(id.slice(8));
+  if (typeof id === "string" && id.startsWith("audience:")) {
+    const a = getAudience(id.slice(9));
+    return a ? { ...a, name: a.petitioner, hook: a.request } : null;
+  }
   return (
     getEvents().find((e) => e.id === id) ??
     getStoryEvents().find((e) => e.id === id) ??

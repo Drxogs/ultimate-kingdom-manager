@@ -10,6 +10,8 @@ import { getRealm, updateRealm } from "../realm/state.js";
 import { finishRankUpNow, rankUpChoices, rankUpCost, rankUpProject } from "../realm/ranks.js";
 import { buildableStructures, projectQuote, projectsForSeat, projectTargets } from "../realm/projects.js";
 import { tapCostBP, tapLimit, tapMode } from "../realm/treasury.js";
+import { audienceResponses, drawAudience } from "../realm/audiences.js";
+import { proposals } from "../realm/council.js";
 import { getProject } from "../content/data.js";
 import { sendRequest } from "../realm/requests.js";
 import {
@@ -122,6 +124,11 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       beginRankUp: KingdomManager.#beginRankUp,
       startProject: KingdomManager.#startProject,
       tapTreasury: KingdomManager.#tapTreasury,
+      hearAudience: KingdomManager.#hearAudience,
+      drawAudience: KingdomManager.#drawAudience,
+      vote: KingdomManager.#vote,
+      fundProposal: KingdomManager.#fundProposal,
+      rejectProposal: KingdomManager.#rejectProposal,
       repayDebt: KingdomManager.#repayDebt,
       chooseRankUp: KingdomManager.#chooseRankUp,
       finishRankUp: KingdomManager.#finishRankUp,
@@ -134,6 +141,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     tabs: { template: "templates/generic/tab-navigation.hbs" },
     overview: { template: `modules/${MODULE_ID}/templates/manager/overview.hbs`, scrollable: [""] },
     desks: { template: `modules/${MODULE_ID}/templates/manager/desks.hbs`, scrollable: [""] },
+    council: { template: `modules/${MODULE_ID}/templates/manager/council.hbs`, scrollable: [""] },
     log: { template: `modules/${MODULE_ID}/templates/manager/log.hbs`, scrollable: [""] }
   };
 
@@ -142,6 +150,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       tabs: [
         { id: "overview", icon: "fa-solid fa-landmark", label: "UKM.Manager.Tab.Overview" },
         { id: "desks", icon: "fa-solid fa-inbox", label: "UKM.Manager.Tab.Desks" },
+        { id: "council", icon: "fa-solid fa-landmark-dome", label: "UKM.Manager.Tab.Council" },
         { id: "log", icon: "fa-solid fa-scroll", label: "UKM.Manager.Tab.Log" }
       ],
       initial: "desks"
@@ -195,6 +204,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       };
     });
     context.desks = this.#prepareDesks(realm, kingdom);
+    context.council = this.#prepareCouncil(realm);
     context.gmTasks = game.user.isGM
       ? realm.gmTasks
           .slice()
@@ -262,9 +272,11 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             workDays: card.workUntil ? Math.max(0, daysUntil(card.workUntil, now)) : null,
             assigneeName: card.assignee?.name ?? null,
             assigneePersonal: card.assignee?.type === "pc",
-            canDelegate: open && canAct && !!holderName && !advisorBusy,
+            canDelegate: open && canAct && !!holderName && !advisorBusy && card.kind !== "audience",
             advisorBusy: open && !!advisorBusy,
-            canHandle: open && canAct && !event?.advisorOnly,
+            canHandle: open && canAct && !event?.advisorOnly && card.kind !== "audience",
+            isAudience: card.kind === "audience",
+            canHear: open && canAct && card.kind === "audience",
             canUnassign: card.status === "assigned" && canAct,
             canEscalate: open && canAct && !!event?.escalate,
             outcomes: outcomePreview(card),
@@ -432,23 +444,91 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         ? `<input type="hidden" name="target" value="0"><p>${quoteText(projectQuote(def, targets[0]))}</p>`
         : `<div class="form-group"><label>${game.i18n.localize(def.target === "settlement" ? "UKM.Project.Where" : "UKM.Project.Hex")}</label><select name="target">${targetOptions}</select></div>`}
       ${structureField}${campField}<p class="hint">${game.i18n.format("UKM.Project.Treasury", { bp: getRealm().treasury })}</p>`;
-    const choice = await DialogV2.prompt({
-      window: { title: def.name },
+    const read = (mode) => (event, button) => ({
+      mode,
+      target: button.form.elements.target.value,
+      structure: button.form.elements.structure?.value ?? null,
+      camp: button.form.elements.camp?.value ?? null
+    });
+    const buttons = [{ action: "start", label: game.i18n.localize("UKM.Project.Start"), icon: "fa-solid fa-hammer", default: true, callback: read("start") }];
+    if (getSetting(SETTINGS.council)) buttons.push({ action: "propose", label: game.i18n.localize("UKM.Council.Propose"), icon: "fa-solid fa-landmark-dome", callback: read("propose") });
+    const choice = await DialogV2.wait({ window: { title: def.name }, position: { width: 520 }, content, buttons, rejectClose: false });
+    if (!choice?.mode) return;
+    const picked = targets[Number(choice.target)];
+    const request = { type: def.id, hexKey: picked.hexKey, structure: choice.structure, camp: choice.camp };
+    await sendRequest(choice.mode === "propose" ? "proposeProject" : "startProject", request);
+  }
+
+  #prepareCouncil(realm) {
+    const isRuler = game.user.isGM || canActForSeat(game.user, "ruler");
+    const all = proposals(realm);
+    const view = (p) => {
+      const yes = Object.values(p.votes).filter((v) => v > 0).length;
+      const no = Object.values(p.votes).filter((v) => v < 0).length;
+      return {
+        ...p,
+        seatLabel: game.i18n.localize(`UKM.Seat.${p.seat}`),
+        yes,
+        no,
+        myVote: p.votes[game.user.id] ?? 0,
+        affordable: realm.treasury >= p.cost,
+        canFund: isRuler && p.status === "open",
+        canReject: p.status === "open" && (isRuler || p.by === game.user.id),
+        statusLabel: game.i18n.localize(`UKM.Council.Status.${p.status}`)
+      };
+    };
+    const open = all.filter((p) => p.status === "open").map(view);
+    return {
+      enabled: getSetting(SETTINGS.council),
+      open,
+      empty: !open.length,
+      recent: all.filter((p) => p.status !== "open").slice(-10).reverse().map(view),
+      treasury: realm.treasury,
+      asked: open.reduce((sum, p) => sum + p.cost, 0),
+      isRuler
+    };
+  }
+
+  static async #hearAudience(event, target) {
+    const card = findCard(target);
+    const data = card ? audienceResponses(card) : null;
+    if (!data) return;
+    const esc = Handlebars.escapeExpression;
+    const content = `<div class="ukm-scene"><p><strong>${esc(data.petitioner)}</strong></p><p class="ukm-scene-text">"${esc(data.request)}"</p><ul class="ukm-scene-options">${data.responses
+      .map((r) => `<li><strong>${esc(r.label)}</strong>${r.lines.length ? `<br><span class="hint">${r.lines.map(esc).join("; ")}</span>` : ""}</li>`)
+      .join("")}</ul></div>`;
+    const response = await DialogV2.wait({
+      window: { title: card.name },
       position: { width: 520 },
       content,
-      ok: {
-        label: game.i18n.localize("UKM.Project.Start"),
-        callback: (event, button) => ({
-          target: button.form.elements.target.value,
-          structure: button.form.elements.structure?.value ?? null,
-          camp: button.form.elements.camp?.value ?? null
-        })
-      },
+      buttons: data.responses.map((r) => ({ action: r.id, label: r.label })),
       rejectClose: false
     });
-    if (!choice) return;
-    const picked = targets[Number(choice.target)];
-    await sendRequest("startProject", { type: def.id, hexKey: picked.hexKey, structure: choice.structure, camp: choice.camp });
+    if (response) await sendRequest("answerAudience", { cardId: card.id, response });
+  }
+
+  static async #drawAudience() {
+    if (!game.user.isActiveGM) return;
+    let card = null;
+    await updateRealm((realm) => {
+      card = drawAudience(realm);
+    });
+    ui.notifications.info(card ? game.i18n.format("UKM.Manager.MatterDrawn", { name: card.name }) : game.i18n.localize("UKM.Manager.MatterNone"));
+  }
+
+  static async #vote(event, target) {
+    const proposalId = target.closest("[data-proposal]")?.dataset.proposal;
+    if (proposalId) await sendRequest("voteProposal", { proposalId, vote: Number(target.dataset.vote) });
+  }
+
+  static async #fundProposal(event, target) {
+    const proposalId = target.closest("[data-proposal]")?.dataset.proposal;
+    if (proposalId) await sendRequest("fundProposal", { proposalId });
+  }
+
+  static async #rejectProposal(event, target) {
+    const proposalId = target.closest("[data-proposal]")?.dataset.proposal;
+    if (proposalId) await sendRequest("rejectProposal", { proposalId });
   }
 
   static #characterOptions() {

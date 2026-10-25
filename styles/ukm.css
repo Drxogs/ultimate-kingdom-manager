@@ -271,3 +271,10 @@
 .ukm-manager .ukm-desk-action { flex: 0 0 auto; width: auto; height: 1.7rem; padding: 0 0.5rem; font-size: var(--font-size-12, 12px); margin-left: auto; }
 .ukm-manager .ukm-card.project { border-left-color: var(--ukm-gold); }
 .ukm .ukm-tag.project { border-color: var(--ukm-gold); color: var(--ukm-gold); }
+
+.ukm-manager .ukm-proposals { list-style: none; margin: 0.4rem 0; padding: 0; display: grid; gap: 0.4rem; }
+.ukm-manager .ukm-proposal { padding: 0.35rem 0.45rem; border-left: 3px solid var(--ukm-gold); background: rgba(0, 0, 0, 0.04); }
+.ukm-manager .ukm-proposal.poor { opacity: 0.75; }
+.ukm-manager .ukm-proposal button.active { box-shadow: 0 0 0 2px var(--ukm-gold) inset; }
+.ukm-manager .ukm-card.audience { border-left-color: #5b6ea8; }
+.ukm .ukm-tag.audience { border-color: #5b6ea8; color: #5b6ea8; }

@@ -16,7 +16,9 @@ export const SETTINGS = {
   clock: "clock",
   seatAssignments: "seatAssignments",
   deskMatters: "deskMatters",
-  structureCatalog: "structureCatalog"
+  structureCatalog: "structureCatalog",
+  audiences: "audiences",
+  council: "council"
 };
 
 export function registerSettings() {
@@ -50,6 +52,22 @@ export function registerSettings() {
       auto: "UKM.Settings.Approval.Auto"
     },
     default: "review"
+  });
+
+  world(SETTINGS.council, {
+    name: "UKM.Settings.Council.Name",
+    hint: "UKM.Settings.Council.Hint",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  world(SETTINGS.audiences, {
+    name: "UKM.Settings.Audiences.Name",
+    hint: "UKM.Settings.Audiences.Hint",
+    config: true,
+    type: Boolean,
+    default: true
   });
 
   world(SETTINGS.deskMatters, {
