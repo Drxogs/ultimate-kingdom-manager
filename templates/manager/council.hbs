@@ -13,7 +13,7 @@
             <div class="ukm-card-head">
               <strong>{{name}}</strong>
               <span class="ukm-tag">{{seatLabel}}</span>
-              <span class="ukm-tag">{{cost}} BP · {{localize "UKM.Card.DaysLeft" days=days}}</span>
+              <span class="ukm-tag">{{localize "UKM.Project.Quote" cost=cost days=days}}</span>
             </div>
             <p class="hint">{{localize "UKM.Council.ProposedBy" name=byName}}{{#unless affordable}} · <span class="ukm-urgent">{{localize "UKM.Council.TooCostly"}}</span>{{/unless}}</p>
             <div class="ukm-card-actions">

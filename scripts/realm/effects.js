@@ -22,7 +22,7 @@ export async function rollAmount(value) {
 }
 
 function formatAmount(value) {
-  if (typeof value === "number") return value > 0 ? `+${value}` : `${value}`;
+  if (typeof value === "number") return value > 0 ? `+${value}` : value < 0 ? `−${Math.abs(value)}` : "0";
   return value.startsWith("-") ? `−${value.slice(1)}` : `+${value}`;
 }
 

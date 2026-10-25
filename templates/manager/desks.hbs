@@ -27,7 +27,7 @@
               </div>
               <p class="ukm-hook">{{hook}}</p>
               <div class="ukm-card-meta">
-                <span><i class="fa-solid fa-dice-d20"></i> {{skill}} ({{ukmSigned mod}})</span>
+                {{#unless isAudience}}<span><i class="fa-solid fa-dice-d20"></i> {{skill}} ({{ukmSigned mod}})</span>{{/unless}}
                 {{#if place}}<span><i class="fa-solid fa-location-dot"></i> {{place}}</span>{{/if}}
                 {{#if isEscalated}}
                   <span><i class="fa-solid fa-dragon"></i> {{localize "UKM.Card.WithParty"}}</span>
