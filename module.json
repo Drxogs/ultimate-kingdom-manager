@@ -1,0 +1,55 @@
+{
+  "id": "ultimate-kingdom-manager",
+  "title": "Ultimate Kingdom Manager",
+  "description": "Advisor-driven kingdom management for the Kingmaker Adventure Path in Pathfinder Second Edition. Events and projects arrive on a living calendar, each leader runs their own desk, and the kingdom grows alongside the party.",
+  "version": "0.1.0",
+  "authors": [
+    {
+      "name": "Drxogs"
+    }
+  ],
+  "compatibility": {
+    "minimum": "13",
+    "verified": "14"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "pf2e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "7.0.0",
+          "verified": "8.6.1"
+        }
+      }
+    ],
+    "recommends": [
+      {
+        "id": "pf2e-kingmaker",
+        "type": "module",
+        "reason": "Region map, hex data and adventure text for the story import."
+      },
+      {
+        "id": "socketlib",
+        "type": "module",
+        "reason": "Lets players act on their desks while the GM is connected."
+      }
+    ]
+  },
+  "esmodules": [
+    "scripts/module.js"
+  ],
+  "styles": [
+    "styles/ukm.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "socket": true,
+  "license": "LICENSE",
+  "readme": "README.md"
+}

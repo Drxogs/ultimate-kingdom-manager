@@ -1,0 +1,206 @@
+.ukm {
+  --ukm-ink: #2b2118;
+  --ukm-muted: #6b5a48;
+  --ukm-line: #c9b28f;
+  --ukm-paper: #f4ead8;
+  --ukm-gold: #b7862b;
+  --ukm-red: #a8322b;
+  --ukm-green: #3f7a3a;
+}
+
+.ukm .hint {
+  color: var(--ukm-muted);
+  font-size: var(--font-size-12, 12px);
+}
+
+.ukm .ukm-notice {
+  border-left: 3px solid var(--ukm-gold);
+  padding: 0.4rem 0.6rem;
+  background: rgba(183, 134, 43, 0.12);
+}
+
+.ukm .ukm-tag {
+  display: inline-block;
+  padding: 0 0.4em;
+  border: 1px solid var(--ukm-line);
+  border-radius: 3px;
+  font-size: var(--font-size-11, 11px);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.ukm .ukm-tag.problem { border-color: var(--ukm-red); color: var(--ukm-red); }
+.ukm .ukm-tag.opportunity { border-color: var(--ukm-green); color: var(--ukm-green); }
+
+.ukm .ukm-bar {
+  position: relative;
+  height: 8px;
+  border: 1px solid var(--ukm-line);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.ukm .ukm-bar.small { height: 5px; }
+
+.ukm .ukm-bar > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, #8a6420, var(--ukm-gold));
+}
+
+/* Setup and import */
+
+.ukm-setup .ukm-checklist,
+.ukm-import .ukm-checklist {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+}
+
+.ukm .ukm-checklist li { margin: 0.2rem 0; }
+.ukm .ukm-checklist li.ok i { color: var(--ukm-green); }
+.ukm .ukm-checklist li.warn i { color: var(--ukm-gold); }
+.ukm .ukm-checklist a { margin-left: 0.4rem; text-decoration: underline; cursor: pointer; }
+
+.ukm-setup section + section { margin-top: 0.75rem; }
+
+.ukm-setup .ukm-seats { width: 100%; border-collapse: collapse; }
+.ukm-setup .ukm-seats th { text-align: left; font-weight: 600; }
+.ukm-setup .ukm-seats td,
+.ukm-setup .ukm-seats th { padding: 0.2rem 0.3rem; }
+.ukm-setup .ukm-seats select { width: 100%; }
+
+.ukm-import .ukm-summary { columns: 2; }
+
+/* Manager */
+
+.ukm-manager .window-content { padding: 0.5rem 0.75rem; }
+
+.ukm-manager .ukm-realm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  border-bottom: 2px solid var(--ukm-line);
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.ukm-manager .ukm-realm-name h2 { margin: 0; border: none; }
+
+.ukm-manager .ukm-treasury {
+  display: grid;
+  justify-items: end;
+}
+
+.ukm-manager .ukm-bp {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ukm-gold);
+}
+
+.ukm-manager .ukm-debt { color: var(--ukm-red); font-weight: 600; }
+
+.ukm-manager .ukm-pressure {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.ukm-manager .ukm-meter {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.35rem 0.45rem;
+  border: 1px solid var(--ukm-line);
+  border-radius: 4px;
+}
+
+.ukm-manager .ukm-meter label { font-size: var(--font-size-11, 11px); text-transform: uppercase; letter-spacing: 0.04em; }
+.ukm-manager .ukm-meter .ukm-value { font-weight: 600; }
+
+.ukm-manager .ukm-stats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.ukm-manager .ukm-stat {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--ukm-line);
+  border-radius: 4px;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.ukm-manager .ukm-stat.ready { border-color: var(--ukm-gold); box-shadow: 0 0 4px rgba(183, 134, 43, 0.6); }
+.ukm-manager .ukm-stat-head { display: flex; justify-content: space-between; gap: 0.5rem; }
+.ukm-manager .ukm-stat-rank { display: flex; gap: 0.4rem; align-items: center; }
+
+.ukm-manager .ukm-gm-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--ukm-line);
+}
+
+.ukm-manager .ukm-gm-tools button { flex: 1 1 auto; }
+
+.ukm-manager .ukm-desks {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+}
+
+.ukm-manager .ukm-desk {
+  border: 1px solid var(--ukm-line);
+  border-radius: 4px;
+  padding: 0.4rem 0.5rem;
+}
+
+.ukm-manager .ukm-desk.mine { border-color: var(--ukm-gold); border-width: 2px; }
+.ukm-manager .ukm-desk header { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+.ukm-manager .ukm-desk h3 { margin: 0; border: none; }
+.ukm-manager .ukm-empty { margin: 0.4rem 0 0; }
+
+.ukm-manager .ukm-cards { list-style: none; margin: 0.4rem 0 0; padding: 0; display: grid; gap: 0.4rem; }
+
+.ukm-manager .ukm-card {
+  position: relative;
+  padding: 0.35rem 0.45rem;
+  border-left: 3px solid var(--ukm-line);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.ukm-manager .ukm-card.problem { border-left-color: var(--ukm-red); }
+.ukm-manager .ukm-card.opportunity { border-left-color: var(--ukm-green); }
+.ukm-manager .ukm-card-head { display: flex; flex-wrap: wrap; gap: 0.3rem; align-items: center; padding-right: 3.5rem; }
+.ukm-manager .ukm-hook { margin: 0.2rem 0; font-style: italic; }
+.ukm-manager .ukm-card-meta { display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: var(--font-size-12, 12px); }
+.ukm-manager .ukm-urgent { color: var(--ukm-red); font-weight: 600; }
+
+.ukm-manager .ukm-card-actions {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  display: flex;
+  gap: 0.2rem;
+}
+
+.ukm-manager .ukm-card-actions button {
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 0;
+  line-height: 1;
+}
+
+.ukm-manager .ukm-log-list { list-style: none; margin: 0; padding: 0; }
+.ukm-manager .ukm-log-list li { display: grid; grid-template-columns: 11rem 1fr; gap: 0.5rem; padding: 0.15rem 0; border-bottom: 1px dotted var(--ukm-line); }
+.ukm-manager .ukm-log-list time { color: var(--ukm-muted); font-size: var(--font-size-12, 12px); }

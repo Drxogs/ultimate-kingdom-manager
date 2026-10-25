@@ -1,0 +1,68 @@
+<section class="tab ukm-overview {{tab.cssClass}}" data-tab="overview" data-group="primary">
+  {{#unless kingdomActive}}
+    <p class="ukm-notice">{{localize "UKM.Manager.NoKingdom"}}</p>
+  {{/unless}}
+
+  <header class="ukm-realm-header">
+    <div class="ukm-realm-name">
+      <h2>{{kingdom.name}}</h2>
+      <span>{{localize "UKM.Manager.Level"}} {{kingdom.level}} · {{localize "UKM.Manager.Size"}} {{kingdom.size}} · {{localize "UKM.Manager.ControlDC"}} {{kingdom.controlDC}}</span>
+    </div>
+    <div class="ukm-treasury">
+      <span class="ukm-bp">{{treasury}}</span>
+      <label>{{localize "UKM.Manager.Treasury"}}</label>
+      <span class="hint" data-tooltip="{{localize "UKM.Manager.IncomeBreakdown" base=income.base worksites=income.worksites ranks=income.ranks trade=income.trade}}">
+        {{ukmSigned income.total}} {{localize "UKM.Manager.PerWeek"}}
+      </span>
+      {{#if debt.amount}}<span class="ukm-debt">{{localize "UKM.Manager.InDebt"}}</span>{{/if}}
+    </div>
+  </header>
+
+  <div class="ukm-pressure">
+    <div class="ukm-meter">
+      <label>{{localize "UKM.Manager.Unrest"}}</label>
+      <span class="ukm-value">{{kingdom.unrest}}</span>
+    </div>
+    <div class="ukm-meter">
+      <label>{{localize "UKM.Manager.Fame"}}</label>
+      <span class="ukm-value">{{kingdom.fame.value}} / {{kingdom.fame.max}}</span>
+    </div>
+    {{#each kingdom.ruin}}
+      <div class="ukm-meter ukm-ruin">
+        <label>{{label}}</label>
+        <div class="ukm-bar small"><span style="width: {{percent}}%"></span></div>
+        <span class="ukm-value">{{value}} / {{max}}{{#if penalty}} (−{{penalty}}){{/if}}</span>
+      </div>
+    {{/each}}
+  </div>
+
+  <h3>{{localize "UKM.Manager.RealmStats"}}</h3>
+  <ol class="ukm-stats">
+    {{#each stats}}
+      <li class="ukm-stat {{#if ready}}ready{{/if}}">
+        <div class="ukm-stat-head">
+          <strong>{{label}}</strong>
+          <span class="hint">{{seat}} · {{skills}}</span>
+        </div>
+        <div class="ukm-stat-rank">
+          <span>{{localize "UKM.Manager.Rank"}} {{rank}}</span>
+          {{#if bonus}}<span class="ukm-tag">{{ukmSigned bonus}}</span>{{/if}}
+        </div>
+        <div class="ukm-bar"><span style="width: {{progress.percent}}%"></span></div>
+        <span class="hint">{{progress.value}} / {{progress.max}}{{#if ready}} · {{localize "UKM.Manager.RankReady"}}{{/if}}</span>
+      </li>
+    {{/each}}
+  </ol>
+
+  {{#if isGM}}
+    <footer class="ukm-gm-tools">
+      <button type="button" data-action="openSetup"><i class="fa-solid fa-gear"></i> {{localize "UKM.Manager.Setup"}}</button>
+      <button type="button" data-action="openImport"><i class="fa-solid fa-book-open"></i> {{#if storyImported}}{{localize "UKM.Setup.Reimport"}}{{else}}{{localize "UKM.Setup.Import"}}{{/if}}</button>
+      <button type="button" data-action="toggleBetweenSessions">
+        <i class="fa-solid {{#if betweenSessions}}fa-door-open{{else}}fa-door-closed{{/if}}"></i>
+        {{#if betweenSessions}}{{localize "UKM.Manager.BetweenOn"}}{{else}}{{localize "UKM.Manager.BetweenOff"}}{{/if}}
+      </button>
+      <button type="button" data-action="drawEvents"><i class="fa-solid fa-layer-group"></i> {{localize "UKM.Manager.DrawNow"}}</button>
+    </footer>
+  {{/if}}
+</section>

@@ -1,0 +1,14 @@
+<section class="tab ukm-log {{tab.cssClass}}" data-tab="log" data-group="primary">
+  {{#if log.length}}
+    <ol class="ukm-log-list">
+      {{#each log}}
+        <li class="{{type}}">
+          <time>{{date}}</time>
+          <span>{{text}}</span>
+        </li>
+      {{/each}}
+    </ol>
+  {{else}}
+    <p class="hint">{{localize "UKM.Manager.LogEmpty"}}</p>
+  {{/if}}
+</section>

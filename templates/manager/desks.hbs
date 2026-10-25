@@ -1,0 +1,39 @@
+<section class="tab ukm-desks {{tab.cssClass}}" data-tab="desks" data-group="primary">
+  {{#each desks}}
+    <article class="ukm-desk {{#if mine}}mine{{/if}}">
+      <header>
+        <h3>{{label}}</h3>
+        <span class="ukm-holder">
+          {{#if holder}}{{holder}}{{#if isCompanion}} <span class="ukm-tag">{{localize "UKM.Manager.Advisor"}}</span>{{/if}}{{else}}<em>{{localize "UKM.Manager.Vacant"}}</em>{{/if}}
+          {{#if supervisor}}<span class="hint"> · {{localize "UKM.Manager.SupervisedBy" name=supervisor}}</span>{{/if}}
+        </span>
+      </header>
+      {{#if empty}}
+        <p class="hint ukm-empty">{{localize "UKM.Manager.DeskEmpty"}}</p>
+      {{else}}
+        <ul class="ukm-cards">
+          {{#each cards}}
+            <li class="ukm-card {{kind}} {{#if urgent}}urgent{{/if}}" data-card="{{id}}">
+              <div class="ukm-card-head">
+                <strong>{{name}}</strong>
+                <span class="ukm-tag {{kind}}">{{localize (concat "UKM.Card.Kind." kind)}}</span>
+                {{#if continuous}}<span class="ukm-tag">{{localize "UKM.Card.Continuous"}}</span>{{/if}}
+                {{#if escalate}}<span class="ukm-tag" data-tooltip="{{localize "UKM.Card.EscalateHint"}}"><i class="fa-solid fa-dragon"></i></span>{{/if}}
+              </div>
+              <p class="ukm-hook">{{hook}}</p>
+              <div class="ukm-card-meta">
+                <span><i class="fa-solid fa-dice-d20"></i> {{skill}} ({{ukmSigned mod}})</span>
+                {{#if place}}<span><i class="fa-solid fa-location-dot"></i> {{place}}</span>{{/if}}
+                <span class="{{#if urgent}}ukm-urgent{{/if}}"><i class="fa-solid fa-hourglass-half"></i> {{localize "UKM.Card.DaysLeft" days=daysLeft}}</span>
+              </div>
+              <div class="ukm-card-actions">
+                {{#if canFocus}}<button type="button" data-action="focusHex" data-tooltip="{{localize "UKM.Card.Focus"}}"><i class="fa-solid fa-map-location-dot"></i></button>{{/if}}
+                {{#if hasPage}}<button type="button" data-action="openCard" data-tooltip="{{localize "UKM.Card.Read"}}"><i class="fa-solid fa-book"></i></button>{{/if}}
+              </div>
+            </li>
+          {{/each}}
+        </ul>
+      {{/if}}
+    </article>
+  {{/each}}
+</section>

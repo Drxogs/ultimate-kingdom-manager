@@ -1,0 +1,182 @@
+{
+  "UKM": {
+    "Settings": {
+      "Setup": {
+        "Name": "Kingdom Setup",
+        "Label": "Open Setup",
+        "Hint": "Seats, advisors, table options and the story import."
+      },
+      "BetweenSessions": {
+        "Name": "Desks open between sessions",
+        "Hint": "Players can manage their desks whenever the world is running. Requests made while the GM is away wait for the GM."
+      },
+      "Approval": {
+        "Name": "Requests made between sessions",
+        "Hint": "What happens to player requests made while no GM is connected.",
+        "Review": "GM reviews them first",
+        "Auto": "Apply them automatically"
+      },
+      "TapTreasury": {
+        "Name": "Tap Treasury",
+        "Hint": "The only way to turn kingdom funds into gold. It creates a debt, adds Corruption and Unrest, and is logged by name.",
+        "Approval": "Allowed with GM approval",
+        "Allowed": "Allowed",
+        "Disabled": "Disabled"
+      },
+      "AdvisorWarnings": {
+        "Name": "Advisor warnings",
+        "Hint": "How plainly advisors warn the party away from regions far above their level.",
+        "Off": "Off",
+        "Subtle": "Rumors",
+        "Blunt": "Plain warnings"
+      },
+      "PinResolved": {
+        "Name": "Resolved event pins",
+        "Hint": "What happens to a map pin once its event is over.",
+        "Remove": "Remove it",
+        "Keep": "Keep a small marker"
+      }
+    },
+    "Setup": {
+      "Title": "Kingdom Setup",
+      "Status": "Before you begin",
+      "KingmakerModule": "Pathfinder: Kingmaker module is active",
+      "AdventureImported": "Adventure has been imported into this world",
+      "KingdomActive": "Kingdom has been founded on the party sheet",
+      "OpenPartySheet": "Open party sheet",
+      "StoryImported": "Story content imported",
+      "Import": "Import now",
+      "Reimport": "Re-import",
+      "Table": "Your table",
+      "Seats": "Leadership seats",
+      "SeatsHint": "Give each seat a holder: a player character, an NPC actor, or a companion advisor. Seats held by advisors need a player to supervise them, so every desk has someone at the table looking after it.",
+      "SeatsNeedKingdom": "Seat holders are saved to the PF2e kingdom, so found the kingdom first. Companion and supervisor choices are saved either way.",
+      "Seat": "Seat",
+      "Holder": "Holder",
+      "Companion": "Advisor",
+      "Supervisor": "Supervised by",
+      "None": "—",
+      "Save": "Save",
+      "Saved": "Kingdom setup saved."
+    },
+    "Import": {
+      "Title": "Import Story Content",
+      "Intro": "Copy regions, locations, kingdom events, quests, characters and structures from the Kingmaker adventure into GM-only journals in this world. This only needs doing once; the originals are not changed.",
+      "Reimport": "Content was imported before. Pages you have edited since then will be left as they are.",
+      "NotReady": "The Kingmaker module must be active and its adventure imported into this world.",
+      "Start": "Import",
+      "Later": "Remind me tomorrow",
+      "Running": "Importing…",
+      "Done": "Import complete",
+      "Counts": "{created} pages created, {updated} updated, {skipped} kept because you edited them.",
+      "Missing": "{count} entries could not be found",
+      "Close": "Done",
+      "Failed": "The story import failed. See the console for details.",
+      "Category": {
+        "regions": "Regions",
+        "locations": "Locations",
+        "events": "Kingdom events",
+        "quests": "Quests",
+        "characters": "Characters",
+        "structures": "Structures"
+      }
+    },
+    "Manager": {
+      "Title": "Ultimate Kingdom Manager",
+      "Open": "Kingdom Manager",
+      "Short": "Kingdom",
+      "Unnamed": "Unnamed Kingdom",
+      "NoKingdom": "No kingdom has been founded yet. Found it from the Kingdom tab of the party sheet.",
+      "Tab": {
+        "Overview": "Realm",
+        "Desks": "Desks",
+        "Log": "Chronicle"
+      },
+      "Level": "Level",
+      "Size": "Size",
+      "ControlDC": "Control DC",
+      "Treasury": "Treasury (BP)",
+      "PerWeek": "per week",
+      "IncomeBreakdown": "Base {base} · Work sites {worksites} · Ranks {ranks} · Trade {trade}",
+      "InDebt": "Treasury in debt",
+      "Unrest": "Unrest",
+      "Fame": "Fame",
+      "RealmStats": "Realm",
+      "Rank": "Rank",
+      "RankReady": "ready to rank up",
+      "Setup": "Setup",
+      "BetweenOn": "Desks open between sessions",
+      "BetweenOff": "Desks closed between sessions",
+      "DrawNow": "Draw events now",
+      "Drawn": "{count} new events have arrived.",
+      "Advisor": "advisor",
+      "Vacant": "Vacant",
+      "SupervisedBy": "supervised by {name}",
+      "DeskEmpty": "Nothing waiting on this desk.",
+      "Unknown": "Location unknown",
+      "LogEmpty": "Nothing has happened yet."
+    },
+    "Card": {
+      "Kind": {
+        "problem": "Problem",
+        "opportunity": "Opportunity"
+      },
+      "Continuous": "Ongoing",
+      "EscalateHint": "Can be taken on by the party as an adventure",
+      "DaysLeft": "{days} days left",
+      "Focus": "Show on map",
+      "Read": "Read event"
+    },
+    "Log": {
+      "income": "Treasury collected {amount} BP.",
+      "food": "Food upkeep cost {amount} BP.",
+      "food-shortfall": "The treasury could not cover food upkeep. Unrest rises.",
+      "event-drawn": "New event: {name}.",
+      "card-expired": "{name} was left unattended."
+    },
+    "Seat": {
+      "ruler": "Ruler",
+      "counselor": "Counselor",
+      "general": "General",
+      "emissary": "Emissary",
+      "magister": "Magister",
+      "treasurer": "Treasurer",
+      "viceroy": "Viceroy",
+      "warden": "Warden"
+    },
+    "Stat": {
+      "loyalty": "Loyalty",
+      "culture": "Culture",
+      "military": "Military",
+      "relations": "Relations",
+      "arcane": "Arcane",
+      "economy": "Economy",
+      "community": "Community",
+      "stability": "Stability"
+    },
+    "Skill": {
+      "agriculture": "Agriculture",
+      "arts": "Arts",
+      "boating": "Boating",
+      "defense": "Defense",
+      "engineering": "Engineering",
+      "exploration": "Exploration",
+      "folklore": "Folklore",
+      "industry": "Industry",
+      "intrigue": "Intrigue",
+      "magic": "Magic",
+      "politics": "Politics",
+      "scholarship": "Scholarship",
+      "statecraft": "Statecraft",
+      "trade": "Trade",
+      "warfare": "Warfare",
+      "wilderness": "Wilderness"
+    },
+    "Ruin": {
+      "corruption": "Corruption",
+      "crime": "Crime",
+      "decay": "Decay",
+      "strife": "Strife"
+    }
+  }
+}

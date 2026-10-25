@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "companions": [
+    {
+      "id": "amiri", "name": "Amiri", "seats": ["warden"],
+      "joins": { "influence": 0 },
+      "unlocks": { "structures": ["gladiatorial-arena"] },
+      "eventBonus": [{ "event": "monster-activity", "type": "circumstance", "value": 2 }],
+      "storyEvents": ["monster-hunt", "barbarian-immigrants"]
+    },
+    {
+      "id": "ekundayo", "name": "Ekundayo", "seats": ["general", "warden"],
+      "joins": { "attitude": "helpful" },
+      "signature": {
+        "id": "supplementary-hunting", "name": "Supplementary Hunting", "skill": "wilderness", "category": "region",
+        "outcomes": {
+          "criticalSuccess": [{ "food": "1d4" }, { "luxuries": 1 }, { "bpDice": 1 }],
+          "success": [{ "choose": { "n": 1, "from": [[{ "food": "1d4" }], [{ "luxuries": 1 }], [{ "bpDice": 1 }]] } }],
+          "failure": [{ "cooldownDays": 30 }],
+          "criticalFailure": [{ "cooldownDays": 30 }, { "choose": { "n": 1, "from": [[{ "unrest": "1d4" }], [{ "ruin": { "choice": 1 } }]] } }]
+        }
+      },
+      "influence8": [{ "constructionDc": { "lumberCost": true, "value": -2 } }]
+    },
+    {
+      "id": "jubilost", "name": "Jubilost", "seats": ["treasurer"],
+      "joins": { "onFounding": true },
+      "signature": {
+        "id": "process-hidden-fees", "name": "Process Hidden Fees", "skill": "trade", "requiresSeat": "treasurer",
+        "outcomes": {
+          "criticalSuccess": [{ "bpDice": 2 }],
+          "success": [{ "bpDice": 1 }, { "nextAttemptDegree": -1 }],
+          "failure": [{ "bpDice": 1 }, { "unrest": 1 }, { "cooldownDays": 30 }],
+          "criticalFailure": [{ "bpDice": 1 }, { "unrest": "1d6" }, { "cooldownDays": 30 }]
+        }
+      },
+      "influence8": [{ "freeStructure": "alchemy-laboratory" }]
+    },
+    {
+      "id": "linzi", "name": "Linzi", "seats": ["counselor"],
+      "joins": { "onFounding": true },
+      "signature": {
+        "id": "spread-the-legend", "name": "Spread the Legend", "skill": "arts",
+        "itemBonus": { "ifFlag": "printing-press", "value": 2 },
+        "outcomes": {
+          "criticalSuccess": [{ "unrest": "-1d6" }, { "fame": 1 }, { "nextDangerousEventMod": -1 }],
+          "success": [{ "unrest": "-1d6" }],
+          "failure": [{ "unrest": -1 }],
+          "criticalFailure": [{ "unrest": "1d4" }]
+        }
+      },
+      "storyEvents": ["the-local-paper"]
+    },
+    {
+      "id": "nok-nok", "name": "Nok-Nok", "seats": ["emissary"], "anySeat": true,
+      "joins": { "influence": 8 },
+      "signature": {
+        "id": "recruit-monsters", "name": "Recruit Monsters", "skill": "intrigue", "category": "region",
+        "requires": { "skillRank": { "intrigue": 1 } },
+        "capacity": { "base": 1, "master": 2, "legendary": 3 },
+        "usableOn": ["bandit-activity", "monster-activity", "sacrifices", "undead-uprising"],
+        "outcomes": {
+          "criticalSuccess": [{ "bankMonster": true }],
+          "success": [{ "nextAttemptDegree": 1 }],
+          "failure": [{ "loseProgress": true }],
+          "criticalFailure": [{ "spawn": "monster-activity", "days": 30 }]
+        }
+      },
+      "onAppoint": [{ "if": { "fame": "famous" }, "then": [{ "spawn": "goblin-backlash" }] }]
+    },
+    {
+      "id": "tristian", "name": "Tristian", "seats": ["magister"],
+      "joins": { "famous": { "influence": 0 }, "infamous": { "influence": 8 } },
+      "signature": {
+        "id": "preventative-measures", "name": "Preventative Measures", "skill": "magic", "requiresSeat": "magister",
+        "outcomes": {
+          "criticalSuccess": [{ "nextDangerousEvent": { "bonus": 2, "degree": 1 } }, { "ifNoDangerousEvent": [{ "ruin": { "choice": -1 } }] }],
+          "success": [{ "nextDangerousEvent": { "bonus": 2 } }],
+          "failure": [],
+          "criticalFailure": [{ "cooldownDays": 30 }, { "bpDice": -2 }]
+        }
+      },
+      "influence8": [{ "freeStructure": "orphanage" }, { "freeStructure": "shrine" }]
+    },
+    {
+      "id": "valerie", "name": "Valerie", "seats": ["general"],
+      "joins": { "influence": 0 },
+      "signature": {
+        "id": "warfare-exercises", "name": "Warfare Exercises", "skill": "warfare",
+        "outcomes": {
+          "criticalSuccess": [{ "armyBonus": { "all": true, "byLevel": { "1": 1, "9": 2, "15": 3 } } }, { "armyCritFailToFail": 1 }],
+          "success": [{ "armyBonus": { "first": true, "byLevel": { "1": 1, "9": 2, "15": 3 } } }],
+          "failure": [],
+          "criticalFailure": [{ "armyFailToCritFail": 1 }]
+        }
+      }
+    },
+    {
+      "id": "harrim", "name": "Harrim", "seats": ["magister"],
+      "joins": { "influence": 8 },
+      "signature": {
+        "id": "evangelize-the-end", "name": "Evangelize the End", "skill": "folklore",
+        "outcomes": {
+          "criticalSuccess": [{ "unrest": "-1d4" }, { "choose": { "n": 1, "from": [[{ "ruin": { "crime": -2 } }], [{ "ruin": { "corruption": -1 } }], [{ "ruin": { "strife": -1 } }]] } }],
+          "success": [{ "unrest": "-1d3" }],
+          "failure": [{ "unrest": -1 }],
+          "criticalFailure": [{ "unrest": "1d4" }, { "ruin": { "decay": 1 } }]
+        }
+      }
+    },
+    {
+      "id": "jaethal", "name": "Jaethal", "seats": ["emissary"],
+      "joins": { "influence": 6 },
+      "onAppoint": [{ "if": { "fame": "famous" }, "then": [{ "unrest": "1d3" }] }],
+      "signature": {
+        "id": "decadent-feasts", "name": "Decadent Feasts", "skill": ["agriculture", "trade"],
+        "cost": { "food": "1d8", "luxuries": 1 },
+        "outcomes": {
+          "criticalSuccess": [{ "unrest": "-1d6" }, { "ignoreNextUnrest": { "days": 30 } }],
+          "success": [{ "unrest": "-1d3" }],
+          "failure": [{ "unrest": -1 }],
+          "criticalFailure": [{ "unrest": "1d4" }, { "ruin": { "corruption": 1 } }]
+        }
+      }
+    },
+    {
+      "id": "kalikke", "name": "Kalikke", "seats": ["counselor"], "sharesBodyWith": "kanerah",
+      "joins": { "influence": 4 },
+      "signature": {
+        "id": "deliberate-planning", "name": "Deliberate Planning", "skill": "scholarship", "target": "continuous-event",
+        "outcomes": {
+          "criticalSuccess": [{ "targetEvent": { "fortune": "best", "status": 1 } }],
+          "success": [{ "targetEvent": { "status": 1 } }],
+          "failure": [],
+          "criticalFailure": [{ "targetEvent": { "fortune": "worst" } }]
+        }
+      }
+    },
+    {
+      "id": "kanerah", "name": "Kanerah", "seats": ["emissary"], "sharesBodyWith": "kalikke",
+      "joins": { "influence": 4 },
+      "signature": {
+        "id": "false-victory", "name": "False Victory", "skill": "intrigue",
+        "outcomes": {
+          "criticalSuccess": [{ "unrest": "-1d6" }, { "ruin": { "choice": -1 } }, { "falseVictory": { "months": 4, "bonus": 1 } }],
+          "success": [{ "unrest": "-1d3" }],
+          "failure": [{ "unrest": 1 }, { "cooldownDays": 30 }],
+          "criticalFailure": [{ "spawn": "public-scandal", "blame": { "flatDc": 11, "success": "random-leader", "failure": "self" } }, { "cooldownDays": 180 }]
+        }
+      }
+    },
+    {
+      "id": "octavia", "name": "Octavia", "seats": ["magister"],
+      "joins": { "influence": 6 },
+      "skillSubstitution": { "skill": "magic", "for": ["celebrate-holiday", "craft-luxuries", "create-a-masterpiece", "rest-and-relax"] }
+    },
+    {
+      "id": "regongar", "name": "Regongar", "seats": ["general"],
+      "joins": { "influence": 8 },
+      "signature": {
+        "id": "show-of-force", "name": "Show of Force", "skill": "warfare",
+        "outcomes": {
+          "criticalSuccess": [{ "ruin": { "crime": -2 } }, { "ruin": { "choice": -1, "exclude": ["crime"] } }],
+          "success": [{ "ruin": { "crime": -1 } }],
+          "failure": [{ "unrest": 1 }],
+          "criticalFailure": [{ "unrest": "1d4" }, { "ruin": { "crime": 1 } }]
+        }
+      }
+    }
+  ]
+}

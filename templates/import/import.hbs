@@ -1,0 +1,55 @@
+<div class="ukm-import-body">
+  {{#if (eq state "ready")}}
+    <p>{{localize "UKM.Import.Intro"}}</p>
+    <ul class="ukm-checklist">
+      <li class="{{#if sources.kingmaker}}ok{{else}}warn{{/if}}">
+        <i class="fa-solid {{#if sources.kingmaker}}fa-circle-check{{else}}fa-triangle-exclamation{{/if}}"></i>
+        {{localize "UKM.Setup.KingmakerModule"}}
+      </li>
+      <li class="{{#if sources.adventureImported}}ok{{else}}warn{{/if}}">
+        <i class="fa-solid {{#if sources.adventureImported}}fa-circle-check{{else}}fa-triangle-exclamation{{/if}}"></i>
+        {{localize "UKM.Setup.AdventureImported"}}
+      </li>
+    </ul>
+    {{#if alreadyImported}}<p class="hint">{{localize "UKM.Import.Reimport"}}</p>{{/if}}
+    {{#unless ready}}<p class="ukm-notice">{{localize "UKM.Import.NotReady"}}</p>{{/unless}}
+    <footer class="form-footer">
+      <button type="button" data-action="startImport" {{disabled (not ready)}}>
+        <i class="fa-solid fa-file-import"></i> {{localize "UKM.Import.Start"}}
+      </button>
+      <button type="button" data-action="remindLater">
+        <i class="fa-solid fa-clock"></i> {{localize "UKM.Import.Later"}}
+      </button>
+    </footer>
+  {{/if}}
+
+  {{#if (eq state "running")}}
+    <p>{{localize "UKM.Import.Running"}}</p>
+    {{#if progress}}
+      <div class="ukm-bar"><span style="width: {{progress.percent}}%"></span></div>
+      <p class="hint">{{progress.label}} ({{progress.step}}/{{progress.total}})</p>
+    {{/if}}
+  {{/if}}
+
+  {{#if (eq state "done")}}
+    <h3>{{localize "UKM.Import.Done"}}</h3>
+    <ul class="ukm-summary">
+      <li>{{localize "UKM.Import.Category.regions"}}: {{summary.byCategory.regions}}</li>
+      <li>{{localize "UKM.Import.Category.locations"}}: {{summary.byCategory.locations}}</li>
+      <li>{{localize "UKM.Import.Category.events"}}: {{summary.byCategory.events}}</li>
+      <li>{{localize "UKM.Import.Category.quests"}}: {{summary.byCategory.quests}}</li>
+      <li>{{localize "UKM.Import.Category.characters"}}: {{summary.byCategory.characters}}</li>
+      <li>{{localize "UKM.Import.Category.structures"}}: {{summary.byCategory.structures}}</li>
+    </ul>
+    <p class="hint">{{localize "UKM.Import.Counts" created=summary.created updated=summary.updated skipped=summary.skippedEdited}}</p>
+    {{#if missingCount}}
+      <details>
+        <summary>{{localize "UKM.Import.Missing" count=missingCount}}</summary>
+        <ul>{{#each summary.missing}}<li>{{this}}</li>{{/each}}</ul>
+      </details>
+    {{/if}}
+    <footer class="form-footer">
+      <button type="button" data-action="close"><i class="fa-solid fa-check"></i> {{localize "UKM.Import.Close"}}</button>
+    </footer>
+  {{/if}}
+</div>

@@ -1,0 +1,88 @@
+<div class="ukm-setup-body">
+  <section class="ukm-status">
+    <h3>{{localize "UKM.Setup.Status"}}</h3>
+    <ul class="ukm-checklist">
+      <li class="{{#if sources.kingmaker}}ok{{else}}warn{{/if}}">
+        <i class="fa-solid {{#if sources.kingmaker}}fa-circle-check{{else}}fa-triangle-exclamation{{/if}}"></i>
+        {{localize "UKM.Setup.KingmakerModule"}}
+      </li>
+      <li class="{{#if sources.adventureImported}}ok{{else}}warn{{/if}}">
+        <i class="fa-solid {{#if sources.adventureImported}}fa-circle-check{{else}}fa-triangle-exclamation{{/if}}"></i>
+        {{localize "UKM.Setup.AdventureImported"}}
+      </li>
+      <li class="{{#if kingdomActive}}ok{{else}}warn{{/if}}">
+        <i class="fa-solid {{#if kingdomActive}}fa-circle-check{{else}}fa-triangle-exclamation{{/if}}"></i>
+        {{localize "UKM.Setup.KingdomActive"}}
+        {{#unless kingdomActive}}<a data-action="openKingdom">{{localize "UKM.Setup.OpenPartySheet"}}</a>{{/unless}}
+      </li>
+      <li class="{{#if storyImported}}ok{{else}}warn{{/if}}">
+        <i class="fa-solid {{#if storyImported}}fa-circle-check{{else}}fa-triangle-exclamation{{/if}}"></i>
+        {{localize "UKM.Setup.StoryImported"}}
+        {{#if sources.adventureImported}}<a data-action="openImport">{{#if storyImported}}{{localize "UKM.Setup.Reimport"}}{{else}}{{localize "UKM.Setup.Import"}}{{/if}}</a>{{/if}}
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h3>{{localize "UKM.Setup.Table"}}</h3>
+    <div class="form-group">
+      <label>{{localize "UKM.Settings.BetweenSessions.Name"}}</label>
+      <input type="checkbox" name="betweenSessions" {{checked betweenSessions}}>
+      <p class="hint">{{localize "UKM.Settings.BetweenSessions.Hint"}}</p>
+    </div>
+    <div class="form-group">
+      <label>{{localize "UKM.Settings.Approval.Name"}}</label>
+      <select name="approval">{{selectOptions approvalChoices selected=approval localize=true}}</select>
+    </div>
+    <div class="form-group">
+      <label>{{localize "UKM.Settings.TapTreasury.Name"}}</label>
+      <select name="tapTreasury">{{selectOptions tapChoices selected=tapTreasury localize=true}}</select>
+      <p class="hint">{{localize "UKM.Settings.TapTreasury.Hint"}}</p>
+    </div>
+    <div class="form-group">
+      <label>{{localize "UKM.Settings.AdvisorWarnings.Name"}}</label>
+      <select name="advisorWarnings">{{selectOptions warningChoices selected=advisorWarnings localize=true}}</select>
+    </div>
+  </section>
+
+  <section>
+    <h3>{{localize "UKM.Setup.Seats"}}</h3>
+    <p class="hint">{{localize "UKM.Setup.SeatsHint"}}</p>
+    {{#unless kingdomActive}}<p class="ukm-notice">{{localize "UKM.Setup.SeatsNeedKingdom"}}</p>{{/unless}}
+    <table class="ukm-seats">
+      <thead>
+        <tr>
+          <th>{{localize "UKM.Setup.Seat"}}</th>
+          <th>{{localize "UKM.Setup.Holder"}}</th>
+          <th>{{localize "UKM.Setup.Companion"}}</th>
+          <th>{{localize "UKM.Setup.Supervisor"}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each seats}}
+        <tr>
+          <td>{{label}}</td>
+          <td>
+            <select name="seats.{{seat}}.holder">
+              <option value="">{{localize "UKM.Setup.None"}}</option>
+              {{selectOptions @root.holderChoices selected=holder}}
+            </select>
+          </td>
+          <td>
+            <select name="seats.{{seat}}.companion">
+              <option value="">{{localize "UKM.Setup.None"}}</option>
+              {{selectOptions @root.companionChoices selected=companion}}
+            </select>
+          </td>
+          <td>
+            <select name="seats.{{seat}}.supervisor">
+              <option value="">{{localize "UKM.Setup.None"}}</option>
+              {{selectOptions @root.supervisorChoices selected=supervisor}}
+            </select>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </section>
+</div>

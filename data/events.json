@@ -1,0 +1,3134 @@
+{
+  "version": 1,
+  "events": [
+    {
+      "id": "archaeological-find",
+      "name": "Archaeological Find",
+      "page": "k12fOB3Tm5l0xjEO",
+      "kind": "opportunity",
+      "mod": 0,
+      "traits": [
+        "beneficial",
+        "hex"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "hex",
+        "rule": "claimed-outside-influence"
+      },
+      "seat": "viceroy",
+      "skill": [
+        "exploration"
+      ],
+      "hook": "A remote ruin in your lands may hold relics of the people who came before.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": "-1d4"
+          },
+          {
+            "modifier": {
+              "type": "circumstance",
+              "value": 2,
+              "selector": [
+                "culture",
+                "economy"
+              ],
+              "days": 30
+            }
+          },
+          {
+            "if": {
+              "structure": "museum"
+            },
+            "then": [
+              {
+                "unrest": -1
+              }
+            ]
+          }
+        ],
+        "success": [
+          {
+            "unrest": -2
+          }
+        ],
+        "failure": [],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          },
+          {
+            "retry": {
+              "kind": "project",
+              "dcAdjust": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "assassination-attempt",
+      "name": "Assassination Attempt",
+      "page": "ijxmMlxMY1REOwJY",
+      "kind": "problem",
+      "mod": 1,
+      "traits": [
+        "dangerous"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "warden",
+      "skill": [
+        "intrigue"
+      ],
+      "special": [
+        {
+          "if": {
+            "atWar": true
+          },
+          "then": [
+            {
+              "setMod": 3
+            }
+          ]
+        }
+      ],
+      "setup": [
+        {
+          "flat": {
+            "dc": 11,
+            "success": [
+              {
+                "target": "npc-leader"
+              }
+            ],
+            "failure": [
+              {
+                "target": "notable-npc"
+              }
+            ]
+          }
+        }
+      ],
+      "hook": "Someone has hired killers to strike at the court.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": "-1d4"
+          },
+          {
+            "ruin": {
+              "choice": 1
+            }
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "leaderOut": {
+              "days": 30,
+              "ifTargetIsLeader": true
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "2d4"
+          },
+          {
+            "ruin": {
+              "decay": "1d4"
+            }
+          },
+          {
+            "leaderOut": {
+              "permanent": true,
+              "ifTargetIsLeader": true
+            }
+          },
+          {
+            "gm": "The target is killed."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bandit-activity",
+      "name": "Bandit Activity",
+      "page": "N29niitpzc7GWUxN",
+      "kind": "problem",
+      "mod": 1,
+      "traits": [
+        "continuous",
+        "dangerous"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "kingdom",
+        "pin": "frontier"
+      },
+      "seat": "warden",
+      "skill": [
+        "defense"
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess"
+        ]
+      },
+      "escalate": true,
+      "hook": "Caravans along the roads are being robbed.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": "-1d4"
+          },
+          {
+            "modifier": {
+              "type": "circumstance",
+              "value": 1,
+              "selector": [
+                "economy"
+              ],
+              "days": 30
+            }
+          }
+        ],
+        "success": [
+          {
+            "bpDice": -1
+          }
+        ],
+        "failure": [
+          {
+            "unrest": 1
+          },
+          {
+            "bpDice": -4
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "choice": 1
+            }
+          },
+          {
+            "bpDice": "halfOrMinus4"
+          }
+        ]
+      }
+    },
+    {
+      "id": "boomtown",
+      "name": "Boomtown",
+      "page": "b3XupGcqhuzuyKPw",
+      "kind": "opportunity",
+      "mod": 0,
+      "traits": [
+        "beneficial",
+        "settlement"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "settlement",
+        "rule": "smallest"
+      },
+      "seat": "treasurer",
+      "skill": [
+        "trade"
+      ],
+      "special": [
+        {
+          "if": {
+            "noStructure": "dump"
+          },
+          "then": [
+            {
+              "degree": -1
+            }
+          ]
+        }
+      ],
+      "hook": "Trade is booming in one of your smaller towns.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "bpDice": 4
+          },
+          {
+            "settlementItemBonus": {
+              "double": "all",
+              "days": 30
+            }
+          }
+        ],
+        "success": [
+          {
+            "bpDice": 2
+          },
+          {
+            "settlementItemBonus": {
+              "double": "one",
+              "days": 30
+            }
+          }
+        ],
+        "failure": [
+          {
+            "bpDice": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "bpDice": -2
+          }
+        ]
+      }
+    },
+    {
+      "id": "building-demand",
+      "name": "Building Demand",
+      "page": "Ct40OuQru3STCfyD",
+      "kind": "problem",
+      "mod": -1,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "settlement"
+      ],
+      "weight": 4,
+      "placement": {
+        "type": "settlement",
+        "rule": "largest"
+      },
+      "seat": "viceroy",
+      "skill": [
+        "politics"
+      ],
+      "setup": [
+        {
+          "gmChoose": "build-or-demolish",
+          "hint": "Pick a structure near kingdom level, ideally one that lowers Unrest (build) or one now obsolete (demolish)."
+        }
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess",
+          "success"
+        ],
+        "orComplete": "demanded-structure"
+      },
+      "altResolve": "Commit this settlement's next builds to the demand instead of rolling.",
+      "hook": "Townsfolk are demanding a building be raised, or torn down.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "unrest": 1
+          }
+        ],
+        "failure": [
+          {
+            "unrest": 1
+          },
+          {
+            "bpDice": -2
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "bpDice": -2
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "crop-failure",
+      "name": "Crop Failure",
+      "page": "S1imtHR8xUkvPZHZ",
+      "kind": "problem",
+      "mod": 0,
+      "traits": [
+        "dangerous",
+        "hex"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "hex",
+        "rule": "farmland"
+      },
+      "requires": {
+        "farmland": 1
+      },
+      "seat": "treasurer",
+      "skill": [
+        "agriculture"
+      ],
+      "hook": "Blight has struck the fields.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "consumption": 1,
+            "days": 30
+          }
+        ],
+        "failure": [
+          {
+            "consumption": "1d4+1",
+            "days": 30
+          }
+        ],
+        "criticalFailure": [
+          {
+            "consumption": "1d4+1",
+            "days": 30
+          },
+          {
+            "gm": "This farmland is destroyed. Remove it on the map."
+          }
+        ]
+      }
+    },
+    {
+      "id": "cult-activity",
+      "name": "Cult Activity",
+      "page": "EaIsjefqXYVgfcq0",
+      "kind": "problem",
+      "mod": 1,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "settlement"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "settlement",
+        "rule": "random",
+        "hidden": true
+      },
+      "seat": "magister",
+      "skill": [
+        "intrigue",
+        "folklore"
+      ],
+      "special": [
+        {
+          "if": {
+            "structure": "sewer-system"
+          },
+          "then": [
+            {
+              "stageModifier": {
+                "stage": 0,
+                "type": "item",
+                "value": -2
+              }
+            }
+          ]
+        },
+        {
+          "if": {
+            "chapter": 5
+          },
+          "then": [
+            {
+              "setMod": 3
+            },
+            {
+              "note": "The cult worships Lamashtu."
+            }
+          ]
+        }
+      ],
+      "continuous": {
+        "endOn": [
+          "stage1:success",
+          "stage1:criticalSuccess"
+        ]
+      },
+      "escalate": true,
+      "stages": [
+        {
+          "label": "Find the cult",
+          "skill": [
+            "intrigue"
+          ],
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "revealPin": true
+              },
+              {
+                "nextStage": true,
+                "dcAdjust": -5
+              }
+            ],
+            "success": [
+              {
+                "revealPin": true
+              },
+              {
+                "nextStage": true
+              },
+              {
+                "unrest": 1
+              }
+            ],
+            "failure": [
+              {
+                "unrest": 1
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d4"
+              },
+              {
+                "ruin": {
+                  "corruption": 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "label": "Defeat the cult",
+          "skill": [
+            "folklore"
+          ],
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": "-1d6"
+              },
+              {
+                "ruin": {
+                  "choice": -1
+                }
+              },
+              {
+                "luxuries": "1d6"
+              },
+              {
+                "end": true
+              }
+            ],
+            "success": [
+              {
+                "choose": {
+                  "n": 1,
+                  "from": [
+                    [
+                      {
+                        "unrest": "-1d4"
+                      }
+                    ],
+                    [
+                      {
+                        "ruin": {
+                          "choice": -1
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "luxuries": "1d4"
+                      }
+                    ]
+                  ]
+                }
+              },
+              {
+                "end": true
+              }
+            ],
+            "failure": [
+              {
+                "unrest": 1
+              },
+              {
+                "flat": {
+                  "dc": 6,
+                  "failure": [
+                    {
+                      "ruin": {
+                        "corruption": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d4"
+              },
+              {
+                "ruin": {
+                  "corruption": 1
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "hook": "Citizens are vanishing. Whispers speak of a hidden temple."
+    },
+    {
+      "id": "diplomatic-overture",
+      "name": "Diplomatic Overture",
+      "page": "bXc4KHMVR2NYrUt2",
+      "kind": "opportunity",
+      "mod": 0,
+      "traits": [
+        "beneficial"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "emissary",
+      "skill": [
+        "statecraft"
+      ],
+      "setup": [
+        {
+          "randomGroup": "negotiation"
+        },
+        {
+          "if": {
+            "noRelations": true
+          },
+          "then": [
+            {
+              "offerProject": "send-diplomatic-envoy",
+              "free": true
+            },
+            {
+              "skipRoll": true
+            }
+          ]
+        }
+      ],
+      "hook": "An envoy has arrived seeking an audience.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "choose": {
+              "n": 2,
+              "from": [
+                [
+                  {
+                    "commodities": 5
+                  }
+                ],
+                [
+                  {
+                    "bpDice": 2
+                  }
+                ],
+                [
+                  {
+                    "tradeAgreement": true
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "success": [
+          {
+            "choose": {
+              "n": 1,
+              "from": [
+                [
+                  {
+                    "commodities": 5
+                  }
+                ],
+                [
+                  {
+                    "bpDice": 2
+                  }
+                ],
+                [
+                  {
+                    "tradeAgreement": true
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "failure": [],
+        "criticalFailure": [
+          {
+            "choose": {
+              "n": 1,
+              "from": [
+                [
+                  {
+                    "bp": -10
+                  }
+                ],
+                [
+                  {
+                    "breakRelations": true,
+                    "reestablishPenalty": -2
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "discovery",
+      "name": "Discovery",
+      "page": "nxpBZrOcufzI3iJE",
+      "kind": "opportunity",
+      "mod": 0,
+      "traits": [
+        "beneficial"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "counselor",
+      "skill": [
+        "scholarship"
+      ],
+      "hook": "Your scholars believe they are close to a breakthrough.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "fame": 1
+          },
+          {
+            "bpDice": 6
+          },
+          {
+            "unrest": -2
+          }
+        ],
+        "success": [
+          {
+            "bpDice": 3
+          }
+        ],
+        "failure": [
+          {
+            "bpDice": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "bpDice": -2
+          }
+        ]
+      }
+    },
+    {
+      "id": "drug-den",
+      "name": "Drug Den",
+      "page": "l5M53xbktELh5nwz",
+      "kind": "problem",
+      "mod": 1,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "settlement"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "settlement",
+        "rule": "largest",
+        "hidden": true
+      },
+      "seat": "counselor",
+      "skill": [
+        "intrigue"
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess"
+        ]
+      },
+      "escalate": true,
+      "hook": "Something is poisoning the back streets.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "unrest": 1
+          }
+        ],
+        "failure": [
+          {
+            "unrest": 1
+          },
+          {
+            "ruin": {
+              "crime": 1,
+              "decay": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "split": {
+                "of": [
+                  "crime",
+                  "decay"
+                ],
+                "amounts": [
+                  1,
+                  2
+                ]
+              }
+            }
+          },
+          {
+            "gm": "The den's residential lot becomes rubble, and the den moves to another lot."
+          }
+        ]
+      }
+    },
+    {
+      "id": "economic-surge",
+      "name": "Economic Surge",
+      "page": "YkEO6Ukf6o7olOoT",
+      "kind": "opportunity",
+      "mod": 2,
+      "traits": [
+        "beneficial",
+        "continuous"
+      ],
+      "weight": 1,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "treasurer",
+      "skill": [
+        "trade"
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalFailure",
+          "failure:twiceInARow"
+        ]
+      },
+      "hook": "Markets are booming across the realm.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "bpDice": 2
+          }
+        ],
+        "success": [
+          {
+            "bpDice": 1
+          }
+        ],
+        "failure": [],
+        "criticalFailure": [
+          {
+            "end": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "expansion-demand",
+      "name": "Expansion Demand",
+      "page": "rNxTrfqnm2fid8au",
+      "kind": "problem",
+      "mod": 0,
+      "traits": [
+        "continuous",
+        "dangerous"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "warden",
+      "skill": [
+        "exploration"
+      ],
+      "special": [
+        {
+          "if": {
+            "claimedHexThisMonth": true
+          },
+          "then": [
+            {
+              "degree": 1
+            }
+          ]
+        }
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess",
+          "success"
+        ]
+      },
+      "hook": "Settlers are restless for new land.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "requireClaim": {
+              "days": 30,
+              "else": [
+                {
+                  "unrest": 1
+                }
+              ]
+            }
+          }
+        ],
+        "failure": [
+          {
+            "unrest": 1
+          },
+          {
+            "requireClaim": {
+              "days": 30,
+              "else": [
+                {
+                  "unrest": 1
+                }
+              ]
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 2
+          },
+          {
+            "requireClaim": {
+              "days": 30,
+              "else": [
+                {
+                  "unrest": 1
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "festive-invitation",
+      "name": "Festive Invitation",
+      "page": "fGjJD3w3p4Bl4sff",
+      "kind": "opportunity",
+      "mod": 0,
+      "traits": [
+        "beneficial"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "kingdom"
+      },
+      "requires": {
+        "relations": 1
+      },
+      "seat": "ruler",
+      "skill": [
+        "arts"
+      ],
+      "setup": [
+        {
+          "gift": {
+            "maxDice": 4,
+            "note": "Bring up to 4 dice of next month's income as gifts."
+          }
+        }
+      ],
+      "hook": "An ally invites your court to their festival.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "giftReturn": "rollEach"
+          },
+          {
+            "flat": {
+              "dc": 11,
+              "success": [
+                {
+                  "spawnOneOf": [
+                    "diplomatic-overture",
+                    "visiting-celebrity"
+                  ],
+                  "days": 30
+                }
+              ]
+            }
+          }
+        ],
+        "success": [
+          {
+            "giftReturn": "countEach"
+          }
+        ],
+        "failure": [],
+        "criticalFailure": [
+          {
+            "flat": {
+              "dc": 11,
+              "failure": [
+                {
+                  "breakRelations": true
+                },
+                {
+                  "unrest": 1
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "feud",
+      "name": "Feud",
+      "page": "FYYKdDvHrPnWnzhz",
+      "kind": "problem",
+      "mod": 0,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "settlement"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "settlement",
+        "rule": "two"
+      },
+      "requires": {
+        "settlements": 2
+      },
+      "seat": "counselor",
+      "skill": [
+        "politics"
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess"
+        ],
+        "buyout": {
+          "afterMonths": 3,
+          "bpDice": 4
+        }
+      },
+      "hook": "Two towns' leading families are at each other's throats.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "bpDice": 2
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "unrest": 1
+          },
+          {
+            "blockArmies": {
+              "days": 30
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 2
+          },
+          {
+            "ruin": {
+              "choice": 1
+            }
+          },
+          {
+            "blockArmies": {
+              "untilEnd": true
+            }
+          },
+          {
+            "ifRepeat": "criticalFailure",
+            "then": [
+              {
+                "unrest": 2
+              },
+              {
+                "ruin": {
+                  "choice": 1
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "food-shortage",
+      "name": "Food Shortage",
+      "page": "qHu7jBop1YzvEZF4",
+      "kind": "problem",
+      "mod": 1,
+      "traits": [
+        "dangerous"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "treasurer",
+      "skill": [
+        "agriculture"
+      ],
+      "hook": "The granaries are running low.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "consumption": 1,
+            "days": 30
+          },
+          {
+            "flat": {
+              "dc": 6,
+              "failure": [
+                {
+                  "repeat": true
+                }
+              ]
+            }
+          }
+        ],
+        "failure": [
+          {
+            "consumption": "perSettlement",
+            "days": 30
+          },
+          {
+            "flat": {
+              "dc": 16,
+              "failure": [
+                {
+                  "repeat": true
+                }
+              ]
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 2
+          },
+          {
+            "ruin": {
+              "strife": 1
+            }
+          },
+          {
+            "consumption": "perSettlement",
+            "days": 30
+          },
+          {
+            "repeat": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "food-surplus",
+      "name": "Food Surplus",
+      "page": "89aS4xk8RYXqBYzE",
+      "kind": "opportunity",
+      "mod": 0,
+      "traits": [
+        "beneficial"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "treasurer",
+      "skill": [
+        "agriculture"
+      ],
+      "onSpawn": [
+        {
+          "endEvent": "food-shortage"
+        }
+      ],
+      "hook": "The harvest is bountiful.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "consumption": "skip",
+            "days": 30
+          },
+          {
+            "food": "1d6"
+          }
+        ],
+        "success": [
+          {
+            "consumption": -2,
+            "days": 30
+          },
+          {
+            "food": "1d6"
+          }
+        ],
+        "failure": [
+          {
+            "consumption": -1,
+            "days": 30
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "ruin": {
+              "choice": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "good-weather",
+      "name": "Good Weather",
+      "page": "ZcThuH6XS88FlMqz",
+      "kind": "opportunity",
+      "mod": 1,
+      "traits": [
+        "beneficial",
+        "fortune"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "magister",
+      "skill": [
+        "wilderness"
+      ],
+      "hook": "A run of fine weather lifts every spirit.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": "-1d6"
+          },
+          {
+            "reroll": {
+              "skills": [
+                "agriculture",
+                "boating",
+                "exploration",
+                "wilderness"
+              ],
+              "uses": 1,
+              "days": 30
+            }
+          }
+        ],
+        "success": [
+          {
+            "unrest": "-1d4"
+          }
+        ],
+        "failure": [
+          {
+            "unrest": -1
+          }
+        ],
+        "criticalFailure": []
+      }
+    },
+    {
+      "id": "inquisition",
+      "name": "Inquisition",
+      "page": "OEuqkyrjzsSjtl3G",
+      "kind": "problem",
+      "mod": 1,
+      "traits": [
+        "continuous",
+        "dangerous"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "magister",
+      "skill": [
+        "folklore"
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess"
+        ]
+      },
+      "escalate": true,
+      "hook": "Zealots are stirring the crowds against their neighbours.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "choose": {
+              "n": 1,
+              "from": [
+                [
+                  {
+                    "nextLevelMod": 2,
+                    "note": "Pacified: they'll be back, angrier."
+                  }
+                ],
+                [
+                  {
+                    "ruin": {
+                      "choice": 1
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "success": [
+          {
+            "unrest": 1
+          }
+        ],
+        "failure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "choice": 1,
+              "count": 2
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "choice": 1,
+              "count": 2
+            }
+          },
+          {
+            "check": {
+              "skill": "defense",
+              "failure": [
+                {
+                  "gm": "The targeted structure becomes rubble."
+                },
+                {
+                  "ruin": {
+                    "decay": 1
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "justice-prevails",
+      "name": "Justice Prevails",
+      "page": "H0m1LdwFOHNJTZFt",
+      "kind": "opportunity",
+      "mod": 0,
+      "traits": [
+        "beneficial"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "warden",
+      "skill": [
+        "statecraft"
+      ],
+      "hook": "A long-standing injustice has finally been put right.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "choose": {
+              "n": 1,
+              "from": [
+                [
+                  {
+                    "unrest": "-1d6"
+                  },
+                  {
+                    "ruin": {
+                      "all": -1
+                    }
+                  }
+                ],
+                [
+                  {
+                    "endEventOneOf": [
+                      "bandit-activity",
+                      "cult-activity",
+                      "drug-den",
+                      "inquisition",
+                      "sacrifices",
+                      "sensational-crime",
+                      "squatters",
+                      "vandals"
+                    ]
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "success": [
+          {
+            "choose": {
+              "n": 1,
+              "from": [
+                [
+                  {
+                    "unrest": "-1d4"
+                  }
+                ],
+                [
+                  {
+                    "ruin": {
+                      "choice": -1,
+                      "count": 2
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "failure": [
+          {
+            "requireProject": {
+              "type": "quell-unrest",
+              "days": 30,
+              "else": [
+                {
+                  "unrest": "1d4"
+                }
+              ]
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "crime": 2
+            }
+          },
+          {
+            "ruin": {
+              "choice": 1,
+              "exclude": [
+                "crime"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "land-rush",
+      "name": "Land Rush",
+      "page": "CfAXZYN88RyWWctd",
+      "kind": "problem",
+      "mod": 1,
+      "traits": [
+        "dangerous",
+        "hex"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "hex",
+        "rule": "unclaimed-adjacent"
+      },
+      "seat": "viceroy",
+      "skill": [
+        "politics"
+      ],
+      "hook": "Settlers are squabbling over land just past your border.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "claimHex": true
+          },
+          {
+            "gm": "Mark the hex claimed and add the settlers' farmland or work site."
+          },
+          {
+            "unrest": -1
+          }
+        ],
+        "success": [
+          {
+            "offer": {
+              "costBpDice": 4,
+              "accept": "criticalSuccess",
+              "decline": "failure"
+            }
+          }
+        ],
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "choice": 1,
+              "count": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "local-disaster",
+      "name": "Local Disaster",
+      "page": "ug1AYlKJKtSUeLYH",
+      "kind": "problem",
+      "mod": 0,
+      "traits": [
+        "dangerous",
+        "settlement"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "settlement",
+        "rule": "random"
+      },
+      "seat": "magister",
+      "skill": [
+        "industry"
+      ],
+      "special": [
+        {
+          "if": {
+            "structure": "cemetery"
+          },
+          "then": [
+            {
+              "halveBpDiceLoss": true
+            }
+          ]
+        }
+      ],
+      "hook": "Fire, flood or collapse has struck a settlement.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "bpDice": -2
+          }
+        ],
+        "failure": [
+          {
+            "ruin": {
+              "decay": 1
+            }
+          },
+          {
+            "gm": "Place rubble in three lots of the players' choice."
+          },
+          {
+            "bpDice": -4
+          }
+        ],
+        "criticalFailure": [
+          {
+            "ruin": {
+              "decay": "1d6"
+            }
+          },
+          {
+            "gm": "Rubble one lot in as many adjacent blocks as the Decay rolled."
+          },
+          {
+            "bpDice": -6
+          }
+        ]
+      }
+    },
+    {
+      "id": "monster-activity",
+      "name": "Monster Activity",
+      "page": "pr1olkpuBA78fisx",
+      "kind": "problem",
+      "mod": 0,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "hex"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "hex",
+        "rule": "claimed-outside-influence"
+      },
+      "seat": "ruler",
+      "skill": [
+        "defense"
+      ],
+      "setup": [
+        {
+          "encounter": "zone-at-kingdom-level"
+        }
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess"
+        ]
+      },
+      "escalate": true,
+      "hook": "Something large is killing livestock out in the wilds.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "luxuries": "1d4"
+          },
+          {
+            "bpDice": 2
+          }
+        ],
+        "success": [
+          {
+            "unrest": 1
+          }
+        ],
+        "failure": [
+          {
+            "gm": "The nearest farmland or work site is destroyed. Remove it on the map."
+          },
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "gm": "As failure, then it reaches the nearest settlement: if it can get past walls or water, one structure (players' choice) becomes rubble; otherwise one wall is destroyed."
+          },
+          {
+            "ifSettlementBreached": [
+              {
+                "unrest": "1d4"
+              },
+              {
+                "ruin": {
+                  "decay": 2
+                }
+              }
+            ],
+            "else": [
+              {
+                "unrest": 1
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "natural-disaster",
+      "name": "Natural Disaster",
+      "page": "h8lJCzlZxEzml5zL",
+      "kind": "problem",
+      "mod": 2,
+      "traits": [
+        "dangerous"
+      ],
+      "weight": 1,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "magister",
+      "skill": [
+        "wilderness"
+      ],
+      "hook": "Storm, fire or flood is sweeping across the land.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "bpDice": -4
+          }
+        ],
+        "failure": [
+          {
+            "gm": "One farmland or work site is destroyed. Remove it on the map."
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          },
+          {
+            "unrest": "1d6"
+          },
+          {
+            "bpDice": -6
+          }
+        ],
+        "criticalFailure": [
+          {
+            "gm": "1d6 farmlands or work sites are destroyed (Decay 1 each)."
+          },
+          {
+            "ruin": {
+              "decay": "perHexLost"
+            }
+          },
+          {
+            "unrest": "2d6"
+          },
+          {
+            "spawn": "local-disaster",
+            "now": true
+          },
+          {
+            "bpDice": -8
+          }
+        ]
+      }
+    },
+    {
+      "id": "natures-blessing",
+      "name": "Nature's Blessing",
+      "page": "mN39Zf6Y8DT0MMKs",
+      "kind": "opportunity",
+      "mod": 0,
+      "traits": [
+        "beneficial"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "magister",
+      "skill": [
+        "arts"
+      ],
+      "hook": "A rare wonder of nature has the whole realm talking.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "degreeBonus": {
+              "projects": [
+                "craft-luxuries",
+                "create-a-masterpiece"
+              ],
+              "days": 30
+            }
+          },
+          {
+            "unrest": "-1d6"
+          }
+        ],
+        "success": [
+          {
+            "modifier": {
+              "type": "status",
+              "value": 1,
+              "selector": [
+                "culture",
+                "stability"
+              ],
+              "days": 30
+            }
+          }
+        ],
+        "failure": [],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "new-subjects",
+      "name": "New Subjects",
+      "page": "EJXLlpCCnfHLxNHN",
+      "kind": "opportunity",
+      "mod": 0,
+      "traits": [
+        "beneficial"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "emissary",
+      "skill": [
+        "statecraft"
+      ],
+      "hook": "Newcomers ask to settle under your banner.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "bpDice": 6
+          },
+          {
+            "freeProject": {
+              "category": "region",
+              "count": 1,
+              "days": 30
+            }
+          }
+        ],
+        "success": [
+          {
+            "bpDice": 3
+          }
+        ],
+        "failure": [
+          {
+            "unrest": 1
+          },
+          {
+            "bpDice": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "strife": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "noblesse-oblige",
+      "name": "Noblesse Oblige",
+      "page": "tyGnmI3RQeNGkt06",
+      "kind": "opportunity",
+      "mod": 0,
+      "traits": [
+        "beneficial",
+        "settlement"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "settlement",
+        "rule": "has-structure",
+        "structures": [
+          "mansion",
+          "noble-villa"
+        ]
+      },
+      "requires": {
+        "structureAny": [
+          "mansion",
+          "noble-villa"
+        ]
+      },
+      "seat": "viceroy",
+      "skill": [
+        "arts"
+      ],
+      "hook": "A wealthy family offers to beautify the town.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "freeStructure": [
+              "monument",
+              "park"
+            ],
+            "noCheck": true
+          }
+        ],
+        "success": [
+          {
+            "freeStructure": {
+              "oneOf": [
+                "monument",
+                "park"
+              ]
+            },
+            "autoSucceed": true,
+            "withinDays": 30
+          }
+        ],
+        "failure": [],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "flat": {
+              "dc": 11,
+              "failure": [
+                {
+                  "spawn": "feud",
+                  "days": 30
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "outstanding-success",
+      "name": "Outstanding Success",
+      "page": "B9NmOtqLfEleuL3O",
+      "kind": "opportunity",
+      "mod": 0,
+      "traits": [
+        "beneficial"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "counselor",
+      "skill": [
+        "arts"
+      ],
+      "hook": "One of your citizens has made something remarkable.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "bpDice": 3
+          }
+        ],
+        "success": [
+          {
+            "bpDice": 1
+          }
+        ],
+        "failure": [],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "ruin": {
+              "corruption": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "pilgrimage",
+      "name": "Pilgrimage",
+      "page": "01jXsIhNx8Tn0BYr",
+      "kind": "opportunity",
+      "mod": 1,
+      "traits": [
+        "beneficial"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "kingdom"
+      },
+      "requires": {
+        "structureAny": [
+          "shrine",
+          "temple",
+          "cathedral"
+        ]
+      },
+      "seat": "magister",
+      "skill": [
+        "folklore"
+      ],
+      "hook": "Pilgrims are streaming toward your shrines.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "luxuries": "1d6"
+          },
+          {
+            "unrest": "-1d6"
+          },
+          {
+            "ruin": {
+              "choice": -1
+            }
+          }
+        ],
+        "success": [
+          {
+            "unrest": "-1d4"
+          }
+        ],
+        "failure": [
+          {
+            "unrest": "-1d4"
+          },
+          {
+            "consumption": "1d4",
+            "days": 30
+          }
+        ],
+        "criticalFailure": [
+          {
+            "ruin": {
+              "corruption": 1
+            }
+          },
+          {
+            "consumption": "1d4",
+            "days": 30
+          }
+        ]
+      }
+    },
+    {
+      "id": "plague",
+      "name": "Plague",
+      "page": "9ifdy5CVK9lT5X9t",
+      "kind": "problem",
+      "mod": 1,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "settlement"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "settlement",
+        "rule": "largest"
+      },
+      "seat": "ruler",
+      "skill": [
+        "defense"
+      ],
+      "special": [
+        {
+          "if": {
+            "noStructure": "dump"
+          },
+          "then": [
+            {
+              "checkModifier": {
+                "type": "item",
+                "value": -4
+              }
+            }
+          ]
+        },
+        {
+          "if": {
+            "structure": "sewer-system"
+          },
+          "then": [
+            {
+              "checkModifier": {
+                "type": "item",
+                "value": 2
+              }
+            }
+          ]
+        }
+      ],
+      "whileActive": [
+        {
+          "if": {
+            "noStructure": "sewer-system"
+          },
+          "then": [
+            {
+              "settlementModifier": {
+                "type": "status",
+                "value": -2,
+                "selector": "build"
+              }
+            }
+          ]
+        }
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess"
+        ],
+        "orProgress": {
+          "project": "provide-care",
+          "successes": 4,
+          "critCounts": 2
+        }
+      },
+      "hook": "Sickness is spreading through the streets.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "bpDice": -2
+          },
+          {
+            "end": true
+          }
+        ],
+        "success": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "choice": 1
+            }
+          }
+        ],
+        "failure": [
+          {
+            "unrest": "1d6"
+          },
+          {
+            "ruin": {
+              "all": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d6"
+          },
+          {
+            "ruin": {
+              "all": 1
+            }
+          },
+          {
+            "spawn": "plague",
+            "placement": "nearest-unaffected-settlement"
+          }
+        ]
+      }
+    },
+    {
+      "id": "political-calm",
+      "name": "Political Calm",
+      "page": "WYleHy8NAkdto1p0",
+      "kind": "opportunity",
+      "mod": -1,
+      "traits": [
+        "beneficial"
+      ],
+      "weight": 4,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "ruler",
+      "skill": [
+        "politics"
+      ],
+      "hook": "For once, the court is quiet and the people approve.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "choose": {
+              "n": 1,
+              "from": [
+                [
+                  {
+                    "unrest": "-1d6"
+                  }
+                ],
+                [
+                  {
+                    "ruin": {
+                      "choice": -1
+                    }
+                  }
+                ]
+              ]
+            }
+          },
+          {
+            "modifier": {
+              "type": "status",
+              "value": 2,
+              "selector": [
+                "events"
+              ],
+              "days": 30
+            }
+          }
+        ],
+        "success": [
+          {
+            "unrest": "-1d4"
+          }
+        ],
+        "failure": [
+          {
+            "unrest": -1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "ruin": {
+              "choice": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "public-scandal",
+      "name": "Public Scandal",
+      "page": "OURUA8YrKosurVYG",
+      "kind": "problem",
+      "mod": 0,
+      "traits": [
+        "dangerous"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "kingdom"
+      },
+      "requires": {
+        "npcLeader": 1,
+        "orGmPcLeader": true
+      },
+      "seat": "counselor",
+      "skill": [
+        "intrigue"
+      ],
+      "setup": [
+        {
+          "target": "npc-leader"
+        }
+      ],
+      "hook": "One of your officials is at the centre of an embarrassing affair.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "unrest": 1
+          }
+        ],
+        "failure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "corruption": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d6"
+          },
+          {
+            "ruin": {
+              "choice": 1
+            }
+          },
+          {
+            "replaceLeader": {
+              "onFail": [
+                {
+                  "repeat": true,
+                  "sameRole": true
+                }
+              ]
+            }
+          },
+          {
+            "taint": {
+              "leader": "target",
+              "months": "1d4",
+              "spawn": "public-scandal"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "remarkable-treasure",
+      "name": "Remarkable Treasure",
+      "page": "SC8cBkkhGX6WOzVX",
+      "kind": "opportunity",
+      "mod": 2,
+      "traits": [
+        "beneficial",
+        "fortune"
+      ],
+      "weight": 1,
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "emissary",
+      "skill": [
+        "exploration"
+      ],
+      "hook": "Foreign adventurers struck it rich in your wilds.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "luxuries": "1d6"
+          },
+          {
+            "unrest": "-1d4"
+          },
+          {
+            "fame": 1
+          },
+          {
+            "reroll": {
+              "projects": [
+                "hire-adventurers"
+              ],
+              "uses": 1,
+              "days": 30
+            }
+          }
+        ],
+        "success": [
+          {
+            "luxuries": "1d4"
+          },
+          {
+            "unrest": "-1d4"
+          }
+        ],
+        "failure": [
+          {
+            "unrest": -1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "note": "These adventurers may return as rivals."
+          }
+        ]
+      }
+    },
+    {
+      "id": "sacrifices",
+      "name": "Sacrifices",
+      "page": "fLcBrTB6qYEQZj47",
+      "kind": "problem",
+      "mod": 2,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "hex"
+      ],
+      "weight": 1,
+      "placement": {
+        "type": "hex",
+        "rule": "claimed-in-influence",
+        "hidden": true
+      },
+      "seat": "emissary",
+      "skill": [
+        "exploration"
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess"
+        ]
+      },
+      "escalate": true,
+      "hook": "People are being taken from the roads at night.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "revealPin": true
+          },
+          {
+            "eventDc": -4
+          },
+          {
+            "unrest": 1
+          }
+        ],
+        "failure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "choice": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d6"
+          },
+          {
+            "ruin": {
+              "choice": 2,
+              "count": 2
+            }
+          },
+          {
+            "ifRevealed": [
+              {
+                "hidePin": true,
+                "moveHex": true
+              },
+              {
+                "eventDc": "reset"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "sensational-crime",
+      "name": "Sensational Crime",
+      "page": "RTa6cljeJntKeVFw",
+      "kind": "problem",
+      "mod": 1,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "settlement"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "settlement",
+        "rule": "random"
+      },
+      "seat": "warden",
+      "skill": [
+        "intrigue"
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess"
+        ]
+      },
+      "escalate": true,
+      "hook": "A notorious criminal is making fools of the watch.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "ruin": {
+              "crime": -2
+            }
+          },
+          {
+            "ruin": {
+              "choice": -2,
+              "exclude": [
+                "crime"
+              ]
+            }
+          },
+          {
+            "ifFirstMonth": [
+              {
+                "ruin": {
+                  "crime": -1
+                }
+              }
+            ]
+          }
+        ],
+        "success": [
+          {
+            "unrest": 1
+          }
+        ],
+        "failure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "crime": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d6"
+          },
+          {
+            "ruin": {
+              "crime": 2
+            }
+          },
+          {
+            "ruin": {
+              "choice": 2,
+              "exclude": [
+                "crime"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "squatters",
+      "name": "Squatters",
+      "page": "q4O1wzWvplrTf8ru",
+      "kind": "problem",
+      "mod": -1,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "settlement"
+      ],
+      "weight": 5,
+      "placement": {
+        "type": "settlement",
+        "rule": "highest-consumption-or-largest"
+      },
+      "seat": "viceroy",
+      "skill": [
+        "politics"
+      ],
+      "special": [
+        {
+          "if": {
+            "structure": "sewer-system"
+          },
+          "then": [
+            {
+              "checkModifier": {
+                "type": "item",
+                "value": 2
+              }
+            }
+          ]
+        }
+      ],
+      "whileActive": [
+        {
+          "gm": "One empty lot is occupied and can't be built on."
+        }
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess"
+        ],
+        "orComplete": "residential-structure-on-lot"
+      },
+      "hook": "Families with nowhere to go have camped on an empty lot.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "unrest": 1
+          },
+          {
+            "end": true
+          }
+        ],
+        "failure": [
+          {
+            "unrest": "1d4"
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "consumption": 1,
+            "monthlyUntilEnd": true
+          },
+          {
+            "flat": {
+              "dc": 6,
+              "failure": [
+                {
+                  "spawn": "squatters",
+                  "placement": "same-settlement",
+                  "days": 30
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "undead-uprising",
+      "name": "Undead Uprising",
+      "page": "amPCmoD9IzZcQhbA",
+      "kind": "problem",
+      "mod": 0,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "settlement"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "settlement",
+        "rule": "most-cemeteries-or-largest"
+      },
+      "seat": "magister",
+      "skill": [
+        "folklore"
+      ],
+      "special": [
+        {
+          "modPerStructure": {
+            "structure": "cemetery",
+            "each": 1,
+            "max": 4
+          }
+        }
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess"
+        ]
+      },
+      "escalate": true,
+      "hook": "The dead are not staying in their graves.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "unrest": 1
+          }
+        ],
+        "failure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "choice": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "2d4"
+          },
+          {
+            "ruin": {
+              "all": 1
+            }
+          },
+          {
+            "gm": "One non-cemetery lot (players' choice) becomes rubble."
+          }
+        ]
+      }
+    },
+    {
+      "id": "unexpected-find",
+      "name": "Unexpected Find",
+      "page": "fOU85L4sMJsKngE5",
+      "kind": "opportunity",
+      "mod": 0,
+      "traits": [
+        "beneficial",
+        "settlement"
+      ],
+      "weight": 3,
+      "placement": {
+        "type": "settlement",
+        "rule": "newest"
+      },
+      "seat": "ruler",
+      "skill": [
+        "trade"
+      ],
+      "hook": "Workers have dug up something that glows.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "choose": {
+              "n": 1,
+              "from": [
+                [
+                  {
+                    "gm": "Give the PCs a permanent item, or four consumables, of kingdom level (AP rule; this is the AP's own reward, not kingdom gold)."
+                  }
+                ],
+                [
+                  {
+                    "unrest": "-2d4"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "success": [
+          {
+            "unrest": "-1d4"
+          }
+        ],
+        "failure": [
+          {
+            "unrest": -1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "vandals",
+      "name": "Vandals",
+      "page": "B6ipXbbfumQNhlCx",
+      "kind": "problem",
+      "mod": 1,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "settlement"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "settlement",
+        "rule": "random"
+      },
+      "seat": "warden",
+      "skill": [
+        "industry"
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess",
+          "success"
+        ]
+      },
+      "hook": "Someone is wrecking property under cover of night.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "bpDice": -2
+          }
+        ],
+        "failure": [
+          {
+            "bpDice": -4
+          }
+        ],
+        "criticalFailure": [
+          {
+            "gm": "One structure (players' choice) becomes rubble."
+          },
+          {
+            "unrest": "1d4"
+          },
+          {
+            "bpDice": -4
+          }
+        ]
+      }
+    },
+    {
+      "id": "visiting-celebrity",
+      "name": "Visiting Celebrity",
+      "page": "ii3XuPLxTj2pc3PE",
+      "kind": "opportunity",
+      "mod": 1,
+      "traits": [
+        "beneficial",
+        "settlement"
+      ],
+      "weight": 2,
+      "placement": {
+        "type": "settlement",
+        "rule": "random"
+      },
+      "seat": "emissary",
+      "skill": [
+        "arts"
+      ],
+      "hook": "A famous visitor is coming to town.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "choose": {
+              "n": 2,
+              "from": [
+                [
+                  {
+                    "bpDice": 4
+                  }
+                ],
+                [
+                  {
+                    "luxuries": "1d6"
+                  }
+                ],
+                [
+                  {
+                    "unrest": "-1d6"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "success": [
+          {
+            "choose": {
+              "n": 1,
+              "from": [
+                [
+                  {
+                    "bpDice": 4
+                  }
+                ],
+                [
+                  {
+                    "luxuries": "1d6"
+                  }
+                ],
+                [
+                  {
+                    "unrest": "-1d6"
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "failure": [
+          {
+            "unrest": -1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "nextLevelMod": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "wealthy-immigrant",
+      "name": "Wealthy Immigrant",
+      "page": "L1dEcsUBNS8rUCNS",
+      "kind": "opportunity",
+      "mod": 2,
+      "traits": [
+        "beneficial",
+        "continuous",
+        "settlement"
+      ],
+      "weight": 1,
+      "placement": {
+        "type": "settlement",
+        "rule": "capital"
+      },
+      "seat": "emissary",
+      "skill": [
+        "industry"
+      ],
+      "setup": [
+        {
+          "permission": {
+            "deny": [
+              {
+                "nextLevelMod": 1
+              },
+              {
+                "cancel": true
+              }
+            ]
+          }
+        }
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess",
+          "success",
+          "criticalFailure"
+        ]
+      },
+      "hook": "A rich foreigner wants to build an estate in your capital.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "freeStructure": "noble-villa",
+            "where": "capital-or-largest-with-room"
+          }
+        ],
+        "success": [
+          {
+            "freeStructure": "mansion",
+            "where": "capital-or-largest-with-room"
+          }
+        ],
+        "failure": [],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          }
+        ]
+      }
+    }
+  ],
+  "storyEvents": [
+    {
+      "id": "public-outbreak",
+      "name": "Public Outbreak",
+      "page": "oACpUsHavxM0gXje",
+      "kind": "problem",
+      "mod": 0,
+      "traits": [
+        "dangerous"
+      ],
+      "trigger": {
+        "chapter": 5,
+        "gm": true
+      },
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "ruler",
+      "skill": [
+        "politics"
+      ],
+      "special": [
+        {
+          "modGrowsEachTime": {
+            "by": 1,
+            "max": 2
+          }
+        }
+      ],
+      "hook": "Fear of the bloom-curse is spreading.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "noModGrowth": true
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "spawn": "cult-activity",
+            "inDays": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "too-close-to-home",
+      "name": "Too Close To Home",
+      "page": "GYO0H3yx4Izv8h7w",
+      "kind": "problem",
+      "mod": 1,
+      "traits": [
+        "dangerous",
+        "hex"
+      ],
+      "trigger": {
+        "chapter": 5,
+        "gm": true
+      },
+      "placement": {
+        "type": "hex",
+        "rule": "influence-of-settlement-nearest-party"
+      },
+      "seat": "warden",
+      "skill": [
+        "defense"
+      ],
+      "deadlineDays": 1,
+      "escalate": true,
+      "setup": [
+        {
+          "encounter": {
+            "levelOffset": 1,
+            "threat": "low"
+          }
+        }
+      ],
+      "hook": "Something burst out of a citizen and is loose in the countryside.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "flat": {
+              "dc": 11,
+              "failure": [
+                {
+                  "unrest": 1
+                }
+              ]
+            }
+          }
+        ],
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          },
+          {
+            "becomeContinuous": {
+              "everyDays": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "urban-outbreak",
+      "name": "Urban Outbreak",
+      "page": "SJR5W6LsquErMEhD",
+      "kind": "problem",
+      "mod": 2,
+      "traits": [
+        "dangerous",
+        "settlement"
+      ],
+      "trigger": {
+        "chapter": 5,
+        "gm": true
+      },
+      "placement": {
+        "type": "settlement",
+        "rule": "party-current-or-nearest"
+      },
+      "seat": "warden",
+      "skill": [
+        "defense"
+      ],
+      "deadlineDays": 1,
+      "escalate": true,
+      "setup": [
+        {
+          "encounter": {
+            "levelOffset": 2,
+            "threat": "moderate"
+          }
+        }
+      ],
+      "hook": "A monster has erupted in the middle of town.",
+      "outcomes": {
+        "criticalSuccess": [],
+        "success": [
+          {
+            "unrest": 1
+          }
+        ],
+        "failure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d6"
+          },
+          {
+            "ruin": {
+              "decay": 2
+            }
+          },
+          {
+            "becomeContinuous": {
+              "everyDays": 1
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

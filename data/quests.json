@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "quests": [
+    { "id": "olegs-trophy", "name": "Oleg's Trophy", "location": "RL1" },
+    { "id": "svetlanas-ring", "name": "Svetlana's Ring", "location": "RL1" },
+    { "id": "a-missing-brother", "name": "A Missing Brother", "location": "RL6" },
+    { "id": "radish-soup", "name": "Radish Soup", "location": "GB4", "givenAt": "RL1" },
+    { "id": "wanted-bandits", "name": "Wanted: Bandits", "location": "GB7" },
+    { "id": "wanted-tuskgutter", "name": "Wanted: Tuskgutter", "location": "GB12" },
+    { "id": "wanted-kobolds", "name": "Wanted: Kobolds", "location": "GB20" },
+    { "id": "that-damn-turtle", "name": "That Damn Turtle!", "location": "TW8" },
+    { "id": "a-ladys-desire", "name": "A Lady’s Desire", "location": "NM5" },
+    { "id": "i-swear-im-sober", "name": "I Swear I’m Sober!", "location": "NM6" },
+    { "id": "forgotten-history", "name": "Forgotten History", "location": "LV6", "chapter": 6 },
+    { "id": "a-missing-professor", "name": "A Missing Professor", "location": "DS5", "leadsTo": "LV6", "chapter": 6 },
+    { "id": "the-omelet-king", "name": "The Omelet King", "location": "LV2" },
+    { "id": "bog-mummy-terror", "name": "Bog Mummy Terror", "location": "HT13" },
+    { "id": "chasing-the-wind", "name": "Chasing the Wind", "location": "DR3" },
+    { "id": "drunken-heroes", "name": "Drunken Heroes", "location": "RU2" },
+    { "id": "catching-a-cheat", "name": "Catching A Cheat", "location": "RU2" },
+    { "id": "strange-vegetation", "name": "Strange Vegetation", "location": "GU2" },
+    { "id": "a-flying-owlbear", "name": "A Flying Owlbear", "roaming": true, "chapter": 10 }
+  ]
+}
