@@ -325,6 +325,10 @@ async function settleCard(realm, card, degreeName, { points = true, skill = null
   }
 
   for (const task of ctx.gmTasks) realm.gmTasks.push(task);
+  if (points && ["success", "criticalSuccess"].includes(degreeName)) {
+    realm.seatRecord ??= {};
+    realm.seatRecord[card.seat] = (realm.seatRecord[card.seat] ?? 0) + 1;
+  }
   addLog(realm, { type: "card-resolved", card: card.id, seat: card.seat, text: `${card.name}: ${game.i18n.localize(`UKM.Degree.${degreeName}`)}` });
   return ctx;
 }

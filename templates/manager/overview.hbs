@@ -68,6 +68,25 @@
     {{/each}}
   </ol>
 
+  <h3>{{localize "UKM.Ambition.Heading"}}</h3>
+  <ol class="ukm-stats ukm-ambitions">
+    {{#each ambitions}}
+      <li class="ukm-stat {{#if complete}}ready{{/if}}">
+        <div class="ukm-stat-head">
+          <strong>{{title}}</strong>
+          <span class="hint">{{seatLabel}} · {{reached}}/{{total}}</span>
+        </div>
+        {{#if complete}}
+          <span class="hint">{{localize "UKM.Ambition.Complete"}}</span>
+        {{else}}
+          <span>{{goal}}</span>
+          <div class="ukm-bar"><span style="width: {{percent}}%"></span></div>
+          <span class="hint">{{value}} / {{target}} · {{localize "UKM.Ambition.Reward" reward=reward}}</span>
+        {{/if}}
+      </li>
+    {{/each}}
+  </ol>
+
   {{#if isGM}}
     <h3>{{localize "UKM.Manager.GmTasks"}}{{#if openTasks}} <span class="ukm-tag">{{openTasks}}</span>{{/if}}</h3>
     {{#if gmTasks.length}}

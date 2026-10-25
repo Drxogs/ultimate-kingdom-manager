@@ -5,6 +5,7 @@ import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
 import { drawAudience } from "./audiences.js";
 import { announceCouncil } from "./council.js";
+import { checkAmbitions } from "./ambitions.js";
 import { addStatPoints, routinePoints, weeklyFoodShortfall, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { monthKey, secondsPerDay, weekNumber } from "./time.js";
@@ -41,6 +42,7 @@ export async function tick() {
       if (hasExpiring(getRealm())) await updateRealm((realm) => expireCards(realm));
       await resolveDue();
       await advanceRankUps();
+      await checkAmbitions();
       await syncPins();
       return;
     }
@@ -66,6 +68,7 @@ export async function tick() {
     if (unrest) await addUnrest(unrest);
     await resolveDue();
     await advanceRankUps();
+    await checkAmbitions();
     await syncPins();
 
     if (newMonth && getSetting(SETTINGS.council)) await announceCouncil();

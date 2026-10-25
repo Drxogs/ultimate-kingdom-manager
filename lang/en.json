@@ -209,7 +209,8 @@
       "proposal": "Proposed: {name}.",
       "proposal-funded": "Funded: {name}.",
       "proposal-rejected": "Rejected: {name}.",
-      "proposal-withdrawn": "Withdrawn: {name}."
+      "proposal-withdrawn": "Withdrawn: {name}.",
+      "ambition": "Ambition reached: {name}."
     },
     "Seat": {
       "ruler": "Ruler",
@@ -322,7 +323,7 @@
       },
       "ConsumptionSkip": "No food upkeep for a month",
       "Consumption": "Consumption {amount} for a month",
-      "Modifier": "{value} to {selector} checks for a month",
+      "Modifier": "{value} to {selector} checks for {days} days",
       "Selector": {
         "culture": "Culture",
         "economy": "Economy",
@@ -490,6 +491,23 @@
       "MeetsWaiting": "{count} proposals are waiting, and the treasury holds {bp} BP.",
       "MeetsEmpty": "Nothing is waiting on the council this month. The treasury holds {bp} BP.",
       "Proposed": "Proposed to the council."
+    },
+    "Ambition": {
+      "Heading": "Seat ambitions",
+      "Complete": "Every goal reached.",
+      "Reward": "Reward: {reward}",
+      "Reached": "{title}: goal {tier} of {total} reached",
+      "ReachedBy": "The {seat} ({holder}) has done it: {goal}.",
+      "Goal": {
+        "successes": "Handle {n} matters on this desk successfully",
+        "rank": "Raise {stat} to rank {n}",
+        "structures": "Have {n} structures built through the realm",
+        "trade": "Hold {n} trade agreements",
+        "projects": "Finish {n} roads, farms or structures",
+        "hexes": "Grow the realm to {n} hexes",
+        "income": "Weekly income at {n}× the base",
+        "fame": "Reach {n} Fame"
+      }
     }
   }
 }

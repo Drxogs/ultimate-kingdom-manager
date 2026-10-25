@@ -1,0 +1,510 @@
+{
+  "version": 1,
+  "ambitions": {
+    "ruler": {
+      "title": "Beloved Sovereign",
+      "tiers": [
+        {
+          "goal": {
+            "type": "successes",
+            "n": 3
+          },
+          "reward": [
+            {
+              "fame": 1
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "rank",
+            "stat": "loyalty",
+            "n": 3
+          },
+          "reward": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "loyalty"
+                ],
+                "days": 180
+              }
+            },
+            {
+              "income": {
+                "perWeek": 1,
+                "weeks": 26
+              }
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "rank",
+            "stat": "loyalty",
+            "n": 6
+          },
+          "reward": [
+            {
+              "fame": 1
+            },
+            {
+              "modifier": {
+                "type": "status",
+                "value": 2,
+                "selector": [
+                  "loyalty"
+                ],
+                "days": 365
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "counselor": {
+      "title": "Patron of the Arts",
+      "tiers": [
+        {
+          "goal": {
+            "type": "successes",
+            "n": 3
+          },
+          "reward": [
+            {
+              "fame": 1
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "structures",
+            "n": 3
+          },
+          "reward": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "culture"
+                ],
+                "days": 180
+              }
+            },
+            {
+              "income": {
+                "perWeek": 1,
+                "weeks": 26
+              }
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "rank",
+            "stat": "culture",
+            "n": 5
+          },
+          "reward": [
+            {
+              "fame": 1
+            },
+            {
+              "modifier": {
+                "type": "status",
+                "value": 2,
+                "selector": [
+                  "culture"
+                ],
+                "days": 365
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "general": {
+      "title": "Shield of the Realm",
+      "tiers": [
+        {
+          "goal": {
+            "type": "successes",
+            "n": 3
+          },
+          "reward": [
+            {
+              "fame": 1
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "rank",
+            "stat": "military",
+            "n": 3
+          },
+          "reward": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "stability"
+                ],
+                "days": 180
+              }
+            },
+            {
+              "income": {
+                "perWeek": 1,
+                "weeks": 26
+              }
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "rank",
+            "stat": "military",
+            "n": 6
+          },
+          "reward": [
+            {
+              "fame": 1
+            },
+            {
+              "modifier": {
+                "type": "status",
+                "value": 2,
+                "selector": [
+                  "stability"
+                ],
+                "days": 365
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "emissary": {
+      "title": "Friend to Every Neighbor",
+      "tiers": [
+        {
+          "goal": {
+            "type": "successes",
+            "n": 3
+          },
+          "reward": [
+            {
+              "fame": 1
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "trade",
+            "n": 2
+          },
+          "reward": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "loyalty"
+                ],
+                "days": 180
+              }
+            },
+            {
+              "income": {
+                "perWeek": 1,
+                "weeks": 26
+              }
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "trade",
+            "n": 4
+          },
+          "reward": [
+            {
+              "fame": 1
+            },
+            {
+              "modifier": {
+                "type": "status",
+                "value": 2,
+                "selector": [
+                  "loyalty"
+                ],
+                "days": 365
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "magister": {
+      "title": "Keeper of Lore",
+      "tiers": [
+        {
+          "goal": {
+            "type": "successes",
+            "n": 3
+          },
+          "reward": [
+            {
+              "fame": 1
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "rank",
+            "stat": "arcane",
+            "n": 3
+          },
+          "reward": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "culture"
+                ],
+                "days": 180
+              }
+            },
+            {
+              "income": {
+                "perWeek": 1,
+                "weeks": 26
+              }
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "rank",
+            "stat": "arcane",
+            "n": 6
+          },
+          "reward": [
+            {
+              "fame": 1
+            },
+            {
+              "modifier": {
+                "type": "status",
+                "value": 2,
+                "selector": [
+                  "culture"
+                ],
+                "days": 365
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "treasurer": {
+      "title": "Full Coffers",
+      "tiers": [
+        {
+          "goal": {
+            "type": "successes",
+            "n": 3
+          },
+          "reward": [
+            {
+              "fame": 1
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "income",
+            "n": 1.5
+          },
+          "reward": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "economy"
+                ],
+                "days": 180
+              }
+            },
+            {
+              "income": {
+                "perWeek": 1,
+                "weeks": 26
+              }
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "income",
+            "n": 2.5
+          },
+          "reward": [
+            {
+              "fame": 1
+            },
+            {
+              "modifier": {
+                "type": "status",
+                "value": 2,
+                "selector": [
+                  "economy"
+                ],
+                "days": 365
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "viceroy": {
+      "title": "Builder of Towns",
+      "tiers": [
+        {
+          "goal": {
+            "type": "projects",
+            "types": [
+              "build-road",
+              "establish-farmland",
+              "build-structure"
+            ],
+            "n": 3
+          },
+          "reward": [
+            {
+              "fame": 1
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "projects",
+            "types": [
+              "build-road",
+              "establish-farmland",
+              "build-structure"
+            ],
+            "n": 8
+          },
+          "reward": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "economy"
+                ],
+                "days": 180
+              }
+            },
+            {
+              "income": {
+                "perWeek": 1,
+                "weeks": 26
+              }
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "structures",
+            "n": 10
+          },
+          "reward": [
+            {
+              "fame": 1
+            },
+            {
+              "modifier": {
+                "type": "status",
+                "value": 2,
+                "selector": [
+                  "economy"
+                ],
+                "days": 365
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "warden": {
+      "title": "Master of the Wilds",
+      "tiers": [
+        {
+          "goal": {
+            "type": "hexes",
+            "n": 10
+          },
+          "reward": [
+            {
+              "fame": 1
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "hexes",
+            "n": 25
+          },
+          "reward": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "stability"
+                ],
+                "days": 180
+              }
+            },
+            {
+              "income": {
+                "perWeek": 1,
+                "weeks": 26
+              }
+            }
+          ]
+        },
+        {
+          "goal": {
+            "type": "hexes",
+            "n": 50
+          },
+          "reward": [
+            {
+              "fame": 1
+            },
+            {
+              "modifier": {
+                "type": "status",
+                "value": 2,
+                "selector": [
+                  "stability"
+                ],
+                "days": 365
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

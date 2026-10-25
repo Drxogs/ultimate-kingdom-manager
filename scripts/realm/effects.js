@@ -49,6 +49,7 @@ export function describeEffect(effect) {
     case "modifier":
       return loc("Modifier", {
         value: formatAmount(value.value),
+        days: value.days ?? 30,
         selector: [value.selector].flat().map((s) => game.i18n.localize(`UKM.Effect.Selector.${s}`)).join(" & ")
       });
     case "reroll":

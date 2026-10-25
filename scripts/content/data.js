@@ -11,7 +11,7 @@ async function load(name) {
 }
 
 export async function preloadData() {
-  await Promise.all(["events", "matters", "rankups", "projects", "audiences", "companions", "quests"].map(load));
+  await Promise.all(["events", "matters", "rankups", "projects", "audiences", "ambitions", "companions", "quests"].map(load));
 }
 
 export function getEvents() {
@@ -52,6 +52,10 @@ export function getSignature(companionId) {
 export function getProject(type) {
   if (typeof type === "string" && type.startsWith("signature-")) return getSignature(type.slice(10));
   return getProjects().find((p) => p.id === type) ?? null;
+}
+
+export function getAmbition(seat) {
+  return cache.ambitions?.ambitions?.[seat] ?? null;
 }
 
 export function getAudiences() {

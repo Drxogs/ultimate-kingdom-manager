@@ -12,6 +12,7 @@ import { buildableStructures, projectQuote, projectsForSeat, projectTargets } fr
 import { tapCostBP, tapLimit, tapMode } from "../realm/treasury.js";
 import { audienceResponses, drawAudience } from "../realm/audiences.js";
 import { proposals } from "../realm/council.js";
+import { ambitionsView } from "../realm/ambitions.js";
 import { getProject } from "../content/data.js";
 import { sendRequest } from "../realm/requests.js";
 import {
@@ -205,6 +206,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     });
     context.desks = this.#prepareDesks(realm, kingdom);
     context.council = this.#prepareCouncil(realm);
+    context.ambitions = ambitionsView(realm);
     context.gmTasks = game.user.isGM
       ? realm.gmTasks
           .slice()
