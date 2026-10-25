@@ -67,7 +67,7 @@ Hooks.on("updateActor", (actor, changes) => {
 });
 
 Hooks.on("updateSetting", (setting) => {
-  if (setting.key.startsWith(`${MODULE_ID}.`)) KingdomManager.refresh();
+  if (setting.key.startsWith(`${MODULE_ID}.`)) Hooks.callAll(`${MODULE_ID}.refresh`);
 });
 
 Hooks.on("getSceneControlButtons", (controls) => {

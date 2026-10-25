@@ -75,7 +75,22 @@
 
 /* Manager */
 
-.ukm-manager .window-content { padding: 0.5rem 0.75rem; }
+.ukm-manager .window-content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0.5rem 0.75rem;
+}
+
+.ukm-manager .window-content > .tab {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.ukm-manager .window-content > .tab:not(.active) { display: none; }
+
+.ukm-manager .ukm-desks.active { align-content: start; }
 
 .ukm-manager .ukm-realm-header {
   display: flex;
@@ -153,7 +168,7 @@
 
 .ukm-manager .ukm-gm-tools button { flex: 1 1 auto; }
 
-.ukm-manager .ukm-desks {
+.ukm-manager .ukm-desks.active {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.6rem;

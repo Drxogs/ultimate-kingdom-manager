@@ -108,13 +108,15 @@
       "BetweenOn": "Desks open between sessions",
       "BetweenOff": "Desks closed between sessions",
       "DrawNow": "Draw events now",
-      "Drawn": "{count} new events have arrived.",
+      "Drawn": "New events have arrived: {count}.",
       "Advisor": "advisor",
       "Vacant": "Vacant",
       "SupervisedBy": "supervised by {name}",
       "DeskEmpty": "Nothing waiting on this desk.",
       "Unknown": "Location unknown",
-      "LogEmpty": "Nothing has happened yet."
+      "LogEmpty": "Nothing has happened yet.",
+      "DrawnOne": "A new event has arrived.",
+      "DrawnNone": "No events could be drawn right now."
     },
     "Card": {
       "Kind": {

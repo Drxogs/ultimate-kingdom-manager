@@ -196,7 +196,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       drawn = drawMonthlyEvents(realm);
     });
     await syncPins();
-    ui.notifications.info(game.i18n.format("UKM.Manager.Drawn", { count: drawn.length }));
+    const key = drawn.length === 0 ? "DrawnNone" : drawn.length === 1 ? "DrawnOne" : "Drawn";
+    ui.notifications.info(game.i18n.format(`UKM.Manager.${key}`, { count: drawn.length }));
   }
 
   static #openSetup() {

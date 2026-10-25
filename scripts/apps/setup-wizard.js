@@ -115,3 +115,8 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     getKingdom()?.actor?.sheet?.render(true, { tab: "kingdom" });
   }
 }
+
+Hooks.on(`${MODULE_ID}.refresh`, () => {
+  const app = foundry.applications.instances.get("ukm-setup");
+  if (app?.rendered) app.render();
+});

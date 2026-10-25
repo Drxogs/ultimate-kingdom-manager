@@ -167,14 +167,26 @@ async function ensureFolder() {
   });
 }
 
+const KINGMAKER_SHEET = "pf2e-kingmaker.KingmakerJournalSheet";
+
+function kingmakerSheetAvailable() {
+  return !!CONFIG.JournalEntry.sheetClasses?.base?.[KINGMAKER_SHEET];
+}
+
 async function ensureJournal(folder, category) {
+  const sheetClass = kingmakerSheetAvailable() ? KINGMAKER_SHEET : null;
   const existing = game.journal.find((j) => j.getFlag(FLAG_SCOPE, "category") === category);
-  if (existing) return existing;
+  if (existing) {
+    if (sheetClass && existing.getFlag("core", "sheetClass") !== sheetClass) {
+      await existing.setFlag("core", "sheetClass", sheetClass);
+    }
+    return existing;
+  }
   return JournalEntry.create({
     name: JOURNAL_TITLES[category],
     folder: folder.id,
     ownership: { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE },
-    flags: { [FLAG_SCOPE]: { category } }
+    flags: { [FLAG_SCOPE]: { category }, ...(sheetClass ? { core: { sheetClass } } : {}) }
   });
 }
 
