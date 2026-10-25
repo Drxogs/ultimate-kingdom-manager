@@ -51,7 +51,7 @@ function withLevelGravity(hexes, defs) {
   return near.length ? near : hexes;
 }
 
-function settlementHexes() {
+export function settlementHexes() {
   return getClaimedHexes()
     .map((hex) => {
       const feature = (hex.features ?? []).find((f) => SETTLEMENT_TYPES.includes(f.type));
@@ -61,7 +61,7 @@ function settlementHexes() {
     .filter(Boolean);
 }
 
-function neighbors(hexKey) {
+export function neighbors(hexKey) {
   const hex = globalThis.kingmaker?.region?.hexes?.get?.(Number(hexKey));
   const list = hex?.getNeighbors?.() ?? [];
   return list.map((n) => String(n.key ?? 1000 * n.offset.i + n.offset.j));

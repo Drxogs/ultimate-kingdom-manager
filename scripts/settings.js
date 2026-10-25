@@ -15,7 +15,8 @@ export const SETTINGS = {
   pinResolved: "pinResolved",
   clock: "clock",
   seatAssignments: "seatAssignments",
-  deskMatters: "deskMatters"
+  deskMatters: "deskMatters",
+  structureCatalog: "structureCatalog"
 };
 
 export function registerSettings() {
@@ -110,6 +111,7 @@ export function registerSettings() {
   world(SETTINGS.importReminder, { config: false, type: Number, default: 0 });
   world(SETTINGS.clock, { config: false, type: Object, default: {} });
   world(SETTINGS.seatAssignments, { config: false, type: Object, default: {} });
+  world(SETTINGS.structureCatalog, { config: false, type: Array, default: [] });
 }
 
 export function getSetting(key) {

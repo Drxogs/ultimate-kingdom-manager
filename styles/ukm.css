@@ -196,7 +196,7 @@
 }
 
 .ukm-manager .ukm-desk.mine { border-color: var(--ukm-gold); border-width: 2px; }
-.ukm-manager .ukm-desk header { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+.ukm-manager .ukm-desk header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
 .ukm-manager .ukm-desk h3 { margin: 0; border: none; }
 .ukm-manager .ukm-empty { margin: 0.4rem 0 0; }
 
@@ -267,3 +267,7 @@
 .ukm-manager .ukm-stat .ukm-working { display: block; margin-top: 0.25rem; }
 .ukm-scene .ukm-scene-text { font-style: italic; }
 .ukm-scene .ukm-scene-options { margin: 0.5rem 0; padding-left: 1.1rem; display: grid; gap: 0.4rem; }
+
+.ukm-manager .ukm-desk-action { flex: 0 0 auto; width: auto; height: 1.7rem; padding: 0 0.5rem; font-size: var(--font-size-12, 12px); margin-left: auto; }
+.ukm-manager .ukm-card.project { border-left-color: var(--ukm-gold); }
+.ukm .ukm-tag.project { border-color: var(--ukm-gold); color: var(--ukm-gold); }

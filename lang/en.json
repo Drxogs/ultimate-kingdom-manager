@@ -147,7 +147,8 @@
     "Card": {
       "Kind": {
         "problem": "Problem",
-        "opportunity": "Opportunity"
+        "opportunity": "Opportunity",
+        "project": "Project"
       },
       "Continuous": "Ongoing",
       "EscalateHint": "Can be taken on by the party as an adventure",
@@ -189,7 +190,8 @@
       "card-dismissed": "Dismissed: {name}.",
       "rank-up": "Rank up: {name}.",
       "founding": "Founding focus: {name}.",
-      "rank-start": "Rank-up begun: {name}."
+      "rank-start": "Rank-up begun: {name}.",
+      "project-start": "Project started: {name}."
     },
     "Seat": {
       "ruler": "Ruler",
@@ -274,7 +276,9 @@
         "NotReady": "That stat isn't ready to rank up.",
         "AlreadyUnderway": "A rank-up for that stat is already underway.",
         "AdvisorBusy": "The advisor is busy with {card}.",
-        "TooPoor": "The treasury needs {cost} BP for that."
+        "TooPoor": "The treasury needs {cost} BP for that.",
+        "NoTarget": "That place isn't available for this project.",
+        "NoStructure": "That structure can't be built yet."
       }
     },
     "Effect": {
@@ -333,7 +337,9 @@
       "BecomesOngoing": "Becomes ongoing",
       "Harder": "Harder next time",
       "AskBreached": "Did the threat break into {place}?",
-      "Income": "{amount} BP a week for {weeks} weeks"
+      "Income": "{amount} BP a week for {weeks} weeks",
+      "ProjectDone": "The work is finished",
+      "Refund": "{percent}% of the cost back"
     },
     "Difficulty": {
       "veryEasy": "Very easy",
@@ -359,6 +365,53 @@
       "ReadyText": "The seat's holder has a choice to make on the Realm tab.",
       "ToRank": "{stat} rank {rank}",
       "Always": "Whatever is chosen: {effects}."
+    },
+    "Project": {
+      "Start": "Start project",
+      "StartTitle": "What should be built?",
+      "Quote": "{cost} BP, {days} days",
+      "Treasury": "Treasury: {bp} BP. The cost is paid when the project starts.",
+      "Hex": "Hex",
+      "Where": "Settlement",
+      "Structure": "Structure",
+      "CampLabel": "Work site",
+      "CampHint": "On a hex with the matching resource the site pays double.",
+      "Camp": {
+        "lumber": "Lumber camp",
+        "quarry": "Quarry",
+        "mine": "Mine"
+      },
+      "Commodity": {
+        "food": "food",
+        "ore": "ore",
+        "lumber": "lumber",
+        "luxuries": "luxuries",
+        "stone": "stone"
+      },
+      "Settlement": {
+        "village": "Village",
+        "town": "Town",
+        "city": "City",
+        "metropolis": "Metropolis"
+      },
+      "NoTargets": {
+        "frontier": "There are no unclaimed hexes next to the realm.",
+        "claimed-no-road": "Every claimed hex already has a road.",
+        "claimed-no-farm": "No claimed hex is free for farmland.",
+        "claimed-no-camp": "No claimed hex is free for a work site.",
+        "settlement": "The realm has no settlements yet."
+      },
+      "NoStructures": "No structures are known yet. Import the story content first.",
+      "Started": "The project is on the desk. {cost} BP paid. Delegate it or handle it personally.",
+      "Done": "The work is finished.",
+      "Refund": "{amount} BP recovered.",
+      "Task": {
+        "claim": "Mark {where} as claimed.",
+        "road": "Add a road to {where}.",
+        "farm": "Mark farmland on {where}.",
+        "camp": "Add a {camp} on {where}.",
+        "structure": "Add {name} to {where}."
+      }
     }
   }
 }

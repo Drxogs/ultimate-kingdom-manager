@@ -8,6 +8,8 @@ import { syncPins } from "../realm/pins.js";
 import { canRankUp, rankBonus, rankCap, routinePoints, statProgress, weeklyIncome } from "../realm/rules.js";
 import { getRealm, updateRealm } from "../realm/state.js";
 import { finishRankUpNow, rankUpChoices, rankUpCost, rankUpProject } from "../realm/ranks.js";
+import { buildableStructures, projectQuote, projectsForSeat, projectTargets } from "../realm/projects.js";
+import { getProject } from "../content/data.js";
 import { sendRequest } from "../realm/requests.js";
 import {
   canActForSeat,
@@ -117,6 +119,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       dismiss: KingdomManager.#dismiss,
       toggleTask: KingdomManager.#toggleTask,
       beginRankUp: KingdomManager.#beginRankUp,
+      startProject: KingdomManager.#startProject,
       chooseRankUp: KingdomManager.#chooseRankUp,
       finishRankUp: KingdomManager.#finishRankUp,
       openImport: KingdomManager.#openImport,
@@ -285,6 +288,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         isCompanion: !leader && !!companion,
         supervisor: supervisor?.name ?? null,
         mine,
+        canStartProject: canAct && projectsForSeat(seat).length > 0,
         cards,
         empty: !cards.length
       };
@@ -372,6 +376,72 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       canChoose: project?.status === "choosing" && canAct,
       cost: rankUpCost(realm)
     };
+  }
+
+  static async #startProject(event, target) {
+    const seat = target.closest("[data-seat]")?.dataset.seat;
+    const defs = projectsForSeat(seat);
+    if (!defs.length) return;
+    const esc = Handlebars.escapeExpression;
+    const type =
+      defs.length === 1
+        ? defs[0].id
+        : await DialogV2.wait({
+            window: { title: game.i18n.localize("UKM.Project.StartTitle") },
+            content: `<ul class="ukm-scene-options">${defs.map((d) => `<li><strong>${esc(d.name)}</strong> ${esc(d.hook)}</li>`).join("")}</ul>`,
+            buttons: defs.map((d) => ({ action: d.id, label: d.name })),
+            rejectClose: false
+          });
+    const def = type ? getProject(type) : null;
+    if (!def) return;
+
+    const targets = projectTargets(def);
+    if (!targets.length) {
+      ui.notifications.warn(game.i18n.localize(`UKM.Project.NoTargets.${def.target}`));
+      return;
+    }
+    const structures = def.target === "settlement" ? buildableStructures() : [];
+    if (def.target === "settlement" && !structures.length) {
+      ui.notifications.warn(game.i18n.localize("UKM.Project.NoStructures"));
+      return;
+    }
+    const probe = { eventId: `project:${def.id}`, seat: def.seat, dcAdjust: 0 };
+    const odds = estimateCheck(probe, { type: "advisor", skill: def.skill[0] });
+    const quoteText = (q) => game.i18n.format("UKM.Project.Quote", { cost: q.cost, days: q.days });
+    const targetOptions = targets
+      .map((t, i) => `<option value="${i}">${esc(t.label)}${def.target === "settlement" ? "" : ` — ${quoteText(projectQuote(def, t))}`}</option>`)
+      .join("");
+    const structureField = structures.length
+      ? `<div class="form-group"><label>${game.i18n.localize("UKM.Project.Structure")}</label><select name="structure">${structures
+          .map((s) => `<option value="${s.slug}">${esc(s.name)}${s.level ? ` (${s.level})` : ""} — ${quoteText(projectQuote(def, null, s))}</option>`)
+          .join("")}</select></div>`
+      : "";
+    const campField =
+      def.id === "establish-work-site"
+        ? `<div class="form-group"><label>${game.i18n.localize("UKM.Project.CampLabel")}</label><select name="camp">${["lumber", "quarry", "mine"]
+            .map((c) => `<option value="${c}">${game.i18n.localize(`UKM.Project.Camp.${c}`)}</option>`)
+            .join("")}</select><p class="hint">${game.i18n.localize("UKM.Project.CampHint")}</p></div>`
+        : "";
+    const content = `<p>${esc(def.hook)}</p>${odds ? `<p class="hint">${game.i18n.localize("UKM.Difficulty.Advisor")} ${odds.label}</p>` : ""}
+      <div class="form-group"><label>${game.i18n.localize(def.target === "settlement" ? "UKM.Project.Where" : "UKM.Project.Hex")}</label><select name="target">${targetOptions}</select></div>
+      ${structureField}${campField}<p class="hint">${game.i18n.format("UKM.Project.Treasury", { bp: getRealm().treasury })}</p>`;
+    const choice = await DialogV2.prompt({
+      window: { title: def.name },
+      position: { width: 520 },
+      content,
+      ok: {
+        label: game.i18n.localize("UKM.Project.Start"),
+        callback: (event, button) => ({
+          target: button.form.elements.target.value,
+          structure: button.form.elements.structure?.value ?? null,
+          camp: button.form.elements.camp?.value ?? null
+        })
+      },
+      rejectClose: false
+    });
+    if (!choice) return;
+    const picked = targets[Number(choice.target)];
+    await sendRequest("startProject", { type: def.id, hexKey: picked.hexKey, structure: choice.structure, camp: choice.camp });
   }
 
   static async #beginRankUp(event, target) {

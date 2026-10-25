@@ -4,6 +4,7 @@ import { getKingdom } from "../integrations/party.js";
 import { resourceDieValue, weeklyIncome } from "./rules.js";
 import { newId } from "./state.js";
 import { secondsPerDay } from "./time.js";
+import { completeProject, refundProject } from "./projects.js";
 
 const { DialogV2 } = foundry.applications.api;
 
@@ -54,6 +55,10 @@ export function describeEffect(effect) {
       return loc("Reroll");
     case "tradeAgreement":
       return loc("TradeAgreement");
+    case "completeProject":
+      return loc("ProjectDone");
+    case "refund":
+      return loc("Refund", { percent: Math.round(value * 100) });
     case "income":
       return loc("Income", { amount: formatAmount(value.perWeek), weeks: value.weeks });
     case "end":
@@ -424,6 +429,14 @@ export async function applyEffects(ctx, effects = []) {
       case "nextLevelMod": {
         realm.levelModBoosts ??= {};
         realm.levelModBoosts[ctx.card.eventId] = (realm.levelModBoosts[ctx.card.eventId] ?? 0) + value;
+        break;
+      }
+      case "completeProject": {
+        completeProject(ctx);
+        break;
+      }
+      case "refund": {
+        refundProject(ctx, value);
         break;
       }
       case "income": {

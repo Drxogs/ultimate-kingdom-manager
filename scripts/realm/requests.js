@@ -1,6 +1,7 @@
 import { FLAG_SCOPE, MODULE_ID } from "../constants.js";
 import { getSetting, SETTINGS } from "../settings.js";
-import { acceptRequest, assignCard, escalateCard, unassignCard } from "./resolve.js";
+import { acceptRequest, assignCard, canActForSeat, escalateCard, unassignCard } from "./resolve.js";
+import { startProject } from "./projects.js";
 import { chooseRankUp, startRankUp } from "./ranks.js";
 import { getRealm } from "./state.js";
 
@@ -14,6 +15,7 @@ const HANDLERS = {
   escalate: escalateCard,
   accept: acceptRequest,
   startRankUp,
+  startProject: (payload) => startProject(payload, { canActForSeat }),
   chooseRankUp
 };
 
@@ -49,6 +51,7 @@ async function handle(action, payload) {
 function report(result, action) {
   if (result?.ok) {
     if (action === "assign") ui.notifications.info(game.i18n.format("UKM.Request.Assigned", { days: result.days }));
+    if (action === "startProject") ui.notifications.info(game.i18n.format("UKM.Project.Started", { cost: result.cost }));
     if (action === "startRankUp") ui.notifications.info(game.i18n.format("UKM.Rank.Started", { days: result.days }));
     return;
   }

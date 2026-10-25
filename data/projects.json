@@ -1,0 +1,228 @@
+{
+  "version": 1,
+  "projects": [
+    {
+      "id": "claim-hex",
+      "seat": "warden",
+      "skill": [
+        "exploration",
+        "wilderness"
+      ],
+      "target": "frontier",
+      "costWeeks": 0.5,
+      "workDays": 7,
+      "name": "Claim a Hex",
+      "hook": "Survey the land, settle the boundary and raise the realm's banner over a new hex.",
+      "kind": "project",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "completeProject": true
+          },
+          {
+            "refund": 0.5
+          }
+        ],
+        "success": [
+          {
+            "completeProject": true
+          }
+        ],
+        "failure": [
+          {
+            "refund": 0.5
+          },
+          {
+            "note": "The work didn't come together. Half the cost is recovered; it can be tried again."
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "note": "The work collapsed and the money is gone."
+          }
+        ]
+      }
+    },
+    {
+      "id": "build-road",
+      "seat": "viceroy",
+      "skill": [
+        "engineering"
+      ],
+      "target": "claimed-no-road",
+      "costWeeks": 0.5,
+      "workDays": 7,
+      "name": "Build a Road",
+      "hook": "Cut and pave a road through a claimed hex.",
+      "kind": "project",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "completeProject": true
+          },
+          {
+            "refund": 0.5
+          }
+        ],
+        "success": [
+          {
+            "completeProject": true
+          }
+        ],
+        "failure": [
+          {
+            "refund": 0.5
+          },
+          {
+            "note": "The work didn't come together. Half the cost is recovered; it can be tried again."
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "note": "The work collapsed and the money is gone."
+          }
+        ]
+      }
+    },
+    {
+      "id": "establish-farmland",
+      "seat": "viceroy",
+      "skill": [
+        "agriculture"
+      ],
+      "target": "claimed-no-farm",
+      "costWeeks": 0.5,
+      "workDays": 7,
+      "name": "Establish Farmland",
+      "hook": "Clear fields, dig ditches and plant the first crop.",
+      "kind": "project",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "completeProject": true
+          },
+          {
+            "refund": 0.5
+          }
+        ],
+        "success": [
+          {
+            "completeProject": true
+          }
+        ],
+        "failure": [
+          {
+            "refund": 0.5
+          },
+          {
+            "note": "The work didn't come together. Half the cost is recovered; it can be tried again."
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "note": "The work collapsed and the money is gone."
+          }
+        ]
+      }
+    },
+    {
+      "id": "establish-work-site",
+      "seat": "treasurer",
+      "skill": [
+        "industry",
+        "engineering"
+      ],
+      "target": "claimed-no-camp",
+      "costWeeks": 1,
+      "workDays": 7,
+      "name": "Establish a Work Site",
+      "hook": "Open a quarry, mine or lumber camp. On a hex with that resource it pays double.",
+      "kind": "project",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "completeProject": true
+          },
+          {
+            "refund": 0.5
+          }
+        ],
+        "success": [
+          {
+            "completeProject": true
+          }
+        ],
+        "failure": [
+          {
+            "refund": 0.5
+          },
+          {
+            "note": "The work didn't come together. Half the cost is recovered; it can be tried again."
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "note": "The work collapsed and the money is gone."
+          }
+        ]
+      }
+    },
+    {
+      "id": "build-structure",
+      "seat": "viceroy",
+      "skill": [
+        "industry",
+        "engineering"
+      ],
+      "target": "settlement",
+      "costWeeks": null,
+      "workDays": 14,
+      "name": "Build a Structure",
+      "hook": "Raise a new building in one of the realm's settlements.",
+      "kind": "project",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "completeProject": true
+          },
+          {
+            "refund": 0.5
+          }
+        ],
+        "success": [
+          {
+            "completeProject": true
+          }
+        ],
+        "failure": [
+          {
+            "refund": 0.5
+          },
+          {
+            "note": "The work didn't come together. Half the cost is recovered; it can be tried again."
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "note": "The work collapsed and the money is gone."
+          }
+        ]
+      }
+    }
+  ]
+}

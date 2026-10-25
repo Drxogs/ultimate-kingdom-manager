@@ -8,6 +8,7 @@ import { registerClock, tick } from "./realm/clock.js";
 import { getRealm } from "./realm/state.js";
 import { processQueuedRequests, registerRequests } from "./realm/requests.js";
 import { onRerollMessage } from "./realm/resolve.js";
+import { buildStructureCatalog, structureCatalog } from "./realm/projects.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
 import { SetupWizard } from "./apps/setup-wizard.js";
 import { StoryImportApp } from "./apps/story-import-app.js";
@@ -46,6 +47,7 @@ Hooks.once("ready", async () => {
   await syncKingdomLevel();
   await tick();
   await processQueuedRequests();
+  if (getSetting(SETTINGS.storyImported) && !structureCatalog().length) await buildStructureCatalog();
 
   if (!getSetting(SETTINGS.setupComplete)) {
     new SetupWizard().render(true);

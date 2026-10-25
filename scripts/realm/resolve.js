@@ -88,7 +88,7 @@ export async function assignCard(request) {
   const busy = busyWith(realm, assigneeKey(assignee));
   if (busy) return { ok: false, reason: "Busy", data: { name: assignee.name, card: busy.name } };
 
-  const days = cardWorkDays(cardLevelMod(card, realm));
+  const days = card.project?.days ?? cardWorkDays(cardLevelMod(card, realm));
   await updateRealm((r) => {
     const target = r.cards.find((c) => c.id === card.id);
     if (!target || target.status !== "open") return;
