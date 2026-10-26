@@ -12,6 +12,7 @@ import { buildStructureCatalog, structureCatalog } from "./realm/projects.js";
 import { ensureHandbook, openHandbook } from "./content/handbook.js";
 import { isLeader, leaderSettled, startLeader } from "./realm/leader.js";
 import { cardsOnHex } from "./realm/pins.js";
+import { checkPartyPosition } from "./realm/warnings.js";
 import { daysUntil } from "./realm/time.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
 import { SetupWizard } from "./apps/setup-wizard.js";
@@ -86,6 +87,10 @@ Hooks.on("updateActor", (actor, changes) => {
 Hooks.on("createChatMessage", (message) => onRerollMessage(message));
 
 Hooks.on("userConnected", () => KingdomManager.refresh());
+
+Hooks.on("updateToken", (token, changes) => {
+  checkPartyPosition(token, changes).catch((err) => console.error(`${MODULE_ID} |`, err));
+});
 
 function addHexHudLine(app, html) {
   const root = html instanceof HTMLElement ? html : html?.[0] ?? app?.element;

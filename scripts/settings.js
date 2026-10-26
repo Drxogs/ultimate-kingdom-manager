@@ -18,6 +18,7 @@ export const SETTINGS = {
   deskMatters: "deskMatters",
   structureCatalog: "structureCatalog",
   audiences: "audiences",
+  warnedZones: "warnedZones",
   council: "council"
 };
 
@@ -130,6 +131,7 @@ export function registerSettings() {
   world(SETTINGS.clock, { config: false, type: Object, default: {} });
   world(SETTINGS.seatAssignments, { config: false, type: Object, default: {} });
   world(SETTINGS.structureCatalog, { config: false, type: Array, default: [] });
+  world(SETTINGS.warnedZones, { config: false, type: Object, default: {} });
 }
 
 export function getSetting(key) {

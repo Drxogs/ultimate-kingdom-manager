@@ -549,6 +549,19 @@
       "HudTitle": "Kingdom",
       "HudDays": "{days} days left",
       "HudProject": "in progress"
+    },
+    "Warning": {
+      "Someone": "A worried advisor",
+      "Subtle": {
+        "Caution": "The folk who come back from {zone} don't say much about it. I'd go carefully.",
+        "Danger": "I've heard what lives in {zone}. Are we truly ready for that? I'm not sure we are.",
+        "Deadly": "Nobody we know has come back from {zone}. Please, think again before going further."
+      },
+      "Blunt": {
+        "Caution": "{zone} is level {zoneLevel} country and we're level {level}. Expect hard fights.",
+        "Danger": "{zone} is level {zoneLevel}. At level {level}, most of what's out there outclasses us.",
+        "Deadly": "{zone} is level {zoneLevel}. At level {level}, going in is likely to get someone killed."
+      }
     }
   }
 }
