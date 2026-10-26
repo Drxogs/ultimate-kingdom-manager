@@ -60,7 +60,7 @@ This module does not replace the camping and weather rules of *PF2e – Kingdom 
 
 This module was written with **Claude**, an AI model made by Anthropic, working in Claude Code sessions. Claude wrote the code, the templates and styles, the original content (desk matters, rank-up scenes, audiences, seat ambitions, companion abilities) and the handbook text.
 
-Drxogs came up with the idea of bringing the Owlcat *Pathfinder: Kingmaker* kingdom game to the tabletop adventure in Foundry, set the direction and rules decisions, tests it in his own campaign, and maintains the project. Bug reports and feedback go to the [issue tracker](https://github.com/Drxogs/ultimate-kingdom-manager/issues).
+Drxogs came up with the idea of bringing the Owlcat *Pathfinder: Kingmaker* kingdom game to the tabletop adventure in Foundry, set the direction and rules decisions, tests it in their own campaign, and maintains the project. Bug reports and feedback go to the [issue tracker](https://github.com/Drxogs/ultimate-kingdom-manager/issues).
 
 Commits made before v0.15.3 don't mark Claude's part; from v0.15.3 on, commits carry a co-author line.
 
