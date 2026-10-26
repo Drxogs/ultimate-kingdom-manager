@@ -4,6 +4,7 @@ import { getStoryEvents } from "../content/data.js";
 import { addLog } from "./state.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
+import { setFortified } from "./projects.js";
 import { completeGmTask, dismissCard, recordOutcome, rollCard } from "./resolve.js";
 import { getRealm, updateRealm } from "./state.js";
 
@@ -31,6 +32,11 @@ const OPS = {
   task: async ({ taskId }) => {
     const task = getRealm().gmTasks.find((t) => t.id === taskId);
     if (task) await completeGmTask(taskId, !task.done);
+    return {};
+  },
+  fortify: async ({ hexKey, on }) => {
+    if (hexKey === undefined || hexKey === null) return { ok: false, reason: "Unknown" };
+    await setFortified(hexKey, !!on);
     return {};
   },
   finishRankUp: async ({ projectId }) => {

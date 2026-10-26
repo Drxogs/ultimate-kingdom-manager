@@ -6,7 +6,7 @@ import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnr
 import { canRankUp, companionAttitude, isHired, rankBonus, rankCap, rawSeatCompanionId, routinePoints, seatCompanionId, statProgress, weeklyIncome } from "../realm/rules.js";
 import { getRealm, updateRealm } from "../realm/state.js";
 import { rankUpChoices, rankUpCost, rankUpProject } from "../realm/ranks.js";
-import { buildableStructures, projectQuote, projectsForSeat, projectTargets } from "../realm/projects.js";
+import { buildableStructures, isHexProject, projectQuote, projectsForSeat, projectTargets } from "../realm/projects.js";
 import { tapCostBP, tapLimit, tapMode } from "../realm/treasury.js";
 import { audienceResponses } from "../realm/audiences.js";
 import { proposals } from "../realm/council.js";
@@ -458,20 +458,25 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const content = `<p>${esc(def.hook)}</p>${odds ? `<p class="hint">${game.i18n.localize("UKM.Difficulty.Advisor")} ${odds.label}</p>` : ""}
       ${def.target === "none"
         ? `<input type="hidden" name="target" value="0"><p>${quoteText(projectQuote(def, targets[0]))}</p>`
+        : isHexProject(def)
+        ? `<input type="hidden" name="target" value="0"><p>${quoteText(projectQuote(def, targets[0]))}</p>
+           <div class="form-group"><label>${game.i18n.localize("UKM.Project.WhereNote")}</label><input type="text" name="where" maxlength="80" placeholder="${esc(game.i18n.localize("UKM.Project.WherePlaceholder"))}"></div>
+           <p class="hint">${game.i18n.localize("UKM.Project.WhereHint")}</p>`
         : `<div class="form-group"><label>${game.i18n.localize(def.target === "settlement" ? "UKM.Project.Where" : "UKM.Project.Hex")}</label><select name="target">${targetOptions}</select></div>`}
       ${structureField}${campField}<p class="hint">${game.i18n.format("UKM.Project.Treasury", { bp: getRealm().treasury })}</p>`;
     const read = (mode) => (event, button) => ({
       mode,
       target: button.form.elements.target.value,
       structure: button.form.elements.structure?.value ?? null,
-      camp: button.form.elements.camp?.value ?? null
+      camp: button.form.elements.camp?.value ?? null,
+      where: button.form.elements.where?.value ?? ""
     });
     const buttons = [{ action: "start", label: game.i18n.localize("UKM.Project.Start"), icon: "fa-solid fa-hammer", default: true, callback: read("start") }];
     if (getSetting(SETTINGS.council)) buttons.push({ action: "propose", label: game.i18n.localize("UKM.Council.Propose"), icon: "fa-solid fa-landmark-dome", callback: read("propose") });
     const choice = await DialogV2.wait({ window: { title: def.name }, position: { width: 520 }, content, buttons, rejectClose: false });
     if (!choice?.mode) return;
     const picked = targets[Number(choice.target)];
-    const request = { type: def.id, hexKey: picked.hexKey, structure: choice.structure, camp: choice.camp };
+    const request = { type: def.id, hexKey: picked.hexKey, structure: choice.structure, camp: choice.camp, where: choice.where };
     await sendRequest(choice.mode === "propose" ? "proposeProject" : "startProject", request);
   }
 

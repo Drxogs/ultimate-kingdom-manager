@@ -49,20 +49,26 @@ export function gradientFactor(hexKey, defs = definitions()) {
   return 1 + (g.near ?? 0);
 }
 
-function activeTargets(realm) {
-  return new Set(
-    realm.cards
-      .filter((c) => c.project && ["open", "assigned", "rolled", "escalated"].includes(c.status))
-      .map((c) => `${c.project.type}:${c.target?.hexKey}`)
-  );
+/** Hex projects go wherever the party tells the GM; the module only checks one is possible. */
+export function isHexProject(def) {
+  return !["none", "settlement"].includes(def?.target);
 }
+
+const PARTY_PICKS = { hexKey: null, label: "", factor: 1 };
 
 /** Where a project of this kind could go right now. */
 export function projectTargets(def, realm = getRealm()) {
-  if (!isKingmakerActive()) return [];
+  if (isHexProject(def)) {
+    if (!isKingmakerActive()) return [PARTY_PICKS];
+    return possibleHexes(def, realm).length ? [PARTY_PICKS] : [];
+  }
+  if (!isKingmakerActive()) return def.target === "none" ? [PARTY_PICKS] : [];
+  return possibleHexes(def, realm);
+}
+
+function possibleHexes(def, realm) {
   const defs = definitions();
   const claimed = getClaimedHexes();
-  const taken = activeTargets(realm);
   const isSettlement = (h) => SETTLEMENT_TYPES.some((t) => hasFeature(h, t));
   let hexes = [];
 
@@ -107,7 +113,6 @@ export function projectTargets(def, realm = getRealm()) {
   }
 
   return hexes
-    .filter((h) => !taken.has(`${def.id}:${h.key}`))
     .map((h) => {
       const factor = gradientFactor(h.key, defs);
       const commodity = h.commodity ?? null;
@@ -243,7 +248,8 @@ export async function startProject(request, { canActForSeat }) {
   if (!canActForSeat(user, def.seat)) return { ok: false, reason: "NotYourSeat" };
 
   const realm = getRealm();
-  const target = projectTargets(def, realm).find((t) => t.hexKey === (request.hexKey ?? null));
+  const targets = projectTargets(def, realm);
+  const target = isHexProject(def) ? targets[0] : targets.find((t) => t.hexKey === (request.hexKey ?? null));
   if (!target) return { ok: false, reason: "NoTarget" };
   let structure = null;
   if (def.target === "settlement") {
@@ -254,11 +260,12 @@ export async function startProject(request, { canActForSeat }) {
   if (def.id === "establish-work-site") {
     camp = CAMPS.includes(request.camp) ? request.camp : CAMP_FOR_COMMODITY[target.commodity] ?? "lumber";
   }
+  const where = isHexProject(def) ? String(request.where ?? "").trim().slice(0, 80) : "";
   const quote = projectQuote(def, target, structure);
   if (realm.treasury < quote.cost) return { ok: false, reason: "TooPoor", data: { cost: quote.cost } };
 
   const now = game.time.worldTime;
-  const label = structure ? `${structure.name}, ${target.settlement}` : target.label;
+  const label = structure ? `${structure.name}, ${target.settlement}` : where || target.label;
   const name = label ? `${def.name}: ${label}` : def.name;
   await updateRealm((r) => {
     r.treasury -= quote.cost;
@@ -285,6 +292,7 @@ export async function startProject(request, { canActForSeat }) {
         cost: quote.cost,
         days: quote.days,
         camp,
+        where,
         commodity: target.commodity ?? null,
         structure: structure ? { slug: structure.slug, name: structure.name, level: structure.level, skill: structure.skill } : null,
         by: user.id
@@ -304,7 +312,11 @@ export async function startProject(request, { canActForSeat }) {
 /** What the GM needs to do on the map once a project succeeds. */
 function mapTask(card) {
   const p = card.project;
-  const where = hexLabel(card.target?.hexKey);
+  const where = card.target?.hexKey
+    ? hexLabel(card.target.hexKey)
+    : p.where
+      ? game.i18n.format("UKM.Project.PartyWhere", { where: p.where })
+      : game.i18n.localize("UKM.Project.PartyHex");
   switch (p.type) {
     case "claim-hex":
       return game.i18n.format("UKM.Project.Task.claim", { where });
@@ -315,7 +327,7 @@ function mapTask(card) {
     case "establish-work-site":
       return game.i18n.format("UKM.Project.Task.camp", { where, camp: game.i18n.localize(`UKM.Project.Camp.${p.camp}`).toLowerCase() });
     case "fortify-hex":
-      return game.i18n.format("UKM.Project.Task.fortify", { where });
+      return game.i18n.format(card.target?.hexKey ? "UKM.Project.Task.fortify" : "UKM.Project.Task.fortifyPick", { where });
     case "build-structure":
       return game.i18n.format("UKM.Project.Task.structure", { name: p.structure?.name ?? "", where: card.target?.settlement ?? where });
     default:
@@ -341,6 +353,21 @@ export function completeProject(ctx) {
   ctx.realm.projectRecord[card.project.type] = (ctx.realm.projectRecord[card.project.type] ?? 0) + 1;
   ctx.note(game.i18n.localize("UKM.Project.Done"));
   Hooks.callAll(`${MODULE_ID}.projectComplete`, { card });
+}
+
+/** The GM marks a hex fortified (or not) from the Kingmaker hex panel. */
+export async function setFortified(hexKey, on) {
+  const key = String(hexKey);
+  await updateRealm((realm) => {
+    const list = new Set(realm.fortified ?? []);
+    if (on) list.add(key);
+    else list.delete(key);
+    realm.fortified = [...list];
+  });
+}
+
+export function isFortified(hexKey, realm = getRealm()) {
+  return (realm.fortified ?? []).includes(String(hexKey));
 }
 
 export function refundProject(ctx, share) {

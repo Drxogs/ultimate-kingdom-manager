@@ -1,7 +1,7 @@
 import { MODULE_ID, SEATS } from "../constants.js";
 import { getProject } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
-import { projectQuote, projectTargets, signatureForSeat, startProject, buildableStructures } from "./projects.js";
+import { isHexProject, projectQuote, projectTargets, signatureForSeat, startProject, buildableStructures } from "./projects.js";
 import { canActForSeat } from "./resolve.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
@@ -20,17 +20,19 @@ export async function proposeProject(request) {
   if (!def) return { ok: false, reason: "Unknown" };
   const seatDef = def.signature ? SEATS.map((s) => signatureForSeat(s)).find((s) => s?.id === def.id) : def;
   if (!seatDef?.seat || !canActForSeat(user, seatDef.seat)) return { ok: false, reason: "NotYourSeat" };
-  const target = projectTargets(seatDef).find((t) => t.hexKey === (request.hexKey ?? null));
+  const targets = projectTargets(seatDef);
+  const target = isHexProject(seatDef) ? targets[0] : targets.find((t) => t.hexKey === (request.hexKey ?? null));
   if (!target) return { ok: false, reason: "NoTarget" };
   const structure = request.structure ? buildableStructures().find((s) => s.slug === request.structure) : null;
   const quote = projectQuote(seatDef, target, structure);
-  const label = structure ? `${structure.name}, ${target.settlement}` : target.label;
+  const where = String(request.where ?? "").trim().slice(0, 80);
+  const label = structure ? `${structure.name}, ${target.settlement}` : where || target.label;
 
   await updateRealm((realm) => {
     realm.council ??= { proposals: [] };
     realm.council.proposals.push({
       id: newId(),
-      request: { type: request.type, hexKey: request.hexKey ?? null, structure: request.structure ?? null, camp: request.camp ?? null },
+      request: { type: request.type, hexKey: request.hexKey ?? null, structure: request.structure ?? null, camp: request.camp ?? null, where },
       name: label ? `${seatDef.name}: ${label}` : seatDef.name,
       seat: seatDef.seat,
       cost: quote.cost,

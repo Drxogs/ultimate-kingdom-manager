@@ -6,9 +6,9 @@ import { onRegionChange } from "./integrations/kingmaker.js";
 import { getParty, syncKingdomLevel } from "./integrations/party.js";
 import { registerClock, tick } from "./realm/clock.js";
 import { getRealm } from "./realm/state.js";
-import { processQueuedRequests, registerRequests } from "./realm/requests.js";
+import { processQueuedRequests, registerRequests, sendRequest } from "./realm/requests.js";
 import { onRerollMessage } from "./realm/resolve.js";
-import { buildStructureCatalog, structureCatalog } from "./realm/projects.js";
+import { buildStructureCatalog, isFortified, structureCatalog } from "./realm/projects.js";
 import { ensureHandbook, openHandbook } from "./content/handbook.js";
 import { isLeader, leaderSettled, startLeader } from "./realm/leader.js";
 import { cardsOnHex } from "./realm/pins.js";
@@ -107,7 +107,8 @@ function addHexHudLine(app, html) {
   if (!root || key === undefined) return;
   root.querySelector(".ukm-hex-hud")?.remove();
   const cards = cardsOnHex(key);
-  if (!cards.length) return;
+  const fortified = isFortified(key);
+  if (!cards.length && !fortified && !game.user.isGM) return;
   const esc = Handlebars.escapeExpression;
   const items = cards
     .map((c) => {
@@ -117,7 +118,15 @@ function addHexHudLine(app, html) {
     .join("");
   const section = document.createElement("section");
   section.className = "ukm-hex-hud";
-  section.innerHTML = `<h4>${game.i18n.localize("UKM.Pins.HudTitle")}</h4><ul>${items}</ul>`;
+  const fortLine = game.user.isGM
+    ? `<label class="ukm-fortified" data-tooltip="${esc(game.i18n.localize("UKM.Pins.FortifiedHint"))}"><input type="checkbox" ${fortified ? "checked" : ""}> ${game.i18n.localize("UKM.Pins.Fortified")}</label>`
+    : fortified
+      ? `<p class="ukm-fortified"><i class="fa-solid fa-shield-halved"></i> ${game.i18n.localize("UKM.Pins.Fortified")}</p>`
+      : "";
+  section.innerHTML = `<h4>${game.i18n.localize("UKM.Pins.HudTitle")}</h4>${items ? `<ul>${items}</ul>` : ""}${fortLine}`;
+  section.querySelector(".ukm-fortified input")?.addEventListener("change", (event) => {
+    sendRequest("gm", { op: "fortify", hexKey: String(key), on: event.currentTarget.checked });
+  });
   root.append(section);
 }
 

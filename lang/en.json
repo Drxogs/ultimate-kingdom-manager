@@ -475,8 +475,14 @@
         "farm": "Mark farmland on {where}.",
         "camp": "Add a {camp} on {where}.",
         "structure": "Add {name} to {where}.",
-        "fortify": "Mark a fortification on {where}."
-      }
+        "fortify": "Mark a fortification on {where}.",
+        "fortifyPick": "Fortify {where}: open that hex on the map and tick Fortified in its Kingdom section."
+      },
+      "PartyHex": "the hex the party picked",
+      "PartyWhere": "the hex the party picked ({where})",
+      "WhereNote": "Where (optional)",
+      "WhereHint": "Tell the GM which hex. A note here goes into the GM's task.",
+      "WherePlaceholder": "e.g. east of Monkeyton, by the river"
     },
     "Tap": {
       "Title": "Tap the treasury",
@@ -561,7 +567,9 @@
       "Deadline": "Needs dealing with by {date}.",
       "HudTitle": "Kingdom",
       "HudDays": "{days} days left",
-      "HudProject": "in progress"
+      "HudProject": "in progress",
+      "Fortified": "Fortified",
+      "FortifiedHint": "Threats don't appear on fortified hexes."
     },
     "Warning": {
       "Someone": "A worried advisor",

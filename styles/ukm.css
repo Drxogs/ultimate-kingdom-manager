@@ -107,7 +107,6 @@
   --ukm-divider: var(--color-border-divider, #baa991);
   --ukm-head: var(--color-pf-primary, #5e0000);
   --ukm-sheet-gold: #ffd700;
-  color: var(--color-text-dark-input, #333);
 }
 
 .ukm-manager .window-content {
@@ -117,6 +116,7 @@
   padding: 0;
   background: url("../../../systems/pf2e/assets/sheet/background.webp") no-repeat;
   background-size: cover;
+  color: var(--color-text-dark-input, #333);
 }
 
 .ukm-manager .window-content > .tab {
@@ -330,7 +330,7 @@
 .ukm-manager .ukm-bar > span { background: var(--sidebar-title, #786452); }
 .ukm-manager .ukm-stat.ready .ukm-bar > span { background: linear-gradient(90deg, #a98f39, #e3c05a); }
 
-.ukm-manager button {
+.ukm-manager .window-content button {
   font-family: var(--sans-serif, sans-serif);
 }
 
@@ -562,3 +562,5 @@
 .ukm-manager .ukm-log-list { list-style: none; margin: 0; padding: 0; }
 .ukm-manager .ukm-log-list li { display: grid; grid-template-columns: 11rem 1fr; gap: 0.5rem; padding: 0.2rem 0; border-bottom: 1px solid var(--ukm-divider); }
 .ukm-manager .ukm-log-list time { color: var(--color-text-tertiary, #6b5a48); font-size: var(--font-size-12, 12px); }
+.ukm-hex-hud .ukm-fortified { display: flex; align-items: center; gap: 0.3rem; margin: 0.2rem 0 0; }
+.ukm-hex-hud .ukm-fortified input { margin: 0; }
