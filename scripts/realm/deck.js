@@ -67,7 +67,7 @@ export function neighbors(hexKey) {
   return list.map((n) => String(n.key ?? 1000 * n.offset.i + n.offset.j));
 }
 
-function chooseHex(rule) {
+function chooseHex(rule, kind = null) {
   const defs = hexDefinitionMap();
   const claimed = getClaimedHexes();
   const settlements = new Set(settlementHexes().map((s) => s.key));
@@ -99,7 +99,7 @@ function chooseHex(rule) {
   }
 
   const fortified = new Set(getRealm().fortified ?? []);
-  const unguarded = pool.filter((h) => !fortified.has(h.key));
+  const unguarded = kind === "problem" ? pool.filter((h) => !fortified.has(h.key)) : pool;
   return pickRandom(withLevelGravity(unguarded.length ? unguarded : pool, defs))?.key ?? null;
 }
 
@@ -149,7 +149,7 @@ function isAlreadyActive(event, realm) {
 export function createCard(event, { now = game.time.worldTime, tier = null } = {}) {
   const version = tier && event.tiers ? { ...event, ...event.tiers[tier] } : event;
   const target = {};
-  if (event.placement?.type === "hex") target.hexKey = chooseHex(event.placement.rule);
+  if (event.placement?.type === "hex") target.hexKey = chooseHex(event.placement.rule, version.kind);
   if (event.placement?.type === "settlement") {
     const settlement = chooseSettlement(event.placement.rule);
     target.hexKey = settlement?.key ?? null;
