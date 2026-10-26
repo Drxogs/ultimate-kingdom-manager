@@ -108,6 +108,26 @@ function personalChoices(card) {
 }
 
 const LOG_SHOWN = 40;
+const FOLD_KEY = `${MODULE_ID}.folds`;
+
+/** Which collapsible sections this viewer left open. Only a convenience, so failures are ignored. */
+function readFold(name) {
+  try {
+    return !!JSON.parse(localStorage.getItem(FOLD_KEY) ?? "{}")[name];
+  } catch {
+    return false;
+  }
+}
+
+function writeFold(name, open) {
+  try {
+    const folds = JSON.parse(localStorage.getItem(FOLD_KEY) ?? "{}");
+    folds[name] = open;
+    localStorage.setItem(FOLD_KEY, JSON.stringify(folds));
+  } catch {
+    /* storage unavailable */
+  }
+}
 
 /**
  * Lay buildings out on the 3x3 urban grid: four-lot buildings take a whole block,
@@ -318,6 +338,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     context.desks = this.#prepareDesks(realm, kingdom);
     context.council = this.#prepareCouncil(realm);
     context.ambitions = ambitionsView(realm);
+    context.ambitionsDone = context.ambitions.filter((a) => a.complete).length;
+    context.foldOpen = { ambitions: readFold("ambitions") };
     context.gmTasks = game.user.isGM
       ? realm.gmTasks
           .slice()
@@ -335,6 +357,13 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       .reverse()
       .map((entry) => ({ ...entry, date: formatDate(entry.time), text: this.#logText(entry) }));
     return context;
+  }
+
+  _onRender(context, options) {
+    super._onRender?.(context, options);
+    for (const fold of this.element.querySelectorAll("details[data-fold]")) {
+      fold.addEventListener("toggle", () => writeFold(fold.dataset.fold, fold.open));
+    }
   }
 
   async _preparePartContext(partId, context) {

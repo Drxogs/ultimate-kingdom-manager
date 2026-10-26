@@ -289,7 +289,8 @@
 
 /* Shared pieces */
 
-.ukm-manager header.ukm-major {
+.ukm-manager header.ukm-major,
+.ukm-manager summary.ukm-major {
   position: relative;
   margin: 0.75rem 0 0.5rem;
   border-bottom: 1px solid var(--ukm-divider);
@@ -653,3 +654,8 @@
 .ukm-build-option .ukm-build-noart { width: 3rem; height: 3rem; background: rgba(0, 0, 0, 0.1); border-radius: 2px; }
 .ukm-build-option strong { display: block; }
 .ukm-build-option .hint { display: block; font-size: var(--font-size-12, 12px); }
+.ukm-manager .ukm-fold > summary { cursor: pointer; list-style: none; display: flex; align-items: baseline; gap: 0.5rem; }
+.ukm-manager .ukm-fold > summary::-webkit-details-marker { display: none; }
+.ukm-manager .ukm-fold > summary::before { content: "\25B8"; font-size: 0.8em; transition: transform 0.1s; }
+.ukm-manager .ukm-fold[open] > summary::before { transform: rotate(90deg); }
+.ukm-manager .ukm-fold > summary .hint { font: 400 var(--font-size-12, 12px) var(--sans-serif, sans-serif); }

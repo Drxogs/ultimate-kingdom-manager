@@ -64,7 +64,9 @@
     {{/each}}
   </ol>
 
-  <header class="ukm-major">{{localize "UKM.Ambition.Heading"}}</header>
+  <details class="ukm-fold" data-fold="ambitions" {{#if foldOpen.ambitions}}open{{/if}}>
+  <summary class="ukm-major">{{localize "UKM.Ambition.Heading"}} <span class="hint">{{localize "UKM.Ambition.Summary" done=ambitionsDone total=ambitions.length}}</span></summary>
+  <p class="hint">{{localize "UKM.Ambition.What"}}</p>
   <ol class="ukm-stats ukm-ambitions">
     {{#each ambitions}}
       <li class="ukm-stat {{#if complete}}ready{{/if}}">
@@ -82,6 +84,7 @@
       </li>
     {{/each}}
   </ol>
+  </details>
 
   <p class="ukm-handbook-link"><button type="button" data-action="openHandbook"><i class="fa-solid fa-book-open-reader"></i> {{localize "UKM.Handbook.Open"}}</button></p>
 

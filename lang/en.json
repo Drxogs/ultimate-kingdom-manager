@@ -542,7 +542,9 @@
         "hexes": "Grow the realm to {n} hexes",
         "income": "Weekly income at {n}× the base",
         "fame": "Reach {n} Fame"
-      }
+      },
+      "Summary": "{done} of {total} done",
+      "What": "Each desk has a long-term goal, such as handling three matters on that desk successfully. Reach it for a reward; then a harder goal takes its place."
     },
     "Handbook": {
       "Open": "Handbook",
