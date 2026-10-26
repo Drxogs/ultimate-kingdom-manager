@@ -1,4 +1,4 @@
-import { FOUNDING_PICKS, MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
+import { ATTITUDES, FOUNDING_PICKS, HIRED_ADVISOR, MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
 import { getCompanions } from "../content/data.js";
 import { inspectSources } from "../content/story-import.js";
 import { getKingdom, getPlayerCharacters, syncKingdomLevel } from "../integrations/party.js";
@@ -53,7 +53,12 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     const characters = getPlayerCharacters();
     const companions = getCompanions();
     const actorChoices = Object.fromEntries(characters.map((a) => [a.uuid, a.name]));
-    const companionChoices = Object.fromEntries(companions.map((c) => [c.id, c.name]));
+    const companionChoices = {
+      ...Object.fromEntries(companions.map((c) => [c.id, c.name])),
+      [HIRED_ADVISOR]: game.i18n.localize("UKM.Hired.Option")
+    };
+    const attitudes = getSetting(SETTINGS.companionAttitudes) ?? {};
+    const attitudeChoices = Object.fromEntries(ATTITUDES.map((a) => [a, `UKM.Attitude.${a}`]));
     const draft = this.#draft;
 
     const seats = SEATS.map((seat) => {
@@ -120,6 +125,8 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       ].filter((g) => Object.keys(g.choices).length),
       supervisorChoices: actorChoices,
       companionChoices,
+      attitudeChoices,
+      companionRows: companions.map((c) => ({ id: c.id, name: c.name, attitude: draft?.attitudes?.[c.id] ?? attitudes[c.id] ?? "friendly" })),
       buttons: [{ type: "submit", icon: "fa-solid fa-check", label: "UKM.Setup.Save" }]
     };
   }
@@ -130,6 +137,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     await setSetting(SETTINGS.betweenSessionsApproval, data.approval);
     await setSetting(SETTINGS.tapTreasury, data.tapTreasury);
     await setSetting(SETTINGS.advisorWarnings, data.advisorWarnings);
+    if (data.attitudes) await setSetting(SETTINGS.companionAttitudes, data.attitudes);
 
     const assignments = {};
     const leadership = {};

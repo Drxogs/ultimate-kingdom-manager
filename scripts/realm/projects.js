@@ -11,7 +11,7 @@ import {
 import { getKingdom, getPartyLevel } from "../integrations/party.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { neighbors, settlementHexes } from "./deck.js";
-import { seatCompanionId, weeklyIncome } from "./rules.js";
+import { attitudeAtLeast, seatCompanionId, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { syncPins } from "./pins.js";
 import { secondsPerDay } from "./time.js";
@@ -138,6 +138,7 @@ export function signatureForSeat(seat, realm = getRealm()) {
   const def = companionId ? getSignature(companionId) : null;
   if (!def) return null;
   if (def.requiresSeat && !getCompanion(companionId)?.seats?.includes(seat)) return null;
+  if (!attitudeAtLeast(companionId, "friendly")) return null;
   const readyAt = realm.cooldowns?.[def.id] ?? 0;
   const busy = realm.cards.some((c) => c.eventId === `project:${def.id}` && ["open", "assigned", "rolled"].includes(c.status));
   return { ...def, seat, readyAt, available: !busy && readyAt <= game.time.worldTime };

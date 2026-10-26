@@ -108,5 +108,19 @@
         {{/each}}
       </tbody>
     </table>
+    <p class="hint">{{localize "UKM.Hired.Hint"}}</p>
+  </section>
+
+  <section>
+    <h3>{{localize "UKM.Attitude.Heading"}}</h3>
+    <p class="hint">{{localize "UKM.Attitude.Hint"}}</p>
+    <div class="ukm-attitudes">
+      {{#each companionRows}}
+        <div class="form-group">
+          <label>{{name}}</label>
+          <select name="attitudes.{{id}}">{{selectOptions @root.attitudeChoices selected=attitude localize=true}}</select>
+        </div>
+      {{/each}}
+    </div>
   </section>
 </div>

@@ -215,7 +215,8 @@
       "proposal-funded": "Funded: {name}.",
       "proposal-rejected": "Rejected: {name}.",
       "proposal-withdrawn": "Withdrawn: {name}.",
-      "ambition": "Ambition reached: {name}."
+      "ambition": "Ambition reached: {name}.",
+      "hired-upkeep": "Hired advisors paid {amount} BP."
     },
     "Seat": {
       "ruler": "Ruler",
@@ -562,6 +563,21 @@
         "Danger": "{zone} is level {zoneLevel}. At level {level}, most of what's out there outclasses us.",
         "Deadly": "{zone} is level {zoneLevel}. At level {level}, going in is likely to get someone killed."
       }
+    },
+    "Hired": {
+      "Name": "Hired advisor",
+      "Option": "Hired advisor (−2, 1 BP a week)",
+      "Hint": "A hired advisor fills an empty seat: the desk can delegate, and the stat grows each week. They roll at −2, have no special ability, and cost 1 BP a week."
+    },
+    "Attitude": {
+      "Heading": "Companion attitudes",
+      "Hint": "Set as their Influence changes in play. Below friendly, a companion won't use their special ability. Below indifferent, they stop advising altogether.",
+      "hostile": "Hostile",
+      "unfriendly": "Unfriendly",
+      "indifferent": "Indifferent",
+      "friendly": "Friendly",
+      "helpful": "Helpful",
+      "WontAdvise": "{name} won't advise ({attitude})"
     }
   }
 }

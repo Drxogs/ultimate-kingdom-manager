@@ -1,10 +1,10 @@
-import { DEGREE_POINTS, DEGREES, LEVEL_DC, MODULE_ID, SKILL_ABILITY, SKILL_TO_STAT } from "../constants.js";
+import { DEGREE_POINTS, DEGREES, HIRED_PENALTY, LEVEL_DC, MODULE_ID, SKILL_ABILITY, SKILL_TO_STAT } from "../constants.js";
 import { getCardEvent, getCompanion, getEvent } from "../content/data.js";
 import { getControlDC, getKingdom, getPartyLevel } from "../integrations/party.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { createCard } from "./deck.js";
 import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
-import { addStatPoints, cardWorkDays, rankBonus, seatCompanionId } from "./rules.js";
+import { addStatPoints, cardWorkDays, isHired, rankBonus, seatCompanionId } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { isLeader } from "./leader.js";
@@ -57,7 +57,13 @@ function seatHolderName(seat) {
   const leader = leaderUuid ? fromUuidSync(leaderUuid) : null;
   if (leader) return leader.name;
   const companionId = seatCompanionId(seat);
-  return companionId ? getCompanion(companionId)?.name ?? null : null;
+  if (companionId) return getCompanion(companionId)?.name ?? null;
+  return isHired(seat) ? game.i18n.localize("UKM.Hired.Name") : null;
+}
+
+function hiredOnly(seat) {
+  const kingdom = getKingdom();
+  return isHired(seat) && !kingdom?.leadership?.[seat]?.uuid;
 }
 
 /**
@@ -161,6 +167,7 @@ function companionModifiers(realm, card) {
 
 function advisorModifiers(realm, card, stat) {
   const mods = companionModifiers(realm, card);
+  if (hiredOnly(card.seat)) mods.push({ slug: "ukm-hired", label: game.i18n.localize("UKM.Hired.Name"), modifier: HIRED_PENALTY, type: "untyped" });
   const bonus = rankBonus(realm.stats[stat]?.rank ?? 0);
   if (bonus) mods.push({ slug: `ukm-rank-${stat}`, label: game.i18n.localize(`UKM.Stat.${stat}`), modifier: bonus, type: "circumstance" });
   return mods;

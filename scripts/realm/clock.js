@@ -1,4 +1,4 @@
-import { MISSED_PROBLEM_POINTS, MODULE_ID, SKILL_TO_STAT } from "../constants.js";
+import { HIRED_UPKEEP, MISSED_PROBLEM_POINTS, MODULE_ID, SEATS, SKILL_TO_STAT } from "../constants.js";
 import { getCardEvent } from "../content/data.js";
 import { getKingdom, isKingdomActive } from "../integrations/party.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
@@ -7,7 +7,7 @@ import { drawAudience } from "./audiences.js";
 import { announceCouncil } from "./council.js";
 import { checkAmbitions } from "./ambitions.js";
 import { checkWatchers, commitKingdomChanges } from "./effects.js";
-import { addStatPoints, routinePoints, weeklyFoodShortfall, weeklyIncome } from "./rules.js";
+import { addStatPoints, isHired, routinePoints, weeklyFoodShortfall, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { monthKey, secondsPerDay, weekNumber } from "./time.js";
 import { syncPins } from "./pins.js";
@@ -111,6 +111,11 @@ function runWeek(realm) {
   const income = weeklyIncome(realm);
   const foodCost = Math.round(weeklyFoodShortfall(realm) * 0.5);
   realm.treasury += income.total;
+  const hired = SEATS.filter((seat) => isHired(seat) && !getKingdom()?.leadership?.[seat]?.uuid).length;
+  if (hired) {
+    realm.treasury = Math.max(0, realm.treasury - hired * HIRED_UPKEEP);
+    addLog(realm, { type: "hired-upkeep", amount: -hired * HIRED_UPKEEP });
+  }
   addLog(realm, { type: "income", amount: income.total });
 
   if (foodCost > 0) {

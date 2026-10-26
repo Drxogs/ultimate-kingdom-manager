@@ -3,7 +3,7 @@ import { getCardEvent, getCompanion } from "../content/data.js";
 import { getImportedPage } from "../content/story-import.js";
 import { focusHex, getHexDefinitions, getZone } from "../integrations/kingmaker.js";
 import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnrest } from "../integrations/party.js";
-import { canRankUp, rankBonus, rankCap, routinePoints, seatCompanionId, statProgress, weeklyIncome } from "../realm/rules.js";
+import { canRankUp, companionAttitude, isHired, rankBonus, rankCap, rawSeatCompanionId, routinePoints, seatCompanionId, statProgress, weeklyIncome } from "../realm/rules.js";
 import { getRealm, updateRealm } from "../realm/state.js";
 import { rankUpChoices, rankUpCost, rankUpProject } from "../realm/ranks.js";
 import { buildableStructures, projectQuote, projectsForSeat, projectTargets } from "../realm/projects.js";
@@ -246,11 +246,14 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       const assignment = assignments[seat] ?? {};
       const companionId = seatCompanionId(seat);
       const companion = companionId ? getCompanion(companionId) : null;
+      const placedId = rawSeatCompanionId(seat);
+      const sulking = placedId && placedId !== "hired" && !companionId ? getCompanion(placedId) : null;
+      const hired = isHired(seat);
       const supervisor = assignment.supervisor ? fromUuidSync(assignment.supervisor) : null;
       const mine =
         (leader?.isOwner && !game.user.isGM) || (supervisor?.isOwner && !game.user.isGM) || false;
       const canAct = canActForSeat(game.user, seat);
-      const holderName = leader?.name ?? companion?.name ?? null;
+      const holderName = leader?.name ?? companion?.name ?? (hired ? game.i18n.localize("UKM.Hired.Name") : null);
       const advisorBusy =
         realm.cards.find((c) => c.status === "assigned" && c.assignee?.type === "advisor" && c.assignee.seat === seat) ??
         realm.projects.find((p) => p.status === "working" && p.seat === seat);
@@ -309,7 +312,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         seat,
         label: game.i18n.localize(`UKM.Seat.${seat}`),
         holder: holderName,
-        isCompanion: !leader && !!companion,
+        isCompanion: !leader && (!!companion || hired),
+        sulking: sulking ? game.i18n.format("UKM.Attitude.WontAdvise", { name: sulking.name, attitude: game.i18n.localize(`UKM.Attitude.${companionAttitude(sulking.id)}`) }) : null,
         advisor: leader && companion && !leader.name.toLowerCase().startsWith(companion.name.toLowerCase()) ? companion.name : null,
         supervisor: supervisor && supervisor.uuid !== leader?.uuid ? supervisor.name : null,
         mine,

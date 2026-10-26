@@ -107,3 +107,8 @@ export const RUIN_ABILITY = { corruption: "culture", crime: "economy", decay: "s
 export const ROUTINE_POINTS = 0.5;
 export const ROUTINE_ADVISOR_BONUS = 0.25;
 export const FOUNDING_PICKS = 2;
+
+export const HIRED_ADVISOR = "hired";
+export const HIRED_PENALTY = -2;
+export const HIRED_UPKEEP = 1;
+export const ATTITUDES = ["hostile", "unfriendly", "indifferent", "friendly", "helpful"];

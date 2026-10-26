@@ -9,6 +9,7 @@
         <span class="ukm-holder">
           {{#if holder}}{{holder}}{{#if isCompanion}} <span class="ukm-tag">{{localize "UKM.Manager.Advisor"}}</span>{{/if}}{{else}}<em>{{localize "UKM.Manager.Vacant"}}</em>{{/if}}
           {{#if advisor}}<span class="hint"> · {{localize "UKM.Manager.AdvisedBy" name=advisor}}</span>{{/if}}
+          {{#if sulking}}<span class="hint ukm-urgent"> · {{sulking}}</span>{{/if}}
           {{#if supervisor}}<span class="hint"> · {{localize "UKM.Manager.SupervisedBy" name=supervisor}}</span>{{/if}}
         </span>
         {{#if canTap}}<button type="button" class="ukm-desk-action" data-action="tapTreasury" data-tooltip="{{localize "UKM.Tap.Hint"}}"><i class="fa-solid fa-sack-dollar"></i> {{localize "UKM.Tap.Title"}}</button>{{/if}}

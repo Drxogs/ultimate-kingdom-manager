@@ -1,4 +1,4 @@
-import { DIE_AVERAGE, POINTS_PER_RANK, REALM_STATS, ROUTINE_ADVISOR_BONUS, ROUTINE_POINTS } from "../constants.js";
+import { ATTITUDES, DIE_AVERAGE, HIRED_ADVISOR, POINTS_PER_RANK, REALM_STATS, ROUTINE_ADVISOR_BONUS, ROUTINE_POINTS } from "../constants.js";
 import { getCompanion, getCompanions } from "../content/data.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { getKingdom, getResourceDie } from "../integrations/party.js";
@@ -86,11 +86,28 @@ export function cardWorkDays(levelModifier) {
   return Math.max(3, 5 + 2 * (levelModifier ?? 0));
 }
 
-/**
- * The companion advising a seat: the one picked as its advisor in Setup, or
- * else a companion actor holding the seat themselves.
- */
+export function companionAttitude(id) {
+  return getSetting(SETTINGS.companionAttitudes)?.[id] ?? "friendly";
+}
+
+/** At least this attitude? */
+export function attitudeAtLeast(id, wanted) {
+  return ATTITUDES.indexOf(companionAttitude(id)) >= ATTITUDES.indexOf(wanted);
+}
+
+export function isHired(seat) {
+  return getSetting(SETTINGS.seatAssignments)?.[seat]?.companion === HIRED_ADVISOR;
+}
+
+/** The companion advising a seat, as long as they're still willing to. */
 export function seatCompanionId(seat) {
+  const id = rawSeatCompanionId(seat);
+  if (!id || id === HIRED_ADVISOR) return null;
+  return attitudeAtLeast(id, "indifferent") ? id : null;
+}
+
+/** The companion placed in a seat, whatever their mood. */
+export function rawSeatCompanionId(seat) {
   const chosen = getSetting(SETTINGS.seatAssignments)?.[seat]?.companion;
   if (chosen) return chosen;
   const uuid = getKingdom()?.leadership?.[seat]?.uuid;
@@ -110,7 +127,7 @@ export function seatFilled(seat) {
   const companionId = seatCompanionId(seat);
   const companion = companionId ? getCompanion(companionId) : null;
   return {
-    filled: !!leader?.uuid || !!companion,
+    filled: !!leader?.uuid || !!companion || isHired(seat),
     suited: !!companion?.seats?.includes(seat)
   };
 }
