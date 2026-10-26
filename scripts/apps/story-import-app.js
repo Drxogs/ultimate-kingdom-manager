@@ -1,6 +1,7 @@
 import { MODULE_ID } from "../constants.js";
 import { inspectSources, runStoryImport } from "../content/story-import.js";
 import { buildStructureCatalog } from "../realm/projects.js";
+import { ensureHandbook } from "../content/handbook.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -54,6 +55,7 @@ export class StoryImportApp extends HandlebarsApplicationMixin(ApplicationV2) {
       });
       await setSetting(SETTINGS.storyImported, true);
       await buildStructureCatalog();
+      await ensureHandbook();
       this.#state = "done";
     } catch (err) {
       console.error(err);

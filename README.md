@@ -6,28 +6,49 @@ Kingdom management for the **Kingmaker** Adventure Path in Pathfinder Second Edi
 
 - Foundry VTT v13 or v14
 - Pathfinder Second Edition system
-- Recommended: **Pathfinder: Kingmaker** (official module) for the region map, hex data and adventure text
-- Recommended: **socketlib**
+- Recommended: **Pathfinder: Kingmaker** (official module), with its adventure imported, for the region map, hex data and adventure text. Without it, desks, cards and the treasury still work, but nothing on the map does.
 
-## Getting started
+## Installing
 
-1. Import the Kingmaker adventure into your world and found the kingdom from the party sheet's Kingdom tab.
-2. Enable this module. The setup window opens the first time the GM logs in.
-3. Assign leadership seats. Seats held by companion advisors get a player supervisor, so every desk has someone at the table looking after it.
-4. Run the story import. It copies regions, locations, kingdom events, quests, characters and structures into GM-only journals. It only needs doing once; the original journals are never changed.
-5. Open the Kingdom Manager from the token controls or the party sheet header.
+In Foundry, go to **Add-on Modules → Install Module** and paste this manifest URL:
 
-## How it plays
+```
+https://github.com/Drxogs/ultimate-kingdom-manager/releases/latest/download/module.json
+```
 
-- **Treasury.** The kingdom earns build points every week. They only buy kingdom things. Gold can be invested into the kingdom, but the only way back out is Tap Treasury, which is capped, runs up a debt, and can be disabled.
-- **Desks.** Each month new events land on the desk of the seat responsible for them, with a 30-day deadline. Delegate to the seat's advisor, handle it personally, or take it on as an adventure.
-- **Realm stats.** Eight stats, one per seat. Resolving events earns points; every 20 points the stat can rank up, which improves its skills and the weekly income.
-- **The map stays yours.** Claims, roads, farms and settlements are still marked with the Kingmaker module's hex tools. This module reads the map and never edits it.
+On The Forge, stop the server before checking for updates, then restart it.
+
+## Quick start for GMs
+
+1. **Build the kingdom first.** Finish the kingdom builder on the party sheet's Kingdom tab: charter, heartland, government, trained skills and ability boosts. Advisors roll the kingdom's skills, so if this is skipped everything rolls at an untrained +0.
+2. **Enable the module.** The setup window opens the first time the GM logs in.
+3. **Import the story text** when asked. It copies the adventure's regions, locations, kingdom events, quests, characters and structures into GM-only journals. Your original journals are never changed, and pages you edit are left alone on re-import.
+4. **Run Setup:** table options, the founding focus (two realm stats that start at rank 1), and the eight leadership seats. Seats held by companion advisors get a player supervisor, so every desk has someone at the table looking after it.
+5. **Point your players at the Player's Handbook** in the journal sidebar.
+
+Time drives everything, so advance world time the way you normally do. Every week brings income, food upkeep, a little growth for every filled seat and one small desk matter. Every month brings major events from the adventure, an audience and a council reminder.
+
+The map stays yours. When a project finishes or an event changes the land, the module adds a GM task with a jump-to-hex button telling you what to mark with the Kingmaker hex tools. It never edits the map itself.
+
+## For players
+
+Open the Kingdom Manager from the rook button in the token controls or on the party sheet.
+
+- **Your desk** holds your seat's cards. **Delegate** to your advisor, **Handle personally** with your own character's skill, take some problems **to the party** as an adventure, or **Hear** a petitioner and choose your answer. Every card shows its odds and its possible outcomes before you commit.
+- Checks roll when the work is done. The result waits on the card so you can **reroll** from the chat card with a hero point, or **Accept** it.
+- **Realm stats** fill as you succeed. When one is full, begin a **rank-up** and choose its reward.
+- **Start project** to claim hexes, build roads, farms, work sites and buildings, or use your companion advisor's ability. Pay now or **propose it to the council** for a vote.
+- Kingdom money never becomes your gold, except through the Treasurer's **Tap the treasury**, which leaves the realm in debt.
+
+## In-game handbook
+
+When the GM logs in, the module creates two journals in a **Kingdom Manager: Handbook** folder: a **Player's Handbook** everyone can read (how desks, rolls, ranks, projects, the council, audiences and money work, plus a glossary and reference tables for rank-up choices, projects, companion abilities and seat ambitions) and a **GM's Handbook** (setup, the calendar, map tasks, GM controls, settings, the numbers behind costs and income, and troubleshooting). The **Handbook** button on the Realm tab opens it. They're updated with the module; pages you've edited are left alone.
 
 ## Settings
 
-- Desks open between sessions (and whether the GM reviews requests first)
-- Tap Treasury: allowed, allowed with approval, or disabled
+- Desks open between sessions, and whether the GM reviews requests first
+- Tap the Treasury: allowed, allowed with GM approval, or disabled
+- Weekly desk matters, monthly audiences, and the council, each on or off
 - Advisor warnings about dangerous regions
 - What happens to map pins once an event is resolved
 

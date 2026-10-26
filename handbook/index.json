@@ -1,0 +1,120 @@
+{
+  "pages": [
+    {
+      "book": "player",
+      "key": "welcome",
+      "name": "Welcome to the Realm",
+      "file": "player-welcome.html"
+    },
+    {
+      "book": "player",
+      "key": "desk",
+      "name": "Your Desk",
+      "file": "player-desk.html"
+    },
+    {
+      "book": "player",
+      "key": "rolls",
+      "name": "Rolls, Odds and Rerolls",
+      "file": "player-rolls.html"
+    },
+    {
+      "book": "player",
+      "key": "realm",
+      "name": "Realm Stats and Ranks",
+      "file": "player-realm.html"
+    },
+    {
+      "book": "player",
+      "key": "rankups",
+      "generated": "rankups"
+    },
+    {
+      "book": "player",
+      "key": "projects",
+      "name": "Projects",
+      "file": "player-projects.html"
+    },
+    {
+      "book": "player",
+      "key": "projects",
+      "generated": "projects"
+    },
+    {
+      "book": "player",
+      "key": "companions",
+      "generated": "companions"
+    },
+    {
+      "book": "player",
+      "key": "council",
+      "name": "The Council and Audiences",
+      "file": "player-council.html"
+    },
+    {
+      "book": "player",
+      "key": "ambitions",
+      "generated": "ambitions"
+    },
+    {
+      "book": "player",
+      "key": "money",
+      "name": "Money",
+      "file": "player-money.html"
+    },
+    {
+      "book": "player",
+      "key": "between",
+      "name": "Between Sessions",
+      "file": "player-between.html"
+    },
+    {
+      "book": "player",
+      "key": "glossary",
+      "name": "Glossary",
+      "file": "player-glossary.html"
+    },
+    {
+      "book": "gm",
+      "key": "setup",
+      "name": "Setting Up",
+      "file": "gm-setup.html"
+    },
+    {
+      "book": "gm",
+      "key": "time",
+      "name": "Time and the Calendar",
+      "file": "gm-time.html"
+    },
+    {
+      "book": "gm",
+      "key": "map",
+      "name": "The Map, Pins and GM Tasks",
+      "file": "gm-map.html"
+    },
+    {
+      "book": "gm",
+      "key": "controls",
+      "name": "GM Controls",
+      "file": "gm-controls.html"
+    },
+    {
+      "book": "gm",
+      "key": "settings",
+      "name": "Settings",
+      "file": "gm-settings.html"
+    },
+    {
+      "book": "gm",
+      "key": "numbers",
+      "name": "The Numbers",
+      "file": "gm-numbers.html"
+    },
+    {
+      "book": "gm",
+      "key": "trouble",
+      "name": "Troubleshooting",
+      "file": "gm-trouble.html"
+    }
+  ]
+}

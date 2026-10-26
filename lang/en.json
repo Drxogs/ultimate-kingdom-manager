@@ -508,6 +508,10 @@
         "income": "Weekly income at {n}× the base",
         "fame": "Reach {n} Fame"
       }
+    },
+    "Handbook": {
+      "Open": "Handbook",
+      "Missing": "The handbook hasn't been set up yet. The GM needs to log in once with this version of the module."
     }
   }
 }

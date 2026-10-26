@@ -13,6 +13,7 @@ import { tapCostBP, tapLimit, tapMode } from "../realm/treasury.js";
 import { audienceResponses, drawAudience } from "../realm/audiences.js";
 import { proposals } from "../realm/council.js";
 import { ambitionsView } from "../realm/ambitions.js";
+import { openHandbook } from "../content/handbook.js";
 import { getProject } from "../content/data.js";
 import { sendRequest } from "../realm/requests.js";
 import {
@@ -124,6 +125,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       toggleTask: KingdomManager.#toggleTask,
       beginRankUp: KingdomManager.#beginRankUp,
       startProject: KingdomManager.#startProject,
+      openHandbook: () => openHandbook(),
       tapTreasury: KingdomManager.#tapTreasury,
       hearAudience: KingdomManager.#hearAudience,
       drawAudience: KingdomManager.#drawAudience,

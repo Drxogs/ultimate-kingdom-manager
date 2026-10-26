@@ -87,6 +87,8 @@
     {{/each}}
   </ol>
 
+  <p class="ukm-handbook-link"><button type="button" data-action="openHandbook"><i class="fa-solid fa-book-open-reader"></i> {{localize "UKM.Handbook.Open"}}</button></p>
+
   {{#if isGM}}
     <h3>{{localize "UKM.Manager.GmTasks"}}{{#if openTasks}} <span class="ukm-tag">{{openTasks}}</span>{{/if}}</h3>
     {{#if gmTasks.length}}
