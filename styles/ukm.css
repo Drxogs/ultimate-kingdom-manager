@@ -218,7 +218,7 @@
 }
 
 .ukm-manager .ukm-sheet-header .level-badge label {
-  color: var(--sidebar-label, #5e4a3a);
+  color: #4a3b2e;
   font: 500 var(--font-size-10, 10px) / 1.5 var(--sans-serif, sans-serif);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -300,7 +300,7 @@
 .ukm-manager .tab > header.ukm-major:first-child,
 .ukm-manager .tab > p + header.ukm-major { margin-top: 0.25rem; }
 
-.ukm-manager .hint { color: var(--color-text-tertiary, #6b5a48); }
+.ukm-manager .hint { color: #4a3b2e; }
 
 .ukm-manager .ukm-tag {
   border-color: var(--ukm-divider);
@@ -313,22 +313,22 @@
 }
 
 .ukm-manager .ukm-notice {
-  border-left: 3px solid var(--color-pf-tertiary, #786452);
+  border-left: 3px solid #5a3e2b;
   background: var(--ukm-paper-bg);
   box-shadow: var(--ukm-shadow);
 }
 
 .ukm-manager .ukm-bar {
-  height: 6px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  height: 8px;
+  border: 1px solid #8a7560;
   border-radius: 0;
-  background: rgba(0, 0, 0, 0.12);
-  box-shadow: 0 0 2px var(--sidebar-label, #5e4a3a);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 2px #4a3b2e;
 }
 
-.ukm-manager .ukm-bar.small { height: 4px; }
-.ukm-manager .ukm-bar > span { background: var(--sidebar-title, #786452); }
-.ukm-manager .ukm-stat.ready .ukm-bar > span { background: linear-gradient(90deg, #a98f39, #e3c05a); }
+.ukm-manager .ukm-bar.small { height: 6px; }
+.ukm-manager .ukm-bar > span { background: #6b4a2e; }
+.ukm-manager .ukm-stat.ready .ukm-bar > span { background: linear-gradient(90deg, #7a5c14, #a8801f); }
 
 .ukm-manager .window-content button {
   font-family: var(--sans-serif, sans-serif);
@@ -361,10 +361,10 @@
 .ukm-manager .ukm-icon:hover,
 .ukm-manager .ukm-task button:hover {
   background: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 0 4px var(--color-pf-tertiary, #786452);
+  box-shadow: 0 0 4px #5a3e2b;
 }
 
-.ukm-manager .ukm-icon { border: none; background: none; min-width: 1.2rem; padding: 0 0.2rem; color: var(--color-pf-tertiary, #786452); }
+.ukm-manager .ukm-icon { border: 1px solid rgba(90, 62, 43, 0.45); background: rgba(255, 255, 255, 0.4); min-width: 1.6rem; padding: 0 0.3rem; color: #4a2f1c; }
 
 .ukm-manager .ukm-urgent { color: var(--color-pf-text-critical-failure, #a8322b); font-weight: 600; }
 .ukm-manager .ukm-working { margin: 0.25rem 0 0; font-size: var(--font-size-12, 12px); color: #2f6b2a; }
@@ -393,7 +393,7 @@
   font: 500 var(--font-size-10, 10px) / 1.4 var(--sans-serif, sans-serif);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--sidebar-label, #5e4a3a);
+  color: #4a3b2e;
 }
 
 .ukm-manager .ukm-meter .ukm-value { font-weight: 600; }
@@ -467,7 +467,7 @@
   z-index: 1;
   border-radius: 2px;
   background: rgba(0, 0, 0, 0.15);
-  box-shadow: 0 0 0 1px var(--color-pf-tertiary, #786452), 0 0 0 2px #9f725b, inset 0 0 0.25rem rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 1px #5a3e2b, 0 0 0 2px #9f725b, inset 0 0 0.25rem rgba(0, 0, 0, 0.5);
   overflow: hidden;
 }
 
@@ -503,10 +503,10 @@
 }
 
 .ukm-manager .ukm-leader .role { font-variant: small-caps; font-weight: 600; font-size: var(--font-size-14, 14px); color: var(--ukm-head); }
-.ukm-manager .ukm-leader .ukm-holder { color: var(--color-text-tertiary, #6b5a48); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ukm-manager .ukm-leader .ukm-holder { color: #4a3b2e; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .ukm-manager .ukm-desk.mine .ukm-leader .details { box-shadow: var(--ukm-shadow), inset 0 -2px 0 #a98f39; }
-.ukm-manager .ukm-desk.mine .ukm-leader .image { box-shadow: 0 0 0 1px var(--color-pf-tertiary, #786452), 0 0 0 2px #a98f39, 0 0 6px #e3c05a; }
+.ukm-manager .ukm-desk.mine .ukm-leader .image { box-shadow: 0 0 0 1px #5a3e2b, 0 0 0 2px #a98f39, 0 0 6px #e3c05a; }
 
 .ukm-manager .ukm-empty { margin: 0.4rem 0 0 3.25rem; font-style: italic; }
 
@@ -516,7 +516,7 @@
 .ukm-manager .ukm-proposal {
   position: relative;
   padding: 0.35rem 0.5rem;
-  border-left: 3px solid var(--color-pf-tertiary, #786452);
+  border-left: 3px solid #5a3e2b;
   background: var(--ukm-paper-bg);
   box-shadow: var(--ukm-shadow);
 }
@@ -535,11 +535,11 @@
 .ukm-manager .ukm-tag.audience { border-color: #4a5c8f; color: #4a5c8f; }
 
 .ukm-manager .ukm-hook { margin: 0.2rem 0; font-style: italic; }
-.ukm-manager .ukm-card-meta { display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: var(--font-size-12, 12px); color: var(--color-text-tertiary, #6b5a48); }
+.ukm-manager .ukm-card-meta { display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: var(--font-size-12, 12px); color: #4a3b2e; }
 .ukm-manager .ukm-card-actions { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.35rem; }
 
 .ukm-manager .ukm-outcomes { margin-top: 0.25rem; font-size: var(--font-size-12, 12px); }
-.ukm-manager .ukm-outcomes summary { cursor: pointer; color: var(--color-text-tertiary, #6b5a48); font-variant: small-caps; }
+.ukm-manager .ukm-outcomes summary { cursor: pointer; color: #4a3b2e; font-variant: small-caps; }
 .ukm-manager .ukm-outcomes dl { display: grid; grid-template-columns: auto 1fr; gap: 0.1rem 0.5rem; margin: 0.25rem 0 0; }
 .ukm-manager .ukm-outcomes dt { font-weight: 600; }
 .ukm-manager .ukm-outcomes dd { margin: 0; }
@@ -561,7 +561,7 @@
 
 .ukm-manager .ukm-log-list { list-style: none; margin: 0; padding: 0; }
 .ukm-manager .ukm-log-list li { display: grid; grid-template-columns: 11rem 1fr; gap: 0.5rem; padding: 0.2rem 0; border-bottom: 1px solid var(--ukm-divider); }
-.ukm-manager .ukm-log-list time { color: var(--color-text-tertiary, #6b5a48); font-size: var(--font-size-12, 12px); }
+.ukm-manager .ukm-log-list time { color: #4a3b2e; font-size: var(--font-size-12, 12px); }
 .ukm-hex-hud .ukm-fortified { display: flex; align-items: center; gap: 0.3rem; margin: 0.2rem 0 0; }
 .ukm-hex-hud .ukm-fortified input { margin: 0; }
 .ukm-manager .ukm-tied-up { margin: 0.3rem 0 0 3.25rem; color: #8b1e1e; }
@@ -587,9 +587,10 @@
 .ukm-manager .ukm-settlement { margin-bottom: 0.75rem; }
 .ukm-manager .ukm-settlement header.ukm-major { display: flex; align-items: baseline; gap: 0.4rem; }
 .ukm-manager .ukm-settlement header .fa-crown { color: #a98f39; }
-.ukm-manager .ukm-settlement-type { font: 400 var(--font-size-13, 13px) var(--sans-serif, sans-serif); color: var(--color-text-tertiary, #6b5a48); font-variant: small-caps; }
+.ukm-manager .ukm-settlement-type { font: 400 var(--font-size-13, 13px) var(--sans-serif, sans-serif); color: #4a3b2e; font-variant: small-caps; }
 .ukm-manager .ukm-settlement header .controls { margin-left: auto; display: flex; gap: 0.25rem; align-items: center; }
-.ukm-manager .ukm-icon.on { color: #2a5d8f; }
+.ukm-manager .ukm-icon.on { color: #1f4f80; }
+.ukm-manager .ukm-icon:hover { color: #2b1d12; background: rgba(255, 255, 255, 0.5); }
 
 .ukm-manager .ukm-settlement-body { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start; }
 
