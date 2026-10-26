@@ -564,3 +564,4 @@
 .ukm-manager .ukm-log-list time { color: var(--color-text-tertiary, #6b5a48); font-size: var(--font-size-12, 12px); }
 .ukm-hex-hud .ukm-fortified { display: flex; align-items: center; gap: 0.3rem; margin: 0.2rem 0 0; }
 .ukm-hex-hud .ukm-fortified input { margin: 0; }
+.ukm-manager .ukm-tied-up { margin: 0.3rem 0 0 3.25rem; color: #8b1e1e; }

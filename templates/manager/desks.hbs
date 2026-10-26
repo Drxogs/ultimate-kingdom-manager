@@ -23,6 +23,7 @@
           </span>
         </div>
       </header>
+      {{#if tiedUp}}<p class="hint ukm-tied-up"><i class="fa-solid fa-people-arrows"></i> {{tiedUp}}</p>{{/if}}
       {{#if empty}}
         <p class="hint ukm-empty">{{localize "UKM.Manager.DeskEmpty"}}</p>
       {{else}}
@@ -54,6 +55,7 @@
                 <p class="ukm-working">
                   <i class="fa-solid {{#if assigneePersonal}}fa-user{{else}}fa-user-tie{{/if}}"></i>
                   {{localize "UKM.Card.Working" name=assigneeName days=workDays}}
+                  {{#if helping}}<span class="ukm-tag">{{localize "UKM.Card.Helping"}}</span>{{/if}}
                   {{#if currentOdds}}<span class="ukm-odds {{currentOdds.key}}" data-tooltip="{{currentOdds.detail}}">{{currentOdds.label}}</span>{{/if}}
                 </p>
               {{/if}}

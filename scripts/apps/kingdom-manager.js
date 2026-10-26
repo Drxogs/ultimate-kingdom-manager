@@ -15,6 +15,7 @@ import { openHandbook } from "../content/handbook.js";
 import { getProject, getStoryEvents } from "../content/data.js";
 import { sendRequest } from "../realm/requests.js";
 import {
+  busyWith,
   canActForSeat,
   cardLevelMod,
   cardStage,
@@ -23,7 +24,8 @@ import {
   estimateCheck,
   outcomePreview,
   recordOutcome,
-  rollCard
+  rollCard,
+  seatsOf
 } from "../realm/resolve.js";
 import { daysUntil, formatDate } from "../realm/time.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
@@ -64,9 +66,11 @@ function oddsView(odds) {
 
 function personalChoices(card) {
   const { skills } = cardStage(card);
-  const actors = getPlayerCharacters().filter((a) => game.user.isGM || a.isOwner);
+  const actors = getPlayerCharacters();
   return actors
     .map((actor) => {
+      const own = seatsOf(actor.uuid);
+      const lent = !own.includes(card.seat);
       const options = [];
       for (const kingdomSkill of skills) {
         for (const slug of PERSONAL_SKILLS[kingdomSkill] ?? []) {
@@ -81,7 +85,10 @@ function personalChoices(card) {
         }
       }
       options.sort((a, b) => b.mod - a.mod);
-      return { actor, options };
+      const group = lent
+        ? `${actor.name} (${game.i18n.format("UKM.Card.LentFrom", { desks: own.length ? own.map((s) => game.i18n.localize(`UKM.Seat.${s}`)).join(", ") : game.i18n.localize("UKM.Card.NoDesk") })})`
+        : actor.name;
+      return { actor, options, group };
     })
     .filter((g) => g.options.length);
 }
@@ -261,9 +268,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         (leader?.isOwner && !game.user.isGM) || (supervisor?.isOwner && !game.user.isGM) || false;
       const canAct = canActForSeat(game.user, seat);
       const holderName = leader?.name ?? companion?.name ?? (hired ? game.i18n.localize("UKM.Hired.Name") : null);
-      const advisorBusy =
-        realm.cards.find((c) => c.status === "assigned" && c.assignee?.type === "advisor" && c.assignee.seat === seat) ??
-        realm.projects.find((p) => p.status === "working" && p.seat === seat);
+      const advisorBusy = busyWith(realm, `seat:${seat}`);
+      const lentTo = realm.cards.find((c) => c.status === "assigned" && c.assignee?.lockSeats?.includes(seat));
 
       const cards = realm.cards
         .filter((c) => c.seat === seat && ["open", "assigned", "escalated", "rolled"].includes(c.status))
@@ -289,8 +295,9 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             assigneeName: card.assignee?.name ?? null,
             assigneePersonal: card.assignee?.type === "pc",
             canDelegate: open && canAct && !!holderName && !advisorBusy && card.kind !== "audience",
-            advisorBusy: open && !!advisorBusy,
-            canHandle: open && canAct && !event?.advisorOnly && card.kind !== "audience",
+            advisorBusy: open && !!advisorBusy && !lentTo,
+            canHandle: open && canAct && !lentTo && !event?.advisorOnly && card.kind !== "audience",
+            helping: !!card.assignee?.helping,
             isAudience: card.kind === "audience",
             isProject: card.kind === "project",
             canReveal: game.user.isGM && !!card.target?.hexKey && card.kind !== "project",
@@ -327,6 +334,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         advisor: leader && companion && !leader.name.toLowerCase().startsWith(companion.name.toLowerCase()) ? companion.name : null,
         supervisor: supervisor && supervisor.uuid !== leader?.uuid ? supervisor.name : null,
         mine,
+        tiedUp: lentTo ? game.i18n.format("UKM.Card.DeskBusy", { card: lentTo.name }) : null,
         canStartProject: canAct && projectsForSeat(seat).length > 0,
         canTap: seat === "treasurer" && canAct && tapMode() !== "disabled",
         cards,
@@ -376,7 +384,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       return;
     }
     const select = groups
-      .map(({ actor, options }) => `<optgroup label="${Handlebars.escapeExpression(actor.name)}">${options.map((o) => `<option value="${o.value}">${Handlebars.escapeExpression(o.label)}</option>`).join("")}</optgroup>`)
+      .map(({ group, options }) => `<optgroup label="${Handlebars.escapeExpression(group)}">${options.map((o) => `<option value="${o.value}">${Handlebars.escapeExpression(o.label)}</option>`).join("")}</optgroup>`)
       .join("");
     const dc = game.i18n.localize("UKM.Card.PersonalHint");
     const choice = await DialogV2.prompt({

@@ -1,6 +1,6 @@
-import { DEGREE_POINTS, DEGREES, HIRED_PENALTY, LEVEL_DC, MODULE_ID, SKILL_ABILITY, SKILL_TO_STAT } from "../constants.js";
+import { DEGREE_POINTS, DEGREES, HIRED_PENALTY, LEVEL_DC, MODULE_ID, SEATS, SKILL_ABILITY, SKILL_TO_STAT } from "../constants.js";
 import { getCardEvent, getCompanion, getEvent } from "../content/data.js";
-import { getControlDC, getKingdom, getPartyLevel } from "../integrations/party.js";
+import { getControlDC, getKingdom, getPartyLevel, getPlayerCharacters } from "../integrations/party.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { createCard } from "./deck.js";
 import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
@@ -38,8 +38,20 @@ function assigneeKey(assignee) {
 export function busyWith(realm, key) {
   const card = realm.cards.find((c) => c.status === "assigned" && assigneeKey(c.assignee) === key);
   if (card) return card;
+  if (key?.startsWith("seat:")) {
+    const seat = key.slice(5);
+    const lent = realm.cards.find((c) => c.status === "assigned" && c.assignee?.lockSeats?.includes(seat));
+    if (lent) return lent;
+  }
   const project = realm.projects.find((p) => p.status === "working" && `seat:${p.seat}` === key);
   return project ? { name: project.name } : null;
+}
+
+/** The seats a character holds or supervises. */
+export function seatsOf(actorUuid) {
+  const leadership = getKingdom()?.leadership ?? {};
+  const assignments = getSetting(SETTINGS.seatAssignments) ?? {};
+  return SEATS.filter((seat) => leadership[seat]?.uuid === actorUuid || assignments[seat]?.supervisor === actorUuid);
 }
 
 /** Whether a user may act for a seat: the GM, an owner of the seat holder, or the seat's supervising player. */
@@ -84,9 +96,20 @@ export async function assignCard(request) {
   if (request.type === "pc" && cardStage(card).event?.advisorOnly) return { ok: false, reason: "AdvisorOnly" };
   if (request.type === "pc") {
     const actor = fromUuidSync(request.actorUuid);
-    if (!actor || (!user.isGM && !actor.testUserPermission(user, "OWNER"))) return { ok: false, reason: "NotYourCharacter" };
+    const inParty = getPlayerCharacters().some((a) => a.uuid === actor?.uuid);
+    if (!actor || (!inParty && !user.isGM && !actor.testUserPermission(user, "OWNER"))) return { ok: false, reason: "NotYourCharacter" };
     if (!actor.skills?.[request.personalSkill]) return { ok: false, reason: "NoSkill" };
     assignee = { type: "pc", actorUuid: actor.uuid, name: actor.name, skill, personalSkill: request.personalSkill };
+    const own = seatsOf(actor.uuid);
+    if (!own.includes(card.seat)) {
+      const lockSeats = [card.seat, ...own];
+      for (const seat of lockSeats) {
+        const busy = busyWith(realm, `seat:${seat}`);
+        if (busy) return { ok: false, reason: "DeskBusy", data: { desk: game.i18n.localize(`UKM.Seat.${seat}`), card: busy.name } };
+      }
+      assignee.lockSeats = lockSeats;
+      assignee.helping = true;
+    }
   } else {
     const event = cardStage(card).event;
     const name = event?.signature ? getCompanion(event.companion)?.name ?? seatHolderName(card.seat) : seatHolderName(card.seat);
@@ -94,6 +117,8 @@ export async function assignCard(request) {
     assignee = { type: "advisor", seat: card.seat, name, skill };
   }
 
+  const lent = realm.cards.find((c) => c.status === "assigned" && c.assignee?.lockSeats?.includes(card.seat));
+  if (lent) return { ok: false, reason: "DeskBusy", data: { desk: game.i18n.localize(`UKM.Seat.${card.seat}`), card: lent.name } };
   const busy = busyWith(realm, assigneeKey(assignee));
   if (busy) return { ok: false, reason: "Busy", data: { name: assignee.name, card: busy.name } };
 
@@ -107,6 +132,13 @@ export async function assignCard(request) {
     target.workUntil = game.time.worldTime + days * secondsPerDay();
     addLog(r, { type: "card-assigned", card: card.id, seat: card.seat, text: `${card.name} — ${assignee.name}` });
   });
+  if (assignee.helping) {
+    const desks = assignee.lockSeats.map((s) => game.i18n.localize(`UKM.Seat.${s}`)).join(", ");
+    await ChatMessage.create({
+      speaker: { alias: getKingdom()?.name || game.i18n.localize("UKM.Manager.Unnamed") },
+      content: `<div class="ukm-chat"><h3>${Handlebars.escapeExpression(card.name)}</h3><p>${game.i18n.format("UKM.Card.HelpingChat", { name: Handlebars.escapeExpression(assignee.name), seat: game.i18n.localize(`UKM.Seat.${card.seat}`), days, desks })}</p></div>`
+    });
+  }
   return { ok: true, days };
 }
 

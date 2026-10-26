@@ -184,7 +184,7 @@
       "Dismiss": "Dismiss",
       "ChooseSkill": "Which approach should be taken?",
       "NoPersonalSkill": "None of your characters has a skill that fits this event.",
-      "PersonalHint": "Your character takes this on in person, rolling their own skill against a level-based DC. A success counts as a critical success, and a critical success earns Fame.",
+      "PersonalHint": "A character takes this on in person, rolling their own skill against a level-based DC. A success counts as a critical success, and a critical success earns Fame. Anyone in the party can do it. Someone who doesn't hold this desk is lent to it: their own desk and this one take no other work until it's done, and their player makes the roll.",
       "Who": "Character and skill",
       "EscalateConfirm": "Take this to the table? The deadline pauses until the GM records how the party fared.",
       "RecordPrompt": "How did it go?",
@@ -198,7 +198,12 @@
       "Rolled": "{name}'s roll: {result}. Reroll from the chat card, or accept it. It applies on its own after a day.",
       "Accept": "Accept",
       "Matter": "Desk matter",
-      "WorkDays": "{days} days of work"
+      "WorkDays": "{days} days of work",
+      "Helping": "lent from another desk",
+      "HelpingChat": "{name} is lent to the {seat}'s desk for {days} days. Until it's done, these desks take no other work: {desks}. {name}'s player makes the roll.",
+      "DeskBusy": "Desk tied up: someone is lent to {card}.",
+      "LentFrom": "lent from {desks}",
+      "NoDesk": "no desk"
     },
     "Log": {
       "income": "Treasury collected {amount} BP.",
@@ -296,7 +301,7 @@
       "Reason": {
         "NotOpen": "That card is no longer open.",
         "NotYourSeat": "That desk isn't yours.",
-        "NotYourCharacter": "You don't own that character.",
+        "NotYourCharacter": "That character isn't in the party.",
         "NoSkill": "That character doesn't have that skill.",
         "SeatVacant": "Nobody holds this seat.",
         "Busy": "{name} is already working on {card}.",
@@ -317,7 +322,8 @@
         "NothingOwed": "Nothing is owed.",
         "NotEnoughGold": "That character doesn't have that much gold.",
         "AdvisorOnly": "Only the advisor can do this one.",
-        "NotRuler": "Only the Ruler or the GM can do that."
+        "NotRuler": "Only the Ruler or the GM can do that.",
+        "DeskBusy": "The {desk} desk is tied up with {card}."
       }
     },
     "Effect": {
