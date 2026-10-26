@@ -598,7 +598,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const esc = Handlebars.escapeExpression;
     const always = choices.always.length ? `<p class="hint">${game.i18n.format("UKM.Rank.Always", { effects: choices.always.join(", ") })}</p>` : "";
     const content = `<div class="ukm-scene"><p class="ukm-scene-text">${esc(choices.scene)}</p>${always}<ul class="ukm-scene-options">${choices.options
-      .map((o) => `<li><strong>${esc(o.label)}</strong> ${esc(o.text)}<br><span class="hint">${o.lines.map(esc).join("; ")}</span></li>`)
+      .map((o) => `<li><strong>${esc(o.label)}</strong> ${esc(o.text)}<br><span class="hint">${o.lines.map(esc).join("; ")}</span>${o.warning ? `<br><span class="ukm-urgent">${esc(o.warning)}</span>` : ""}</li>`)
       .join("")}</ul></div>`;
     const option = await DialogV2.wait({
       window: { title: `${choices.title} — ${game.i18n.format("UKM.Rank.ToRank", { stat: game.i18n.localize(`UKM.Stat.${stat}`), rank: project.rank })}` },

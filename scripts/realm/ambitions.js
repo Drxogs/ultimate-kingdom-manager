@@ -4,6 +4,7 @@ import { isKingmakerActive, summarizeRealm } from "../integrations/kingmaker.js"
 import { getFame, getKingdom } from "../integrations/party.js";
 import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
 import { weeklyIncome } from "./rules.js";
+import { convertWasted } from "./bonuses.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { isLeader } from "./leader.js";
 
@@ -57,7 +58,7 @@ export function ambitionsView(realm = getRealm()) {
       value: progress?.value ?? 0,
       target: progress?.target ?? 0,
       percent: progress ? Math.min(100, Math.round((progress.value / Math.max(progress.target, 1)) * 100)) : 100,
-      reward: tier ? tier.reward.map(describeEffect).join(", ") : null
+      reward: tier ? convertWasted(tier.reward, realm).effects.map(describeEffect).join(", ") : null
     };
   }).filter(Boolean);
 }
@@ -82,7 +83,9 @@ export async function checkAmbitions() {
       if ((r.ambitions[item.seat] ?? 0) !== item.tierIndex) return;
       r.ambitions[item.seat] = item.tierIndex + 1;
       ctx = new EffectContext({ realm: r, card: null, event: null });
-      await applyEffects(ctx, item.tier.reward);
+      const reward = convertWasted(item.tier.reward, r);
+      await applyEffects(ctx, reward.effects);
+      if (reward.converted) ctx.note(game.i18n.localize("UKM.Bonus.Converted"));
       addLog(r, { type: "ambition", seat: item.seat, text: `${item.ambition.title} ${item.tierIndex + 1}` });
     });
     if (!ctx) continue;

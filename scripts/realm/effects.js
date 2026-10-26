@@ -54,7 +54,7 @@ export function describeEffect(effect) {
         selector: [value.selector].flat().map((s) => game.i18n.localize(`UKM.Effect.Selector.${s}`)).join(" & ")
       });
     case "reroll":
-      return loc("Reroll");
+      return value?.uses > 1 ? loc("RerollMany", { uses: value.uses, days: value.days ?? 30 }) : loc("Reroll");
     case "tradeAgreement":
       return loc("TradeAgreement");
     case "completeProject":
@@ -367,7 +367,7 @@ export async function applyEffects(ctx, effects = []) {
           label: ctx.card?.name ?? "",
           expires: now + (value.days ?? 30) * day
         });
-        ctx.note(loc("Reroll"));
+        ctx.note(describeEffect(effect));
         break;
       }
       case "flat": {

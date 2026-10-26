@@ -395,7 +395,8 @@
         "replaceLeader": "{card}: replace the disgraced leader, or the scandal comes back.",
         "taint": "{card}: the leader is tainted for a while; more scandals may follow.",
         "noModGrowth": "{card}: the next outbreak doesn't get harder."
-      }
+      },
+      "RerollMany": "{uses} rerolls on these checks within {days} days"
     },
     "Difficulty": {
       "veryEasy": "Very easy",
@@ -583,6 +584,11 @@
       "friendly": "Friendly",
       "helpful": "Helpful",
       "WontAdvise": "{name} won't advise ({attitude})"
+    },
+    "Bonus": {
+      "Wasted": "Adds nothing right now: these checks already get a +{existing} status bonus, and status bonuses don't stack.",
+      "Partial": "Only adds +{gain} right now: these checks already get a +{existing} status bonus, and status bonuses don't stack.",
+      "Converted": "The status bonus wouldn't have added anything here, so it became two rerolls on the same checks instead."
     }
   }
 }

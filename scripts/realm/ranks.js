@@ -6,6 +6,7 @@ import { canRankUp, rankBonus, weeklyIncome } from "./rules.js";
 import { busyWith, canActForSeat } from "./resolve.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
+import { statusNote } from "./bonuses.js";
 import { isLeader } from "./leader.js";
 
 export const RANK_UP_DAYS = 14;
@@ -46,7 +47,8 @@ export function rankUpChoices(project) {
       label: o.label,
       text: o.text,
       effects: o.effects[level] ?? [],
-      lines: (o.effects[level] ?? []).map(describeEffect)
+      lines: (o.effects[level] ?? []).map(describeEffect),
+      warning: statusNote(o.effects[level] ?? [])
     }))
   };
 }
