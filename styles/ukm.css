@@ -218,7 +218,7 @@
 }
 
 .ukm-manager .ukm-sheet-header .level-badge label {
-  color: #4a3b2e;
+  color: var(--sidebar-label, #5e4a3a);
   font: 500 var(--font-size-10, 10px) / 1.5 var(--sans-serif, sans-serif);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -327,8 +327,9 @@
 }
 
 .ukm-manager .ukm-bar.small { height: 6px; }
-.ukm-manager .ukm-bar > span { background: #6b4a2e; }
-.ukm-manager .ukm-stat.ready .ukm-bar > span { background: linear-gradient(90deg, #7a5c14, #a8801f); }
+.ukm-manager .ukm-bar > span { background: linear-gradient(90deg, #2f6b2a, #4c8f3c); }
+.ukm-manager .ukm-ruin .ukm-bar > span { background: linear-gradient(90deg, #8b1e1e, #b83a2e); }
+.ukm-manager .ukm-stat.ready .ukm-bar > span { background: linear-gradient(90deg, #2f6b2a, #6aa84f); box-shadow: 0 0 4px #6aa84f; }
 
 .ukm-manager .window-content button {
   font-family: var(--sans-serif, sans-serif);
