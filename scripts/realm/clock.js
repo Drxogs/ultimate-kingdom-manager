@@ -20,13 +20,21 @@ const MAX_MATTERS_PER_TICK = 2;
 
 let running = false;
 
+function inCombat() {
+  return game.combats?.some((c) => c.started) ?? false;
+}
+
 export function registerClock() {
   Hooks.on("updateWorldTime", () => tick());
+  Hooks.on("deleteCombat", () => tick());
+  Hooks.on("updateCombat", (combat, changes) => {
+    if ("round" in changes && !combat.started) tick();
+  });
 }
 
 /** Bring the realm up to the current world time. Safe to call at any moment. */
 export async function tick() {
-  if (running || !isLeader() || !isKingdomActive()) return;
+  if (running || !isLeader() || !isKingdomActive() || inCombat()) return;
   running = true;
   try {
     const clock = getSetting(SETTINGS.clock) ?? {};
