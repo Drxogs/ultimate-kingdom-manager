@@ -153,7 +153,10 @@
       "MatterDrawn": "New desk matter: {name}.",
       "MatterNone": "No desk matter fits right now.",
       "DrawAudience": "Draw audience",
-      "AdvisedBy": "advisor {name}"
+      "AdvisedBy": "advisor {name}",
+      "GmAwayQueue": "No GM is online. Anything you do here waits for the GM.",
+      "GmAwayClosed": "No GM is online, and the desks are closed between sessions. You can read your desk until the GM is back.",
+      "Queued": "({count} waiting)"
     },
     "Card": {
       "Kind": {
@@ -538,6 +541,14 @@
       "Skill": "Skill",
       "PreferredOnly": "Only from a suited seat",
       "Costs": "Costs {cost} BP"
+    },
+    "Pins": {
+      "Reveal": "Show players where this is",
+      "Hide": "Hide this from players again",
+      "Deadline": "Needs dealing with by {date}.",
+      "HudTitle": "Kingdom",
+      "HudDays": "{days} days left",
+      "HudProject": "in progress"
     }
   }
 }

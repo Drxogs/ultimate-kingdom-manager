@@ -124,6 +124,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       beginRankUp: KingdomManager.#beginRankUp,
       startProject: KingdomManager.#startProject,
       openHandbook: () => openHandbook(),
+      reveal: KingdomManager.#reveal,
       tapTreasury: KingdomManager.#tapTreasury,
       hearAudience: KingdomManager.#hearAudience,
       drawAudience: KingdomManager.#drawAudience,
@@ -167,6 +168,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const income = weeklyIncome(realm);
 
     context.isGM = game.user.isGM;
+    context.gmAway = !game.user.isGM && !game.users.activeGM;
+    context.queued = !game.user.isGM && (game.user.getFlag(MODULE_ID, "queue")?.length ?? 0);
     context.kingdomActive = !!kingdom?.active;
     context.storyImported = getSetting(SETTINGS.storyImported);
     context.betweenSessions = getSetting(SETTINGS.betweenSessions);
@@ -280,6 +283,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             canHandle: open && canAct && !event?.advisorOnly && card.kind !== "audience",
             isAudience: card.kind === "audience",
             isProject: card.kind === "project",
+            canReveal: game.user.isGM && !!card.target?.hexKey && card.kind !== "project",
             canHear: open && canAct && card.kind === "audience",
             canUnassign: card.status === "assigned" && canAct,
             canEscalate: open && canAct && !!event?.escalate,
@@ -605,6 +609,11 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const stat = target.closest("[data-stat]")?.dataset.stat;
     const project = stat ? rankUpProject(getRealm(), stat) : null;
     if (project) await sendRequest("gm", { op: "finishRankUp", projectId: project.id });
+  }
+
+  static async #reveal(event, target) {
+    const card = findCard(target);
+    if (card && game.user.isGM) await sendRequest("gm", { op: "reveal", cardId: card.id, revealed: !card.revealed });
   }
 
   static async #accept(event, target) {

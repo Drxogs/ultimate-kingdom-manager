@@ -13,6 +13,7 @@ import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { neighbors, settlementHexes } from "./deck.js";
 import { seatCompanionId, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
+import { syncPins } from "./pins.js";
 import { secondsPerDay } from "./time.js";
 import { isLeader } from "./leader.js";
 
@@ -284,6 +285,7 @@ export async function startProject(request, { canActForSeat }) {
     r.cards.push(card);
     addLog(r, { type: "project-start", card: card.id, seat: def.seat, text: card.name, amount: -quote.cost });
   });
+  await syncPins();
   return { ok: true, cost: quote.cost };
 }
 

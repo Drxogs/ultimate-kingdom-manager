@@ -1,6 +1,6 @@
 import { drawAudience } from "./audiences.js";
 import { drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
-import { syncPins } from "./pins.js";
+import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
 import { completeGmTask, dismissCard, recordOutcome, rollCard } from "./resolve.js";
 import { getRealm, updateRealm } from "./state.js";
@@ -20,6 +20,10 @@ const OPS = {
   },
   dismiss: async ({ cardId }) => {
     await dismissCard(cardId);
+    return {};
+  },
+  reveal: async ({ cardId, revealed }) => {
+    await setRevealed(cardId, !!revealed);
     return {};
   },
   task: async ({ taskId }) => {

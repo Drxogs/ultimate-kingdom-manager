@@ -278,3 +278,8 @@
 .ukm-manager .ukm-proposal button.active { box-shadow: 0 0 0 2px var(--ukm-gold) inset; }
 .ukm-manager .ukm-card.audience { border-left-color: #5b6ea8; }
 .ukm .ukm-tag.audience { border-color: #5b6ea8; color: #5b6ea8; }
+
+.ukm-manager .ukm-desks-notice { grid-column: 1 / -1; margin: 0; }
+.ukm-hex-hud { margin-top: 0.4rem; padding-top: 0.3rem; border-top: 1px solid rgba(255, 255, 255, 0.2); font-size: var(--font-size-12, 12px); }
+.ukm-hex-hud h4 { margin: 0 0 0.2rem; font-size: inherit; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8; }
+.ukm-hex-hud ul { margin: 0; padding-left: 1rem; }

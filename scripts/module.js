@@ -11,6 +11,8 @@ import { onRerollMessage } from "./realm/resolve.js";
 import { buildStructureCatalog, structureCatalog } from "./realm/projects.js";
 import { ensureHandbook, openHandbook } from "./content/handbook.js";
 import { isLeader, leaderSettled, startLeader } from "./realm/leader.js";
+import { cardsOnHex } from "./realm/pins.js";
+import { daysUntil } from "./realm/time.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
 import { SetupWizard } from "./apps/setup-wizard.js";
 import { StoryImportApp } from "./apps/story-import-app.js";
@@ -82,6 +84,31 @@ Hooks.on("updateActor", (actor, changes) => {
 });
 
 Hooks.on("createChatMessage", (message) => onRerollMessage(message));
+
+Hooks.on("userConnected", () => KingdomManager.refresh());
+
+function addHexHudLine(app, html) {
+  const root = html instanceof HTMLElement ? html : html?.[0] ?? app?.element;
+  const key = app?.hex?.key;
+  if (!root || key === undefined) return;
+  root.querySelector(".ukm-hex-hud")?.remove();
+  const cards = cardsOnHex(key);
+  if (!cards.length) return;
+  const esc = Handlebars.escapeExpression;
+  const items = cards
+    .map((c) => {
+      const when = c.kind === "project" ? game.i18n.localize("UKM.Pins.HudProject") : game.i18n.format("UKM.Pins.HudDays", { days: Math.max(0, daysUntil(c.deadline)) });
+      return `<li>${esc(c.name)} <span class="hint">· ${esc(when)}</span></li>`;
+    })
+    .join("");
+  const section = document.createElement("section");
+  section.className = "ukm-hex-hud";
+  section.innerHTML = `<h4>${game.i18n.localize("UKM.Pins.HudTitle")}</h4><ul>${items}</ul>`;
+  root.append(section);
+}
+
+Hooks.on("renderHexHUD", addHexHudLine);
+Hooks.on("renderKingmakerHexHUD", addHexHudLine);
 
 Hooks.on("updateSetting", (setting) => {
   if (setting.key.startsWith(`${MODULE_ID}.`)) Hooks.callAll(`${MODULE_ID}.refresh`);
