@@ -56,6 +56,14 @@ When the GM logs in, the module creates two journals in a **Kingdom Manager: Han
 
 This module does not replace the camping and weather rules of *PF2e – Kingdom Building, Camping & Weather*. Both can be active together; just don't use that module's kingdom sheet alongside this one.
 
+## How this module was made
+
+This module was written with **Claude**, an AI model made by Anthropic, working in Claude Code sessions. Claude wrote the code, the templates and styles, the original content (desk matters, rank-up scenes, audiences, seat ambitions, companion abilities) and the handbook text.
+
+Drxogs came up with the idea of bringing the Owlcat *Pathfinder: Kingmaker* kingdom game to the tabletop adventure in Foundry, set the direction and rules decisions, tests it in his own campaign, and maintains the project. Bug reports and feedback go to the [issue tracker](https://github.com/Drxogs/ultimate-kingdom-manager/issues).
+
+Commits made before v0.15.3 don't mark Claude's part; from v0.15.3 on, commits carry a co-author line.
+
 ## Legal
 
 This module uses trademarks and/or copyrights owned by Paizo Inc., used under Paizo's Community Use Policy ([paizo.com/licenses/communityuse](https://paizo.com/licenses/communityuse)). We are expressly prohibited from charging you to use or access this content. This module is not published, endorsed, or specifically approved by Paizo. For more information about Paizo Inc. and Paizo products, visit [paizo.com](https://paizo.com).

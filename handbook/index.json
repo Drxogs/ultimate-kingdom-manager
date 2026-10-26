@@ -127,6 +127,12 @@
       "key": "trouble",
       "name": "Troubleshooting",
       "file": "gm-trouble.html"
+    },
+    {
+      "book": "gm",
+      "key": "about",
+      "name": "About This Module",
+      "file": "gm-about.html"
     }
   ]
 }
