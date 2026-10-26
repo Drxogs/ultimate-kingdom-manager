@@ -5,6 +5,7 @@
         <h3>{{label}}</h3>
         <span class="ukm-holder">
           {{#if holder}}{{holder}}{{#if isCompanion}} <span class="ukm-tag">{{localize "UKM.Manager.Advisor"}}</span>{{/if}}{{else}}<em>{{localize "UKM.Manager.Vacant"}}</em>{{/if}}
+          {{#if advisor}}<span class="hint"> · {{localize "UKM.Manager.AdvisedBy" name=advisor}}</span>{{/if}}
           {{#if supervisor}}<span class="hint"> · {{localize "UKM.Manager.SupervisedBy" name=supervisor}}</span>{{/if}}
         </span>
         {{#if canTap}}<button type="button" class="ukm-desk-action" data-action="tapTreasury" data-tooltip="{{localize "UKM.Tap.Hint"}}"><i class="fa-solid fa-sack-dollar"></i> {{localize "UKM.Tap.Title"}}</button>{{/if}}
@@ -31,6 +32,8 @@
                 {{#if place}}<span><i class="fa-solid fa-location-dot"></i> {{place}}</span>{{/if}}
                 {{#if isEscalated}}
                   <span><i class="fa-solid fa-dragon"></i> {{localize "UKM.Card.WithParty"}}</span>
+                {{else if isProject}}
+                  {{#if project.days}}<span><i class="fa-solid fa-hammer"></i> {{localize "UKM.Card.WorkDays" days=project.days}}</span>{{/if}}
                 {{else}}
                   <span class="{{#if urgent}}ukm-urgent{{/if}}"><i class="fa-solid fa-hourglass-half"></i> {{localize "UKM.Card.DaysLeft" days=daysLeft}}</span>
                 {{/if}}

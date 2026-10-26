@@ -3,14 +3,12 @@ import { getCardEvent, getCompanion } from "../content/data.js";
 import { getImportedPage } from "../content/story-import.js";
 import { focusHex, getHexDefinitions, getZone } from "../integrations/kingmaker.js";
 import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnrest } from "../integrations/party.js";
-import { drawMonthlyEvents, drawWeeklyMatter } from "../realm/deck.js";
-import { syncPins } from "../realm/pins.js";
-import { canRankUp, rankBonus, rankCap, routinePoints, statProgress, weeklyIncome } from "../realm/rules.js";
+import { canRankUp, rankBonus, rankCap, routinePoints, seatCompanionId, statProgress, weeklyIncome } from "../realm/rules.js";
 import { getRealm, updateRealm } from "../realm/state.js";
-import { finishRankUpNow, rankUpChoices, rankUpCost, rankUpProject } from "../realm/ranks.js";
+import { rankUpChoices, rankUpCost, rankUpProject } from "../realm/ranks.js";
 import { buildableStructures, projectQuote, projectsForSeat, projectTargets } from "../realm/projects.js";
 import { tapCostBP, tapLimit, tapMode } from "../realm/treasury.js";
-import { audienceResponses, drawAudience } from "../realm/audiences.js";
+import { audienceResponses } from "../realm/audiences.js";
 import { proposals } from "../realm/council.js";
 import { ambitionsView } from "../realm/ambitions.js";
 import { openHandbook } from "../content/handbook.js";
@@ -243,7 +241,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       const leaderUuid = kingdom?.leadership?.[seat]?.uuid;
       const leader = leaderUuid ? fromUuidSync(leaderUuid) : null;
       const assignment = assignments[seat] ?? {};
-      const companion = assignment.companion ? getCompanion(assignment.companion) : null;
+      const companionId = seatCompanionId(seat);
+      const companion = companionId ? getCompanion(companionId) : null;
       const supervisor = assignment.supervisor ? fromUuidSync(assignment.supervisor) : null;
       const mine =
         (leader?.isOwner && !game.user.isGM) || (supervisor?.isOwner && !game.user.isGM) || false;
@@ -280,6 +279,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             advisorBusy: open && !!advisorBusy,
             canHandle: open && canAct && !event?.advisorOnly && card.kind !== "audience",
             isAudience: card.kind === "audience",
+            isProject: card.kind === "project",
             canHear: open && canAct && card.kind === "audience",
             canUnassign: card.status === "assigned" && canAct,
             canEscalate: open && canAct && !!event?.escalate,
@@ -306,7 +306,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         label: game.i18n.localize(`UKM.Seat.${seat}`),
         holder: holderName,
         isCompanion: !leader && !!companion,
-        supervisor: supervisor?.name ?? null,
+        advisor: leader && companion && !leader.name.toLowerCase().startsWith(companion.name.toLowerCase()) ? companion.name : null,
+        supervisor: supervisor && supervisor.uuid !== leader?.uuid ? supervisor.name : null,
         mine,
         canStartProject: canAct && projectsForSeat(seat).length > 0,
         canTap: seat === "treasurer" && canAct && tapMode() !== "disabled",
@@ -337,14 +338,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #drawEvents() {
-    if (!game.user.isActiveGM) return;
-    let drawn = [];
-    await updateRealm((realm) => {
-      drawn = drawMonthlyEvents(realm);
-    });
-    await syncPins();
-    const key = drawn.length === 0 ? "DrawnNone" : drawn.length === 1 ? "DrawnOne" : "Drawn";
-    ui.notifications.info(game.i18n.format(`UKM.Manager.${key}`, { count: drawn.length }));
+    await sendRequest("gm", { op: "drawEvents" });
   }
 
   static async #delegate(event, target) {
@@ -512,12 +506,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #drawAudience() {
-    if (!game.user.isActiveGM) return;
-    let card = null;
-    await updateRealm((realm) => {
-      card = drawAudience(realm);
-    });
-    ui.notifications.info(card ? game.i18n.format("UKM.Manager.MatterDrawn", { name: card.name }) : game.i18n.localize("UKM.Manager.MatterNone"));
+    await sendRequest("gm", { op: "drawAudience" });
   }
 
   static async #vote(event, target) {
@@ -615,7 +604,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #finishRankUp(event, target) {
     const stat = target.closest("[data-stat]")?.dataset.stat;
     const project = stat ? rankUpProject(getRealm(), stat) : null;
-    if (project && game.user.isActiveGM) await finishRankUpNow(project.id);
+    if (project) await sendRequest("gm", { op: "finishRankUp", projectId: project.id });
   }
 
   static async #accept(event, target) {
@@ -636,45 +625,40 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static async #rollNow(event, target) {
     const card = findCard(target);
-    if (card && game.user.isActiveGM) await rollCard(card.id);
+    if (card) await sendRequest("gm", { op: "rollNow", cardId: card.id });
   }
 
   static async #recordOutcome(event, target) {
     const card = findCard(target);
-    if (!card || !game.user.isActiveGM) return;
+    if (!card || !game.user.isGM) return;
     const degree = await DialogV2.wait({
       window: { title: card.name },
       content: `<p>${game.i18n.localize("UKM.Card.RecordPrompt")}</p>`,
       buttons: DEGREES.slice().reverse().map((d) => ({ action: d, label: game.i18n.localize(`UKM.Degree.${d}`) })),
       rejectClose: false
     });
-    if (degree) await recordOutcome(card.id, degree);
+    if (degree) await sendRequest("gm", { op: "record", cardId: card.id, degree });
   }
 
   static async #dismiss(event, target) {
     const card = findCard(target);
-    if (!card || !game.user.isActiveGM) return;
+    if (!card || !game.user.isGM) return;
     const ok = await DialogV2.confirm({
       window: { title: card.name },
       content: `<p>${game.i18n.localize("UKM.Card.DismissConfirm")}</p>`,
       rejectClose: false
     });
-    if (ok) await dismissCard(card.id);
+    if (ok) await sendRequest("gm", { op: "dismiss", cardId: card.id });
   }
 
   static async #toggleTask(event, target) {
     const id = target.closest("[data-task]")?.dataset.task;
     const task = getRealm().gmTasks.find((t) => t.id === id);
-    if (task && game.user.isActiveGM) await completeGmTask(id, !task.done);
+    if (task) await sendRequest("gm", { op: "task", taskId: id });
   }
 
   static async #drawMatter() {
-    if (!game.user.isActiveGM) return;
-    let card = null;
-    await updateRealm((realm) => {
-      card = drawWeeklyMatter(realm);
-    });
-    ui.notifications.info(card ? game.i18n.format("UKM.Manager.MatterDrawn", { name: card.name }) : game.i18n.localize("UKM.Manager.MatterNone"));
+    await sendRequest("gm", { op: "drawMatter" });
   }
 
   static #openSetup() {

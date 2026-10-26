@@ -3,6 +3,7 @@ import { getImportedPage } from "../content/story-import.js";
 import { getHexCenter, getRegionScene } from "../integrations/kingmaker.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { getRealm, updateRealm } from "./state.js";
+import { isLeader } from "./leader.js";
 
 const ACTIVE_ICON = "icons/svg/hazard.svg";
 const OPPORTUNITY_ICON = "icons/svg/book.svg";
@@ -17,7 +18,7 @@ function pinsOnScene(scene) {
  * pages, so players only see them once a page is shared with them.
  */
 export async function syncPins() {
-  if (!game.user.isActiveGM) return;
+  if (!isLeader()) return;
   const scene = getRegionScene();
   if (!scene) return;
 

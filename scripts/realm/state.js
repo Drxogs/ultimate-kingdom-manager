@@ -1,5 +1,6 @@
 import { FLAG_SCOPE, MODULE_ID, REALM_STATS } from "../constants.js";
 import { getParty } from "../integrations/party.js";
+import { isLeader } from "./leader.js";
 
 const FLAG_KEY = "realm";
 const VERSION = 1;
@@ -39,7 +40,7 @@ export function getRealm() {
 let queue = Promise.resolve();
 
 export function updateRealm(mutator) {
-  if (!game.user.isActiveGM) return Promise.reject(new Error(`${MODULE_ID} | only the active GM can change the realm`));
+  if (!isLeader()) return Promise.reject(new Error(`${MODULE_ID} | only the active GM can change the realm`));
   const run = queue.then(async () => {
     const party = getParty();
     if (!party) return null;

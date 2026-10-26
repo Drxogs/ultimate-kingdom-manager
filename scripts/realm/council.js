@@ -5,6 +5,7 @@ import { projectQuote, projectTargets, signatureForSeat, startProject, buildable
 import { canActForSeat } from "./resolve.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
+import { isLeader } from "./leader.js";
 
 const KEEP_DAYS = 60;
 
@@ -96,7 +97,7 @@ async function settle(proposalId, status) {
 
 /** At the turn of the month, remind the table what's waiting on the council. */
 export async function announceCouncil() {
-  if (!game.user.isActiveGM) return;
+  if (!isLeader()) return;
   const open = proposals().filter((p) => p.status === "open");
   const kingdom = getKingdom();
   const list = open.map((p) => `<li>${Handlebars.escapeExpression(p.name)} — ${p.cost} BP</li>`).join("");

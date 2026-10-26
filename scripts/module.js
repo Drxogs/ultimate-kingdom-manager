@@ -10,6 +10,7 @@ import { processQueuedRequests, registerRequests } from "./realm/requests.js";
 import { onRerollMessage } from "./realm/resolve.js";
 import { buildStructureCatalog, structureCatalog } from "./realm/projects.js";
 import { ensureHandbook, openHandbook } from "./content/handbook.js";
+import { isLeader, leaderSettled, startLeader } from "./realm/leader.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
 import { SetupWizard } from "./apps/setup-wizard.js";
 import { StoryImportApp } from "./apps/story-import-app.js";
@@ -41,17 +42,21 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", async () => {
   await preloadData();
+  startLeader();
   registerRequests();
   registerClock();
   onRegionChange(() => KingdomManager.refresh());
 
   if (!game.user.isGM) return;
 
-  await syncKingdomLevel();
-  await tick();
-  await processQueuedRequests();
-  if (getSetting(SETTINGS.storyImported) && !structureCatalog().length) await buildStructureCatalog();
-  await ensureHandbook().catch((err) => console.error(`${MODULE_ID} |`, err));
+  await leaderSettled();
+  if (isLeader()) {
+    await syncKingdomLevel();
+    await tick();
+    await processQueuedRequests();
+    if (getSetting(SETTINGS.storyImported)) await buildStructureCatalog();
+    await ensureHandbook().catch((err) => console.error(`${MODULE_ID} |`, err));
+  }
 
   if (!getSetting(SETTINGS.setupComplete)) {
     new SetupWizard().render(true);

@@ -6,6 +6,7 @@ import { canRankUp, rankBonus, weeklyIncome } from "./rules.js";
 import { busyWith, canActForSeat } from "./resolve.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
+import { isLeader } from "./leader.js";
 
 export const RANK_UP_DAYS = 14;
 
@@ -89,7 +90,7 @@ export async function startRankUp({ stat, userId }) {
 
 /** Move finished rank-ups to their choice scene. */
 export async function advanceRankUps() {
-  if (!game.user.isActiveGM) return;
+  if (!isLeader()) return;
   const now = game.time.worldTime;
   if (!getRealm().projects.some((p) => p.type === "rankUp" && p.status === "working" && p.until <= now)) return;
   const ready = [];

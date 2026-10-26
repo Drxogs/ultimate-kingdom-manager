@@ -2,6 +2,7 @@ import { COMMODITY_BP, RUINS, RUIN_ABILITY } from "../constants.js";
 import { getEvent } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
 import { resourceDieValue, weeklyIncome } from "./rules.js";
+import { isKingmakerActive, summarizeRealm } from "../integrations/kingmaker.js";
 import { newId } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { completeProject, refundProject } from "./projects.js";
@@ -234,6 +235,48 @@ function endCards(realm, eventIds) {
   return ended;
 }
 
+function claimedCount() {
+  return isKingmakerActive() ? summarizeRealm().size : getKingdom()?.size ?? 0;
+}
+
+/** Plain instructions for effects the GM applies by hand. */
+function gmText(ctx, key, value, effect) {
+  const where = ctx.card?.target?.settlement ?? "";
+  const days = value?.days ?? value?.withinDays ?? effect.withinDays ?? 30;
+  const k = `UKM.Effect.Gm.${key}`;
+  if (!game.i18n.has(k)) return loc("ManualDetail", { key, detail: ctx.card?.name ?? "" });
+  const list = (v) => [v].flat().map((s) => String(s).replace(/-/g, " ")).join(" or ");
+  return game.i18n.format(k, {
+    where,
+    days,
+    card: ctx.card?.name ?? "",
+    structures: list(Array.isArray(value) ? value : value?.oneOf ?? []),
+    skill: value?.skill ? game.i18n.localize(`UKM.Skill.${value.skill}`) : "",
+    count: value?.count ?? 1,
+    cost: value?.costBpDice ?? ""
+  });
+}
+
+/** Conditions that resolve later: "claim a hex within 30 days, or else". */
+export async function checkWatchers(realm) {
+  const now = game.time.worldTime;
+  const keep = [];
+  const ctx = new EffectContext({ realm, card: null, event: null });
+  for (const w of realm.watchers ?? []) {
+    if (w.type === "claim" && claimedCount() > w.size) {
+      ctx.note(loc("ClaimMet", { card: w.card }));
+      continue;
+    }
+    if (w.until <= now) {
+      await applyEffects(ctx, w.else);
+      continue;
+    }
+    keep.push(w);
+  }
+  realm.watchers = keep;
+  return ctx;
+}
+
 function settlementCount() {
   const settlements = getKingdom()?.settlements ?? {};
   return Math.max(1, Object.keys(settlements).length);
@@ -458,8 +501,21 @@ export async function applyEffects(ctx, effects = []) {
         ctx.gmTask(value);
         break;
       }
+      case "requireClaim": {
+        realm.watchers ??= [];
+        realm.watchers.push({
+          id: newId(),
+          type: "claim",
+          card: ctx.card?.name ?? "",
+          size: claimedCount(),
+          until: now + (value.days ?? 30) * day,
+          else: value.else ?? []
+        });
+        ctx.note(loc("RequireClaim", { days: value.days ?? 30 }));
+        break;
+      }
       default: {
-        ctx.gmTask(loc("ManualDetail", { key, detail: JSON.stringify(value) }));
+        ctx.gmTask(gmText(ctx, key, value, effect));
       }
     }
   }

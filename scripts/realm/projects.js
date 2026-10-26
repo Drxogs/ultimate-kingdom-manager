@@ -1,4 +1,4 @@
-import { COMMODITY_BP, FLAG_SCOPE, MODULE_ID } from "../constants.js";
+import { COMMODITY_BP, FLAG_SCOPE, MODULE_ID, SEATS } from "../constants.js";
 import { getCompanion, getProject, getProjects, getSignature } from "../content/data.js";
 import {
   getAllHexStates,
@@ -11,14 +11,16 @@ import {
 import { getKingdom, getPartyLevel } from "../integrations/party.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { neighbors, settlementHexes } from "./deck.js";
-import { weeklyIncome } from "./rules.js";
+import { seatCompanionId, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
+import { isLeader } from "./leader.js";
 
 const NEVER = 3650;
 const CAMPS = ["quarry", "mine", "lumber"];
 const CAMP_FOR_COMMODITY = { stone: "quarry", ore: "mine", lumber: "lumber" };
 const SETTLEMENT_TYPES = ["village", "town", "city", "metropolis"];
+const SLUG_FIXES = { cemetary: "cemetery" };
 
 function definitions() {
   return new Map(getHexDefinitions().map((h) => [h.key, h]));
@@ -131,7 +133,7 @@ export function projectQuote(def, target, structure = null) {
 
 /** The signature ability of the companion advising a seat, if they have one and it's usable now. */
 export function signatureForSeat(seat, realm = getRealm()) {
-  const companionId = getSetting(SETTINGS.seatAssignments)?.[seat]?.companion;
+  const companionId = seatCompanionId(seat);
   const def = companionId ? getSignature(companionId) : null;
   if (!def) return null;
   if (def.requiresSeat && !getCompanion(companionId)?.seats?.includes(seat)) return null;
@@ -173,7 +175,7 @@ export function costToBP(text) {
 
 function parseStructure(page) {
   const text = plainText(page.text?.content);
-  const level = Number(text.match(/Structure\s+(\d+)/i)?.[1]) || null;
+  const level = Number(text.match(/Structure\s+(\d+)/i)?.[1] ?? text.match(/Building\s+(\d+)/i)?.[1]) || null;
   const costText = text.match(/Cost\s+(.+?)(?:;|Construction|Upgrade|Ruin|Item Bonus|$)/i)?.[1] ?? null;
   const skill = text.match(/Construction\s+([A-Za-z]+)/i)?.[1]?.toLowerCase() ?? null;
   const lots = Number(text.match(/Lots?\s+(\d+)/i)?.[1]) || null;
@@ -182,13 +184,14 @@ function parseStructure(page) {
 
 /** Structure names, levels and costs, read once from the imported story journals. */
 export async function buildStructureCatalog() {
-  if (!game.user.isActiveGM) return [];
+  if (!isLeader()) return [];
   const journal = game.journal.find((j) => j.getFlag(FLAG_SCOPE, "category") === "structures");
   if (!journal) return [];
   const catalog = journal.pages.contents
     .map((page) => {
-      const slug = page.getFlag(FLAG_SCOPE, "structure");
-      if (!slug) return null;
+      const raw = page.getFlag(FLAG_SCOPE, "structure");
+      if (!raw) return null;
+      const slug = SLUG_FIXES[raw] ?? raw;
       return { slug, name: page.name, ...parseStructure(page) };
     })
     .filter(Boolean)
@@ -203,7 +206,7 @@ export function structureCatalog() {
 
 export function buildableStructures() {
   const level = getKingdom()?.level ?? 1;
-  return structureCatalog().filter((s) => !s.level || s.level <= level);
+  return structureCatalog().filter((s) => s.bp && s.slug !== "rubble" && (!s.level || s.level <= level));
 }
 
 /* ---------- Starting and finishing ---------- */
@@ -217,7 +220,7 @@ export async function startProject(request, { canActForSeat }) {
   const user = game.users.get(request.userId) ?? game.user;
   let def = getProject(request.type);
   if (def?.signature) {
-    const seat = Object.entries(getSetting(SETTINGS.seatAssignments) ?? {}).find(([, a]) => a?.companion === def.companion)?.[0];
+    const seat = SEATS.find((s) => seatCompanionId(s) === def.companion);
     const usable = seat ? signatureForSeat(seat) : null;
     if (!usable?.available) return { ok: false, reason: "NotReady" };
     def = usable;

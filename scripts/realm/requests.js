@@ -4,6 +4,8 @@ import { acceptRequest, assignCard, canActForSeat, escalateCard, unassignCard } 
 import { startProject } from "./projects.js";
 import { repayDebt, tapTreasury } from "./treasury.js";
 import { answerAudience } from "./audiences.js";
+import { isLeader } from "./leader.js";
+import { gmAction } from "./gm.js";
 import { fundProposal, proposeProject, rejectProposal, voteProposal } from "./council.js";
 import { chooseRankUp, startRankUp } from "./ranks.js";
 import { getRealm } from "./state.js";
@@ -11,7 +13,7 @@ import { getRealm } from "./state.js";
 const SOCKET = `module.${MODULE_ID}`;
 const TIMEOUT = 15000;
 const SLOW_TIMEOUT = 180000;
-const SLOW = new Set(["tapTreasury"]);
+const SLOW = new Set(["tapTreasury", "gm"]);
 const QUEUE_FLAG = "queue";
 
 const HANDLERS = {
@@ -19,6 +21,7 @@ const HANDLERS = {
   unassign: unassignCard,
   escalate: escalateCard,
   accept: acceptRequest,
+  gm: gmAction,
   startRankUp,
   tapTreasury,
   answerAudience,
@@ -38,7 +41,7 @@ export function registerRequests() {
 }
 
 async function onMessage(message) {
-  if (message.type === "request" && game.user.isActiveGM) {
+  if (message.type === "request" && isLeader()) {
     const result = await handle(message.action, { ...message.payload, userId: message.userId });
     game.socket.emit(SOCKET, { type: "response", id: message.id, userId: message.userId, result });
     return;
@@ -62,6 +65,7 @@ async function handle(action, payload) {
 
 function report(result, action) {
   if (result?.ok) {
+    if (result.notice) ui.notifications.info(result.notice);
     if (action === "assign") ui.notifications.info(game.i18n.format("UKM.Request.Assigned", { days: result.days }));
     if (action === "proposeProject") ui.notifications.info(game.i18n.localize("UKM.Council.Proposed"));
     if (action === "startProject") ui.notifications.info(game.i18n.format("UKM.Project.Started", { cost: result.cost }));
@@ -74,7 +78,7 @@ function report(result, action) {
 
 /** Send a request to the GM, or run it here when this client is the GM. */
 export async function sendRequest(action, payload) {
-  if (game.user.isActiveGM) {
+  if (isLeader()) {
     const result = await handle(action, { ...payload, userId: game.user.id });
     report(result, action);
     return result;
@@ -119,7 +123,7 @@ function describeRequest(user, entry) {
 
 /** Work through requests players made while no GM was online. */
 export async function processQueuedRequests() {
-  if (!game.user.isActiveGM) return;
+  if (!isLeader()) return;
   const review = getSetting(SETTINGS.betweenSessionsApproval) === "review";
   for (const user of game.users) {
     const queue = queuedRequests(user);

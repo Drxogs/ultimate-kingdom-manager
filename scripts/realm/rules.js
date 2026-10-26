@@ -1,5 +1,5 @@
 import { DIE_AVERAGE, POINTS_PER_RANK, REALM_STATS, ROUTINE_ADVISOR_BONUS, ROUTINE_POINTS } from "../constants.js";
-import { getCompanion } from "../content/data.js";
+import { getCompanion, getCompanions } from "../content/data.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { getKingdom, getResourceDie } from "../integrations/party.js";
 import { summarizeRealm, isKingmakerActive } from "../integrations/kingmaker.js";
@@ -86,10 +86,28 @@ export function cardWorkDays(levelModifier) {
   return Math.max(3, 5 + 2 * (levelModifier ?? 0));
 }
 
+/**
+ * The companion advising a seat: the one picked as its advisor in Setup, or
+ * else a companion actor holding the seat themselves.
+ */
+export function seatCompanionId(seat) {
+  const chosen = getSetting(SETTINGS.seatAssignments)?.[seat]?.companion;
+  if (chosen) return chosen;
+  const uuid = getKingdom()?.leadership?.[seat]?.uuid;
+  const name = uuid ? fromUuidSync(uuid)?.name?.toLowerCase() : null;
+  if (!name) return null;
+  return (
+    getCompanions().find((c) => {
+      const n = c.name.toLowerCase();
+      return name === n || name.startsWith(`${n} `) || name.startsWith(`${n},`) || name.startsWith(`${n} (`);
+    })?.id ?? null
+  );
+}
+
 /** Whether someone sits in a seat, and whether it's a companion in a role they're suited to. */
 export function seatFilled(seat) {
   const leader = getKingdom()?.leadership?.[seat];
-  const companionId = getSetting(SETTINGS.seatAssignments)?.[seat]?.companion;
+  const companionId = seatCompanionId(seat);
   const companion = companionId ? getCompanion(companionId) : null;
   return {
     filled: !!leader?.uuid || !!companion,

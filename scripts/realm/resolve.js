@@ -4,9 +4,10 @@ import { getControlDC, getKingdom, getPartyLevel } from "../integrations/party.j
 import { getSetting, SETTINGS } from "../settings.js";
 import { createCard } from "./deck.js";
 import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
-import { addStatPoints, cardWorkDays, rankBonus } from "./rules.js";
+import { addStatPoints, cardWorkDays, rankBonus, seatCompanionId } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
+import { isLeader } from "./leader.js";
 
 const ACTIVE = ["open", "assigned", "rolled"];
 
@@ -55,7 +56,7 @@ function seatHolderName(seat) {
   const leaderUuid = getKingdom()?.leadership?.[seat]?.uuid;
   const leader = leaderUuid ? fromUuidSync(leaderUuid) : null;
   if (leader) return leader.name;
-  const companionId = getSetting(SETTINGS.seatAssignments)?.[seat]?.companion;
+  const companionId = seatCompanionId(seat);
   return companionId ? getCompanion(companionId)?.name ?? null : null;
 }
 
@@ -81,7 +82,8 @@ export async function assignCard(request) {
     if (!actor.skills?.[request.personalSkill]) return { ok: false, reason: "NoSkill" };
     assignee = { type: "pc", actorUuid: actor.uuid, name: actor.name, skill, personalSkill: request.personalSkill };
   } else {
-    const name = seatHolderName(card.seat);
+    const event = cardStage(card).event;
+    const name = event?.signature ? getCompanion(event.companion)?.name ?? seatHolderName(card.seat) : seatHolderName(card.seat);
     if (!name) return { ok: false, reason: "SeatVacant" };
     assignee = { type: "advisor", seat: card.seat, name, skill };
   }
@@ -140,15 +142,15 @@ function timedModifiers(realm, skill, eventId) {
     .map((m) => ({ slug: `ukm-${m.id}`, label: m.label, modifier: m.value, type: m.type }));
 }
 
-function companionModifiers(realm, eventId) {
-  const event = getEvent(eventId);
-  const assignments = getSetting(SETTINGS.seatAssignments) ?? {};
-  const companionId = assignments[event?.seat]?.companion;
+function companionModifiers(realm, card) {
+  const eventId = card.eventId;
+  const seat = card.seat;
+  const companionId = seatCompanionId(seat);
   const companion = companionId ? getCompanion(companionId) : null;
   if (!companion) return [];
   const mods = [];
   const level = getPartyLevel();
-  if (companion.seats?.includes(event.seat)) {
+  if (companion.seats?.includes(seat)) {
     mods.push({ slug: `ukm-advisor-${companion.id}`, label: companion.name, modifier: level >= 16 ? 3 : level >= 8 ? 2 : 1, type: "status" });
   }
   for (const bonus of companion.eventBonus ?? []) {
@@ -158,7 +160,7 @@ function companionModifiers(realm, eventId) {
 }
 
 function advisorModifiers(realm, card, stat) {
-  const mods = companionModifiers(realm, card.eventId);
+  const mods = companionModifiers(realm, card);
   const bonus = rankBonus(realm.stats[stat]?.rank ?? 0);
   if (bonus) mods.push({ slug: `ukm-rank-${stat}`, label: game.i18n.localize(`UKM.Stat.${stat}`), modifier: bonus, type: "circumstance" });
   return mods;
@@ -437,7 +439,7 @@ const DEGREE_NAMES = ["criticalFailure", "failure", "success", "criticalSuccess"
 
 /** A card's check was rerolled from its chat card: use the kept result. */
 export function onRerollMessage(message) {
-  if (!game.user.isActiveGM) return;
+  if (!isLeader()) return;
   const context = message.flags?.pf2e?.context;
   if (!context?.isReroll) return;
   const options = [context.options ?? []].flat();
@@ -516,7 +518,7 @@ async function releaseScheduled() {
 
 /** Everything time-driven on cards: missed problems, follow-ups and finished work. */
 export async function resolveDue() {
-  if (!game.user.isActiveGM) return;
+  if (!isLeader()) return;
   await applyMissedProblems();
   await releaseScheduled();
   const now = game.time.worldTime;

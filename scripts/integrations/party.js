@@ -1,4 +1,5 @@
 import { MODULE_ID } from "../constants.js";
+import { isLeader } from "../realm/leader.js";
 
 export function getParty() {
   return game.actors.party ?? game.actors.find((a) => a.type === "party") ?? null;
@@ -33,7 +34,7 @@ export function getPlayerCharacters() {
 /** Kingdom level always tracks party level. */
 export async function syncKingdomLevel() {
   const kingdom = getKingdom();
-  if (!kingdom?.active || !game.user.isActiveGM) return;
+  if (!kingdom?.active || !isLeader()) return;
   const level = Math.clamp(getPartyLevel(), 1, 20);
   if (kingdom.level === level) return;
   const previous = kingdom.level;

@@ -5,6 +5,7 @@ import { getFame, getKingdom } from "../integrations/party.js";
 import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
 import { weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
+import { isLeader } from "./leader.js";
 
 /** Where a seat stands against one goal: { value, target }. */
 function measure(goal, seat, realm) {
@@ -63,7 +64,7 @@ export function ambitionsView(realm = getRealm()) {
 
 /** Award any ambition tiers that have been met. Runs on the GM's clock. */
 export async function checkAmbitions() {
-  if (!game.user.isActiveGM) return;
+  if (!isLeader()) return;
   const realm = getRealm();
   const due = [];
   for (const seat of SEATS) {

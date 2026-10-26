@@ -6,12 +6,14 @@ import { drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
 import { drawAudience } from "./audiences.js";
 import { announceCouncil } from "./council.js";
 import { checkAmbitions } from "./ambitions.js";
+import { checkWatchers, commitKingdomChanges } from "./effects.js";
 import { addStatPoints, routinePoints, weeklyFoodShortfall, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { monthKey, secondsPerDay, weekNumber } from "./time.js";
 import { syncPins } from "./pins.js";
 import { resolveDue } from "./resolve.js";
 import { advanceRankUps } from "./ranks.js";
+import { isLeader } from "./leader.js";
 
 const MAX_CATCH_UP_WEEKS = 26;
 const MAX_MATTERS_PER_TICK = 2;
@@ -24,7 +26,7 @@ export function registerClock() {
 
 /** Bring the realm up to the current world time. Safe to call at any moment. */
 export async function tick() {
-  if (running || !game.user.isActiveGM || !isKingdomActive()) return;
+  if (running || !isLeader() || !isKingdomActive()) return;
   running = true;
   try {
     const clock = getSetting(SETTINGS.clock) ?? {};
@@ -43,6 +45,7 @@ export async function tick() {
       await resolveDue();
       await advanceRankUps();
       await checkAmbitions();
+      await runWatchers();
       await syncPins();
       return;
     }
@@ -69,6 +72,7 @@ export async function tick() {
     await resolveDue();
     await advanceRankUps();
     await checkAmbitions();
+    await runWatchers();
     await syncPins();
 
     if (newMonth && getSetting(SETTINGS.council)) await announceCouncil();
@@ -76,6 +80,15 @@ export async function tick() {
   } finally {
     running = false;
   }
+}
+
+async function runWatchers() {
+  if (!(getRealm().watchers ?? []).length) return;
+  let ctx = null;
+  await updateRealm(async (realm) => {
+    ctx = await checkWatchers(realm);
+  });
+  if (ctx) await commitKingdomChanges(ctx);
 }
 
 async function addUnrest(amount) {

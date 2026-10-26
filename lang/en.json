@@ -152,7 +152,8 @@
       "DrawMatter": "Draw desk matter",
       "MatterDrawn": "New desk matter: {name}.",
       "MatterNone": "No desk matter fits right now.",
-      "DrawAudience": "Draw audience"
+      "DrawAudience": "Draw audience",
+      "AdvisedBy": "advisor {name}"
     },
     "Card": {
       "Kind": {
@@ -187,7 +188,8 @@
       "NoEffect": "Nothing happens",
       "Rolled": "{name}'s roll: {result}. Reroll from the chat card, or accept it. It applies on its own after a day.",
       "Accept": "Accept",
-      "Matter": "Desk matter"
+      "Matter": "Desk matter",
+      "WorkDays": "{days} days of work"
     },
     "Log": {
       "income": "Treasury collected {amount} BP.",
@@ -335,7 +337,7 @@
       "TradeAgreement": "A new trade agreement",
       "End": "The matter ends",
       "Manual": "Special (see the event)",
-      "ManualDetail": "Apply by hand: {key} {detail}",
+      "ManualDetail": "Apply by hand: see the event text for {detail}.",
       "RuinAll": "{amount} to every Ruin",
       "RuinChoice": "{amount} Ruin of your choice",
       "RuinChoiceMany": "{amount} to {count} Ruins of your choice",
@@ -366,7 +368,27 @@
       "AskBreached": "Did the threat break into {place}?",
       "Income": "{amount} BP a week for {weeks} weeks",
       "ProjectDone": "The work is finished",
-      "Refund": "{percent}% of the cost back"
+      "Refund": "{percent}% of the cost back",
+      "RequireClaim": "Claim a new hex within {days} days, or Unrest rises",
+      "ClaimMet": "{card}: the new claim satisfied the demand.",
+      "Gm": {
+        "retry": "{card}: the party can try again as a project, at a higher DC.",
+        "leaderOut": "{card}: if the target was a leader, they're out of action ({days} days, or for good on a critical failure). Mark the seat vacant on the kingdom sheet.",
+        "settlementItemBonus": "{card}: double the item bonuses of structures in {where} for {days} days.",
+        "breakRelations": "{card}: relations with that group are broken. Reestablishing them is harder.",
+        "giftReturn": "{card}: work out the return on the gifts the realm sent, as the event text describes.",
+        "blockArmies": "{card}: armies can't be raised or moved here while the feud lasts.",
+        "check": "{card}: roll a {skill} check as the event text describes and apply what it says.",
+        "requireProject": "{card}: the realm must calm Unrest within {days} days or it rises.",
+        "claimHex": "{card}: mark the hex as claimed with the Kingmaker hex tools.",
+        "offer": "{card}: the settlers offer land for {cost} resource dice of BP. If the table accepts, take it from the treasury and mark the claim.",
+        "degreeBonus": "{card}: craft and masterpiece checks are one degree better for {days} days.",
+        "freeProject": "{card}: the realm may claim or improve {count} hex for free within {days} days.",
+        "freeStructure": "{card}: build a {structures} in {where} for free within {days} days.",
+        "replaceLeader": "{card}: replace the disgraced leader, or the scandal comes back.",
+        "taint": "{card}: the leader is tainted for a while; more scandals may follow.",
+        "noModGrowth": "{card}: the next outbreak doesn't get harder."
+      }
     },
     "Difficulty": {
       "veryEasy": "Very easy",
@@ -422,7 +444,7 @@
         "metropolis": "Metropolis"
       },
       "NoTargets": {
-        "frontier": "There are no unclaimed hexes next to the realm.",
+        "frontier": "There are no unclaimed hexes next to the realm. If the kingdom has no hexes yet, the GM marks the first claim with the Kingmaker hex tools.",
         "claimed-no-road": "Every claimed hex already has a road.",
         "claimed-no-farm": "No claimed hex is free for farmland.",
         "claimed-no-camp": "No claimed hex is free for a work site.",
@@ -511,7 +533,11 @@
     },
     "Handbook": {
       "Open": "Handbook",
-      "Missing": "The handbook hasn't been set up yet. The GM needs to log in once with this version of the module."
+      "Missing": "The handbook hasn't been set up yet. The GM needs to log in once with this version of the module.",
+      "Suits": "Suited seats",
+      "Skill": "Skill",
+      "PreferredOnly": "Only from a suited seat",
+      "Costs": "Costs {cost} BP"
     }
   }
 }
