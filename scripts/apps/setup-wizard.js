@@ -6,6 +6,7 @@ import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { applyFounding, foundingPicks, resetFounding } from "../realm/ranks.js";
 import { getRealm } from "../realm/state.js";
 import { StoryImportApp } from "./story-import-app.js";
+import { MidCampaignApp } from "./midcampaign-app.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -37,7 +38,8 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       openImport: SetupWizard.#openImport,
       openKingdom: SetupWizard.#openKingdom,
       toggleActors: SetupWizard.#toggleActors,
-      resetFounding: SetupWizard.#resetFounding
+      resetFounding: SetupWizard.#resetFounding,
+      openMidCampaign: () => new MidCampaignApp().render(true)
     }
   };
 
@@ -98,6 +100,8 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
         choices: statChoices
       },
       kingdomActive: !!kingdom?.active,
+      partyLevel: kingdom?.level ?? 1,
+      suggestStart: (kingdom?.level ?? 1) >= 3 && !getRealm().startingPoint && Object.values(getRealm().stats).every((s) => s.rank === 0),
       storyImported: getSetting(SETTINGS.storyImported),
       betweenSessions: draft ? !!draft.betweenSessions : getSetting(SETTINGS.betweenSessions),
       approval: draft?.approval ?? getSetting(SETTINGS.betweenSessionsApproval),

@@ -1,0 +1,51 @@
+<div class="ukm-setup-body">
+  <p>{{localize "UKM.Start.Intro" level=level}}</p>
+
+  <section>
+    <h3>{{localize "UKM.Start.Stats"}}</h3>
+    <p class="hint">{{localize "UKM.Start.StatsHint" cap=cap}}</p>
+    <table class="ukm-seats">
+      <thead><tr><th>{{localize "UKM.Start.Stat"}}</th><th>{{localize "UKM.Start.Now"}}</th><th>{{localize "UKM.Start.Rank"}}</th></tr></thead>
+      <tbody>
+        {{#each stats}}
+          <tr>
+            <td>{{label}} <span class="hint">· {{seat}}{{#if founding}} · {{localize "UKM.Start.Founding"}}{{/if}}</span></td>
+            <td>{{current}}</td>
+            <td><input type="number" name="ranks.{{key}}" value="{{value}}" min="0" max="{{@root.cap}}" step="1"></td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h3>{{localize "UKM.Start.Treasury"}}</h3>
+    <div class="form-group">
+      <label>{{localize "UKM.Manager.Treasury"}}</label>
+      <input type="number" name="treasury" value="{{treasury}}" min="0" step="1">
+    </div>
+    <p class="hint">{{localize "UKM.Start.TreasuryHint"}}</p>
+  </section>
+
+  <section>
+    <h3>{{localize "UKM.Start.Skills"}}</h3>
+    <p class="hint">{{localize "UKM.Start.SkillsHint"}}</p>
+    <div class="form-group">
+      <label>{{localize "UKM.Start.ApplySkills"}}</label>
+      <input type="checkbox" name="skills">
+    </div>
+    <table class="ukm-seats ukm-skill-plan">
+      <thead><tr><th>{{localize "UKM.Start.Skill"}}</th><th>{{localize "UKM.Start.Now"}}</th><th>{{localize "UKM.Start.Planned"}}</th></tr></thead>
+      <tbody>
+        {{#each skills}}<tr class="{{#if changed}}changed{{/if}}"><td>{{label}}</td><td>{{now}}</td><td>{{planned}}</td></tr>{{/each}}
+      </tbody>
+    </table>
+    {{#if boosts.length}}
+      <div class="form-group">
+        <label>{{localize "UKM.Start.ApplyBoosts"}}</label>
+        <input type="checkbox" name="boosts">
+      </div>
+      <ul class="hint">{{#each boosts}}<li>{{localize "UKM.Start.BoostLine" level=level abilities=text}}</li>{{/each}}</ul>
+    {{/if}}
+  </section>
+</div>

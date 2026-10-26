@@ -64,6 +64,12 @@
   </section>
 
   <section>
+    <h3>{{localize "UKM.Start.Title"}}</h3>
+    {{#if suggestStart}}<p class="ukm-notice">{{localize "UKM.Start.Nudge" level=partyLevel}}</p>{{else}}<p class="hint">{{localize "UKM.Start.Hint"}}</p>{{/if}}
+    <p><button type="button" data-action="openMidCampaign"><i class="fa-solid fa-forward"></i> {{localize "UKM.Start.Open"}}</button></p>
+  </section>
+
+  <section>
     <h3>{{localize "UKM.Setup.Seats"}}</h3>
     <p class="hint">{{localize "UKM.Setup.SeatsHint"}}</p>
     <p class="hint">

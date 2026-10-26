@@ -23,6 +23,7 @@
           {{#if @root.canBuild}}<button type="button" class="ukm-desk-action" data-action="buildHere"><i class="fa-solid fa-trowel-bricks"></i> {{localize "UKM.Settlement.Build"}}</button>{{/if}}
           {{#if hexKey}}<button type="button" class="ukm-icon" data-action="focusHex" data-hex="{{hexKey}}" data-tooltip="{{localize "UKM.Card.Focus"}}"><i class="fa-solid fa-map-location-dot"></i></button>{{/if}}
           {{#if @root.isGM}}
+            <button type="button" class="ukm-icon" data-action="placeBuilding" data-tooltip="{{localize "UKM.Settlement.Place"}}"><i class="fa-solid fa-house-circle-check"></i></button>
             {{#unless capital}}<button type="button" class="ukm-icon" data-action="makeCapital" data-tooltip="{{localize "UKM.Settlement.MakeCapital"}}"><i class="fa-solid fa-crown"></i></button>{{/unless}}
             <button type="button" class="ukm-icon {{#if waterside}}on{{/if}}" data-action="toggleWaterside" data-tooltip="{{localize "UKM.Settlement.ToggleWater"}}"><i class="fa-solid fa-water"></i></button>
             <button type="button" class="ukm-icon" data-action="deleteSettlement" data-tooltip="{{localize "UKM.Settlement.Delete"}}"><i class="fa-solid fa-trash"></i></button>

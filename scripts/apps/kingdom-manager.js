@@ -44,6 +44,7 @@ import { daysUntil, formatDate } from "../realm/time.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { SetupWizard } from "./setup-wizard.js";
 import { StoryImportApp } from "./story-import-app.js";
+import { MidCampaignApp } from "./midcampaign-app.js";
 
 const { ApplicationV2, DialogV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -216,6 +217,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       openHandbook: () => openHandbook(),
       foundCapital: KingdomManager.#foundCapital,
       buildHere: KingdomManager.#buildHere,
+      placeBuilding: KingdomManager.#placeBuilding,
+      openMidCampaign: () => new MidCampaignApp().render(true),
       removeBuilding: KingdomManager.#removeBuilding,
       makeCapital: KingdomManager.#makeCapital,
       toggleWaterside: KingdomManager.#toggleWaterside,
@@ -578,6 +581,37 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     if (def && settlementId) await KingdomManager.#projectDialog(def, { settlementId });
   }
 
+  static #buildList(structures, cost = null) {
+    const esc = Handlebars.escapeExpression;
+    return `<div class="ukm-build-list">${structures
+      .map((s, i) => {
+        const art = s.art?.length ? s.art : structureArt(s.source, s.name);
+        const pic = art.length ? `<img src="${art[0]}" alt="">` : `<span class="ukm-build-noart"></span>`;
+        const detail = [cost ? cost(s) : null, KingdomManager.#structureLine(s)].filter(Boolean).map(esc).join(" · ");
+        return `<label class="ukm-build-option"><input type="radio" name="structure" value="${s.key}" ${i === 0 ? "checked" : ""}>${pic}<span><strong>${esc(s.name)}${s.level ? ` (${s.level})` : ""}</strong><span class="hint">${detail}</span></span></label>`;
+      })
+      .join("")}</div>`;
+  }
+
+  static async #placeBuilding(event, target) {
+    const settlementId = target.closest("[data-settlement]")?.dataset.settlement;
+    const settlement = settlements().find((s) => s.id === settlementId);
+    if (!settlement || !game.user.isGM) return;
+    const structures = buildableStructures(settlement);
+    if (!structures.length) {
+      ui.notifications.warn(game.i18n.localize("UKM.Settlement.NoRoom").replace("{name}", settlement.name));
+      return;
+    }
+    const key = await DialogV2.prompt({
+      window: { title: `${game.i18n.localize("UKM.Settlement.Place")}: ${settlement.name}` },
+      position: { width: 560 },
+      content: `<p class="hint">${game.i18n.localize("UKM.Settlement.PlaceHint")}</p>${KingdomManager.#buildList(structures)}`,
+      ok: { label: game.i18n.localize("UKM.Settlement.Place"), callback: (event, button) => button.form.querySelector("input[name=structure]:checked")?.value ?? null },
+      rejectClose: false
+    });
+    if (key) await sendRequest("gm", { op: "placeBuilding", settlementId, key });
+  }
+
   static #structureLine(s) {
     const skills = (s.bonuses ?? [])
       .filter((b) => !b.events)
@@ -626,13 +660,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       const room = roomFor(settlements().find((x) => x.id === picked.settlementId));
       body = `<p><strong>${esc(picked.label)}</strong> · ${game.i18n.format("UKM.Settlement.Room", { n: room })}</p>
         <p>${game.i18n.localize("UKM.Settlement.WhatToBuild")}</p>
-        <div class="ukm-build-list">${structures
-          .map((s, i) => {
-            const art = s.art?.length ? s.art : structureArt(s.source, s.name);
-            const pic = art.length ? `<img src="${art[0]}" alt="">` : `<span class="ukm-build-noart"></span>`;
-            return `<label class="ukm-build-option"><input type="radio" name="structure" value="${s.key}" ${i === 0 ? "checked" : ""}>${pic}<span><strong>${esc(s.name)}${s.level ? ` (${s.level})` : ""}</strong><span class="hint">${quoteText(projectQuote(def, null, s))} · ${esc(KingdomManager.#structureLine(s))}</span></span></label>`;
-          })
-          .join("")}</div>`;
+        ${KingdomManager.#buildList(structures, (s) => quoteText(projectQuote(def, null, s)))}`;
     } else {
       body = `<p>${quoteText(projectQuote(def, picked))}</p>`;
       if (def.id === "found-settlement") {

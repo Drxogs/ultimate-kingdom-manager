@@ -103,6 +103,7 @@
 
     <footer class="ukm-gm-tools">
       <button type="button" data-action="openSetup"><i class="fa-solid fa-gear"></i> {{localize "UKM.Manager.Setup"}}</button>
+      <button type="button" data-action="openMidCampaign"><i class="fa-solid fa-forward"></i> {{localize "UKM.Start.Open"}}</button>
       <button type="button" data-action="openImport"><i class="fa-solid fa-book-open"></i> {{#if storyImported}}{{localize "UKM.Setup.Reimport"}}{{else}}{{localize "UKM.Setup.Import"}}{{/if}}</button>
       <button type="button" data-action="toggleBetweenSessions">
         <i class="fa-solid {{#if betweenSessions}}fa-door-open{{else}}fa-door-closed{{/if}}"></i>

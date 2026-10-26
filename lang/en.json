@@ -232,7 +232,9 @@
       "capital": "{name} became the capital.",
       "settlement": "{name} joined the realm.",
       "settlement-grew": "{name} grew.",
-      "overcrowded": "Overcrowded settlements added {amount} Unrest."
+      "overcrowded": "Overcrowded settlements added {amount} Unrest.",
+      "starting-point": "The realm was set for a level {name} kingdom.",
+      "placed": "{name} was already standing."
     },
     "Seat": {
       "ruler": "Ruler",
@@ -673,7 +675,45 @@
       "LotsShort": "{n} lot(s)",
       "Infrastructure": "infrastructure",
       "Homes1": "home",
-      "InfrastructureHead": "Infrastructure"
+      "InfrastructureHead": "Infrastructure",
+      "Place": "Place a building",
+      "PlaceHint": "For buildings that were already standing before the module was installed. No cost, no roll, no Unrest or Fame.",
+      "Placed": "{name} placed in {settlement}."
+    },
+    "Ability": {
+      "culture": "Culture",
+      "economy": "Economy",
+      "loyalty": "Loyalty",
+      "stability": "Stability"
+    },
+    "Start": {
+      "Title": "Joining mid-campaign",
+      "Open": "Joining mid-campaign?",
+      "Hint": "Starting the module partway through the adventure? Set the realm where it would be by now.",
+      "Intro": "The party is level {level}. Set the realm where a well-run kingdom of that level would be. Rank-up choices from earlier ranks are skipped. You can come back here any time; nothing is ever lowered except the ranks you change.",
+      "Stats": "Realm stats",
+      "StatsHint": "Suggested: the two founding stats at the cap ({cap}), filled seats one below, empty seats two below. Change any of them.",
+      "Stat": "Stat",
+      "Now": "Now",
+      "Rank": "Rank",
+      "Founding": "founding",
+      "Treasury": "Treasury",
+      "TreasuryHint": "Suggested: about a month of base income, or what's there now if it's more.",
+      "Skills": "Kingdom skills (PF2e sheet)",
+      "SkillsHint": "Training lives on the PF2e kingdom sheet and is normally the players' choice. Tick this to apply a typical plan instead: four trained skills at founding (one from each filled seat, in seat order), then one increase at 3rd level and every odd level after, raising those four evenly. Nothing already on the sheet is lowered.",
+      "ApplySkills": "Apply this skill plan",
+      "ApplyBoosts": "Fill in missing ability boosts",
+      "BoostLine": "Level {level}: {abilities}",
+      "Skill": "Skill",
+      "Planned": "With the plan",
+      "Apply": "Apply",
+      "Applied": "The realm has been set for a level {level} kingdom.",
+      "Prof0": "Untrained",
+      "Prof1": "Trained",
+      "Prof2": "Expert",
+      "Prof3": "Master",
+      "Prof4": "Legendary",
+      "Nudge": "The party is level {level} but every realm stat is still at rank 0. If you're starting the module partway through the adventure, set the realm's starting point here."
     }
   }
 }

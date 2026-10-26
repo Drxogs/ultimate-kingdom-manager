@@ -1,14 +1,14 @@
 import { drawAudience } from "./audiences.js";
 import { createCard, drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
 import { getStoryEvents } from "../content/data.js";
-import { addLog } from "./state.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
-import { setFortified } from "./projects.js";
-import { removeBuilding, settlements, syncKingdomSettlements } from "./settlements.js";
+import { buildableStructures, setFortified } from "./projects.js";
+import { addBuilding, removeBuilding, settlements, syncKingdomSettlements } from "./settlements.js";
 import { getKingdom } from "../integrations/party.js";
+import { applyStartingPoint } from "./midcampaign.js";
 import { completeGmTask, dismissCard, recordOutcome, rollCard } from "./resolve.js";
-import { getRealm, updateRealm } from "./state.js";
+import { addLog, getRealm, updateRealm } from "./state.js";
 
 function drawnNotice(card) {
   return card ? game.i18n.format("UKM.Manager.MatterDrawn", { name: card.name }) : game.i18n.localize("UKM.Manager.MatterNone");
@@ -40,6 +40,21 @@ const OPS = {
     if (hexKey === undefined || hexKey === null) return { ok: false, reason: "Unknown" };
     await setFortified(hexKey, !!on);
     return {};
+  },
+  startingPoint: async ({ data }) => {
+    await applyStartingPoint(data ?? {});
+    return { notice: game.i18n.format("UKM.Start.Applied", { level: getKingdom()?.level ?? 1 }) };
+  },
+  placeBuilding: async ({ settlementId, key }) => {
+    const settlement = settlements().find((s) => s.id === settlementId);
+    const structure = settlement ? buildableStructures(settlement).find((s) => s.key === key) : null;
+    if (!structure) return { ok: false, reason: "NoStructure" };
+    await updateRealm((realm) => {
+      addBuilding(realm, settlementId, structure, null);
+      addLog(realm, { type: "placed", text: `${structure.name}, ${settlement.name}` });
+    });
+    await syncKingdomSettlements();
+    return { notice: game.i18n.format("UKM.Settlement.Placed", { name: structure.name, settlement: settlement.name }) };
   },
   removeBuilding: async ({ settlementId, index }) => {
     await updateRealm((realm) => removeBuilding(realm, settlementId, Number(index)));
