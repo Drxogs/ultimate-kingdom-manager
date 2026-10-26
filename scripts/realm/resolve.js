@@ -265,6 +265,7 @@ export function estimateCheck(card, choice, realm = getRealm()) {
     const statistic = fromUuidSync(choice.actorUuid)?.skills?.[choice.personalSkill];
     if (!statistic) return null;
     base = statistic.mod;
+    extras.push(...structureModifiers(realm, card, skill));
     dc = (LEVEL_DC[Math.clamp(kingdom?.level ?? 1, 0, 20)] ?? 14) + mod;
     personal = true;
   } else {
@@ -309,6 +310,7 @@ async function rollCheck(card, realm) {
     const statistic = actor?.skills?.[card.assignee.personalSkill];
     if (!statistic) return null;
     const dc = (LEVEL_DC[Math.clamp(kingdom?.level ?? 1, 0, 20)] ?? 14) + mod;
+    modifiers.push(...structureModifiers(realm, card, skill));
     const roll = await statistic.roll({ ...options, dc: { value: dc }, modifiers: toModifiers(modifiers) });
     if (!roll) return null;
     return { degree: roll.degreeOfSuccess, skill, stat, personal: true, total: roll.total, dc };

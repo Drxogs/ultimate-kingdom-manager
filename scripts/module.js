@@ -101,37 +101,58 @@ Hooks.on("updateToken", (token, changes) => {
   checkPartyPosition(token, changes).catch((err) => console.error(`${MODULE_ID} |`, err));
 });
 
-function addHexHudLine(app, html) {
-  const root = html instanceof HTMLElement ? html : html?.[0] ?? app?.element;
-  const key = app?.hex?.key;
-  if (!root || key === undefined) return;
-  root.querySelector(".ukm-hex-hud")?.remove();
-  const cards = cardsOnHex(key);
-  const fortified = isFortified(key);
-  if (!cards.length && !fortified && !game.user.isGM) return;
+function hexCardList(key) {
   const esc = Handlebars.escapeExpression;
-  const items = cards
+  return cardsOnHex(key)
     .map((c) => {
       const when = c.kind === "project" ? game.i18n.localize("UKM.Pins.HudProject") : game.i18n.format("UKM.Pins.HudDays", { days: Math.max(0, daysUntil(c.deadline)) });
       return `<li>${esc(c.name)} <span class="hint">· ${esc(when)}</span></li>`;
     })
     .join("");
+}
+
+/** The Kingmaker hover panel: what's going on in the hex, and whether it's fortified. */
+function addHexHudLine(app, html) {
+  const root = html instanceof HTMLElement ? html : html?.[0] ?? app?.element;
+  const key = app?.hex?.key;
+  if (!root || key === undefined) return;
+  root.querySelector(".ukm-hex-hud")?.remove();
+  const items = hexCardList(key);
+  const fortified = isFortified(key);
+  if (!items && !fortified) return;
   const section = document.createElement("section");
   section.className = "ukm-hex-hud";
-  const fortLine = game.user.isGM
-    ? `<label class="ukm-fortified" data-tooltip="${esc(game.i18n.localize("UKM.Pins.FortifiedHint"))}"><input type="checkbox" ${fortified ? "checked" : ""}> ${game.i18n.localize("UKM.Pins.Fortified")}</label>`
-    : fortified
-      ? `<p class="ukm-fortified"><i class="fa-solid fa-shield-halved"></i> ${game.i18n.localize("UKM.Pins.Fortified")}</p>`
-      : "";
+  const fortLine = fortified ? `<p class="ukm-fortified"><i class="fa-solid fa-shield-halved"></i> ${game.i18n.localize("UKM.Pins.Fortified")}</p>` : "";
   section.innerHTML = `<h4>${game.i18n.localize("UKM.Pins.HudTitle")}</h4>${items ? `<ul>${items}</ul>` : ""}${fortLine}`;
-  section.querySelector(".ukm-fortified input")?.addEventListener("change", (event) => {
+  root.append(section);
+}
+
+/** The GM's hex editor (double-click a hex with the hex tool on): a Fortified tick box and the hex's cards. */
+function addHexEditorSection(app, html) {
+  if (!game.user.isGM) return;
+  const root = html instanceof HTMLElement ? html : html?.[0] ?? app?.element;
+  const key = app?.options?.hex?.key ?? globalThis.kingmaker?.region?.hoveredHex?.key;
+  if (!root || key === undefined) return;
+  root.querySelector(".ukm-hex-edit")?.remove();
+  const esc = Handlebars.escapeExpression;
+  const items = hexCardList(key);
+  const section = document.createElement("fieldset");
+  section.className = "ukm-hex-edit";
+  section.innerHTML = `<legend>${game.i18n.localize("UKM.Pins.HudTitle")}</legend>
+    <div class="form-group"><label>${game.i18n.localize("UKM.Pins.Fortified")}</label><input type="checkbox" class="ukm-fortify" ${isFortified(key) ? "checked" : ""}><p class="hint">${esc(game.i18n.localize("UKM.Pins.FortifiedHint"))}</p></div>
+    ${items ? `<ul>${items}</ul>` : ""}`;
+  section.querySelector(".ukm-fortify").addEventListener("change", (event) => {
+    event.stopPropagation();
     sendRequest("gm", { op: "fortify", hexKey: String(key), on: event.currentTarget.checked });
   });
-  root.append(section);
+  const footer = root.querySelector(".form-footer");
+  if (footer) footer.before(section);
+  else (root.querySelector(".window-content") ?? root).append(section);
 }
 
 Hooks.on("renderHexHUD", addHexHudLine);
 Hooks.on("renderKingmakerHexHUD", addHexHudLine);
+Hooks.on("renderHexEditor", addHexEditorSection);
 
 Hooks.on("updateSetting", (setting) => {
   if (setting.key.startsWith(`${MODULE_ID}.`)) Hooks.callAll(`${MODULE_ID}.refresh`);
