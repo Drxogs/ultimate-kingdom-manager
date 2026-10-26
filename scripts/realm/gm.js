@@ -1,5 +1,7 @@
 import { drawAudience } from "./audiences.js";
-import { drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
+import { createCard, drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
+import { getStoryEvents } from "../content/data.js";
+import { addLog } from "./state.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
 import { completeGmTask, dismissCard, recordOutcome, rollCard } from "./resolve.js";
@@ -49,6 +51,18 @@ const OPS = {
     await updateRealm((realm) => {
       card = drawWeeklyMatter(realm);
     });
+    return { notice: drawnNotice(card) };
+  },
+  storyEvent: async ({ eventId }) => {
+    const event = getStoryEvents().find((e) => e.id === eventId);
+    if (!event) return { ok: false, reason: "Unknown" };
+    let card = null;
+    await updateRealm((realm) => {
+      card = createCard(event);
+      realm.cards.push(card);
+      addLog(realm, { type: "event-drawn", card: card.id, seat: card.seat, text: card.name });
+    });
+    await syncPins();
     return { notice: drawnNotice(card) };
   },
   drawAudience: async () => {

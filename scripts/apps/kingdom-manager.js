@@ -12,7 +12,7 @@ import { audienceResponses } from "../realm/audiences.js";
 import { proposals } from "../realm/council.js";
 import { ambitionsView } from "../realm/ambitions.js";
 import { openHandbook } from "../content/handbook.js";
-import { getProject } from "../content/data.js";
+import { getProject, getStoryEvents } from "../content/data.js";
 import { sendRequest } from "../realm/requests.js";
 import {
   canActForSeat,
@@ -111,6 +111,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       focusHex: KingdomManager.#focusHex,
       drawEvents: KingdomManager.#drawEvents,
       drawMatter: KingdomManager.#drawMatter,
+      storyEvent: KingdomManager.#storyEvent,
       openSetup: KingdomManager.#openSetup,
       delegate: KingdomManager.#delegate,
       handlePersonally: KingdomManager.#handlePersonally,
@@ -668,6 +669,21 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const id = target.closest("[data-task]")?.dataset.task;
     const task = getRealm().gmTasks.find((t) => t.id === id);
     if (task) await sendRequest("gm", { op: "task", taskId: id });
+  }
+
+  static async #storyEvent() {
+    const events = getStoryEvents();
+    if (!events.length) return;
+    const esc = Handlebars.escapeExpression;
+    const eventId = await DialogV2.wait({
+      window: { title: game.i18n.localize("UKM.Manager.StoryEvents") },
+      content: `<p class="hint">${game.i18n.localize("UKM.Manager.StoryEventsHint")}</p><ul class="ukm-scene-options">${events
+        .map((e) => `<li><strong>${esc(e.name)}</strong> ${esc(e.hook ?? "")}</li>`)
+        .join("")}</ul>`,
+      buttons: events.map((e) => ({ action: e.id, label: e.name })),
+      rejectClose: false
+    });
+    if (eventId) await sendRequest("gm", { op: "storyEvent", eventId });
   }
 
   static async #drawMatter() {

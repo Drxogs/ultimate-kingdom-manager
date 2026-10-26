@@ -1,5 +1,5 @@
 import { MODULE_ID } from "./constants.js";
-import { registerSettings, getSetting, SETTINGS } from "./settings.js";
+import { registerSettings, getSetting, setSetting, SETTINGS } from "./settings.js";
 import { preloadData } from "./content/data.js";
 import { inspectSources } from "./content/story-import.js";
 import { onRegionChange } from "./integrations/kingmaker.js";
@@ -59,6 +59,15 @@ Hooks.once("ready", async () => {
     await processQueuedRequests();
     if (getSetting(SETTINGS.storyImported)) await buildStructureCatalog();
     await ensureHandbook().catch((err) => console.error(`${MODULE_ID} |`, err));
+  }
+
+  if (game.modules.get("pf2e-kingmaker-tools")?.active && !getSetting(SETTINGS.toolsNotice)) {
+    await ChatMessage.create({
+      whisper: [game.user.id],
+      speaker: { alias: game.i18n.localize("UKM.Manager.Title") },
+      content: `<div class="ukm-chat"><p>${game.i18n.localize("UKM.Setup.ToolsNotice")}</p></div>`
+    });
+    await setSetting(SETTINGS.toolsNotice, true);
   }
 
   if (!getSetting(SETTINGS.setupComplete)) {

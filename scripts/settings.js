@@ -20,6 +20,7 @@ export const SETTINGS = {
   audiences: "audiences",
   warnedZones: "warnedZones",
   companionAttitudes: "companionAttitudes",
+  toolsNotice: "toolsNotice",
   council: "council"
 };
 
@@ -134,6 +135,7 @@ export function registerSettings() {
   world(SETTINGS.structureCatalog, { config: false, type: Array, default: [] });
   world(SETTINGS.warnedZones, { config: false, type: Object, default: {} });
   world(SETTINGS.companionAttitudes, { config: false, type: Object, default: {} });
+  world(SETTINGS.toolsNotice, { config: false, type: Boolean, default: false });
 }
 
 export function getSetting(key) {

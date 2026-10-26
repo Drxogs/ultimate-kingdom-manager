@@ -82,7 +82,8 @@
       "FoundingPick": "Focus {n}",
       "FoundingReset": "Pick again",
       "FoundingResetConfirm": "Take back the founding focus? Both stats lose the rank and points it gave them.",
-      "FoundingIncomplete": "Pick two different stats for the founding focus, or leave both empty."
+      "FoundingIncomplete": "Pick two different stats for the founding focus, or leave both empty.",
+      "ToolsNotice": "Kingdom Building, Camping & Weather is active. Its camping and weather work fine alongside this module; just don't use its kingdom sheet, since Ultimate Kingdom Manager runs the kingdom."
     },
     "Import": {
       "Title": "Import Story Content",
@@ -156,7 +157,9 @@
       "AdvisedBy": "advisor {name}",
       "GmAwayQueue": "No GM is online. Anything you do here waits for the GM.",
       "GmAwayClosed": "No GM is online, and the desks are closed between sessions. You can read your desk until the GM is back.",
-      "Queued": "({count} waiting)"
+      "Queued": "({count} waiting)",
+      "StoryEvents": "Story events",
+      "StoryEventsHint": "These come from the adventure's story, not the monthly draw. Put one on its desk when the story reaches it."
     },
     "Card": {
       "Kind": {
