@@ -1,5 +1,4 @@
-import { FLAG_SCOPE, MODULE_ID } from "../constants.js";
-import { getSetting, SETTINGS } from "../settings.js";
+import { MODULE_ID } from "../constants.js";
 import { acceptRequest, assignCard, canActForSeat, escalateCard, unassignCard } from "./resolve.js";
 import { startProject } from "./projects.js";
 import { repayDebt, tapTreasury } from "./treasury.js";
@@ -8,14 +7,12 @@ import { isLeader } from "./leader.js";
 import { gmAction } from "./gm.js";
 import { fundProposal, proposeProject, rejectProposal, voteProposal } from "./council.js";
 import { chooseRankUp, startRankUp } from "./ranks.js";
-import { getRealm } from "./state.js";
 import { foundCapital } from "./settlements.js";
 
 const SOCKET = `module.${MODULE_ID}`;
 const TIMEOUT = 15000;
 const SLOW_TIMEOUT = 180000;
 const SLOW = new Set(["tapTreasury", "gm"]);
-const QUEUE_FLAG = "queue";
 
 const HANDLERS = {
   assign: assignCard,
@@ -87,15 +84,8 @@ export async function sendRequest(action, payload) {
   }
 
   if (!game.users.activeGM) {
-    if (!getSetting(SETTINGS.betweenSessions)) {
-      ui.notifications.warn(game.i18n.localize("UKM.Request.NoGM"));
-      return { ok: false, reason: "NoGM" };
-    }
-    const queue = game.user.getFlag(FLAG_SCOPE, QUEUE_FLAG) ?? [];
-    queue.push({ id: foundry.utils.randomID(12), action, payload, time: Date.now() });
-    await game.user.setFlag(FLAG_SCOPE, QUEUE_FLAG, queue);
-    ui.notifications.info(game.i18n.localize("UKM.Request.Queued"));
-    return { ok: true, queued: true };
+    ui.notifications.warn(game.i18n.localize("UKM.Request.NoGM"));
+    return { ok: false, reason: "NoGM" };
   }
 
   const id = foundry.utils.randomID(12);
@@ -108,36 +98,4 @@ export async function sendRequest(action, payload) {
   });
   report(result, action);
   return result;
-}
-
-export function queuedRequests(user = game.user) {
-  return user.getFlag(FLAG_SCOPE, QUEUE_FLAG) ?? [];
-}
-
-function describeRequest(user, entry) {
-  const card = getRealm().cards.find((c) => c.id === entry.payload?.cardId);
-  return game.i18n.format(`UKM.Request.Describe.${entry.action}`, {
-    user: user.name,
-    card: card?.name ?? "?",
-    who: entry.payload?.type === "pc" ? fromUuidSync(entry.payload.actorUuid)?.name ?? "?" : game.i18n.localize("UKM.Request.TheAdvisor")
-  });
-}
-
-/** Work through requests players made while no GM was online. */
-export async function processQueuedRequests() {
-  if (!isLeader()) return;
-  const review = getSetting(SETTINGS.betweenSessionsApproval) === "review";
-  for (const user of game.users) {
-    const queue = queuedRequests(user);
-    if (!queue.length) continue;
-    for (const entry of queue.sort((a, b) => a.time - b.time)) {
-      const approved = !review || (await foundry.applications.api.DialogV2.confirm({
-        window: { title: game.i18n.localize("UKM.Request.ReviewTitle") },
-        content: `<p>${describeRequest(user, entry)}</p>`,
-        rejectClose: false
-      }));
-      if (approved) await handle(entry.action, { ...entry.payload, userId: user.id });
-    }
-    await user.unsetFlag(FLAG_SCOPE, QUEUE_FLAG);
-  }
 }

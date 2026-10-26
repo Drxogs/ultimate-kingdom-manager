@@ -70,12 +70,6 @@
     },
     {
       "book": "player",
-      "key": "between",
-      "name": "Between Sessions",
-      "file": "player-between.html"
-    },
-    {
-      "book": "player",
       "key": "glossary",
       "name": "Glossary",
       "file": "player-glossary.html"

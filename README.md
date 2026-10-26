@@ -46,10 +46,8 @@ When the GM logs in, the module creates two journals in a **Kingdom Manager: Han
 
 ## Settings
 
-- Desks open between sessions, and whether the GM reviews requests first
 - Tap the Treasury: allowed, allowed with GM approval, or disabled
 - Weekly desk matters, monthly audiences, and the council, each on or off
-- Advisor warnings about dangerous regions
 - What happens to map pins once an event is resolved
 
 ## Compatibility

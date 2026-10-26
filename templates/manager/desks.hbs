@@ -1,6 +1,6 @@
 <section class="tab ukm-desks {{tab.cssClass}}" data-tab="desks" data-group="primary">
   {{#if gmAway}}
-    <p class="ukm-notice ukm-desks-notice">{{#if betweenSessions}}{{localize "UKM.Manager.GmAwayQueue"}}{{else}}{{localize "UKM.Manager.GmAwayClosed"}}{{/if}}{{#if queued}} {{localize "UKM.Manager.Queued" count=queued}}{{/if}}</p>
+    <p class="ukm-notice ukm-desks-notice">{{localize "UKM.Manager.GmAway"}}</p>
   {{/if}}
   {{#unless hasCapital}}
       <div class="ukm-first-step">

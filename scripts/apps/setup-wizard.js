@@ -103,21 +103,12 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       partyLevel: kingdom?.level ?? 1,
       suggestStart: (kingdom?.level ?? 1) >= 3 && !getRealm().startingPoint && Object.values(getRealm().stats).every((s) => s.rank === 0),
       storyImported: getSetting(SETTINGS.storyImported),
-      betweenSessions: draft ? !!draft.betweenSessions : getSetting(SETTINGS.betweenSessions),
-      approval: draft?.approval ?? getSetting(SETTINGS.betweenSessionsApproval),
       tapTreasury: draft?.tapTreasury ?? getSetting(SETTINGS.tapTreasury),
-      advisorWarnings: draft?.advisorWarnings ?? getSetting(SETTINGS.advisorWarnings),
       showAllActors: this.#showAllActors,
-      approvalChoices: { review: "UKM.Settings.Approval.Review", auto: "UKM.Settings.Approval.Auto" },
       tapChoices: {
         approval: "UKM.Settings.TapTreasury.Approval",
         allowed: "UKM.Settings.TapTreasury.Allowed",
         disabled: "UKM.Settings.TapTreasury.Disabled"
-      },
-      warningChoices: {
-        off: "UKM.Settings.AdvisorWarnings.Off",
-        subtle: "UKM.Settings.AdvisorWarnings.Subtle",
-        blunt: "UKM.Settings.AdvisorWarnings.Blunt"
       },
       seats,
       holderGroups: [
@@ -137,10 +128,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static async #onSubmit(event, form, formData) {
     const data = foundry.utils.expandObject(formData.object);
-    await setSetting(SETTINGS.betweenSessions, !!data.betweenSessions);
-    await setSetting(SETTINGS.betweenSessionsApproval, data.approval);
     await setSetting(SETTINGS.tapTreasury, data.tapTreasury);
-    await setSetting(SETTINGS.advisorWarnings, data.advisorWarnings);
     if (data.attitudes) await setSetting(SETTINGS.companionAttitudes, data.attitudes);
 
     const assignments = {};

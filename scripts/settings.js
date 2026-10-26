@@ -5,12 +5,9 @@ export const SETTINGS = {
   setupComplete: "setupComplete",
   storyImported: "storyImported",
   importReminder: "importReminder",
-  betweenSessions: "betweenSessions",
-  betweenSessionsApproval: "betweenSessionsApproval",
   courtOverride: "courtOverride",
   tapTreasury: "tapTreasury",
   levelGravity: "levelGravity",
-  advisorWarnings: "advisorWarnings",
   costGradient: "costGradient",
   pinResolved: "pinResolved",
   clock: "clock",
@@ -18,7 +15,6 @@ export const SETTINGS = {
   deskMatters: "deskMatters",
   structureCatalog: "structureCatalog",
   audiences: "audiences",
-  warnedZones: "warnedZones",
   companionAttitudes: "companionAttitudes",
   toolsNotice: "toolsNotice",
   council: "council"
@@ -34,27 +30,6 @@ export function registerSettings() {
     icon: "fa-solid fa-crown",
     type: SetupWizard,
     restricted: true
-  });
-
-  world(SETTINGS.betweenSessions, {
-    name: "UKM.Settings.BetweenSessions.Name",
-    hint: "UKM.Settings.BetweenSessions.Hint",
-    config: true,
-    type: Boolean,
-    default: false,
-    onChange: () => Hooks.callAll(`${MODULE_ID}.refresh`)
-  });
-
-  world(SETTINGS.betweenSessionsApproval, {
-    name: "UKM.Settings.Approval.Name",
-    hint: "UKM.Settings.Approval.Hint",
-    config: true,
-    type: String,
-    choices: {
-      review: "UKM.Settings.Approval.Review",
-      auto: "UKM.Settings.Approval.Auto"
-    },
-    default: "review"
   });
 
   world(SETTINGS.council, {
@@ -94,19 +69,6 @@ export function registerSettings() {
     default: "approval"
   });
 
-  world(SETTINGS.advisorWarnings, {
-    name: "UKM.Settings.AdvisorWarnings.Name",
-    hint: "UKM.Settings.AdvisorWarnings.Hint",
-    config: true,
-    type: String,
-    choices: {
-      off: "UKM.Settings.AdvisorWarnings.Off",
-      subtle: "UKM.Settings.AdvisorWarnings.Subtle",
-      blunt: "UKM.Settings.AdvisorWarnings.Blunt"
-    },
-    default: "subtle"
-  });
-
   world(SETTINGS.pinResolved, {
     name: "UKM.Settings.PinResolved.Name",
     hint: "UKM.Settings.PinResolved.Hint",
@@ -133,7 +95,6 @@ export function registerSettings() {
   world(SETTINGS.clock, { config: false, type: Object, default: {} });
   world(SETTINGS.seatAssignments, { config: false, type: Object, default: {} });
   world(SETTINGS.structureCatalog, { config: false, type: Array, default: [] });
-  world(SETTINGS.warnedZones, { config: false, type: Object, default: {} });
   world(SETTINGS.companionAttitudes, { config: false, type: Object, default: {} });
   world(SETTINGS.toolsNotice, { config: false, type: Boolean, default: false });
 }

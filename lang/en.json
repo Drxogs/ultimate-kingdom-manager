@@ -6,29 +6,12 @@
         "Label": "Open Setup",
         "Hint": "Seats, advisors, table options and the story import."
       },
-      "BetweenSessions": {
-        "Name": "Desks open between sessions",
-        "Hint": "Players can manage their desks whenever the world is running. Requests made while the GM is away wait for the GM."
-      },
-      "Approval": {
-        "Name": "Requests made between sessions",
-        "Hint": "What happens to player requests made while no GM is connected.",
-        "Review": "GM reviews them first",
-        "Auto": "Apply them automatically"
-      },
       "TapTreasury": {
         "Name": "Tap Treasury",
         "Hint": "The only way to turn kingdom funds into gold. It creates a debt, adds Corruption and Unrest, and is logged by name.",
         "Approval": "Allowed with GM approval",
         "Allowed": "Allowed",
         "Disabled": "Disabled"
-      },
-      "AdvisorWarnings": {
-        "Name": "Advisor warnings",
-        "Hint": "How plainly advisors warn the party away from regions far above their level.",
-        "Off": "Off",
-        "Subtle": "Rumors",
-        "Blunt": "Plain warnings"
       },
       "PinResolved": {
         "Name": "Resolved event pins",
@@ -133,8 +116,6 @@
       "Rank": "Rank",
       "RankReady": "ready to rank up",
       "Setup": "Setup",
-      "BetweenOn": "Desks open between sessions",
-      "BetweenOff": "Desks closed between sessions",
       "DrawNow": "Draw events now",
       "Drawn": "New events have arrived: {count}.",
       "Advisor": "advisor",
@@ -156,14 +137,12 @@
       "MatterNone": "No desk matter fits right now.",
       "DrawAudience": "Draw audience",
       "AdvisedBy": "advisor {name}",
-      "GmAwayQueue": "No GM is online. Anything you do here waits for the GM.",
-      "GmAwayClosed": "No GM is online, and the desks are closed between sessions. You can read your desk until the GM is back.",
-      "Queued": "({count} waiting)",
       "StoryEvents": "Story events",
       "StoryEventsHint": "These come from the adventure's story, not the monthly draw. Put one on its desk when the story reaches it.",
       "Capital": "Capital",
       "NoCapital": "no capital yet",
-      "Week": "wk"
+      "Week": "wk",
+      "GmAway": "No GM is online. You can read the desks, but nothing can be done until the GM is back."
     },
     "Card": {
       "Kind": {
@@ -296,15 +275,7 @@
     },
     "Request": {
       "Assigned": "On it. Expect a result in {days} days.",
-      "NoGM": "No GM is online, and between-session play is off.",
-      "Queued": "No GM is online. Your request will be handled when the GM returns.",
-      "ReviewTitle": "Between-session request",
-      "TheAdvisor": "the advisor",
-      "Describe": {
-        "assign": "{user} asked {who} to handle {card}.",
-        "unassign": "{user} called back the work on {card}.",
-        "escalate": "{user} wants the party to take on {card}."
-      },
+      "NoGM": "No GM is online. Desk actions wait until the GM is back.",
       "Reason": {
         "NotOpen": "That card is no longer open.",
         "NotYourSeat": "That desk isn't yours.",
@@ -590,19 +561,6 @@
       "HudProject": "in progress",
       "Fortified": "Fortified",
       "FortifiedHint": "Threats don't appear on fortified hexes."
-    },
-    "Warning": {
-      "Someone": "A worried advisor",
-      "Subtle": {
-        "Caution": "The folk who come back from {zone} don't say much about it. I'd go carefully.",
-        "Danger": "I've heard what lives in {zone}. Are we truly ready for that? I'm not sure we are.",
-        "Deadly": "Nobody we know has come back from {zone}. Please, think again before going further."
-      },
-      "Blunt": {
-        "Caution": "{zone} is level {zoneLevel} country and we're level {level}. Expect hard fights.",
-        "Danger": "{zone} is level {zoneLevel}. At level {level}, most of what's out there outclasses us.",
-        "Deadly": "{zone} is level {zoneLevel}. At level {level}, going in is likely to get someone killed."
-      }
     },
     "Hired": {
       "Name": "Hired advisor",

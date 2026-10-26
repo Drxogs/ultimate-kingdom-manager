@@ -26,22 +26,9 @@
   <section>
     <h3>{{localize "UKM.Setup.Table"}}</h3>
     <div class="form-group">
-      <label>{{localize "UKM.Settings.BetweenSessions.Name"}}</label>
-      <input type="checkbox" name="betweenSessions" {{checked betweenSessions}}>
-      <p class="hint">{{localize "UKM.Settings.BetweenSessions.Hint"}}</p>
-    </div>
-    <div class="form-group">
-      <label>{{localize "UKM.Settings.Approval.Name"}}</label>
-      <select name="approval">{{selectOptions approvalChoices selected=approval localize=true}}</select>
-    </div>
-    <div class="form-group">
       <label>{{localize "UKM.Settings.TapTreasury.Name"}}</label>
       <select name="tapTreasury">{{selectOptions tapChoices selected=tapTreasury localize=true}}</select>
       <p class="hint">{{localize "UKM.Settings.TapTreasury.Hint"}}</p>
-    </div>
-    <div class="form-group">
-      <label>{{localize "UKM.Settings.AdvisorWarnings.Name"}}</label>
-      <select name="advisorWarnings">{{selectOptions warningChoices selected=advisorWarnings localize=true}}</select>
     </div>
   </section>
 

@@ -6,13 +6,12 @@ import { onRegionChange } from "./integrations/kingmaker.js";
 import { getParty, syncKingdomLevel } from "./integrations/party.js";
 import { registerClock, tick } from "./realm/clock.js";
 import { getRealm } from "./realm/state.js";
-import { processQueuedRequests, registerRequests, sendRequest } from "./realm/requests.js";
+import { registerRequests, sendRequest } from "./realm/requests.js";
 import { onRerollMessage } from "./realm/resolve.js";
 import { buildStructureCatalog, isFortified, structureCatalog } from "./realm/projects.js";
 import { ensureHandbook, openHandbook } from "./content/handbook.js";
 import { isLeader, leaderSettled, startLeader } from "./realm/leader.js";
 import { cardsOnHex } from "./realm/pins.js";
-import { checkPartyPosition } from "./realm/warnings.js";
 import { daysUntil } from "./realm/time.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
 import { SetupWizard } from "./apps/setup-wizard.js";
@@ -56,7 +55,6 @@ Hooks.once("ready", async () => {
   if (isLeader()) {
     await syncKingdomLevel();
     await tick();
-    await processQueuedRequests();
     if (getSetting(SETTINGS.storyImported)) await buildStructureCatalog();
     await ensureHandbook().catch((err) => console.error(`${MODULE_ID} |`, err));
   }
@@ -96,10 +94,6 @@ Hooks.on("updateActor", (actor, changes) => {
 Hooks.on("createChatMessage", (message) => onRerollMessage(message));
 
 Hooks.on("userConnected", () => KingdomManager.refresh());
-
-Hooks.on("updateToken", (token, changes) => {
-  checkPartyPosition(token, changes).catch((err) => console.error(`${MODULE_ID} |`, err));
-});
 
 function hexCardList(key) {
   const esc = Handlebars.escapeExpression;

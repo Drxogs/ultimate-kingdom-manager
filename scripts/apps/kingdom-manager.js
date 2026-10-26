@@ -41,7 +41,7 @@ import {
   seatsOf
 } from "../realm/resolve.js";
 import { daysUntil, formatDate } from "../realm/time.js";
-import { getSetting, setSetting, SETTINGS } from "../settings.js";
+import { getSetting, SETTINGS } from "../settings.js";
 import { SetupWizard } from "./setup-wizard.js";
 import { StoryImportApp } from "./story-import-app.js";
 import { MidCampaignApp } from "./midcampaign-app.js";
@@ -234,8 +234,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       chooseRankUp: KingdomManager.#chooseRankUp,
       previewRankUp: KingdomManager.#previewRankUp,
       finishRankUp: KingdomManager.#finishRankUp,
-      openImport: KingdomManager.#openImport,
-      toggleBetweenSessions: KingdomManager.#toggleBetweenSessions
+      openImport: KingdomManager.#openImport
     }
   };
 
@@ -272,10 +271,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
     context.isGM = game.user.isGM;
     context.gmAway = !game.user.isGM && !game.users.activeGM;
-    context.queued = !game.user.isGM && (game.user.getFlag(MODULE_ID, "queue")?.length ?? 0);
     context.kingdomActive = !!kingdom?.active;
     context.storyImported = getSetting(SETTINGS.storyImported);
-    context.betweenSessions = getSetting(SETTINGS.betweenSessions);
     const fame = getFame();
     context.kingdom = {
       name: kingdom?.name || game.i18n.localize("UKM.Manager.Unnamed"),
@@ -1041,9 +1038,6 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     new StoryImportApp().render(true);
   }
 
-  static async #toggleBetweenSessions() {
-    await setSetting(SETTINGS.betweenSessions, !getSetting(SETTINGS.betweenSessions));
-  }
 }
 
 Hooks.on(`${MODULE_ID}.refresh`, () => KingdomManager.refresh());
