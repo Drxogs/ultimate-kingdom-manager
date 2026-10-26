@@ -595,7 +595,7 @@
 
 .ukm-manager .ukm-grid {
   display: grid;
-  grid-template-columns: repeat(3, 5.5rem);
+  grid-template-columns: repeat(3, 6.6rem);
   gap: 6px;
   padding: 6px;
   background: rgba(94, 74, 58, 0.25);
@@ -605,7 +605,7 @@
 .ukm-manager .ukm-block {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: 2.6rem;
+  grid-template-rows: repeat(2, 3.1rem);
   gap: 2px;
   padding: 2px;
   background: rgba(255, 255, 255, 0.35);
@@ -641,3 +641,13 @@
 
 .ukm-radio { display: flex; align-items: center; gap: 0.4rem; margin: 0.15rem 0; }
 .form-group.stacked select { width: 100%; }
+.ukm-manager .ukm-lot.built.art { background-size: cover; background-position: center; background-color: #8a7a5a; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35); }
+.ukm-manager .ukm-lot.built.art.home { box-shadow: inset 0 0 0 2px rgba(90, 140, 60, 0.85); }
+.ukm-manager .ukm-lot.built.art:hover { filter: brightness(1.1); }
+.ukm-build-list { max-height: 22rem; overflow-y: auto; display: grid; gap: 0.3rem; margin: 0.4rem 0; padding-right: 0.25rem; }
+.ukm-build-option { display: grid; grid-template-columns: auto 3rem 1fr; gap: 0.5rem; align-items: center; padding: 0.25rem 0.4rem; border: 1px solid rgba(0, 0, 0, 0.15); border-radius: 3px; cursor: pointer; }
+.ukm-build-option:has(input:checked) { border-color: #a98f39; box-shadow: 0 0 0 1px #a98f39 inset; background: rgba(169, 143, 57, 0.08); }
+.ukm-build-option img { width: 3rem; height: 3rem; object-fit: cover; border: none; border-radius: 2px; }
+.ukm-build-option .ukm-build-noart { width: 3rem; height: 3rem; background: rgba(0, 0, 0, 0.1); border-radius: 2px; }
+.ukm-build-option strong { display: block; }
+.ukm-build-option .hint { display: block; font-size: var(--font-size-12, 12px); }

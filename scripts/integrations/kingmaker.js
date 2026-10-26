@@ -134,3 +134,17 @@ export function onRegionChange(callback) {
 export function onHexHud(callback) {
   Hooks.on("renderKingmakerHexHUD", (app, html) => callback(app, html));
 }
+
+const ART_ALIASES = { specializedartisan: "specialartisan", theater: "theatre", cemetary: "cemetery" };
+
+/** The Kingmaker module's building art for a structure: lot-sized tiles, sometimes in several variants. */
+export function structureArt(source, name) {
+  const list = km()?.CONST?.STRUCTURES ?? [];
+  const norm = (text) => String(text ?? "").toLowerCase().replace(/[^a-z]/g, "");
+  const wanted = norm(name);
+  const found =
+    (source && list.find((s) => s.journal?.includes(source))) ??
+    list.find((s) => norm(s.label) === (ART_ALIASES[wanted] ?? wanted));
+  const art = found?.art;
+  return art?.enhanced?.length ? [...art.enhanced] : [...(art?.original ?? [])];
+}

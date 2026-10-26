@@ -6,7 +6,8 @@ import {
   getHexDefinitions,
   getZone,
   hasFeature,
-  isKingmakerActive
+  isKingmakerActive,
+  structureArt
 } from "../integrations/kingmaker.js";
 import { getKingdom, getPartyLevel } from "../integrations/party.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
@@ -221,7 +222,8 @@ export async function buildStructureCatalog() {
       const raw = page.getFlag(FLAG_SCOPE, "structure");
       if (!raw) return null;
       const slug = SLUG_FIXES[raw] ?? raw;
-      return { slug, name: page.name, ...parseStructure(page) };
+      const source = page.getFlag(FLAG_SCOPE, "source") ?? null;
+      return { slug, name: page.name, source, art: structureArt(source, page.name), ...parseStructure(page) };
     })
     .filter(Boolean)
     .sort((a, b) => (a.level ?? 99) - (b.level ?? 99) || a.name.localeCompare(b.name));

@@ -1,7 +1,7 @@
 import { DEGREES, MODULE_ID, PERSONAL_SKILLS, REALM_STATS, SEATS } from "../constants.js";
 import { getCardEvent, getCompanion } from "../content/data.js";
 import { getImportedPage } from "../content/story-import.js";
-import { focusHex, getHexDefinitions, getZone } from "../integrations/kingmaker.js";
+import { focusHex, getHexDefinitions, getZone, structureArt } from "../integrations/kingmaker.js";
 import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnrest } from "../integrations/party.js";
 import { canRankUp, companionAttitude, isHired, rankBonus, rankCap, rawSeatCompanionId, routinePoints, seatCompanionId, statProgress, weeklyIncome } from "../realm/rules.js";
 import { getRealm, updateRealm } from "../realm/state.js";
@@ -107,6 +107,75 @@ function personalChoices(card) {
 }
 
 const LOG_SHOWN = 40;
+
+/**
+ * Lay buildings out on the 3x3 urban grid: four-lot buildings take a whole block,
+ * two-lot buildings a row of one, single lots fill the gaps. Art comes from the Kingmaker module.
+ */
+function layoutGrid(buildings, openBlocks) {
+  const blocks = Array.from({ length: 9 }, (_, i) => ({ open: i < openBlocks, cells: [null, null, null, null], items: [] }));
+  const order = buildings
+    .map((b, index) => ({ ...b, index }))
+    .filter((b) => !b.infrastructure)
+    .sort((a, b) => (b.lots ?? 1) - (a.lots ?? 1) || a.index - b.index);
+  const seen = new Map();
+  const place = (block, cells, b) => {
+    for (const c of cells) block.cells[c] = b.index;
+    const art = b.art?.length ? b.art : structureArtFor(b);
+    const n = seen.get(b.slug) ?? 0;
+    seen.set(b.slug, n + 1);
+    const col = (cells[0] % 2) + 1;
+    const row = Math.floor(cells[0] / 2) + 1;
+    const wide = cells.length >= 2;
+    const tall = cells.length === 4;
+    block.items.push({
+      name: b.name,
+      index: b.index,
+      residential: !!b.residential,
+      img: art.length ? art[n % art.length] : null,
+      style: `grid-column: ${col} / span ${wide ? 2 : 1}; grid-row: ${row} / span ${tall ? 2 : 1};`
+    });
+  };
+  for (const b of order) {
+    const lots = Math.max(1, b.lots ?? 1);
+    const open = blocks.filter((k) => k.open);
+    if (lots >= 3) {
+      const block = open.find((k) => k.cells.every((c) => c === null));
+      if (block) place(block, [0, 1, 2, 3], b);
+      continue;
+    }
+    if (lots === 2) {
+      let done = false;
+      for (const block of open) {
+        for (const pair of [[0, 1], [2, 3]]) {
+          if (!done && pair.every((c) => block.cells[c] === null)) {
+            place(block, pair, b);
+            done = true;
+          }
+        }
+        if (done) break;
+      }
+      continue;
+    }
+    for (const block of open) {
+      const free = block.cells.indexOf(null);
+      if (free >= 0) {
+        place(block, [free], b);
+        break;
+      }
+    }
+  }
+  for (const block of blocks) {
+    block.empty = block.open
+      ? block.cells.map((c, i) => (c === null ? `grid-column: ${(i % 2) + 1}; grid-row: ${Math.floor(i / 2) + 1};` : null)).filter(Boolean)
+      : [];
+  }
+  return blocks;
+}
+
+function structureArtFor(building) {
+  return structureArt(building.source, building.name);
+}
 
 export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   static #instance = null;
@@ -376,23 +445,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       .sort((a, b) => Number(b.capital) - Number(a.capital) || a.name.localeCompare(b.name))
       .map((s) => {
         const state = settlementState(s);
-        const grids = s.type === "metropolis" ? s.grids ?? 2 : 1;
-        const openBlocks = { village: 1, town: 4, city: 9, metropolis: 9 }[s.type] ?? 1;
-        const cells = [];
-        state.buildings.forEach((b, index) => {
-          if (b.infrastructure) return;
-          const lots = Math.max(1, b.lots ?? 1);
-          for (let i = 0; i < lots; i++) cells.push({ name: b.name, slug: b.slug, index, first: i === 0, residential: !!b.residential, span: lots > 1 });
-        });
-        const blocks = [];
-        for (let g = 0; g < grids; g++) {
-          for (let block = 0; block < 9; block++) {
-            const open = g > 0 || block < openBlocks;
-            const lots = [];
-            for (let lot = 0; lot < 4; lot++) lots.push(open ? cells.shift() ?? { empty: true } : { locked: true });
-            blocks.push({ open, lots });
-          }
-        }
+        const grid = layoutGrid(state.buildings, { village: 1, town: 4, city: 9, metropolis: 9 }[s.type] ?? 1);
         const next = canGrow(s, state, level);
         const info = SETTLEMENT_INFO[s.type];
         const nextInfo = info.next ? SETTLEMENT_INFO[info.next] : null;
@@ -413,7 +466,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
           hexKey: settlementHex(s),
           bonuses: Object.entries(settlementBonuses(s, state)).map(([k, v]) => `${skill(k)} +${v}`),
           infrastructure: state.buildings.filter((b) => b.infrastructure).map((b) => ({ name: b.name, index: state.buildings.indexOf(b) })),
-          grid: blocks.slice(0, 9),
+          grid,
           growth: next
             ? game.i18n.format("UKM.Settlement.GrowsNext", { type: label(next) })
             : nextInfo
@@ -572,9 +625,14 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     if (def.target === "settlement") {
       const room = roomFor(settlements().find((x) => x.id === picked.settlementId));
       body = `<p><strong>${esc(picked.label)}</strong> · ${game.i18n.format("UKM.Settlement.Room", { n: room })}</p>
-        <div class="form-group stacked"><label>${game.i18n.localize("UKM.Settlement.WhatToBuild")}</label><select name="structure">${structures
-          .map((s) => `<option value="${s.key}">${esc(s.name)}${s.level ? ` (${s.level})` : ""} — ${quoteText(projectQuote(def, null, s))} — ${esc(KingdomManager.#structureLine(s))}</option>`)
-          .join("")}</select></div>`;
+        <p>${game.i18n.localize("UKM.Settlement.WhatToBuild")}</p>
+        <div class="ukm-build-list">${structures
+          .map((s, i) => {
+            const art = s.art?.length ? s.art : structureArt(s.source, s.name);
+            const pic = art.length ? `<img src="${art[0]}" alt="">` : `<span class="ukm-build-noart"></span>`;
+            return `<label class="ukm-build-option"><input type="radio" name="structure" value="${s.key}" ${i === 0 ? "checked" : ""}>${pic}<span><strong>${esc(s.name)}${s.level ? ` (${s.level})` : ""}</strong><span class="hint">${quoteText(projectQuote(def, null, s))} · ${esc(KingdomManager.#structureLine(s))}</span></span></label>`;
+          })
+          .join("")}</div>`;
     } else {
       body = `<p>${quoteText(projectQuote(def, picked))}</p>`;
       if (def.id === "found-settlement") {
@@ -598,7 +656,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       const f = button.form.elements;
       return {
         mode,
-        structure: f.structure?.value ?? null,
+        structure: button.form.querySelector("input[name=structure]:checked")?.value ?? f.structure?.value ?? null,
         camp: f.camp?.value ?? null,
         where: f.where?.value ?? "",
         settlementName: f.settlementName?.value ?? "",

@@ -33,13 +33,12 @@
         <div class="ukm-grid {{#if @root.isGM}}editable{{/if}}">
           {{#each grid}}
             <div class="ukm-block {{#unless open}}locked{{/unless}}">
-              {{#each lots}}
-                {{#if empty}}<div class="ukm-lot empty"></div>
-                {{else if locked}}<div class="ukm-lot locked"></div>
-                {{else}}<div class="ukm-lot built {{#if residential}}home{{/if}} {{#if span}}span{{/if}}" data-index="{{index}}" data-tooltip="{{name}}">
-                  {{#if first}}<span>{{name}}</span>{{/if}}
-                  {{#if first}}{{#if @root.isGM}}<a class="ukm-lot-remove" data-action="removeBuilding" data-tooltip="{{localize "UKM.Settlement.Remove"}}"><i class="fa-solid fa-xmark"></i></a>{{/if}}{{/if}}
-                </div>{{/if}}
+              {{#each empty}}<div class="ukm-lot empty" style="{{this}}"></div>{{/each}}
+              {{#each items}}
+                <div class="ukm-lot built {{#if residential}}home{{/if}} {{#if img}}art{{/if}}" style="{{style}}{{#if img}} background-image: url('{{img}}');{{/if}}" data-index="{{index}}" data-tooltip="{{name}}">
+                  {{#unless img}}<span>{{name}}</span>{{/unless}}
+                  {{#if @root.isGM}}<a class="ukm-lot-remove" data-action="removeBuilding" data-tooltip="{{localize "UKM.Settlement.Remove"}}"><i class="fa-solid fa-xmark"></i></a>{{/if}}
+                </div>
               {{/each}}
             </div>
           {{/each}}
