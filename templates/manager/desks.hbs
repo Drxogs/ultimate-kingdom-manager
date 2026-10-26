@@ -4,16 +4,24 @@
   {{/if}}
   {{#each desks}}
     <article class="ukm-desk {{#if mine}}mine{{/if}}" data-seat="{{seat}}">
-      <header>
-        <h3>{{label}}</h3>
-        <span class="ukm-holder">
-          {{#if holder}}{{holder}}{{#if isCompanion}} <span class="ukm-tag">{{localize "UKM.Manager.Advisor"}}</span>{{/if}}{{else}}<em>{{localize "UKM.Manager.Vacant"}}</em>{{/if}}
-          {{#if advisor}}<span class="hint"> · {{localize "UKM.Manager.AdvisedBy" name=advisor}}</span>{{/if}}
-          {{#if sulking}}<span class="hint ukm-urgent"> · {{sulking}}</span>{{/if}}
-          {{#if supervisor}}<span class="hint"> · {{localize "UKM.Manager.SupervisedBy" name=supervisor}}</span>{{/if}}
-        </span>
-        {{#if canTap}}<button type="button" class="ukm-desk-action" data-action="tapTreasury" data-tooltip="{{localize "UKM.Tap.Hint"}}"><i class="fa-solid fa-sack-dollar"></i> {{localize "UKM.Tap.Title"}}</button>{{/if}}
-        {{#if canStartProject}}<button type="button" class="ukm-desk-action" data-action="startProject"><i class="fa-solid fa-trowel-bricks"></i> {{localize "UKM.Project.Start"}}</button>{{/if}}
+      <header class="ukm-leader">
+        <div class="image">{{#if img}}<img src="{{img}}" alt="">{{/if}}</div>
+        <div class="name">
+          <span>{{#if holder}}{{holder}}{{#if isCompanion}} <span class="ukm-tag">{{localize "UKM.Manager.Advisor"}}</span>{{/if}}{{else}}<em>{{localize "UKM.Manager.Vacant"}}</em>{{/if}}</span>
+          <span class="controls">
+            {{#if canTap}}<button type="button" class="ukm-desk-action" data-action="tapTreasury" data-tooltip="{{localize "UKM.Tap.Hint"}}"><i class="fa-solid fa-sack-dollar"></i> {{localize "UKM.Tap.Title"}}</button>{{/if}}
+            {{#if canStartProject}}<button type="button" class="ukm-desk-action" data-action="startProject"><i class="fa-solid fa-trowel-bricks"></i> {{localize "UKM.Project.Start"}}</button>{{/if}}
+          </span>
+        </div>
+        <div class="details">
+          <span class="role">{{label}}</span>
+          <span class="ukm-holder">
+            {{#if advisor}}{{localize "UKM.Manager.AdvisedBy" name=advisor}} · {{/if}}
+            {{#if supervisor}}{{localize "UKM.Manager.SupervisedBy" name=supervisor}} · {{/if}}
+            {{#if sulking}}<span class="ukm-urgent">{{sulking}}</span> · {{/if}}
+            {{stat}}
+          </span>
+        </div>
       </header>
       {{#if empty}}
         <p class="hint ukm-empty">{{localize "UKM.Manager.DeskEmpty"}}</p>

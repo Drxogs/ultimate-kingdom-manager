@@ -1,0 +1,25 @@
+<header class="ukm-sheet-header">
+  <div class="frame-container">
+    <img class="ukm-crest" src="{{kingdom.img}}" alt="{{kingdom.name}}">
+  </div>
+  <div class="details">
+    <div class="title">
+      <span class="name">{{kingdom.name}}</span>
+      {{#if kingdom.capital}}<span class="capital"><span>{{localize "UKM.Manager.Capital"}}</span> {{kingdom.capital}}</span>{{/if}}
+    </div>
+    <label class="size"><span>{{localize "UKM.Manager.Size"}}</span> {{kingdom.size}}</label>
+    <label class="dc"><span>{{localize "UKM.Manager.ControlDC"}}</span> {{kingdom.controlDC}}</label>
+    <label class="bp" data-tooltip="{{localize "UKM.Manager.IncomeBreakdown" base=income.base worksites=income.worksites ranks=income.ranks trade=income.trade}}">
+      <span>BP</span> {{treasury}} <small>{{ukmSigned income.total}}/{{localize "UKM.Manager.Week"}}</small>
+    </label>
+    <label class="unrest"><span>{{localize "UKM.Manager.Unrest"}}</span> {{kingdom.unrest}}</label>
+    <label class="fame">
+      <span>{{localize "UKM.Manager.Fame"}}</span>
+      <span class="pips">{{#each kingdom.famePips}}<i class="{{#if this}}fa-solid{{else}}fa-regular{{/if}} fa-circle"></i>{{/each}}</span>
+    </label>
+  </div>
+  <div class="level-badge">
+    <label>{{localize "UKM.Manager.Level"}}</label>
+    <span>{{kingdom.level}}</span>
+  </div>
+</header>

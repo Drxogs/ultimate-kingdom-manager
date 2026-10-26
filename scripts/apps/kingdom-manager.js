@@ -103,7 +103,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static DEFAULT_OPTIONS = {
     id: "ukm-manager",
-    classes: ["ukm", "ukm-manager"],
+    classes: ["ukm", "ukm-manager", "themed", "theme-light"],
     window: { title: "UKM.Manager.Title", icon: "fa-solid fa-chess-rook", resizable: true },
     position: { width: 860, height: 720 },
     actions: {
@@ -134,6 +134,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       rejectProposal: KingdomManager.#rejectProposal,
       repayDebt: KingdomManager.#repayDebt,
       chooseRankUp: KingdomManager.#chooseRankUp,
+      previewRankUp: KingdomManager.#previewRankUp,
       finishRankUp: KingdomManager.#finishRankUp,
       openImport: KingdomManager.#openImport,
       toggleBetweenSessions: KingdomManager.#toggleBetweenSessions
@@ -141,6 +142,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   };
 
   static PARTS = {
+    header: { template: `modules/${MODULE_ID}/templates/manager/header.hbs` },
     tabs: { template: "templates/generic/tab-navigation.hbs" },
     overview: { template: `modules/${MODULE_ID}/templates/manager/overview.hbs`, scrollable: [""] },
     desks: { template: `modules/${MODULE_ID}/templates/manager/desks.hbs`, scrollable: [""] },
@@ -174,13 +176,17 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     context.kingdomActive = !!kingdom?.active;
     context.storyImported = getSetting(SETTINGS.storyImported);
     context.betweenSessions = getSetting(SETTINGS.betweenSessions);
+    const fame = getFame();
     context.kingdom = {
       name: kingdom?.name || game.i18n.localize("UKM.Manager.Unnamed"),
+      img: kingdom?.img || game.actors.party?.img || "icons/svg/castle.svg",
+      capital: kingdom?.capital || "",
+      famePips: Array.from({ length: fame.max ?? 3 }, (_, i) => i < (fame.value ?? 0)),
       level,
       size: kingdom?.size ?? 0,
       controlDC: getControlDC(),
       unrest: getUnrest(),
-      fame: getFame(),
+      fame,
       ruin: Object.entries(getRuin()).map(([key, r]) => ({
         key,
         label: game.i18n.localize(`UKM.Ruin.${key}`),
@@ -309,9 +315,12 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
           };
         });
 
+      const companionActor = companion ? game.actors.find((a) => a.name.toLowerCase().startsWith(companion.name.toLowerCase())) : null;
       return {
         seat,
         label: game.i18n.localize(`UKM.Seat.${seat}`),
+        stat: game.i18n.localize(`UKM.Stat.${Object.keys(REALM_STATS).find((k) => REALM_STATS[k].seat === seat)}`),
+        img: leader?.img ?? companionActor?.img ?? (holderName ? "icons/svg/mystery-man.svg" : null),
         holder: holderName,
         isCompanion: !leader && (!!companion || hired),
         sulking: sulking ? game.i18n.format("UKM.Attitude.WontAdvise", { name: sulking.name, attitude: game.i18n.localize(`UKM.Attitude.${companionAttitude(sulking.id)}`) }) : null,
@@ -590,16 +599,38 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     if (ok) await sendRequest("startRankUp", { stat });
   }
 
+  static #choicesHtml(choices, intro = "") {
+    const esc = Handlebars.escapeExpression;
+    const always = choices.always.length ? `<p class="hint">${game.i18n.format("UKM.Rank.Always", { effects: choices.always.join(", ") })}</p>` : "";
+    return `<div class="ukm-scene">${intro}<p class="ukm-scene-text">${esc(choices.scene)}</p>${always}<ul class="ukm-scene-options">${choices.options
+      .map((o) => `<li><strong>${esc(o.label)}</strong> ${esc(o.text)}<br><span class="hint">${o.lines.map(esc).join("; ")}</span>${o.warning ? `<br><span class="ukm-urgent">${esc(o.warning)}</span>` : ""}</li>`)
+      .join("")}</ul></div>`;
+  }
+
+  static async #previewRankUp(event, target) {
+    const stat = target.closest("[data-stat]")?.dataset.stat;
+    const current = stat ? getRealm().stats[stat] : null;
+    if (!current) return;
+    const rank = current.rank + 1;
+    const choices = rankUpChoices({ stat, rank });
+    if (!choices) return;
+    const label = game.i18n.localize(`UKM.Stat.${stat}`);
+    const intro = `<p class="hint">${game.i18n.format("UKM.Rank.PreviewHint", { stat: label, rank })}</p>`;
+    await DialogV2.prompt({
+      window: { title: game.i18n.format("UKM.Rank.PreviewTitle", { stat: label, rank }) },
+      position: { width: 520 },
+      content: KingdomManager.#choicesHtml(choices, intro),
+      ok: { label: game.i18n.localize("Close") },
+      rejectClose: false
+    });
+  }
+
   static async #chooseRankUp(event, target) {
     const stat = target.closest("[data-stat]")?.dataset.stat;
     const project = stat ? rankUpProject(getRealm(), stat) : null;
     const choices = project ? rankUpChoices(project) : null;
     if (!choices) return;
-    const esc = Handlebars.escapeExpression;
-    const always = choices.always.length ? `<p class="hint">${game.i18n.format("UKM.Rank.Always", { effects: choices.always.join(", ") })}</p>` : "";
-    const content = `<div class="ukm-scene"><p class="ukm-scene-text">${esc(choices.scene)}</p>${always}<ul class="ukm-scene-options">${choices.options
-      .map((o) => `<li><strong>${esc(o.label)}</strong> ${esc(o.text)}<br><span class="hint">${o.lines.map(esc).join("; ")}</span>${o.warning ? `<br><span class="ukm-urgent">${esc(o.warning)}</span>` : ""}</li>`)
-      .join("")}</ul></div>`;
+    const content = KingdomManager.#choicesHtml(choices);
     const option = await DialogV2.wait({
       window: { title: `${choices.title} — ${game.i18n.format("UKM.Rank.ToRank", { stat: game.i18n.localize(`UKM.Stat.${stat}`), rank: project.rank })}` },
       position: { width: 520 },

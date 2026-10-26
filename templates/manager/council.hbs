@@ -27,7 +27,7 @@
       </ul>
     {{/if}}
     {{#if council.recent.length}}
-      <h3>{{localize "UKM.Council.Recent"}}</h3>
+      <header class="ukm-major">{{localize "UKM.Council.Recent"}}</header>
       <ul class="ukm-proposals recent">
         {{#each council.recent}}
           <li><strong>{{name}}</strong> <span class="hint">· {{statusLabel}} · {{yes}}/{{no}}</span></li>

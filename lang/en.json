@@ -159,7 +159,10 @@
       "GmAwayClosed": "No GM is online, and the desks are closed between sessions. You can read your desk until the GM is back.",
       "Queued": "({count} waiting)",
       "StoryEvents": "Story events",
-      "StoryEventsHint": "These come from the adventure's story, not the monthly draw. Put one on its desk when the story reaches it."
+      "StoryEventsHint": "These come from the adventure's story, not the monthly draw. Put one on its desk when the story reaches it.",
+      "Capital": "Capital",
+      "NoCapital": "no capital yet",
+      "Week": "wk"
     },
     "Card": {
       "Kind": {
@@ -421,7 +424,10 @@
       "ReadyTitle": "{stat}: the rank-up is ready",
       "ReadyText": "The seat's holder has a choice to make on the Realm tab.",
       "ToRank": "{stat} rank {rank}",
-      "Always": "Whatever is chosen: {effects}."
+      "Always": "Whatever is chosen: {effects}.",
+      "Preview": "See the rank-up choices",
+      "PreviewTitle": "{stat} rank {rank}: the choices",
+      "PreviewHint": "This is what the seat will choose from when {stat} reaches rank {rank}. Nothing is spent or chosen here."
     },
     "Project": {
       "Start": "Start project",

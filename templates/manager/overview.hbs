@@ -3,33 +3,14 @@
     <p class="ukm-notice">{{localize "UKM.Manager.NoKingdom"}}</p>
   {{/unless}}
 
-  <header class="ukm-realm-header">
-    <div class="ukm-realm-name">
-      <h2>{{kingdom.name}}</h2>
-      <span>{{localize "UKM.Manager.Level"}} {{kingdom.level}} · {{localize "UKM.Manager.Size"}} {{kingdom.size}} · {{localize "UKM.Manager.ControlDC"}} {{kingdom.controlDC}}</span>
-    </div>
-    <div class="ukm-treasury">
-      <span class="ukm-bp">{{treasury}}</span>
-      <label>{{localize "UKM.Manager.Treasury"}}</label>
-      <span class="hint" data-tooltip="{{localize "UKM.Manager.IncomeBreakdown" base=income.base worksites=income.worksites ranks=income.ranks trade=income.trade}}">
-        {{ukmSigned income.total}} {{localize "UKM.Manager.PerWeek"}}
-      </span>
-      {{#if debt.amount}}
-        <span class="ukm-debt" data-tooltip="{{localize "UKM.Tap.DebtHint"}}">{{localize "UKM.Tap.Owed" debt=debt.amount}}</span>
-        {{#if canRepay}}<button type="button" class="ukm-rank-up" data-action="repayDebt"><i class="fa-solid fa-coins"></i> {{localize "UKM.Tap.Repay"}}</button>{{/if}}
-      {{/if}}
-    </div>
-  </header>
+  {{#if debt.amount}}
+    <p class="ukm-notice ukm-debt-line">
+      <span class="ukm-debt" data-tooltip="{{localize "UKM.Tap.DebtHint"}}">{{localize "UKM.Tap.Owed" debt=debt.amount}}</span>
+      {{#if canRepay}}<button type="button" class="ukm-rank-up" data-action="repayDebt"><i class="fa-solid fa-coins"></i> {{localize "UKM.Tap.Repay"}}</button>{{/if}}
+    </p>
+  {{/if}}
 
   <div class="ukm-pressure">
-    <div class="ukm-meter">
-      <label>{{localize "UKM.Manager.Unrest"}}</label>
-      <span class="ukm-value">{{kingdom.unrest}}</span>
-    </div>
-    <div class="ukm-meter">
-      <label>{{localize "UKM.Manager.Fame"}}</label>
-      <span class="ukm-value">{{kingdom.fame.value}} / {{kingdom.fame.max}}</span>
-    </div>
     {{#each kingdom.ruin}}
       <div class="ukm-meter ukm-ruin">
         <label>{{label}}</label>
@@ -39,7 +20,7 @@
     {{/each}}
   </div>
 
-  <h3>{{localize "UKM.Manager.RealmStats"}}</h3>
+  <header class="ukm-major">{{localize "UKM.Manager.RealmStats"}}</header>
   <ol class="ukm-stats">
     {{#each stats}}
       <li class="ukm-stat {{#if ready}}ready{{/if}}" data-stat="{{key}}">
@@ -50,6 +31,7 @@
         <div class="ukm-stat-rank">
           <span>{{localize "UKM.Manager.Rank"}} {{rank}}</span>
           {{#if bonus}}<span class="ukm-tag">{{ukmSigned bonus}}</span>{{/if}}
+          <button type="button" class="ukm-icon" data-action="previewRankUp" data-tooltip="{{localize "UKM.Rank.Preview"}}"><i class="fa-solid fa-eye"></i></button>
         </div>
         <div class="ukm-bar"><span style="width: {{progress.percent}}%"></span></div>
         <span class="hint">
@@ -68,7 +50,7 @@
     {{/each}}
   </ol>
 
-  <h3>{{localize "UKM.Ambition.Heading"}}</h3>
+  <header class="ukm-major">{{localize "UKM.Ambition.Heading"}}</header>
   <ol class="ukm-stats ukm-ambitions">
     {{#each ambitions}}
       <li class="ukm-stat {{#if complete}}ready{{/if}}">
@@ -90,7 +72,7 @@
   <p class="ukm-handbook-link"><button type="button" data-action="openHandbook"><i class="fa-solid fa-book-open-reader"></i> {{localize "UKM.Handbook.Open"}}</button></p>
 
   {{#if isGM}}
-    <h3>{{localize "UKM.Manager.GmTasks"}}{{#if openTasks}} <span class="ukm-tag">{{openTasks}}</span>{{/if}}</h3>
+    <header class="ukm-major">{{localize "UKM.Manager.GmTasks"}}{{#if openTasks}} <span class="ukm-tag">{{openTasks}}</span>{{/if}}</header>
     {{#if gmTasks.length}}
       <ul class="ukm-tasks">
         {{#each gmTasks}}
