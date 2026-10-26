@@ -17,6 +17,7 @@ import { sendRequest } from "../realm/requests.js";
 import {
   busyWith,
   canActForSeat,
+  canCallBack,
   cardLevelMod,
   cardStage,
   completeGmTask,
@@ -302,7 +303,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             isProject: card.kind === "project",
             canReveal: game.user.isGM && !!card.target?.hexKey && card.kind !== "project",
             canHear: open && canAct && card.kind === "audience",
-            canUnassign: card.status === "assigned" && canAct,
+            canUnassign: card.status === "assigned" && canCallBack(game.user, card),
             canEscalate: open && canAct && !!event?.escalate,
             outcomes: outcomePreview(card),
             advisorOdds: open && holderName ? stage.skills.map((sk) => oddsView(estimateCheck(card, { type: "advisor", skill: sk }, realm))).filter(Boolean) : [],

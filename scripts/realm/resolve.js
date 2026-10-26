@@ -54,6 +54,13 @@ export function seatsOf(actorUuid) {
   return SEATS.filter((seat) => leadership[seat]?.uuid === actorUuid || assignments[seat]?.supervisor === actorUuid);
 }
 
+/** Whether a user may call back a card's work: the desk's player, or the player of a character lent to it. */
+export function canCallBack(user, card) {
+  if (canActForSeat(user, card.seat)) return true;
+  if (card.assignee?.type !== "pc") return false;
+  return !!fromUuidSync(card.assignee.actorUuid)?.testUserPermission?.(user, "OWNER");
+}
+
 /** Whether a user may act for a seat: the GM, an owner of the seat holder, or the seat's supervising player. */
 export function canActForSeat(user, seat) {
   if (user.isGM) return true;
@@ -145,7 +152,7 @@ export async function assignCard(request) {
 export async function unassignCard({ cardId, userId }) {
   const user = game.users.get(userId) ?? game.user;
   const card = getRealm().cards.find((c) => c.id === cardId);
-  if (!card || card.status !== "assigned" || !canActForSeat(user, card.seat)) return { ok: false, reason: "NotAssigned" };
+  if (!card || card.status !== "assigned" || !canCallBack(user, card)) return { ok: false, reason: "NotAssigned" };
   await updateRealm((r) => {
     const target = r.cards.find((c) => c.id === cardId);
     target.status = "open";
