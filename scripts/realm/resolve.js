@@ -8,6 +8,7 @@ import { addStatPoints, cardWorkDays, isHired, rankBonus, seatCompanionId } from
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { isLeader } from "./leader.js";
+import { structureModifiers } from "./settlements.js";
 
 const ACTIVE = ["open", "assigned", "rolled"];
 
@@ -270,7 +271,7 @@ export function estimateCheck(card, choice, realm = getRealm()) {
     const statistic = kingdom?.skills?.[skill];
     if (!statistic) return null;
     base = statistic.mod;
-    extras.push(...advisorModifiers(realm, card, SKILL_TO_STAT[skill]));
+    extras.push(...advisorModifiers(realm, card, SKILL_TO_STAT[skill]), ...structureModifiers(realm, card, skill));
     dc = getControlDC() + mod;
   }
   const total = base + stackedTotal(extras);
@@ -315,7 +316,7 @@ async function rollCheck(card, realm) {
 
   const statistic = kingdom?.skills?.[skill];
   if (!statistic) return null;
-  modifiers.push(...advisorModifiers(realm, card, stat));
+  modifiers.push(...advisorModifiers(realm, card, stat), ...structureModifiers(realm, card, skill));
   const dc = getControlDC() + mod;
   const roll = await statistic.roll({ ...options, dc: { value: dc }, modifiers: toModifiers(modifiers) });
   if (!roll) return null;

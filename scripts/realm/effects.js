@@ -6,6 +6,7 @@ import { isKingmakerActive, summarizeRealm } from "../integrations/kingmaker.js"
 import { newId } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { completeProject, refundProject } from "./projects.js";
+import { syncKingdomSettlements } from "./settlements.js";
 
 const { DialogV2 } = foundry.applications.api;
 
@@ -552,4 +553,5 @@ export async function commitKingdomChanges(ctx) {
   }
 
   if (Object.keys(update).length) await kingdom.update(update);
+  if (ctx.syncSettlements) await syncKingdomSettlements();
 }

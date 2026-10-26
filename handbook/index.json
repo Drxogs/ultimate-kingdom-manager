@@ -42,6 +42,12 @@
     },
     {
       "book": "player",
+      "key": "settlements",
+      "name": "Settlements and Buildings",
+      "file": "player-settlements.html"
+    },
+    {
+      "book": "player",
       "key": "companions",
       "generated": "companions"
     },
@@ -91,6 +97,12 @@
       "key": "map",
       "name": "The Map, Pins and GM Tasks",
       "file": "gm-map.html"
+    },
+    {
+      "book": "gm",
+      "key": "settlements",
+      "name": "Settlements",
+      "file": "gm-settlements.html"
     },
     {
       "book": "gm",

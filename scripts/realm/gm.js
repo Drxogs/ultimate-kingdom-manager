@@ -5,6 +5,8 @@ import { addLog } from "./state.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
 import { setFortified } from "./projects.js";
+import { removeBuilding, settlements, syncKingdomSettlements } from "./settlements.js";
+import { getKingdom } from "../integrations/party.js";
 import { completeGmTask, dismissCard, recordOutcome, rollCard } from "./resolve.js";
 import { getRealm, updateRealm } from "./state.js";
 
@@ -37,6 +39,29 @@ const OPS = {
   fortify: async ({ hexKey, on }) => {
     if (hexKey === undefined || hexKey === null) return { ok: false, reason: "Unknown" };
     await setFortified(hexKey, !!on);
+    return {};
+  },
+  removeBuilding: async ({ settlementId, index }) => {
+    await updateRealm((realm) => removeBuilding(realm, settlementId, Number(index)));
+    await syncKingdomSettlements();
+    return {};
+  },
+  settlement: async ({ settlementId, waterside, capital, remove }) => {
+    let capitalName = null;
+    await updateRealm((realm) => {
+      const target = settlements(realm).find((s) => s.id === settlementId);
+      if (!target) return;
+      if (waterside !== undefined) target.waterside = !!waterside;
+      if (capital) {
+        for (const s of settlements(realm)) s.capital = s.id === settlementId;
+        capitalName = target.name;
+      }
+      if (remove) realm.settlements = settlements(realm).filter((s) => s.id !== settlementId);
+    });
+    const kingdom = getKingdom();
+    if (remove && kingdom) await kingdom.update({ [`settlements.-=${settlementId}`]: null });
+    await syncKingdomSettlements();
+    if (capitalName && kingdom) await kingdom.update({ capital: capitalName });
     return {};
   },
   finishRankUp: async ({ projectId }) => {

@@ -117,7 +117,8 @@
         "Overview": "Realm",
         "Desks": "Desks",
         "Log": "Chronicle",
-        "Council": "Council"
+        "Council": "Council",
+        "Settlements": "Settlements"
       },
       "Level": "Level",
       "Size": "Size",
@@ -227,7 +228,11 @@
       "proposal-rejected": "Rejected: {name}.",
       "proposal-withdrawn": "Withdrawn: {name}.",
       "ambition": "Ambition reached: {name}.",
-      "hired-upkeep": "Hired advisors paid {amount} BP."
+      "hired-upkeep": "Hired advisors paid {amount} BP.",
+      "capital": "{name} became the capital.",
+      "settlement": "{name} joined the realm.",
+      "settlement-grew": "{name} grew.",
+      "overcrowded": "Overcrowded settlements added {amount} Unrest."
     },
     "Seat": {
       "ruler": "Ruler",
@@ -315,7 +320,7 @@
         "AdvisorBusy": "The advisor is busy with {card}.",
         "TooPoor": "The treasury needs {cost} BP for that.",
         "NoTarget": "That place isn't available for this project.",
-        "NoStructure": "That structure can't be built yet.",
+        "NoStructure": "That building can't go up there now.",
         "TapDisabled": "Tapping the treasury is turned off.",
         "TapDenied": "The GM said no.",
         "InDebt": "Economy can't rank up while the realm is in debt.",
@@ -323,7 +328,11 @@
         "NotEnoughGold": "That character doesn't have that much gold.",
         "AdvisorOnly": "Only the advisor can do this one.",
         "NotRuler": "Only the Ruler or the GM can do that.",
-        "DeskBusy": "The {desk} desk is tied up with {card}."
+        "DeskBusy": "The {desk} desk is tied up with {card}.",
+        "NoCapital": "Found the capital first.",
+        "HasCapital": "The realm already has a capital.",
+        "NoName": "Give it a name.",
+        "NameTaken": "A settlement already has that name."
       }
     },
     "Effect": {
@@ -469,7 +478,8 @@
         "claimed-no-farm": "No claimed hex is free for farmland.",
         "claimed-no-camp": "No claimed hex is free for a work site.",
         "settlement": "The realm has no settlements yet.",
-        "claimed-not-fortified": "Every claimed hex is already fortified."
+        "claimed-not-fortified": "Every claimed hex is already fortified.",
+        "claimed-no-settlement": "Every claimed hex already has a settlement."
       },
       "NoStructures": "No structures are known yet. Import the story content first.",
       "Started": "The project is on the desk. {cost} BP paid. Delegate it or handle it personally.",
@@ -482,13 +492,15 @@
         "camp": "Add a {camp} on {where}.",
         "structure": "Add {name} to {where}.",
         "fortify": "Mark a fortification on {where}.",
-        "fortifyPick": "Fortify {where}: open that hex on the map and tick Fortified in its Kingdom section."
+        "fortifyPick": "Fortify {where}: open that hex on the map and tick Fortified in its Kingdom section.",
+        "settlement": "Mark a village named {name} on {where}."
       },
       "PartyHex": "the hex the party picked",
       "PartyWhere": "the hex the party picked ({where})",
       "WhereNote": "Where (optional)",
       "WhereHint": "Tell the GM which hex. A note here goes into the GM's task.",
-      "WherePlaceholder": "e.g. east of Monkeyton, by the river"
+      "WherePlaceholder": "e.g. east of Monkeyton, by the river",
+      "SettlementName": "Name of the new settlement"
     },
     "Tap": {
       "Title": "Tap the treasury",
@@ -609,6 +621,59 @@
       "Wasted": "Adds nothing right now: these checks already get a +{existing} status bonus, and status bonuses don't stack.",
       "Partial": "Only adds +{gain} right now: these checks already get a +{existing} status bonus, and status bonuses don't stack.",
       "Converted": "The status bonus wouldn't have added anything here, so it became two rerolls on the same checks instead."
+    },
+    "Settlement": {
+      "Type": {
+        "village": "Village",
+        "town": "Town",
+        "city": "City",
+        "metropolis": "Metropolis"
+      },
+      "BonusLabel": "Buildings in {name}",
+      "Grew": "{name} has grown into a {type}.",
+      "NowOvercrowded": "{name} is now overcrowded: it needs more homes (houses, tenements and other residential buildings), or it adds 1 Unrest a month.",
+      "Founded": "{name} is founded.",
+      "CapitalTask": "Found the capital {name}: claim {where} if it isn't already, and mark a village named {name} there.",
+      "CapitalChatTitle": "{name} is the capital",
+      "CapitalChat": "The realm has its heart. Settlers raise the first homes and the banners go up. From here the kingdom grows.",
+      "FirstStepTitle": "First, found your capital",
+      "FirstStep": "Every kingdom starts with a capital. Choose where it stands and give it a name; the GM marks it on the map. Until then the desks stay quiet and no projects can start.",
+      "FirstStepWait": "Your Ruler (or, with no Ruler yet, any player) founds the capital.",
+      "FoundCapital": "Found the capital",
+      "Name": "Name",
+      "NamePlaceholder": "e.g. Tatzlford",
+      "Waterside": "On a river, lake or swamp",
+      "WatersideHint": "Waterside settlements can use mills and piers to their full effect.",
+      "UseMap": "Make this settlement on the map the capital",
+      "NewVillage": "Found a new village",
+      "Empty": "No settlements yet.",
+      "Capital": "Capital",
+      "Level": "Level {level}",
+      "Lots": "{used} of {capacity} lots",
+      "Homes": "Homes {homes} of {needed} needed",
+      "Overcrowded": "Overcrowded: +1 Unrest a month until it has more homes.",
+      "Consumption": "Food {n} a month",
+      "Bonuses": "Bonuses",
+      "NoBonuses": "No skill bonuses yet.",
+      "GrowsNext": "Grows into a {type} with the next building.",
+      "GrowNeeds": "Becomes a {type} at kingdom level {level} with {lots} lots built and enough homes.",
+      "Build": "Build here",
+      "Remove": "Remove this building",
+      "RemoveConfirm": "Remove {name} from {settlement}? Use this for rubble or a building the story destroyed.",
+      "MakeCapital": "Make this the capital",
+      "ToggleWater": "Waterside",
+      "Delete": "Remove this settlement",
+      "DeleteConfirm": "Remove {name} from the realm? Its buildings go with it. The map isn't changed.",
+      "NotOnMap": "not on the map yet",
+      "Upgrade": "replaces {name}",
+      "Room": "{n} lots free",
+      "PickSettlement": "Where should it be built?",
+      "WhatToBuild": "What should be built?",
+      "NoRoom": "No building fits in {name} right now. It needs to grow first, or the kingdom needs a higher level.",
+      "LotsShort": "{n} lot(s)",
+      "Infrastructure": "infrastructure",
+      "Homes1": "home",
+      "InfrastructureHead": "Infrastructure"
     }
   }
 }

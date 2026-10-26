@@ -6,12 +6,24 @@ import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnr
 import { canRankUp, companionAttitude, isHired, rankBonus, rankCap, rawSeatCompanionId, routinePoints, seatCompanionId, statProgress, weeklyIncome } from "../realm/rules.js";
 import { getRealm, updateRealm } from "../realm/state.js";
 import { rankUpChoices, rankUpCost, rankUpProject } from "../realm/ranks.js";
-import { buildableStructures, isHexProject, projectQuote, projectsForSeat, projectTargets } from "../realm/projects.js";
+import { buildableStructures, isHexProject, projectQuote, projectsForSeat, projectTargets, structureCatalog } from "../realm/projects.js";
 import { tapCostBP, tapLimit, tapMode } from "../realm/treasury.js";
 import { audienceResponses } from "../realm/audiences.js";
 import { proposals } from "../realm/council.js";
 import { ambitionsView } from "../realm/ambitions.js";
 import { openHandbook } from "../content/handbook.js";
+import {
+  canFoundCapital,
+  canGrow,
+  hasCapital,
+  roomFor,
+  settlementBonuses,
+  settlementHex,
+  settlements,
+  settlementState,
+  SETTLEMENT_INFO,
+  unknownMapSettlements
+} from "../realm/settlements.js";
 import { getProject, getStoryEvents } from "../content/data.js";
 import { sendRequest } from "../realm/requests.js";
 import {
@@ -133,6 +145,12 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       beginRankUp: KingdomManager.#beginRankUp,
       startProject: KingdomManager.#startProject,
       openHandbook: () => openHandbook(),
+      foundCapital: KingdomManager.#foundCapital,
+      buildHere: KingdomManager.#buildHere,
+      removeBuilding: KingdomManager.#removeBuilding,
+      makeCapital: KingdomManager.#makeCapital,
+      toggleWaterside: KingdomManager.#toggleWaterside,
+      deleteSettlement: KingdomManager.#deleteSettlement,
       reveal: KingdomManager.#reveal,
       tapTreasury: KingdomManager.#tapTreasury,
       hearAudience: KingdomManager.#hearAudience,
@@ -154,6 +172,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     tabs: { template: "templates/generic/tab-navigation.hbs" },
     overview: { template: `modules/${MODULE_ID}/templates/manager/overview.hbs`, scrollable: [""] },
     desks: { template: `modules/${MODULE_ID}/templates/manager/desks.hbs`, scrollable: [""] },
+    settlements: { template: `modules/${MODULE_ID}/templates/manager/settlements.hbs`, scrollable: [""] },
     council: { template: `modules/${MODULE_ID}/templates/manager/council.hbs`, scrollable: [""] },
     log: { template: `modules/${MODULE_ID}/templates/manager/log.hbs`, scrollable: [""] }
   };
@@ -163,6 +182,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       tabs: [
         { id: "overview", icon: "fa-solid fa-landmark", label: "UKM.Manager.Tab.Overview" },
         { id: "desks", icon: "fa-solid fa-inbox", label: "UKM.Manager.Tab.Desks" },
+        { id: "settlements", icon: "fa-solid fa-city", label: "UKM.Manager.Tab.Settlements" },
         { id: "council", icon: "fa-solid fa-landmark-dome", label: "UKM.Manager.Tab.Council" },
         { id: "log", icon: "fa-solid fa-scroll", label: "UKM.Manager.Tab.Log" }
       ],
@@ -222,6 +242,10 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         atCap: stat.rank >= rankCap(level)
       };
     });
+    context.hasCapital = hasCapital(realm);
+    context.canFoundCapital = !context.hasCapital && canFoundCapital(game.user);
+    context.settlements = this.#prepareSettlements(realm, level);
+    context.canBuild = context.hasCapital && canActForSeat(game.user, "viceroy");
     context.desks = this.#prepareDesks(realm, kingdom);
     context.council = this.#prepareCouncil(realm);
     context.ambitions = ambitionsView(realm);
@@ -336,12 +360,67 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         supervisor: supervisor && supervisor.uuid !== leader?.uuid ? supervisor.name : null,
         mine,
         tiedUp: lentTo ? game.i18n.format("UKM.Card.DeskBusy", { card: lentTo.name }) : null,
-        canStartProject: canAct && projectsForSeat(seat).length > 0,
+        canStartProject: canAct && hasCapital(realm) && projectsForSeat(seat).length > 0,
         canTap: seat === "treasurer" && canAct && tapMode() !== "disabled",
         cards,
         empty: !cards.length
       };
     });
+  }
+
+  #prepareSettlements(realm, level) {
+    const label = (type) => game.i18n.localize(`UKM.Settlement.Type.${type}`);
+    const skill = (s) => game.i18n.localize(`UKM.Skill.${s}`);
+    return settlements(realm)
+      .slice()
+      .sort((a, b) => Number(b.capital) - Number(a.capital) || a.name.localeCompare(b.name))
+      .map((s) => {
+        const state = settlementState(s);
+        const grids = s.type === "metropolis" ? s.grids ?? 2 : 1;
+        const openBlocks = { village: 1, town: 4, city: 9, metropolis: 9 }[s.type] ?? 1;
+        const cells = [];
+        state.buildings.forEach((b, index) => {
+          if (b.infrastructure) return;
+          const lots = Math.max(1, b.lots ?? 1);
+          for (let i = 0; i < lots; i++) cells.push({ name: b.name, slug: b.slug, index, first: i === 0, residential: !!b.residential, span: lots > 1 });
+        });
+        const blocks = [];
+        for (let g = 0; g < grids; g++) {
+          for (let block = 0; block < 9; block++) {
+            const open = g > 0 || block < openBlocks;
+            const lots = [];
+            for (let lot = 0; lot < 4; lot++) lots.push(open ? cells.shift() ?? { empty: true } : { locked: true });
+            blocks.push({ open, lots });
+          }
+        }
+        const next = canGrow(s, state, level);
+        const info = SETTLEMENT_INFO[s.type];
+        const nextInfo = info.next ? SETTLEMENT_INFO[info.next] : null;
+        return {
+          id: s.id,
+          name: s.name,
+          capital: s.capital,
+          waterside: s.waterside,
+          typeLabel: label(s.type),
+          level: state.level,
+          used: state.lots,
+          capacity: state.capacity,
+          homes: state.homes,
+          homesNeeded: state.homesNeeded,
+          overcrowded: state.overcrowded,
+          consumption: state.consumption,
+          onMap: !!settlementHex(s),
+          hexKey: settlementHex(s),
+          bonuses: Object.entries(settlementBonuses(s, state)).map(([k, v]) => `${skill(k)} +${v}`),
+          infrastructure: state.buildings.filter((b) => b.infrastructure).map((b) => ({ name: b.name, index: state.buildings.indexOf(b) })),
+          grid: blocks.slice(0, 9),
+          growth: next
+            ? game.i18n.format("UKM.Settlement.GrowsNext", { type: label(next) })
+            : nextInfo
+              ? game.i18n.format("UKM.Settlement.GrowNeeds", { type: label(info.next), level: nextInfo.minLevel, lots: info.growAt })
+              : null
+        };
+      });
   }
 
   #logText(entry) {
@@ -358,9 +437,11 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static async #focusHex(event, target) {
     const taskId = target.closest("[data-task]")?.dataset.task;
-    const hexKey = taskId
-      ? getRealm().gmTasks.find((t) => t.id === taskId)?.hexKey
-      : findCard(target)?.target?.hexKey;
+    const hexKey = target.dataset.hex
+      ? target.dataset.hex
+      : taskId
+        ? getRealm().gmTasks.find((t) => t.id === taskId)?.hexKey
+        : findCard(target)?.target?.hexKey;
     if (hexKey) await focusHex(hexKey);
   }
 
@@ -435,59 +516,190 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             rejectClose: false
           });
     const def = type ? getProject(type) : null;
-    if (!def) return;
+    if (def) await KingdomManager.#projectDialog(def);
+  }
 
+  static async #buildHere(event, target) {
+    const settlementId = target.closest("[data-settlement]")?.dataset.settlement;
+    const def = getProject("build-structure");
+    if (def && settlementId) await KingdomManager.#projectDialog(def, { settlementId });
+  }
+
+  static #structureLine(s) {
+    const skills = (s.bonuses ?? [])
+      .filter((b) => !b.events)
+      .map((b) => `+${b.value} ${b.skills.map((k) => game.i18n.localize(`UKM.Skill.${k}`)).join("/")}`);
+    const parts = [
+      s.infrastructure ? game.i18n.localize("UKM.Settlement.Infrastructure") : game.i18n.format("UKM.Settlement.LotsShort", { n: s.lots ?? 1 }),
+      ...(s.residential ? [game.i18n.localize("UKM.Settlement.Homes1")] : []),
+      ...skills,
+      ...(s.replacesName ? [game.i18n.format("UKM.Settlement.Upgrade", { name: s.replacesName })] : [])
+    ];
+    return parts.join(" · ");
+  }
+
+  static async #projectDialog(def, { settlementId = null } = {}) {
+    const esc = Handlebars.escapeExpression;
     const targets = projectTargets(def);
     if (!targets.length) {
-      ui.notifications.warn(game.i18n.localize(`UKM.Project.NoTargets.${def.target}`));
+      ui.notifications.warn(game.i18n.localize(def.target === "settlement" ? "UKM.Settlement.Empty" : `UKM.Project.NoTargets.${def.target}`));
       return;
     }
-    const structures = def.target === "settlement" ? buildableStructures() : [];
-    if (def.target === "settlement" && !structures.length) {
-      ui.notifications.warn(game.i18n.localize("UKM.Project.NoStructures"));
-      return;
+    let picked = targets[0];
+    let structures = [];
+    if (def.target === "settlement") {
+      if (!settlementId && targets.length > 1) {
+        settlementId = await DialogV2.wait({
+          window: { title: def.name },
+          content: `<p>${game.i18n.localize("UKM.Settlement.PickSettlement")}</p>`,
+          buttons: targets.map((t) => ({ action: t.settlementId, label: t.label })),
+          rejectClose: false
+        });
+        if (!settlementId) return;
+      }
+      picked = targets.find((t) => t.settlementId === settlementId) ?? targets[0];
+      const settlement = settlements().find((x) => x.id === picked.settlementId);
+      structures = buildableStructures(settlement);
+      if (!structures.length) {
+        ui.notifications.warn(game.i18n.localize(structureCatalog().length ? "UKM.Settlement.NoRoom" : "UKM.Project.NoStructures").replace("{name}", settlement?.name ?? ""));
+        return;
+      }
     }
     const probe = { eventId: `project:${def.id}`, seat: def.seat, dcAdjust: 0 };
     const odds = estimateCheck(probe, { type: "advisor", skill: def.skill[0] });
     const quoteText = (q) => game.i18n.format("UKM.Project.Quote", { cost: q.cost, days: q.days });
-    const targetOptions = targets
-      .map((t, i) => `<option value="${i}">${esc(t.label)}${def.target === "settlement" ? "" : ` — ${quoteText(projectQuote(def, t))}`}</option>`)
-      .join("");
-    const structureField = structures.length
-      ? `<div class="form-group"><label>${game.i18n.localize("UKM.Project.Structure")}</label><select name="structure">${structures
-          .map((s) => `<option value="${s.slug}">${esc(s.name)}${s.level ? ` (${s.level})` : ""} — ${quoteText(projectQuote(def, null, s))}</option>`)
-          .join("")}</select></div>`
-      : "";
-    const campField =
-      def.id === "establish-work-site"
-        ? `<div class="form-group"><label>${game.i18n.localize("UKM.Project.CampLabel")}</label><select name="camp">${["lumber", "quarry", "mine"]
-            .map((c) => `<option value="${c}">${game.i18n.localize(`UKM.Project.Camp.${c}`)}</option>`)
-            .join("")}</select><p class="hint">${game.i18n.localize("UKM.Project.CampHint")}</p></div>`
-        : "";
+    let body = "";
+    if (def.target === "settlement") {
+      const room = roomFor(settlements().find((x) => x.id === picked.settlementId));
+      body = `<p><strong>${esc(picked.label)}</strong> · ${game.i18n.format("UKM.Settlement.Room", { n: room })}</p>
+        <div class="form-group stacked"><label>${game.i18n.localize("UKM.Settlement.WhatToBuild")}</label><select name="structure">${structures
+          .map((s) => `<option value="${s.key}">${esc(s.name)}${s.level ? ` (${s.level})` : ""} — ${quoteText(projectQuote(def, null, s))} — ${esc(KingdomManager.#structureLine(s))}</option>`)
+          .join("")}</select></div>`;
+    } else {
+      body = `<p>${quoteText(projectQuote(def, picked))}</p>`;
+      if (def.id === "found-settlement") {
+        body += `<div class="form-group"><label>${game.i18n.localize("UKM.Project.SettlementName")}</label><input type="text" name="settlementName" maxlength="60" required placeholder="${esc(game.i18n.localize("UKM.Settlement.NamePlaceholder"))}"></div>
+          <div class="form-group"><label>${game.i18n.localize("UKM.Settlement.Waterside")}</label><input type="checkbox" name="waterside"></div>
+          <p class="hint">${game.i18n.localize("UKM.Settlement.WatersideHint")}</p>`;
+      }
+      if (isHexProject(def)) {
+        body += `<div class="form-group"><label>${game.i18n.localize("UKM.Project.WhereNote")}</label><input type="text" name="where" maxlength="80" placeholder="${esc(game.i18n.localize("UKM.Project.WherePlaceholder"))}"></div>
+          <p class="hint">${game.i18n.localize("UKM.Project.WhereHint")}</p>`;
+      }
+    }
+    if (def.id === "establish-work-site") {
+      body += `<div class="form-group"><label>${game.i18n.localize("UKM.Project.CampLabel")}</label><select name="camp">${["lumber", "quarry", "mine"]
+        .map((c) => `<option value="${c}">${game.i18n.localize(`UKM.Project.Camp.${c}`)}</option>`)
+        .join("")}</select><p class="hint">${game.i18n.localize("UKM.Project.CampHint")}</p></div>`;
+    }
     const content = `<p>${esc(def.hook)}</p>${odds ? `<p class="hint">${game.i18n.localize("UKM.Difficulty.Advisor")} ${odds.label}</p>` : ""}
-      ${def.target === "none"
-        ? `<input type="hidden" name="target" value="0"><p>${quoteText(projectQuote(def, targets[0]))}</p>`
-        : isHexProject(def)
-        ? `<input type="hidden" name="target" value="0"><p>${quoteText(projectQuote(def, targets[0]))}</p>
-           <div class="form-group"><label>${game.i18n.localize("UKM.Project.WhereNote")}</label><input type="text" name="where" maxlength="80" placeholder="${esc(game.i18n.localize("UKM.Project.WherePlaceholder"))}"></div>
-           <p class="hint">${game.i18n.localize("UKM.Project.WhereHint")}</p>`
-        : `<div class="form-group"><label>${game.i18n.localize(def.target === "settlement" ? "UKM.Project.Where" : "UKM.Project.Hex")}</label><select name="target">${targetOptions}</select></div>`}
-      ${structureField}${campField}<p class="hint">${game.i18n.format("UKM.Project.Treasury", { bp: getRealm().treasury })}</p>`;
-    const read = (mode) => (event, button) => ({
-      mode,
-      target: button.form.elements.target.value,
-      structure: button.form.elements.structure?.value ?? null,
-      camp: button.form.elements.camp?.value ?? null,
-      where: button.form.elements.where?.value ?? ""
-    });
+      ${body}<p class="hint">${game.i18n.format("UKM.Project.Treasury", { bp: getRealm().treasury })}</p>`;
+    const read = (mode) => (event, button) => {
+      const f = button.form.elements;
+      return {
+        mode,
+        structure: f.structure?.value ?? null,
+        camp: f.camp?.value ?? null,
+        where: f.where?.value ?? "",
+        settlementName: f.settlementName?.value ?? "",
+        waterside: !!f.waterside?.checked
+      };
+    };
     const buttons = [{ action: "start", label: game.i18n.localize("UKM.Project.Start"), icon: "fa-solid fa-hammer", default: true, callback: read("start") }];
     if (getSetting(SETTINGS.council)) buttons.push({ action: "propose", label: game.i18n.localize("UKM.Council.Propose"), icon: "fa-solid fa-landmark-dome", callback: read("propose") });
-    const choice = await DialogV2.wait({ window: { title: def.name }, position: { width: 520 }, content, buttons, rejectClose: false });
+    const choice = await DialogV2.wait({ window: { title: def.name }, position: { width: 560 }, content, buttons, rejectClose: false });
     if (!choice?.mode) return;
-    const picked = targets[Number(choice.target)];
-    const request = { type: def.id, hexKey: picked.hexKey, structure: choice.structure, camp: choice.camp, where: choice.where };
+    if (def.id === "found-settlement" && !choice.settlementName.trim()) {
+      ui.notifications.warn(game.i18n.localize("UKM.Request.Reason.NoName"));
+      return;
+    }
+    const request = {
+      type: def.id,
+      hexKey: picked.hexKey,
+      settlementId: picked.settlementId ?? null,
+      structure: choice.structure,
+      camp: choice.camp,
+      where: choice.where,
+      settlementName: choice.settlementName,
+      waterside: choice.waterside
+    };
     await sendRequest(choice.mode === "propose" ? "proposeProject" : "startProject", request);
   }
+
+  static async #foundCapital() {
+    const esc = Handlebars.escapeExpression;
+    const onMap = unknownMapSettlements();
+    const mapChoices = onMap.length
+      ? `<p>${game.i18n.localize("UKM.Settlement.UseMap")}</p>${onMap
+          .map((h, i) => `<label class="ukm-radio"><input type="radio" name="choice" value="${h.key}" ${i === 0 ? "checked" : ""}> ${esc(h.name)} (${game.i18n.localize(`UKM.Settlement.Type.${h.type}`)})</label>`)
+          .join("")}<label class="ukm-radio"><input type="radio" name="choice" value=""> ${game.i18n.localize("UKM.Settlement.NewVillage")}</label><hr>`
+      : `<input type="hidden" name="choice" value="">`;
+    const content = `<p>${game.i18n.localize("UKM.Settlement.FirstStep")}</p>${mapChoices}
+      <div class="form-group"><label>${game.i18n.localize("UKM.Settlement.Name")}</label><input type="text" name="name" maxlength="60" placeholder="${esc(game.i18n.localize("UKM.Settlement.NamePlaceholder"))}"></div>
+      <div class="form-group"><label>${game.i18n.localize("UKM.Settlement.Waterside")}</label><input type="checkbox" name="waterside"></div>
+      <p class="hint">${game.i18n.localize("UKM.Settlement.WatersideHint")}</p>
+      <div class="form-group"><label>${game.i18n.localize("UKM.Project.WhereNote")}</label><input type="text" name="where" maxlength="80" placeholder="${esc(game.i18n.localize("UKM.Project.WherePlaceholder"))}"></div>
+      <p class="hint">${game.i18n.localize("UKM.Project.WhereHint")}</p>`;
+    const choice = await DialogV2.prompt({
+      window: { title: game.i18n.localize("UKM.Settlement.FoundCapital") },
+      position: { width: 480 },
+      content,
+      ok: {
+        label: game.i18n.localize("UKM.Settlement.FoundCapital"),
+        icon: "fa-solid fa-flag",
+        callback: (event, button) => {
+          const f = button.form.elements;
+          const mapHex = button.form.querySelector("input[name=choice]:checked")?.value ?? f.choice?.value ?? "";
+          return { mapHex: mapHex || null, name: f.name.value, waterside: f.waterside.checked, where: f.where.value };
+        }
+      },
+      rejectClose: false
+    });
+    if (!choice) return;
+    if (!choice.mapHex && !choice.name.trim()) {
+      ui.notifications.warn(game.i18n.localize("UKM.Request.Reason.NoName"));
+      return;
+    }
+    await sendRequest("foundCapital", choice);
+  }
+
+  static async #removeBuilding(event, target) {
+    const settlementId = target.closest("[data-settlement]")?.dataset.settlement;
+    const index = target.closest("[data-index]")?.dataset.index;
+    const settlement = settlements().find((s) => s.id === settlementId);
+    const building = settlement?.buildings?.[Number(index)];
+    if (!building || !game.user.isGM) return;
+    const ok = await DialogV2.confirm({
+      window: { title: settlement.name },
+      content: `<p>${game.i18n.format("UKM.Settlement.RemoveConfirm", { name: Handlebars.escapeExpression(building.name), settlement: Handlebars.escapeExpression(settlement.name) })}</p>`,
+      rejectClose: false
+    });
+    if (ok) await sendRequest("gm", { op: "removeBuilding", settlementId, index: Number(index) });
+  }
+
+  static async #makeCapital(event, target) {
+    const settlementId = target.closest("[data-settlement]")?.dataset.settlement;
+    if (settlementId) await sendRequest("gm", { op: "settlement", settlementId, capital: true });
+  }
+
+  static async #toggleWaterside(event, target) {
+    const settlementId = target.closest("[data-settlement]")?.dataset.settlement;
+    const settlement = settlements().find((s) => s.id === settlementId);
+    if (settlement) await sendRequest("gm", { op: "settlement", settlementId, waterside: !settlement.waterside });
+  }
+
+  static async #deleteSettlement(event, target) {
+    const settlementId = target.closest("[data-settlement]")?.dataset.settlement;
+    const settlement = settlements().find((s) => s.id === settlementId);
+    if (!settlement) return;
+    const ok = await DialogV2.confirm({
+      window: { title: settlement.name },
+      content: `<p>${game.i18n.format("UKM.Settlement.DeleteConfirm", { name: Handlebars.escapeExpression(settlement.name) })}</p>`,
+      rejectClose: false
+    });
+    if (ok) await sendRequest("gm", { op: "settlement", settlementId, remove: true });
+  }
+
 
   #prepareCouncil(realm) {
     const isRuler = game.user.isGM || canActForSeat(game.user, "ruler");

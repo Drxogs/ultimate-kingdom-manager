@@ -9,6 +9,7 @@ import { gmAction } from "./gm.js";
 import { fundProposal, proposeProject, rejectProposal, voteProposal } from "./council.js";
 import { chooseRankUp, startRankUp } from "./ranks.js";
 import { getRealm } from "./state.js";
+import { foundCapital } from "./settlements.js";
 
 const SOCKET = `module.${MODULE_ID}`;
 const TIMEOUT = 15000;
@@ -31,7 +32,8 @@ const HANDLERS = {
   rejectProposal,
   repayDebt,
   startProject: (payload) => startProject(payload, { canActForSeat }),
-  chooseRankUp
+  chooseRankUp,
+  foundCapital
 };
 
 const pending = new Map();

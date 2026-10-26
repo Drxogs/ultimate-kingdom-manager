@@ -14,6 +14,7 @@ import { syncPins } from "./pins.js";
 import { resolveDue } from "./resolve.js";
 import { advanceRankUps } from "./ranks.js";
 import { isLeader } from "./leader.js";
+import { adoptMapSettlements, hasCapital, overcrowdedCount } from "./settlements.js";
 
 const MAX_CATCH_UP_WEEKS = 26;
 const MAX_MATTERS_PER_TICK = 2;
@@ -54,6 +55,7 @@ export async function tick() {
       await advanceRankUps();
       await checkAmbitions();
       await runWatchers();
+      await adoptMapSettlements();
       await syncPins();
       return;
     }
@@ -61,14 +63,22 @@ export async function tick() {
     let drawn = [];
     let unrest = 0;
     await updateRealm((realm) => {
+      const founded = hasCapital(realm);
       for (let i = 0; i < weeks; i++) unrest += runWeek(realm);
       expireCards(realm);
-      if (newMonth) drawn = drawMonthlyEvents(realm);
-      if (newMonth && getSetting(SETTINGS.audiences)) {
+      if (newMonth && founded) drawn = drawMonthlyEvents(realm);
+      if (newMonth) {
+        const crowded = overcrowdedCount(realm);
+        if (crowded) {
+          unrest += crowded;
+          addLog(realm, { type: "overcrowded", amount: crowded });
+        }
+      }
+      if (newMonth && founded && getSetting(SETTINGS.audiences)) {
         const card = drawAudience(realm);
         if (card) drawn.push(card);
       }
-      if (weeks && getSetting(SETTINGS.deskMatters)) {
+      if (weeks && founded && getSetting(SETTINGS.deskMatters)) {
         for (let i = 0; i < Math.min(weeks, MAX_MATTERS_PER_TICK); i++) {
           const card = drawWeeklyMatter(realm);
           if (card) drawn.push(card);

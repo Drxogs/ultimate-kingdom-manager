@@ -6,6 +6,7 @@ import { canActForSeat } from "./resolve.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { isLeader } from "./leader.js";
+import { settlements } from "./settlements.js";
 
 const KEEP_DAYS = 60;
 
@@ -21,18 +22,25 @@ export async function proposeProject(request) {
   const seatDef = def.signature ? SEATS.map((s) => signatureForSeat(s)).find((s) => s?.id === def.id) : def;
   if (!seatDef?.seat || !canActForSeat(user, seatDef.seat)) return { ok: false, reason: "NotYourSeat" };
   const targets = projectTargets(seatDef);
-  const target = isHexProject(seatDef) ? targets[0] : targets.find((t) => t.hexKey === (request.hexKey ?? null));
+  const target =
+    seatDef.target === "settlement"
+      ? targets.find((t) => t.settlementId === request.settlementId)
+      : isHexProject(seatDef)
+        ? targets[0]
+        : targets.find((t) => t.hexKey === (request.hexKey ?? null));
   if (!target) return { ok: false, reason: "NoTarget" };
-  const structure = request.structure ? buildableStructures().find((s) => s.slug === request.structure) : null;
+  const settlement = target.settlementId ? settlements().find((s) => s.id === target.settlementId) : null;
+  const structure = request.structure ? buildableStructures(settlement).find((s) => s.key === request.structure) : null;
   const quote = projectQuote(seatDef, target, structure);
   const where = String(request.where ?? "").trim().slice(0, 80);
-  const label = structure ? `${structure.name}, ${target.settlement}` : where || target.label;
+  const settlementName = String(request.settlementName ?? "").trim().slice(0, 60);
+  const label = structure ? `${structure.name}, ${target.settlement}` : settlementName || where || target.label;
 
   await updateRealm((realm) => {
     realm.council ??= { proposals: [] };
     realm.council.proposals.push({
       id: newId(),
-      request: { type: request.type, hexKey: request.hexKey ?? null, structure: request.structure ?? null, camp: request.camp ?? null, where },
+      request: { type: request.type, hexKey: request.hexKey ?? null, structure: request.structure ?? null, camp: request.camp ?? null, where, settlementId: request.settlementId ?? null, settlementName, waterside: !!request.waterside },
       name: label ? `${seatDef.name}: ${label}` : seatDef.name,
       seat: seatDef.seat,
       cost: quote.cost,

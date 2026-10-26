@@ -1,0 +1,67 @@
+<section class="tab ukm-settlements {{tab.cssClass}}" data-tab="settlements" data-group="primary">
+  {{#unless hasCapital}}
+    <div class="ukm-first-step">
+      <i class="fa-solid fa-chess-rook"></i>
+      <div>
+        <h3>{{localize "UKM.Settlement.FirstStepTitle"}}</h3>
+        <p>{{localize "UKM.Settlement.FirstStep"}}</p>
+        {{#if canFoundCapital}}
+          <button type="button" data-action="foundCapital"><i class="fa-solid fa-flag"></i> {{localize "UKM.Settlement.FoundCapital"}}</button>
+        {{else}}
+          <p class="hint">{{localize "UKM.Settlement.FirstStepWait"}}</p>
+        {{/if}}
+      </div>
+    </div>
+  {{/unless}}
+  {{#each settlements}}
+    <article class="ukm-settlement {{#if overcrowded}}crowded{{/if}}" data-settlement="{{id}}">
+      <header class="ukm-major">
+        {{#if capital}}<i class="fa-solid fa-crown" data-tooltip="{{localize "UKM.Settlement.Capital"}}"></i>{{/if}}
+        {{name}}
+        <span class="ukm-settlement-type">{{typeLabel}} · {{localize "UKM.Settlement.Level" level=level}}</span>
+        <span class="controls">
+          {{#if @root.canBuild}}<button type="button" class="ukm-desk-action" data-action="buildHere"><i class="fa-solid fa-trowel-bricks"></i> {{localize "UKM.Settlement.Build"}}</button>{{/if}}
+          {{#if hexKey}}<button type="button" class="ukm-icon" data-action="focusHex" data-hex="{{hexKey}}" data-tooltip="{{localize "UKM.Card.Focus"}}"><i class="fa-solid fa-map-location-dot"></i></button>{{/if}}
+          {{#if @root.isGM}}
+            {{#unless capital}}<button type="button" class="ukm-icon" data-action="makeCapital" data-tooltip="{{localize "UKM.Settlement.MakeCapital"}}"><i class="fa-solid fa-crown"></i></button>{{/unless}}
+            <button type="button" class="ukm-icon {{#if waterside}}on{{/if}}" data-action="toggleWaterside" data-tooltip="{{localize "UKM.Settlement.ToggleWater"}}"><i class="fa-solid fa-water"></i></button>
+            <button type="button" class="ukm-icon" data-action="deleteSettlement" data-tooltip="{{localize "UKM.Settlement.Delete"}}"><i class="fa-solid fa-trash"></i></button>
+          {{/if}}
+        </span>
+      </header>
+      <div class="ukm-settlement-body">
+        <div class="ukm-grid {{#if @root.isGM}}editable{{/if}}">
+          {{#each grid}}
+            <div class="ukm-block {{#unless open}}locked{{/unless}}">
+              {{#each lots}}
+                {{#if empty}}<div class="ukm-lot empty"></div>
+                {{else if locked}}<div class="ukm-lot locked"></div>
+                {{else}}<div class="ukm-lot built {{#if residential}}home{{/if}} {{#if span}}span{{/if}}" data-index="{{index}}" data-tooltip="{{name}}">
+                  {{#if first}}<span>{{name}}</span>{{/if}}
+                  {{#if first}}{{#if @root.isGM}}<a class="ukm-lot-remove" data-action="removeBuilding" data-tooltip="{{localize "UKM.Settlement.Remove"}}"><i class="fa-solid fa-xmark"></i></a>{{/if}}{{/if}}
+                </div>{{/if}}
+              {{/each}}
+            </div>
+          {{/each}}
+        </div>
+        <div class="ukm-settlement-facts">
+          <p>{{localize "UKM.Settlement.Lots" used=used capacity=capacity}}</p>
+          <p class="{{#if overcrowded}}ukm-urgent{{/if}}"><i class="fa-solid fa-house"></i> {{localize "UKM.Settlement.Homes" homes=homes needed=homesNeeded}}</p>
+          {{#if overcrowded}}<p class="ukm-urgent">{{localize "UKM.Settlement.Overcrowded"}}</p>{{/if}}
+          <p><i class="fa-solid fa-wheat-awn"></i> {{localize "UKM.Settlement.Consumption" n=consumption}}</p>
+          {{#if waterside}}<p><i class="fa-solid fa-water"></i> {{localize "UKM.Settlement.Waterside"}}</p>{{/if}}
+          {{#unless onMap}}<p class="hint">{{localize "UKM.Settlement.NotOnMap"}}</p>{{/unless}}
+          <p class="ukm-facts-head">{{localize "UKM.Settlement.Bonuses"}}</p>
+          {{#if bonuses.length}}<p>{{#each bonuses}}<span class="ukm-tag">{{this}}</span> {{/each}}</p>{{else}}<p class="hint">{{localize "UKM.Settlement.NoBonuses"}}</p>{{/if}}
+          {{#if infrastructure.length}}
+            <p class="ukm-facts-head">{{localize "UKM.Settlement.InfrastructureHead"}}</p>
+            <p>{{#each infrastructure}}<span class="ukm-tag" data-index="{{index}}">{{name}}{{#if @root.isGM}} <a data-action="removeBuilding"><i class="fa-solid fa-xmark"></i></a>{{/if}}</span> {{/each}}</p>
+          {{/if}}
+          {{#if growth}}<p class="hint">{{growth}}</p>{{/if}}
+        </div>
+      </div>
+    </article>
+  {{else}}
+    {{#if hasCapital}}<p class="hint">{{localize "UKM.Settlement.Empty"}}</p>{{/if}}
+  {{/each}}
+</section>

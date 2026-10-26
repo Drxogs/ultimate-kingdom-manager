@@ -565,3 +565,79 @@
 .ukm-hex-hud .ukm-fortified { display: flex; align-items: center; gap: 0.3rem; margin: 0.2rem 0 0; }
 .ukm-hex-hud .ukm-fortified input { margin: 0; }
 .ukm-manager .ukm-tied-up { margin: 0.3rem 0 0 3.25rem; color: #8b1e1e; }
+
+/* First step and settlements */
+
+.ukm-manager .ukm-first-step {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--ukm-paper-bg);
+  box-shadow: var(--ukm-shadow), inset 0 0 0 1px #a98f39;
+}
+
+.ukm-manager .ukm-first-step > i { font-size: 2rem; color: var(--ukm-head); margin-top: 0.2rem; }
+.ukm-manager .ukm-first-step h3 { margin: 0 0 0.25rem; border: none; font: 600 var(--font-size-18, 18px) var(--serif, serif); color: var(--ukm-head); }
+.ukm-manager .ukm-first-step p { margin: 0 0 0.4rem; }
+.ukm-manager .ukm-first-step button { width: auto; }
+
+.ukm-manager .ukm-settlement { margin-bottom: 0.75rem; }
+.ukm-manager .ukm-settlement header.ukm-major { display: flex; align-items: baseline; gap: 0.4rem; }
+.ukm-manager .ukm-settlement header .fa-crown { color: #a98f39; }
+.ukm-manager .ukm-settlement-type { font: 400 var(--font-size-13, 13px) var(--sans-serif, sans-serif); color: var(--color-text-tertiary, #6b5a48); font-variant: small-caps; }
+.ukm-manager .ukm-settlement header .controls { margin-left: auto; display: flex; gap: 0.25rem; align-items: center; }
+.ukm-manager .ukm-icon.on { color: #2a5d8f; }
+
+.ukm-manager .ukm-settlement-body { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start; }
+
+.ukm-manager .ukm-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 5.5rem);
+  gap: 6px;
+  padding: 6px;
+  background: rgba(94, 74, 58, 0.25);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.35);
+}
+
+.ukm-manager .ukm-block {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 2.6rem;
+  gap: 2px;
+  padding: 2px;
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 0 1px rgba(94, 74, 58, 0.5);
+}
+
+.ukm-manager .ukm-block.locked { background: rgba(0, 0, 0, 0.12); box-shadow: none; }
+
+.ukm-manager .ukm-lot {
+  position: relative;
+  overflow: hidden;
+  font-size: 0.62rem;
+  line-height: 1.05;
+  padding: 2px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ukm-manager .ukm-lot.empty { background: rgba(255, 255, 255, 0.45); outline: 1px dashed rgba(94, 74, 58, 0.35); outline-offset: -2px; }
+.ukm-manager .ukm-lot.locked { background: transparent; }
+.ukm-manager .ukm-lot.built { background: #c9b48a; color: #2b2118; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25); }
+.ukm-manager .ukm-lot.built.home { background: #b7c99a; }
+.ukm-manager .ukm-lot.span { background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%); background-size: 8px 8px; }
+.ukm-manager .ukm-lot-remove { position: absolute; top: 0; right: 2px; font-size: 0.6rem; opacity: 0; color: #8b1e1e; }
+.ukm-manager .ukm-lot:hover .ukm-lot-remove { opacity: 1; }
+
+.ukm-manager .ukm-settlement-facts p { margin: 0 0 0.3rem; }
+.ukm-manager .ukm-settlement-facts .ukm-facts-head { margin-top: 0.5rem; font: 600 var(--font-size-13, 13px) var(--serif, serif); color: var(--ukm-head); }
+.ukm-manager .ukm-settlement-facts .ukm-tag a { margin-left: 0.2rem; color: #8b1e1e; }
+.ukm-manager .ukm-settlement.crowded .ukm-grid { box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba(139, 30, 30, 0.5); }
+
+.ukm-radio { display: flex; align-items: center; gap: 0.4rem; margin: 0.15rem 0; }
+.form-group.stacked select { width: 100%; }

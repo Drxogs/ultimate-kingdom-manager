@@ -2,6 +2,20 @@
   {{#if gmAway}}
     <p class="ukm-notice ukm-desks-notice">{{#if betweenSessions}}{{localize "UKM.Manager.GmAwayQueue"}}{{else}}{{localize "UKM.Manager.GmAwayClosed"}}{{/if}}{{#if queued}} {{localize "UKM.Manager.Queued" count=queued}}{{/if}}</p>
   {{/if}}
+  {{#unless hasCapital}}
+      <div class="ukm-first-step">
+        <i class="fa-solid fa-chess-rook"></i>
+        <div>
+          <h3>{{localize "UKM.Settlement.FirstStepTitle"}}</h3>
+          <p>{{localize "UKM.Settlement.FirstStep"}}</p>
+          {{#if canFoundCapital}}
+            <button type="button" data-action="foundCapital"><i class="fa-solid fa-flag"></i> {{localize "UKM.Settlement.FoundCapital"}}</button>
+          {{else}}
+            <p class="hint">{{localize "UKM.Settlement.FirstStepWait"}}</p>
+          {{/if}}
+        </div>
+      </div>
+  {{/unless}}
   {{#each desks}}
     <article class="ukm-desk {{#if mine}}mine{{/if}}" data-seat="{{seat}}">
       <header class="ukm-leader">

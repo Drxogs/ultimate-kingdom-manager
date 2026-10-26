@@ -180,6 +180,51 @@
       }
     },
     {
+      "id": "found-settlement",
+      "seat": "viceroy",
+      "skill": [
+        "engineering",
+        "industry"
+      ],
+      "target": "claimed-no-settlement",
+      "costWeeks": 3,
+      "workDays": 21,
+      "name": "Found a Settlement",
+      "hook": "Settlers, surveyors and a first well: a new village in a claimed hex. Tell the GM where.",
+      "kind": "project",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "completeProject": true
+          },
+          {
+            "refund": 0.5
+          }
+        ],
+        "success": [
+          {
+            "completeProject": true
+          }
+        ],
+        "failure": [
+          {
+            "refund": 0.5
+          },
+          {
+            "note": "The work didn't come together. Half the cost is recovered; it can be tried again."
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "note": "The work collapsed and the money is gone."
+          }
+        ]
+      }
+    },
+    {
       "id": "build-structure",
       "seat": "viceroy",
       "skill": [

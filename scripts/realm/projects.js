@@ -16,6 +16,7 @@ import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { syncPins } from "./pins.js";
 import { secondsPerDay } from "./time.js";
 import { isLeader } from "./leader.js";
+import { addBuilding, hasCapital, newSettlement, parseStructureHtml, roomFor, settlementHex, settlements, settlementState, syncKingdomSettlements } from "./settlements.js";
 
 const NEVER = 3650;
 const CAMPS = ["quarry", "mine", "lumber"];
@@ -62,6 +63,15 @@ export function projectTargets(def, realm = getRealm()) {
     if (!isKingmakerActive()) return [PARTY_PICKS];
     return possibleHexes(def, realm).length ? [PARTY_PICKS] : [];
   }
+  if (def.target === "settlement") {
+    return settlements(realm).map((s) => ({
+      hexKey: settlementHex(s),
+      settlementId: s.id,
+      settlement: s.name,
+      label: `${s.name} (${game.i18n.localize(`UKM.Settlement.Type.${s.type}`)})`,
+      factor: 1
+    }));
+  }
   if (!isKingmakerActive()) return def.target === "none" ? [PARTY_PICKS] : [];
   return possibleHexes(def, realm);
 }
@@ -102,12 +112,10 @@ function possibleHexes(def, realm) {
     case "none":
       return [{ hexKey: null, label: "", factor: 1 }];
     case "settlement":
-      return settlementHexes().map((s) => ({
-        hexKey: s.key,
-        settlement: s.name ?? game.i18n.localize(`UKM.Project.Settlement.${s.type}`),
-        label: `${s.name ?? game.i18n.localize(`UKM.Project.Settlement.${s.type}`)} (${hexLabel(s.key, defs)})`,
-        factor: 1
-      }));
+      return [];
+    case "claimed-no-settlement":
+      hexes = claimed.filter((h) => !isSettlement(h));
+      break;
     default:
       hexes = [];
   }
@@ -135,7 +143,7 @@ export function projectQuote(def, target, structure = null) {
   const factor = target?.factor ?? 1;
   if (def.target === "none") return { cost: def.costBP || (def.costWeeks ? baseCost(def) : 0), days: def.workDays ?? 7 };
   if (def.target === "settlement") {
-    const bp = structure?.bp ?? Math.max(4, (structure?.level ?? 1) * 6);
+    const bp = structure?.cost ?? structure?.bp ?? Math.max(4, (structure?.level ?? 1) * 6);
     const days = def.workDays + Math.max(0, (structure?.level ?? 1) - 4);
     return { cost: bp, days };
   }
@@ -169,12 +177,6 @@ export function projectsForSeat(seat, realm = getRealm()) {
 
 /* ---------- Structures ---------- */
 
-function plainText(html) {
-  const div = document.createElement("div");
-  div.innerHTML = html ?? "";
-  return (div.textContent ?? "").replace(/\s+/g, " ").trim();
-}
-
 /** Turn "6 RP, 2 Lumber, 1 Stone" into BP at the realm's conversion rates. */
 export function costToBP(text) {
   if (!text) return null;
@@ -191,14 +193,22 @@ export function costToBP(text) {
   return found ? bp : null;
 }
 
+function slugify(text) {
+  return String(text ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
 function parseStructure(page) {
-  const text = plainText(page.text?.content);
-  const found = text.match(/Structure\s+(\d+)/i)?.[1] ?? text.match(/Building\s+(\d+)/i)?.[1];
-  const level = found === undefined ? null : Number(found);
-  const costText = text.match(/Cost\s+(.+?)(?:;|Construction|Upgrade|Ruin|Item Bonus|$)/i)?.[1] ?? null;
-  const skill = text.match(/Construction\s+([A-Za-z]+)/i)?.[1]?.toLowerCase() ?? null;
-  const lots = Number(text.match(/Lots?\s+(\d+)/i)?.[1]) || null;
-  return { level, bp: costToBP(costText), skill, lots };
+  const parsed = parseStructureHtml(page.text?.content);
+  return { ...parsed, bp: costToBP(parsed.costText) };
+}
+
+/** "tavern, dive" or "wooden wall" → the catalog slug it names. */
+function resolveUpgrade(name, catalog) {
+  if (!name) return null;
+  const first = name.split(/\s+or\s+/i)[0].trim().toLowerCase();
+  const slug = slugify(first);
+  const reversed = slugify(first.split(/\s+/).reverse().join(" "));
+  return (catalog.find((c) => c.name.toLowerCase() === first) ?? catalog.find((c) => c.slug === slug) ?? catalog.find((c) => c.slug === reversed))?.slug ?? null;
 }
 
 /** Structure names, levels and costs, read once from the imported story journals. */
@@ -215,6 +225,7 @@ export async function buildStructureCatalog() {
     })
     .filter(Boolean)
     .sort((a, b) => (a.level ?? 99) - (b.level ?? 99) || a.name.localeCompare(b.name));
+  for (const entry of catalog) entry.upgradeFrom = resolveUpgrade(entry.upgradeFrom, catalog);
   await setSetting(SETTINGS.structureCatalog, catalog);
   return catalog;
 }
@@ -223,9 +234,30 @@ export function structureCatalog() {
   return getSetting(SETTINGS.structureCatalog) ?? [];
 }
 
-export function buildableStructures() {
+/**
+ * What can go up in a settlement now: within the kingdom's level, with room on the urban grid,
+ * edifices and infrastructure only once. An upgrade replaces what it upgrades and costs the difference.
+ */
+export function buildableStructures(settlement = null) {
   const level = getKingdom()?.level ?? 1;
-  return structureCatalog().filter((s) => s.bp && s.slug !== "rubble" && (!s.level || s.level <= level));
+  const all = structureCatalog().filter((s) => s.bp && s.slug !== "rubble" && (!s.level || s.level <= level));
+  if (!settlement) return all;
+  const state = settlementState(settlement);
+  const room = roomFor(settlement, state);
+  const have = new Map();
+  for (const b of settlement.buildings ?? []) have.set(b.slug, (have.get(b.slug) ?? 0) + 1);
+  const out = [];
+  for (const s of all.filter((x) => !x.capitalOnly || settlement.capital)) {
+    const lots = s.infrastructure ? 0 : s.lots ?? 1;
+    const once = s.edifice || s.infrastructure;
+    if (!(once && have.has(s.slug)) && lots <= room) out.push({ ...s, key: s.slug, replaces: null, replacesName: null, cost: s.bp, needed: lots });
+    const base = s.upgradeFrom && have.has(s.upgradeFrom) ? structureCatalog().find((c) => c.slug === s.upgradeFrom) : null;
+    if (!base) continue;
+    const needed = lots - (base.infrastructure ? 0 : base.lots ?? 1);
+    if (needed > room) continue;
+    out.push({ ...s, key: `${s.slug}>${base.slug}`, replaces: base.slug, replacesName: base.name, cost: Math.max(1, s.bp - (base.bp ?? 0)), needed });
+  }
+  return out;
 }
 
 /* ---------- Starting and finishing ---------- */
@@ -248,13 +280,27 @@ export async function startProject(request, { canActForSeat }) {
   if (!canActForSeat(user, def.seat)) return { ok: false, reason: "NotYourSeat" };
 
   const realm = getRealm();
+  if (!hasCapital(realm) && !def.signature) return { ok: false, reason: "NoCapital" };
   const targets = projectTargets(def, realm);
-  const target = isHexProject(def) ? targets[0] : targets.find((t) => t.hexKey === (request.hexKey ?? null));
+  const target =
+    def.target === "settlement"
+      ? targets.find((t) => t.settlementId === request.settlementId) ?? (targets.length === 1 ? targets[0] : null)
+      : isHexProject(def)
+        ? targets[0]
+        : targets.find((t) => t.hexKey === (request.hexKey ?? null));
   if (!target) return { ok: false, reason: "NoTarget" };
   let structure = null;
   if (def.target === "settlement") {
-    structure = buildableStructures().find((s) => s.slug === request.structure);
+    const settlement = settlements(realm).find((s) => s.id === target.settlementId);
+    structure = buildableStructures(settlement).find((s) => s.key === request.structure);
     if (!structure) return { ok: false, reason: "NoStructure" };
+  }
+  let founding = null;
+  if (def.id === "found-settlement") {
+    const name = String(request.settlementName ?? "").trim().slice(0, 60);
+    if (!name) return { ok: false, reason: "NoName" };
+    if (settlements(realm).some((s) => s.name.toLowerCase() === name.toLowerCase())) return { ok: false, reason: "NameTaken" };
+    founding = { name, waterside: !!request.waterside };
   }
   let camp = null;
   if (def.id === "establish-work-site") {
@@ -265,7 +311,7 @@ export async function startProject(request, { canActForSeat }) {
   if (realm.treasury < quote.cost) return { ok: false, reason: "TooPoor", data: { cost: quote.cost } };
 
   const now = game.time.worldTime;
-  const label = structure ? `${structure.name}, ${target.settlement}` : where || target.label;
+  const label = structure ? `${structure.name}, ${target.settlement}` : founding ? founding.name : where || target.label;
   const name = label ? `${def.name}: ${label}` : def.name;
   await updateRealm((r) => {
     r.treasury -= quote.cost;
@@ -281,7 +327,7 @@ export async function startProject(request, { canActForSeat }) {
       status: "open",
       drawnAt: now,
       deadline: now + NEVER * secondsPerDay(),
-      target: { hexKey: target.hexKey, settlement: target.settlement ?? null, hidden: false },
+      target: { hexKey: target.hexKey, settlement: target.settlement ?? null, settlementId: target.settlementId ?? null, hidden: false },
       revealed: true,
       assignee: null,
       workUntil: null,
@@ -294,7 +340,8 @@ export async function startProject(request, { canActForSeat }) {
         camp,
         where,
         commodity: target.commodity ?? null,
-        structure: structure ? { slug: structure.slug, name: structure.name, level: structure.level, skill: structure.skill } : null,
+        structure: structure ? { slug: structure.slug, name: structure.name, level: structure.level, skill: structure.skill, lots: structure.lots ?? 1, replaces: structure.replaces ?? null } : null,
+        founding,
         by: user.id
       }
     };
@@ -328,8 +375,8 @@ function mapTask(card) {
       return game.i18n.format("UKM.Project.Task.camp", { where, camp: game.i18n.localize(`UKM.Project.Camp.${p.camp}`).toLowerCase() });
     case "fortify-hex":
       return game.i18n.format(card.target?.hexKey ? "UKM.Project.Task.fortify" : "UKM.Project.Task.fortifyPick", { where });
-    case "build-structure":
-      return game.i18n.format("UKM.Project.Task.structure", { name: p.structure?.name ?? "", where: card.target?.settlement ?? where });
+    case "found-settlement":
+      return game.i18n.format("UKM.Project.Task.settlement", { name: p.founding?.name ?? "", where });
     default:
       return null;
   }
@@ -346,8 +393,21 @@ export function completeProject(ctx) {
     ctx.realm.fortified.push(card.target.hexKey);
   }
   if (card.project.structure?.slug) {
-    ctx.realm.structures ??= [];
-    ctx.realm.structures.push(card.project.structure.slug);
+    const settlementId = card.target?.settlementId;
+    if (settlementId && addBuilding(ctx.realm, settlementId, card.project.structure, ctx)) {
+      ctx.syncSettlements = true;
+    } else {
+      ctx.realm.structures ??= [];
+      ctx.realm.structures.push(card.project.structure.slug);
+    }
+  }
+  if (card.project.founding) {
+    ctx.realm.settlements ??= [];
+    if (!ctx.realm.settlements.some((s) => s.name.toLowerCase() === card.project.founding.name.toLowerCase())) {
+      ctx.realm.settlements.push(newSettlement(card.project.founding));
+      ctx.note(game.i18n.format("UKM.Settlement.Founded", { name: card.project.founding.name }));
+      ctx.syncSettlements = true;
+    }
   }
   ctx.realm.projectRecord ??= {};
   ctx.realm.projectRecord[card.project.type] = (ctx.realm.projectRecord[card.project.type] ?? 0) + 1;

@@ -1,4 +1,18 @@
 <section class="tab ukm-overview {{tab.cssClass}}" data-tab="overview" data-group="primary">
+  {{#unless hasCapital}}
+      <div class="ukm-first-step">
+        <i class="fa-solid fa-chess-rook"></i>
+        <div>
+          <h3>{{localize "UKM.Settlement.FirstStepTitle"}}</h3>
+          <p>{{localize "UKM.Settlement.FirstStep"}}</p>
+          {{#if canFoundCapital}}
+            <button type="button" data-action="foundCapital"><i class="fa-solid fa-flag"></i> {{localize "UKM.Settlement.FoundCapital"}}</button>
+          {{else}}
+            <p class="hint">{{localize "UKM.Settlement.FirstStepWait"}}</p>
+          {{/if}}
+        </div>
+      </div>
+  {{/unless}}
   {{#unless kingdomActive}}
     <p class="ukm-notice">{{localize "UKM.Manager.NoKingdom"}}</p>
   {{/unless}}

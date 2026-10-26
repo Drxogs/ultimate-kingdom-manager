@@ -22,6 +22,7 @@ export function defaultRealm() {
     scheduled: [],
     gmTasks: [],
     structures: [],
+    settlements: [],
     levelModBoosts: {},
     founding: null,
     log: []
