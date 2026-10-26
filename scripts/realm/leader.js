@@ -1,8 +1,8 @@
 import { MODULE_ID } from "../constants.js";
 
 const CHANNEL = `module.${MODULE_ID}`;
-const HEARTBEAT = 20000;
-const EXPIRES = 60000;
+const HEARTBEAT = 30000;
+const EXPIRES = 300000;
 const SETTLE = 1500;
 
 const me = { id: foundry.utils.randomID(16), start: 0 };

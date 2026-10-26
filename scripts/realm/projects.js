@@ -175,7 +175,8 @@ export function costToBP(text) {
 
 function parseStructure(page) {
   const text = plainText(page.text?.content);
-  const level = Number(text.match(/Structure\s+(\d+)/i)?.[1] ?? text.match(/Building\s+(\d+)/i)?.[1]) || null;
+  const found = text.match(/Structure\s+(\d+)/i)?.[1] ?? text.match(/Building\s+(\d+)/i)?.[1];
+  const level = found === undefined ? null : Number(found);
   const costText = text.match(/Cost\s+(.+?)(?:;|Construction|Upgrade|Ruin|Item Bonus|$)/i)?.[1] ?? null;
   const skill = text.match(/Construction\s+([A-Za-z]+)/i)?.[1]?.toLowerCase() ?? null;
   const lots = Number(text.match(/Lots?\s+(\d+)/i)?.[1]) || null;
@@ -298,7 +299,7 @@ function mapTask(card) {
     case "establish-farmland":
       return game.i18n.format("UKM.Project.Task.farm", { where });
     case "establish-work-site":
-      return game.i18n.format("UKM.Project.Task.camp", { where, camp: game.i18n.localize(`UKM.Project.Camp.${p.camp}`) });
+      return game.i18n.format("UKM.Project.Task.camp", { where, camp: game.i18n.localize(`UKM.Project.Camp.${p.camp}`).toLowerCase() });
     case "build-structure":
       return game.i18n.format("UKM.Project.Task.structure", { name: p.structure?.name ?? "", where: card.target?.settlement ?? where });
     default:
