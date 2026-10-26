@@ -85,6 +85,11 @@ export function projectTargets(def, realm = getRealm()) {
     case "claimed-no-farm":
       hexes = claimed.filter((h) => !hasFeature(h, "farmland") && !isSettlement(h));
       break;
+    case "claimed-not-fortified": {
+      const fortified = new Set(realm.fortified ?? []);
+      hexes = claimed.filter((h) => !fortified.has(h.key));
+      break;
+    }
     case "claimed-no-camp":
       hexes = claimed.filter((h) => !h.camp && !isSettlement(h));
       break;
@@ -123,7 +128,7 @@ function baseCost(def) {
 /** BP cost and working days for a project at a target. */
 export function projectQuote(def, target, structure = null) {
   const factor = target?.factor ?? 1;
-  if (def.target === "none") return { cost: def.costBP ?? 0, days: def.workDays ?? 7 };
+  if (def.target === "none") return { cost: def.costBP || (def.costWeeks ? baseCost(def) : 0), days: def.workDays ?? 7 };
   if (def.target === "settlement") {
     const bp = structure?.bp ?? Math.max(4, (structure?.level ?? 1) * 6);
     const days = def.workDays + Math.max(0, (structure?.level ?? 1) - 4);
@@ -144,8 +149,14 @@ export function signatureForSeat(seat, realm = getRealm()) {
   return { ...def, seat, readyAt, available: !busy && readyAt <= game.time.worldTime };
 }
 
-export function projectsForSeat(seat) {
-  const list = getProjects().filter((p) => p.seat === seat);
+function onCooldown(def, realm) {
+  if (!def.cooldownDays) return false;
+  return (realm.cooldowns?.[def.id] ?? 0) > game.time.worldTime ||
+    realm.cards.some((c) => c.eventId === `project:${def.id}` && ["open", "assigned", "rolled"].includes(c.status));
+}
+
+export function projectsForSeat(seat, realm = getRealm()) {
+  const list = getProjects().filter((p) => p.seat === seat && !onCooldown(p, realm));
   const signature = signatureForSeat(seat);
   if (signature?.available) list.push(signature);
   return list;
@@ -279,7 +290,7 @@ export async function startProject(request, { canActForSeat }) {
         by: user.id
       }
     };
-    if (def.signature) {
+    if (def.signature || def.cooldownDays) {
       r.cooldowns ??= {};
       r.cooldowns[def.id] = now + (def.cooldownDays ?? 30) * secondsPerDay();
     }
@@ -303,6 +314,8 @@ function mapTask(card) {
       return game.i18n.format("UKM.Project.Task.farm", { where });
     case "establish-work-site":
       return game.i18n.format("UKM.Project.Task.camp", { where, camp: game.i18n.localize(`UKM.Project.Camp.${p.camp}`).toLowerCase() });
+    case "fortify-hex":
+      return game.i18n.format("UKM.Project.Task.fortify", { where });
     case "build-structure":
       return game.i18n.format("UKM.Project.Task.structure", { name: p.structure?.name ?? "", where: card.target?.settlement ?? where });
     default:
@@ -316,6 +329,10 @@ export function completeProject(ctx) {
   if (!card?.project) return;
   const task = mapTask(card);
   if (task) ctx.gmTask(task);
+  if (card.project.type === "fortify-hex" && card.target?.hexKey) {
+    ctx.realm.fortified ??= [];
+    ctx.realm.fortified.push(card.target.hexKey);
+  }
   if (card.project.structure?.slug) {
     ctx.realm.structures ??= [];
     ctx.realm.structures.push(card.project.structure.slug);

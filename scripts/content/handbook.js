@@ -55,6 +55,8 @@ const WHERE = {
   "claimed-no-road": "A claimed hex without a road",
   "claimed-no-farm": "A claimed hex without farmland or a settlement",
   "claimed-no-camp": "A claimed hex without a work site or settlement",
+  "claimed-not-fortified": "A claimed hex that isn't fortified yet",
+  none: "Anywhere; once a month",
   settlement: "One of the realm's settlements"
 };
 

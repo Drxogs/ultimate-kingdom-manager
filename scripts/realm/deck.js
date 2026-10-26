@@ -11,7 +11,7 @@ import {
   summarizeRealm
 } from "../integrations/kingmaker.js";
 import { getSetting, SETTINGS } from "../settings.js";
-import { addLog, newId } from "./state.js";
+import { addLog, getRealm, newId } from "./state.js";
 import { secondsPerDay } from "./time.js";
 
 const SETTLEMENT_TYPES = ["metropolis", "city", "town", "village"];
@@ -98,7 +98,9 @@ function chooseHex(rule) {
       if (!pool.length) pool = claimed.filter((h) => !settlements.has(h.key));
   }
 
-  return pickRandom(withLevelGravity(pool, defs))?.key ?? null;
+  const fortified = new Set(getRealm().fortified ?? []);
+  const unguarded = pool.filter((h) => !fortified.has(h.key));
+  return pickRandom(withLevelGravity(unguarded.length ? unguarded : pool, defs))?.key ?? null;
 }
 
 function chooseSettlement(rule) {

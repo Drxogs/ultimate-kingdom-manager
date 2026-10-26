@@ -452,7 +452,8 @@
         "claimed-no-road": "Every claimed hex already has a road.",
         "claimed-no-farm": "No claimed hex is free for farmland.",
         "claimed-no-camp": "No claimed hex is free for a work site.",
-        "settlement": "The realm has no settlements yet."
+        "settlement": "The realm has no settlements yet.",
+        "claimed-not-fortified": "Every claimed hex is already fortified."
       },
       "NoStructures": "No structures are known yet. Import the story content first.",
       "Started": "The project is on the desk. {cost} BP paid. Delegate it or handle it personally.",
@@ -463,7 +464,8 @@
         "road": "Add a road to {where}.",
         "farm": "Mark farmland on {where}.",
         "camp": "Add a {camp} on {where}.",
-        "structure": "Add {name} to {where}."
+        "structure": "Add {name} to {where}.",
+        "fortify": "Mark a fortification on {where}."
       }
     },
     "Tap": {

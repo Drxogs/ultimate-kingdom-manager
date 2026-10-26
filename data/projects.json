@@ -223,6 +223,117 @@
           }
         ]
       }
+    },
+    {
+      "id": "fortify-hex",
+      "seat": "general",
+      "skill": [
+        "defense",
+        "engineering"
+      ],
+      "target": "claimed-not-fortified",
+      "costWeeks": 1,
+      "workDays": 14,
+      "name": "Fortify a Hex",
+      "hook": "Raise a watchtower and earthworks to guard a claimed hex.",
+      "kind": "project",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "completeProject": true
+          },
+          {
+            "refund": 0.5
+          }
+        ],
+        "success": [
+          {
+            "completeProject": true
+          }
+        ],
+        "failure": [
+          {
+            "refund": 0.5
+          },
+          {
+            "note": "The work didn't come together. Half the cost is recovered; it can be tried again."
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "note": "The work collapsed and the money is gone."
+          }
+        ]
+      }
+    },
+    {
+      "id": "muster-troops",
+      "seat": "general",
+      "skill": [
+        "warfare"
+      ],
+      "target": "none",
+      "costWeeks": 1,
+      "workDays": 7,
+      "name": "Muster the Troops",
+      "hook": "Call up the levies, drill them and march them where folks can see.",
+      "kind": "project",
+      "cooldownDays": 30,
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "modifier": {
+              "type": "status",
+              "value": 2,
+              "selector": [
+                "warfare",
+                "defense"
+              ],
+              "days": 30
+            }
+          },
+          {
+            "ruin": {
+              "crime": -1,
+              "strife": -1
+            }
+          }
+        ],
+        "success": [
+          {
+            "modifier": {
+              "type": "status",
+              "value": 1,
+              "selector": [
+                "warfare",
+                "defense"
+              ],
+              "days": 30
+            }
+          },
+          {
+            "ruin": {
+              "crime": -1
+            }
+          }
+        ],
+        "failure": [
+          {
+            "note": "The levies grumble and go home."
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "note": "The muster turns into a brawl."
+          }
+        ]
+      }
     }
   ]
 }
