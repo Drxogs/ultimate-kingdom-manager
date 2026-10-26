@@ -3,6 +3,7 @@ import { describeEffect } from "../realm/effects.js";
 import { structureCatalog } from "../realm/projects.js";
 import { getAmbition, getCompanions, getProjects, getRankUpScene } from "./data.js";
 import { isLeader } from "../realm/leader.js";
+import { KINGMAKER_SHEET, kingmakerSheetAvailable } from "./story-import.js";
 
 const FOLDER_NAME = "Kingdom Manager: Handbook";
 const BOOKS = {
@@ -140,13 +141,17 @@ async function ensureFolder() {
 }
 
 async function ensureJournal(folder, book) {
+  const sheetClass = kingmakerSheetAvailable() ? KINGMAKER_SHEET : null;
   const existing = game.journal.find((j) => j.getFlag(FLAG_SCOPE, "handbook") === book);
-  if (existing) return existing;
+  if (existing) {
+    if (sheetClass && existing.getFlag("core", "sheetClass") !== sheetClass) await existing.setFlag("core", "sheetClass", sheetClass);
+    return existing;
+  }
   return JournalEntry.create({
     name: BOOKS[book].name,
     folder: folder.id,
     ownership: { default: BOOKS[book].ownership },
-    flags: { [FLAG_SCOPE]: { handbook: book } }
+    flags: { [FLAG_SCOPE]: { handbook: book }, ...(sheetClass ? { core: { sheetClass } } : {}) }
   });
 }
 

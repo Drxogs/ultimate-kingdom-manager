@@ -167,9 +167,9 @@ async function ensureFolder() {
   });
 }
 
-const KINGMAKER_SHEET = "pf2e-kingmaker.KingmakerJournalSheet";
+export const KINGMAKER_SHEET = "pf2e-kingmaker.KingmakerJournalSheet";
 
-function kingmakerSheetAvailable() {
+export function kingmakerSheetAvailable() {
   return !!CONFIG.JournalEntry.sheetClasses?.base?.[KINGMAKER_SHEET];
 }
 
