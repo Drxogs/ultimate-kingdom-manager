@@ -13,6 +13,7 @@ import {
 import { getSetting, SETTINGS } from "../settings.js";
 import { addLog, getRealm, newId } from "./state.js";
 import { secondsPerDay } from "./time.js";
+import { settlementHex, settlementState, settlements as realmSettlements } from "./settlements.js";
 
 const SETTLEMENT_TYPES = ["metropolis", "city", "town", "village"];
 const DRAWS_BY_NATION = { territory: 1, province: 1, state: 2, country: 2, dominion: 3 };
@@ -103,21 +104,31 @@ function chooseHex(rule, kind = null) {
   return pickRandom(withLevelGravity(unguarded.length ? unguarded : pool, defs))?.key ?? null;
 }
 
+/**
+ * Pick a settlement for an event from the Settlements tab (the realm's one list), with its place on the map
+ * if it has one. Size goes by buildings, so a busy town counts as bigger than an empty one.
+ */
 function chooseSettlement(rule) {
-  const list = settlementHexes();
+  const list = realmSettlements().map((s) => {
+    const state = settlementState(s);
+    const cemeteries = (s.buildings ?? []).filter((b) => b.slug === "cemetery" || b.slug === "cemetary").length;
+    return { key: settlementHex(s), name: s.name, capital: !!s.capital, founded: s.founded ?? 0, size: state.lots, consumption: state.consumption, cemeteries };
+  });
   if (!list.length) return null;
-  const capital = getKingdom()?.capital;
+  const largest = () => list.slice().sort((a, b) => b.size - a.size)[0];
   switch (rule) {
     case "largest":
+      return largest();
     case "highest-consumption-or-largest":
+      return list.slice().sort((a, b) => b.consumption - a.consumption || b.size - a.size)[0];
     case "most-cemeteries-or-largest":
-      return list.sort((a, b) => b.rank - a.rank)[0];
+      return list.slice().sort((a, b) => b.cemeteries - a.cemeteries || b.size - a.size)[0];
     case "smallest":
-      return list.sort((a, b) => a.rank - b.rank)[0];
+      return list.slice().sort((a, b) => a.size - b.size)[0];
     case "capital":
-      return list.find((s) => capital && s.name === capital) ?? list.sort((a, b) => b.rank - a.rank)[0];
+      return list.find((s) => s.capital) ?? largest();
     case "newest":
-      return list.at(-1);
+      return list.slice().sort((a, b) => b.founded - a.founded)[0];
     default:
       return pickRandom(list);
   }
@@ -128,7 +139,7 @@ function requirementsMet(event, realm) {
   if (!req) return true;
   const map = isKingmakerActive() ? summarizeRealm() : { farmlands: 0, settlements: 0 };
   if (req.farmland && map.farmlands < req.farmland) return false;
-  if (req.settlements && settlementHexes().length < req.settlements) return false;
+  if (req.settlements && realmSettlements(realm).length < req.settlements) return false;
   if (req.relations && (realm.relations?.length ?? 0) < req.relations) return false;
   if (req.npcLeader) {
     const leaders = Object.values(getKingdom()?.leadership ?? {});
@@ -194,8 +205,8 @@ export function drawMonthlyEvents(realm) {
       const event = pickWeighted(pool, (e) => e.weight ?? 1);
       if (!event) break;
       const candidate = createCard(event);
-      const needsPlace = ["hex", "settlement"].includes(event.placement?.type);
-      if (needsPlace && !candidate.target.hexKey) excluded.add(event.id);
+      const missing = event.placement?.type === "hex" ? !candidate.target.hexKey : event.placement?.type === "settlement" ? !candidate.target.settlement : false;
+      if (missing) excluded.add(event.id);
       else card = candidate;
     }
     if (!card) break;
@@ -250,7 +261,7 @@ export function drawWeeklyMatter(realm, { now = game.time.worldTime } = {}) {
     if (!matter) continue;
     const card = createCard(matter, { now, tier });
     const placement = matter.placement?.type;
-    if (["hex", "settlement"].includes(placement) && !card.target.hexKey) continue;
+    if ((placement === "hex" && !card.target.hexKey) || (placement === "settlement" && !card.target.settlement)) continue;
     history[matter.id] = now;
     realm.cards.push(card);
     addLog(realm, { type: "event-drawn", card: card.id, seat: card.seat, text: card.name });

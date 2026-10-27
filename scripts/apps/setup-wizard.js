@@ -43,6 +43,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       toggleActors: SetupWizard.#toggleActors,
       resetFounding: SetupWizard.#resetFounding,
       addAdvisor: SetupWizard.#addAdvisor,
+      foundCapital: SetupWizard.#foundCapital,
       removeAdvisor: SetupWizard.#removeAdvisor,
       openMidCampaign: () => new MidCampaignApp().render(true)
     }
@@ -168,6 +169,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       })),
       seatChoices: Object.fromEntries(SEATS.filter((x) => x !== "ruler").map((x) => [x, `UKM.Seat.${x}`])),
       training: this.#trainingContext(kingdom),
+      capital: (getRealm().settlements ?? []).find((s) => s.capital)?.name ?? null,
       buttons: [{ type: "submit", icon: "fa-solid fa-check", label: "UKM.Setup.Save" }]
     };
   }
@@ -273,6 +275,13 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     for (const row of Object.values(draft.seats ?? {})) if (row.companion === id) row.companion = "";
     if (draft.advisors) delete draft.advisors[id];
     this.#draft = draft;
+    this.render();
+  }
+
+  static async #foundCapital() {
+    const { KingdomManager } = await import("./kingdom-manager.js");
+    this.#draft = foundry.utils.expandObject(new foundry.applications.ux.FormDataExtended(this.element).object);
+    await KingdomManager.foundCapitalDialog();
     this.render();
   }
 

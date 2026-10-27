@@ -12,7 +12,7 @@ import { buildStructureCatalog, isFortified, structureCatalog } from "./realm/pr
 import { ensureHandbook, openHandbook } from "./content/handbook.js";
 import { isLeader, leaderSettled, startLeader } from "./realm/leader.js";
 import { clearInvested } from "./realm/leadership.js";
-import { repairSettlements } from "./realm/settlements.js";
+import { adoptSheetSettlements, repairSettlements } from "./realm/settlements.js";
 import { cardsOnHex } from "./realm/pins.js";
 import { daysUntil } from "./realm/time.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
@@ -60,6 +60,7 @@ Hooks.once("ready", async () => {
     await syncKingdomLevel();
     await clearInvested();
     await repairSettlements();
+    await adoptSheetSettlements();
     noteUnrest();
     await tick();
     if (getSetting(SETTINGS.storyImported)) await buildStructureCatalog();
@@ -155,6 +156,7 @@ Hooks.on("updateActor", (actor, changes) => {
   if (actor.type === "party" && foundry.utils.hasProperty(changes, "system.campaign.leadership")) clearInvested().catch((err) => console.error(`${MODULE_ID} |`, err));
   // Anarchy starts or ends however Unrest changed, including by hand on the kingdom sheet.
   if (actor.type === "party" && foundry.utils.hasProperty(changes, "system.campaign.unrest")) announceAnarchy().catch((err) => console.error(`${MODULE_ID} |`, err));
+  if (actor.type === "party" && foundry.utils.hasProperty(changes, "system.campaign.settlements")) adoptSheetSettlements().catch((err) => console.error(`${MODULE_ID} |`, err));
 });
 
 // Flat-check buttons in chat: any player can roll them.

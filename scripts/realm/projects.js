@@ -258,7 +258,7 @@ export function buildableStructures(settlement = null) {
     if (needed > room) continue;
     out.push({ ...s, key: `${s.slug}>${base.slug}`, replaces: base.slug, replacesName: base.name, cost: Math.max(1, s.bp - (base.bp ?? 0)), needed });
   }
-  return out;
+  return out.sort((a, b) => a.name.localeCompare(b.name) || (a.replaces ? 1 : 0) - (b.replaces ? 1 : 0));
 }
 
 /* ---------- Starting and finishing ---------- */

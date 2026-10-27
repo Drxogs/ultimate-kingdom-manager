@@ -146,8 +146,28 @@ export function hasCapital(realm = getRealm()) {
   return !!capital(realm);
 }
 
+/**
+ * Buildings of the module's own, not in the Kingmaker book. The capital gets a Founders' Hall for free:
+ * it houses the first settlers (counts as a home) and its stores cut the settlement's food need by 1.
+ */
+export const FOUNDERS_HALL = "founders-hall";
+const BUILTIN_STRUCTURES = [
+  {
+    slug: FOUNDERS_HALL,
+    name: "Founders' Hall",
+    level: 0,
+    lots: 1,
+    residential: true,
+    edifice: true,
+    capitalOnly: true,
+    consumption: 1,
+    bonuses: [],
+    builtin: true
+  }
+];
+
 export function catalogEntry(slug) {
-  return (getSetting(SETTINGS.structureCatalog) ?? []).find((s) => s.slug === slug) ?? null;
+  return BUILTIN_STRUCTURES.find((s) => s.slug === slug) ?? (getSetting(SETTINGS.structureCatalog) ?? []).find((s) => s.slug === slug) ?? null;
 }
 
 function buildingInfo(building) {
@@ -319,10 +339,13 @@ export async function growSettlements() {
 export async function repairSettlements() {
   if (!isLeader()) return;
   const realm = getRealm();
-  const needs = settlements(realm).some((s) => settlementState(s).lots > settlementState(s).capacity || canGrow(s));
+  const hallMissing = (s) => s.capital && !(s.buildings ?? []).some((b) => b.slug === FOUNDERS_HALL);
+  const needs = settlements(realm).some((s) => settlementState(s).lots > settlementState(s).capacity || canGrow(s) || hallMissing(s));
   if (!needs && (realm.settlementsStarted || !settlements(realm).length)) return;
   await updateRealm((r) => {
     for (const s of settlements(r)) {
+      // Capitals founded before v0.22 get their Founders' Hall too.
+      if (hallMissing(s)) s.buildings.push({ slug: FOUNDERS_HALL, name: catalogEntry(FOUNDERS_HALL).name, lots: 1, built: game.time.worldTime });
       fitSize(s);
       growIfReady(r, s);
     }
@@ -426,6 +449,9 @@ export async function foundCapital(request) {
     }
     record.capital = true;
     if (request.waterside !== undefined && !fromMap) record.waterside = !!request.waterside;
+    if (!record.buildings.some((b) => b.slug === FOUNDERS_HALL)) {
+      record.buildings.push({ slug: FOUNDERS_HALL, name: catalogEntry(FOUNDERS_HALL).name, lots: 1, built: game.time.worldTime });
+    }
     if (!r.settlementsStarted) {
       for (const slug of r.structures ?? []) {
         if (record.buildings.some((b) => b.slug === slug)) continue;
@@ -453,14 +479,9 @@ export async function foundCapital(request) {
   return { ok: true };
 }
 
-/** The Ruler's player founds the capital; with no Ruler yet, any player with a character in the party can. */
+/** Founding the capital is part of the GM's setup (Setup window or the Settlements tab). */
 export function canFoundCapital(user) {
-  if (user.isGM) return true;
-  const kingdom = getKingdom();
-  const rulerUuid = kingdom?.leadership?.ruler?.uuid;
-  const ruler = rulerUuid ? fromUuidSync(rulerUuid) : null;
-  if (ruler) return !!ruler.testUserPermission?.(user, "OWNER");
-  return game.actors.some((a) => a.type === "character" && a.testUserPermission?.(user, "OWNER"));
+  return !!user?.isGM;
 }
 
 /** Settlements the GM drew on the map after the capital was set join the realm on their own. */
@@ -496,6 +517,43 @@ export async function syncKingdomSettlements() {
     };
   }
   if (Object.keys(update).length) await kingdom.update(update);
+}
+
+/**
+ * The Settlements tab is the one list. A settlement typed on the PF2e kingdom sheet by hand is moved into it
+ * (or dropped, if the tab already has one by that name), so its food is never counted twice.
+ */
+export async function adoptSheetSettlements() {
+  const kingdom = getKingdom();
+  if (!kingdom || !isLeader()) return;
+  const ours = settlements();
+  const ids = new Set(ours.map((s) => s.id));
+  const names = new Set(ours.map((s) => s.name.toLowerCase()));
+  const stray = Object.entries(kingdom.settlements ?? {}).filter(([id, s]) => s?.name && !ids.has(id));
+  if (!stray.length) return;
+  const adopted = [];
+  const removal = {};
+  await updateRealm((r) => {
+    r.settlements ??= [];
+    for (const [id, s] of stray) {
+      removal[`settlements.-=${id}`] = null;
+      if (names.has(s.name.toLowerCase())) continue;
+      const record = newSettlement({ name: s.name, type: s.type });
+      r.settlements.push(record);
+      names.add(s.name.toLowerCase());
+      adopted.push(s.name);
+      addLog(r, { type: "settlement", text: s.name });
+    }
+  });
+  await kingdom.update(removal);
+  await syncKingdomSettlements();
+  if (adopted.length) {
+    await ChatMessage.create({
+      whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
+      speaker: { alias: game.i18n.localize("UKM.Manager.Title") },
+      content: `<div class="ukm-chat"><p>${game.i18n.format("UKM.Settlement.Adopted", { names: adopted.map((n) => Handlebars.escapeExpression(n)).join(", ") })}</p></div>`
+    });
+  }
 }
 
 /** Overcrowded settlements each add 1 Unrest a month. */

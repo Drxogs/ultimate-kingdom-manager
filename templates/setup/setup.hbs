@@ -48,6 +48,18 @@
   </section>
   {{/if}}
 
+  {{#if kingdomActive}}
+  <section>
+    <h3>{{localize "UKM.Setup.CapitalHeading"}}</h3>
+    {{#if capital}}
+      <p>{{localize "UKM.Setup.CapitalDone" name=capital}}</p>
+    {{else}}
+      <p class="hint">{{localize "UKM.Setup.CapitalHint"}}</p>
+      <p><button type="button" data-action="foundCapital"><i class="fa-solid fa-flag"></i> {{localize "UKM.Settlement.FoundCapital"}}</button></p>
+    {{/if}}
+  </section>
+  {{/if}}
+
   <section>
     <h3>{{localize "UKM.Setup.Founding"}}</h3>
     <p class="hint">{{localize "UKM.Setup.FoundingHint"}}</p>

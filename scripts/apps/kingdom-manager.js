@@ -243,7 +243,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       beginRankUp: KingdomManager.#beginRankUp,
       startProject: KingdomManager.#startProject,
       openHandbook: () => openHandbook(),
-      foundCapital: KingdomManager.#foundCapital,
+      foundCapital: () => KingdomManager.foundCapitalDialog(),
       buildHere: KingdomManager.#buildHere,
       placeBuilding: KingdomManager.#placeBuilding,
       openMidCampaign: () => new MidCampaignApp().render(true),
@@ -763,7 +763,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     await sendRequest(choice.mode === "propose" ? "proposeProject" : "startProject", request);
   }
 
-  static async #foundCapital() {
+  /** The GM picks or names the capital. Used by the Settlements tab and by Setup. */
+  static async foundCapitalDialog() {
     const esc = Handlebars.escapeExpression;
     const onMap = unknownMapSettlements();
     const mapChoices = onMap.length
