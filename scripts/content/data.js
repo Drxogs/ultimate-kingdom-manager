@@ -18,11 +18,17 @@ export function getEvents() {
   return cache.events?.events ?? [];
 }
 
-/** What happened, in a line or two, for each result of an event, desk matter or project. */
-export function getStory(eventId, degreeName) {
+/**
+ * What happened, in a line or two, for each result of an event, desk matter or project.
+ * Desk matters have a set of lines for each tier (early, middle, late), since each tier is a different situation.
+ */
+export function getStory(eventId, degreeName, tier = null) {
   const stories = cache.stories?.stories ?? {};
   const id = String(eventId ?? "").replace(/^project:/, "");
-  return stories[id]?.[degreeName] ?? null;
+  const entry = stories[id];
+  if (!entry) return null;
+  const set = (tier && entry[tier]) || (entry[degreeName] ? entry : entry.early ?? entry.middle ?? entry.late);
+  return set?.[degreeName] ?? null;
 }
 
 export function getStoryEvents() {
