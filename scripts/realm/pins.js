@@ -7,10 +7,45 @@ import { getRealm, updateRealm } from "./state.js";
 import { isLeader } from "./leader.js";
 import { formatDate } from "./time.js";
 
-const ACTIVE_ICON = "icons/svg/hazard.svg";
-const OPPORTUNITY_ICON = "icons/svg/book.svg";
-const PROJECT_ICON = "icons/svg/house.svg";
 const RESOLVED_ICON = "icons/svg/circle.svg";
+
+// Pictures for the pins, from Foundry's own icon library: one per kind of trouble or opportunity.
+const EVENT_ICONS = {
+  "archaeological-find": "icons/environment/wilderness/wall-ruins.webp",
+  boomtown: "icons/environment/settlement/market-stall.webp",
+  "building-demand": "icons/environment/settlement/house-construction.webp",
+  "crop-failure": "icons/commodities/flowers/wheat-bundle.webp",
+  "cult-activity": "icons/creatures/unholy/demon-fire-horned-mask.webp",
+  "drug-den": "icons/skills/toxins/bottle-open-vapors-pink.webp",
+  feud: "icons/sundries/flags/banner-symbol-axe-red.webp",
+  "land-rush": "icons/environment/settlement/tent-flag.webp",
+  "local-disaster": "icons/environment/settlement/building-rubble.webp",
+  "monster-activity": "icons/creatures/claws/claw-bear-paw-swipe-red.webp",
+  "noblesse-oblige": "icons/environment/settlement/house-manor.webp",
+  plague: "icons/skills/toxins/cauldron-pot-bubbles-green.webp",
+  sacrifices: "icons/environment/wilderness/altar-hidden.webp",
+  "sensational-crime": "icons/commodities/treasure/mask-wood-tan.webp",
+  squatters: "icons/environment/settlement/tent.webp",
+  "undead-uprising": "icons/magic/death/undead-zombie-grave-green.webp",
+  "unexpected-find": "icons/commodities/treasure/crystal-ball-blue-purple.webp",
+  vandals: "icons/environment/settlement/rubble-scrap-refuse-wood-metal.webp",
+  "visiting-celebrity": "icons/commodities/treasure/mask-jeweled-gold.webp",
+  "wealthy-immigrant": "icons/commodities/currency/coins-assorted-mix-copper-silver-gold.webp",
+  "too-close-to-home": "icons/environment/creatures/monster-tentacles-eye-purple.webp",
+  "urban-outbreak": "icons/environment/creatures/monster-barbed-carapace-purple.webp",
+  "project:claim-hex": "icons/sundries/flags/banner-flag-blue.webp",
+  "project:build-road": "icons/environment/wilderness/terrain-river-road-gray.webp",
+  "project:establish-farmland": "icons/environment/settlement/house-farmland.webp",
+  "project:establish-work-site": "icons/environment/settlement/mine-cart-rocks-red.webp",
+  "project:found-settlement": "icons/environment/settlement/house-farmland-small.webp",
+  "project:build-structure": "icons/tools/hand/hammer-and-nail.webp",
+  "project:fortify-hex": "icons/environment/settlement/watchtower-cliff.webp"
+};
+const KIND_ICONS = {
+  problem: "icons/environment/traps/spike-skull-white-brown.webp",
+  opportunity: "icons/commodities/currency/coins-assorted-crown-blue.webp",
+  project: "icons/tools/hand/hammer-and-nail.webp"
+};
 const ACTIVE = ["open", "assigned", "escalated", "rolled"];
 const NOTICES_NAME = "Kingdom Notices";
 
@@ -19,9 +54,7 @@ function pinsOnScene(scene) {
 }
 
 function iconFor(card) {
-  if (card.kind === "problem") return { src: ACTIVE_ICON, tint: "#c0392b" };
-  if (card.kind === "project") return { src: PROJECT_ICON, tint: "#b7862b" };
-  return { src: OPPORTUNITY_ICON, tint: "#d4a017" };
+  return { src: EVENT_ICONS[card.eventId] ?? KIND_ICONS[card.kind] ?? KIND_ICONS.opportunity, tint: "#ffffff" };
 }
 
 /** A journal everyone can read, holding one short page per card the GM has revealed. */
@@ -111,8 +144,9 @@ export async function syncPins() {
     const isPublic = notices.has(card.id);
 
     if (note) {
-      if (note.entryId !== page.parent.id || note.pageId !== page.id) {
-        toUpdate.push({ _id: note.id, entryId: page.parent.id, pageId: page.id, [`flags.${FLAG_SCOPE}.public`]: isPublic });
+      const icon = iconFor(card);
+      if (note.entryId !== page.parent.id || note.pageId !== page.id || note.texture.src !== icon.src) {
+        toUpdate.push({ _id: note.id, entryId: page.parent.id, pageId: page.id, "texture.src": icon.src, "texture.tint": icon.tint, [`flags.${FLAG_SCOPE}.public`]: isPublic });
       }
       continue;
     }
@@ -126,7 +160,7 @@ export async function syncPins() {
       pageId: page.id,
       text: card.name,
       texture: iconFor(card),
-      iconSize: 48,
+      iconSize: 64,
       fontSize: 24,
       flags: { [FLAG_SCOPE]: { card: card.id, public: isPublic } }
     });
