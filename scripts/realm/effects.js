@@ -53,7 +53,7 @@ export function describeEffect(effect) {
       return loc("Modifier", {
         value: formatAmount(value.value),
         days: value.days ?? 30,
-        selector: [value.selector].flat().map((s) => game.i18n.localize(`UKM.Effect.Selector.${s}`)).join(" & ")
+        selector: [value.selector].flat().map((s) => (game.i18n.has?.(`UKM.Effect.Selector.${s}`) ? game.i18n.localize(`UKM.Effect.Selector.${s}`) : game.i18n.localize(`UKM.Skill.${s}`))).join(" & ")
       });
     case "reroll":
       return value?.uses > 1 ? loc("RerollMany", { uses: value.uses, days: value.days ?? 30 }) : loc("Reroll");

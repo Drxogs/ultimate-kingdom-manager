@@ -14,6 +14,11 @@
           "effects": [
             {
               "unrest": -1
+            },
+            {
+              "ruin": {
+                "strife": 1
+              }
             }
           ]
         },
@@ -38,10 +43,17 @@
           "text": "",
           "effects": [
             {
-              "bp": -2
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "loyalty"
+                ],
+                "days": 30
+              }
             },
             {
-              "note": "Neither is happy, but nobody riots."
+              "bp": -1
             }
           ]
         }
@@ -97,6 +109,9 @@
               "ruin": {
                 "decay": -1
               }
+            },
+            {
+              "bpDice": -1
             }
           ]
         }
@@ -135,6 +150,9 @@
           "label": "Titles here are earned.",
           "text": "",
           "effects": [
+            {
+              "unrest": -1
+            },
             {
               "ruin": {
                 "strife": 1
@@ -208,6 +226,9 @@
                 ],
                 "days": 30
               }
+            },
+            {
+              "bp": -1
             }
           ]
         },
@@ -217,9 +238,13 @@
           "text": "",
           "effects": [
             {
-              "ruin": {
-                "corruption": 1
-              }
+              "bp": 2
+            },
+            {
+              "unrest": 1
+            },
+            {
+              "note": "The priests sell the temple's silver to pay for the roof."
             }
           ]
         }
@@ -279,7 +304,9 @@
               "fame": 1
             },
             {
-              "note": "The leaders are seen as good sports."
+              "ruin": {
+                "strife": 1
+              }
             }
           ]
         }
@@ -326,7 +353,15 @@
           "text": "",
           "effects": [
             {
-              "note": "A shrine goes up by the crossroads."
+              "bp": 1
+            },
+            {
+              "ruin": {
+                "strife": 1
+              }
+            },
+            {
+              "note": "The pilgrims rent land by the crossroads; neither side is quite happy."
             }
           ]
         },
@@ -379,11 +414,19 @@
         },
         {
           "id": "promise",
-          "label": "Promise pay after the harvest.",
+          "label": "Promise pay after the harvest, with a bonus.",
           "text": "",
           "effects": [
             {
-              "unrest": 1
+              "ruin": {
+                "strife": -1
+              }
+            },
+            {
+              "income": {
+                "perWeek": -0.5,
+                "weeks": 8
+              }
             }
           ]
         },
@@ -393,11 +436,19 @@
           "text": "",
           "effects": [
             {
-              "note": "A few take the deal and settle down."
-            },
-            {
               "ruin": {
                 "crime": -1
+              }
+            },
+            {
+              "modifier": {
+                "type": "status",
+                "value": -1,
+                "selector": [
+                  "warfare",
+                  "defense"
+                ],
+                "days": 30
               }
             }
           ]
@@ -426,6 +477,11 @@
           "effects": [
             {
               "unrest": -1
+            },
+            {
+              "ruin": {
+                "crime": 1
+              }
             }
           ]
         },
@@ -450,7 +506,12 @@
           "text": "",
           "effects": [
             {
-              "note": "He's gone. Nobody's sure that's better."
+              "ruin": {
+                "crime": -1
+              }
+            },
+            {
+              "bp": -1
             }
           ]
         }
@@ -498,14 +559,21 @@
                 ],
                 "days": 30
               }
+            },
+            {
+              "bp": -1
             }
           ]
         },
         {
           "id": "dismiss",
-          "label": "It's only deer.",
+          "label": "It's only deer. Hunt them.",
           "text": "",
           "effects": [
+            {
+              "consumption": -1,
+              "days": 30
+            },
             {
               "unrest": 1
             }
@@ -606,6 +674,9 @@
           "effects": [
             {
               "bp": -2
+            },
+            {
+              "unrest": -1
             }
           ]
         },
@@ -643,21 +714,36 @@
       "responses": [
         {
           "id": "first",
-          "label": "The first captain is right.",
+          "label": "The local captain is right.",
           "text": "",
           "effects": [
             {
-              "note": "One happy captain, one sulking one."
+              "unrest": -1
+            },
+            {
+              "ruin": {
+                "strife": 1
+              }
             }
           ]
         },
         {
           "id": "second",
-          "label": "The second captain is right.",
+          "label": "The foreign captain is right.",
           "text": "",
           "effects": [
             {
-              "note": "One happy captain, one sulking one."
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "economy"
+                ],
+                "days": 30
+              }
+            },
+            {
+              "unrest": 1
             }
           ]
         },
@@ -673,6 +759,9 @@
               "ruin": {
                 "crime": -1
               }
+            },
+            {
+              "unrest": 1
             }
           ]
         }
@@ -703,10 +792,14 @@
                 "type": "status",
                 "value": 1,
                 "selector": [
-                  "culture"
+                  "magic",
+                  "scholarship"
                 ],
                 "days": 30
               }
+            },
+            {
+              "unrest": 1
             }
           ]
         },
@@ -716,7 +809,18 @@
           "text": "",
           "effects": [
             {
-              "note": "The wizard grumbles but agrees."
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "magic",
+                  "scholarship"
+                ],
+                "days": 30
+              }
+            },
+            {
+              "bp": -1
             }
           ]
         },
@@ -754,6 +858,11 @@
           "effects": [
             {
               "unrest": -1
+            },
+            {
+              "ruin": {
+                "strife": 1
+              }
             }
           ]
         },
@@ -763,9 +872,17 @@
           "text": "",
           "effects": [
             {
-              "ruin": {
-                "strife": 1
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "loyalty"
+                ],
+                "days": 30
               }
+            },
+            {
+              "unrest": 1
             }
           ]
         },
@@ -778,7 +895,9 @@
               "bp": -1
             },
             {
-              "note": "They start over two villages away."
+              "ruin": {
+                "strife": -1
+              }
             }
           ]
         }
@@ -812,7 +931,8 @@
                 "type": "status",
                 "value": 1,
                 "selector": [
-                  "culture"
+                  "magic",
+                  "scholarship"
                 ],
                 "days": 30
               }
@@ -825,7 +945,15 @@
           "text": "",
           "effects": [
             {
-              "note": "The scholar goes anyway, poorer."
+              "bp": 1
+            },
+            {
+              "ruin": {
+                "decay": 1
+              }
+            },
+            {
+              "note": "The scholar sells a few finds to the crown; the dig is careless."
             }
           ]
         },
@@ -887,11 +1015,16 @@
         },
         {
           "id": "refuse",
-          "label": "The crown isn't a bank.",
+          "label": "Let the bakers' guild sort it out.",
           "text": "",
           "effects": [
             {
-              "note": "The baker closes for a month."
+              "ruin": {
+                "strife": -1
+              }
+            },
+            {
+              "unrest": 1
             }
           ]
         }
@@ -1040,7 +1173,9 @@
           "text": "",
           "effects": [
             {
-              "note": "Tradition is pleased."
+              "ruin": {
+                "strife": -1
+              }
             }
           ]
         },
@@ -1058,6 +1193,11 @@
                 ],
                 "days": 30
               }
+            },
+            {
+              "ruin": {
+                "strife": 1
+              }
             }
           ]
         },
@@ -1068,6 +1208,9 @@
           "effects": [
             {
               "unrest": -1
+            },
+            {
+              "bp": -1
             }
           ]
         }
@@ -1111,6 +1254,10 @@
               "ruin": {
                 "strife": -1
               }
+            },
+            {
+              "consumption": 1,
+              "days": 30
             }
           ]
         },
@@ -1120,7 +1267,10 @@
           "text": "",
           "effects": [
             {
-              "note": "Nobody is thrilled. Nobody is furious."
+              "unrest": -1
+            },
+            {
+              "bp": -1
             }
           ]
         }
@@ -1150,6 +1300,9 @@
               "bp": -2
             },
             {
+              "unrest": -1
+            },
+            {
               "gm": "Settlers want to found a village. Consider a new settlement on the map."
             }
           ]
@@ -1160,7 +1313,17 @@
           "text": "",
           "effects": [
             {
-              "note": "The settlers get to work."
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "stability"
+                ],
+                "days": 30
+              }
+            },
+            {
+              "unrest": 1
             }
           ]
         },
@@ -1169,6 +1332,16 @@
           "label": "Settle in an existing village.",
           "text": "",
           "effects": [
+            {
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "economy"
+                ],
+                "days": 30
+              }
+            },
             {
               "unrest": 1
             }
@@ -1213,10 +1386,10 @@
           "text": "",
           "effects": [
             {
-              "note": "The hunters are grateful."
+              "unrest": -1
             },
             {
-              "unrest": -1
+              "bp": -1
             }
           ]
         },
@@ -1226,7 +1399,13 @@
           "text": "",
           "effects": [
             {
+              "bp": 2
+            },
+            {
               "unrest": 1
+            },
+            {
+              "note": "The crown's hunters sell the venison and hides."
             }
           ]
         }
@@ -1274,6 +1453,11 @@
           "effects": [
             {
               "bp": -1
+            },
+            {
+              "ruin": {
+                "strife": -1
+              }
             }
           ]
         },
@@ -1284,6 +1468,11 @@
           "effects": [
             {
               "unrest": 1
+            },
+            {
+              "ruin": {
+                "corruption": -1
+              }
             }
           ]
         }
@@ -1313,7 +1502,14 @@
               "bpDice": -1
             },
             {
-              "note": "The woods feel friendlier."
+              "modifier": {
+                "type": "status",
+                "value": 1,
+                "selector": [
+                  "stability"
+                ],
+                "days": 30
+              }
             }
           ]
         },
@@ -1337,10 +1533,10 @@
           "text": "",
           "effects": [
             {
-              "note": "The druid says to leave milk. They do."
+              "unrest": -1
             },
             {
-              "unrest": -1
+              "bp": -1
             }
           ]
         }
