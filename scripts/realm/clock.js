@@ -15,6 +15,7 @@ import { resolveDue } from "./resolve.js";
 import { advanceRankUps } from "./ranks.js";
 import { isLeader } from "./leader.js";
 import { adoptMapSettlements, growSettlements, hasCapital, overcrowdedCount } from "./settlements.js";
+import { monthlyStanding, setUnrest } from "./standing.js";
 
 const MAX_CATCH_UP_WEEKS = 26;
 const MAX_MATTERS_PER_TICK = 2;
@@ -88,6 +89,7 @@ export async function tick() {
     });
     await setSetting(SETTINGS.clock, { week, month });
     if (unrest) await addUnrest(unrest);
+    if (newMonth && hasCapital()) await monthlyStanding();
     await resolveDue();
     await advanceRankUps();
     await checkAmbitions();
@@ -115,7 +117,7 @@ async function runWatchers() {
 async function addUnrest(amount) {
   const kingdom = getKingdom();
   if (!kingdom) return;
-  await kingdom.update({ "unrest.value": Math.max(0, (kingdom.unrest?.value ?? 0) + amount) });
+  await setUnrest((kingdom.unrest?.value ?? 0) + amount);
 }
 
 /** One week of upkeep. Returns Unrest gained from food the treasury couldn't cover. */

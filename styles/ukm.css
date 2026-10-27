@@ -666,3 +666,4 @@
 .ukm-manager .ukm-fortunes li { padding: 0.2rem 0.5rem; background: var(--ukm-paper-bg); box-shadow: var(--ukm-shadow); }
 .ukm-manager .ukm-fortunes i, .ukm-manager .ukm-reroll-tag { color: #1f4f80; border-color: #1f4f80; }
 .ukm-manager .ukm-card-actions .ukm-reroll { color: #1f4f80; border-color: #1f4f80; font-weight: 600; }
+.ukm-chat .ukm-story { font-style: italic; margin: 0.2rem 0; }

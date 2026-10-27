@@ -218,7 +218,8 @@
       "settlement-grew": "{name} grew.",
       "overcrowded": "Overcrowded settlements added {amount} Unrest.",
       "starting-point": "The realm was set for a level {name} kingdom.",
-      "placed": "{name} was already standing."
+      "placed": "{name} was already standing.",
+      "unrest-trouble": "High Unrest added Ruin: {name}."
     },
     "Seat": {
       "ruler": "Ruler",
@@ -276,7 +277,9 @@
       "Continues": "This matter isn't over. It returns next month.",
       "GmTasks": "To do: {name}",
       "RollFailed": "Couldn't roll {name}. Check that the kingdom and skill are set up.",
-      "Ignored": "Nobody heard them out, and they went home angry."
+      "Ignored": "Nobody heard them out, and they went home angry.",
+      "Windfall": "A windfall: +{bp} BP to the treasury.",
+      "AnarchyWorse": "The realm is in anarchy: the result is one step worse."
     },
     "Request": {
       "Assigned": "On it. Expect a result in {days} days.",
@@ -313,7 +316,8 @@
         "NameTaken": "A settlement already has that name.",
         "NotRolled": "There's no result waiting on that card.",
         "AlreadyRerolled": "That check has already been rerolled.",
-        "NoReroll": "No reroll fits that check."
+        "NoReroll": "No reroll fits that check.",
+        "NoFame": "The realm has no Fame to spend."
       }
     },
     "Effect": {
@@ -695,7 +699,26 @@
       "UseHint": "Spend one of the realm's rerolls: roll this check again and keep the new result.",
       "Available": "{n} reroll(s) available",
       "Rerolled": "reroll",
-      "What": "Rerolls come from some rewards. When a card has rolled and the result is waiting, its seat can spend one to roll again; the new result stands, one reroll per check."
+      "What": "Rerolls come from some rewards. When a card has rolled and the result is waiting, its seat can spend one to roll again; the new result stands, one reroll per check.",
+      "UseFame": "Spend 1 Fame: reroll",
+      "UseFameHint": "Spend a point of Fame to roll this check again. The new result stands."
+    },
+    "Standing": {
+      "FameTitle": "Spend all Fame?",
+      "FameAsk": "The party can spend all its Fame ({fame}) to stop this. Spend it?",
+      "FameRuin": "{ruin} is about to reach its limit and add a Ruin penalty.",
+      "FameAnarchy": "Unrest is about to reach 20, and the realm would fall into anarchy.",
+      "FameSpentTitle": "The realm's good name holds",
+      "FameSpent": "The party spent all its Fame to hold off disaster.",
+      "AnarchyTitle": "Anarchy",
+      "Anarchy": "Unrest has reached 20. The realm falls into anarchy: every kingdom check is one step worse until Unrest drops below 20.",
+      "OrderTitle": "Order returns",
+      "Order": "Unrest is below 20 again. The anarchy is over.",
+      "TroubleTitle": "Unrest {unrest}: the realm suffers",
+      "Trouble": "With Unrest at 10 or more, things fall apart: {ruin}.",
+      "HexLost": "Flat check {roll} against 11: a hex slips out of the realm's control. The GM marks it unclaimed.",
+      "HexHeld": "Flat check {roll} against 11: the borders hold this month.",
+      "LoseHexTask": "Unrest cost the realm a hex: unclaim one claimed hex of the party's choice on the map."
     }
   }
 }

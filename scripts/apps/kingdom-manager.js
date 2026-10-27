@@ -232,6 +232,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       unassign: KingdomManager.#unassign,
       accept: KingdomManager.#accept,
       useFortune: KingdomManager.#useFortune,
+      useFame: KingdomManager.#useFame,
       escalate: KingdomManager.#escalate,
       rollNow: KingdomManager.#rollNow,
       recordOutcome: KingdomManager.#recordOutcome,
@@ -432,6 +433,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             rolledResult: card.pendingRoll ? game.i18n.localize(`UKM.Degree.${DEGREES[card.pendingRoll.personal && card.pendingRoll.degree === 2 ? 3 : card.pendingRoll.degree]}`) : null,
             canAccept: card.status === "rolled" && canAct,
             rerolls: card.status === "rolled" && card.pendingRoll && !card.pendingRoll.fortuneUsed && canCallBack(game.user, card) ? fortuneUses(realm, card.pendingRoll.skill) : 0,
+            fameReroll: card.status === "rolled" && card.pendingRoll && !card.pendingRoll.fortuneUsed && canCallBack(game.user, card) && getFame().value > 0,
             rerollTag: ["open", "assigned"].includes(card.status) ? Math.max(0, ...stage.skills.map((sk) => fortuneUses(realm, sk))) : 0,
             workDays: card.workUntil ? Math.max(0, daysUntil(card.workUntil, now)) : null,
             assigneeName: card.assignee?.name ?? null,
@@ -1008,6 +1010,11 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #reveal(event, target) {
     const card = findCard(target);
     if (card && game.user.isGM) await sendRequest("gm", { op: "reveal", cardId: card.id, revealed: !card.revealed });
+  }
+
+  static async #useFame(event, target) {
+    const card = findCard(target);
+    if (card) await sendRequest("useFame", { cardId: card.id });
   }
 
   static async #useFortune(event, target) {

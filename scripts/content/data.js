@@ -11,11 +11,18 @@ async function load(name) {
 }
 
 export async function preloadData() {
-  await Promise.all(["events", "matters", "rankups", "projects", "audiences", "ambitions", "companions", "quests"].map(load));
+  await Promise.all(["events", "matters", "rankups", "projects", "audiences", "ambitions", "companions", "quests", "stories"].map(load));
 }
 
 export function getEvents() {
   return cache.events?.events ?? [];
+}
+
+/** What happened, in a line or two, for each result of an event, desk matter or project. */
+export function getStory(eventId, degreeName) {
+  const stories = cache.stories?.stories ?? {};
+  const id = String(eventId ?? "").replace(/^project:/, "");
+  return stories[id]?.[degreeName] ?? null;
 }
 
 export function getStoryEvents() {

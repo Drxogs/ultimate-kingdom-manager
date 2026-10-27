@@ -1,0 +1,952 @@
+{
+ "stories": {
+  "militia-drills": {
+   "criticalSuccess": "The drills go like clockwork. By the end, the farmhands march in step and talk about the realm like it's theirs to defend.",
+   "success": "The drills come together. Nobody will mistake them for knights, but they know which end of the spear goes forward.",
+   "failure": "Half the turnout is busy or bored, and the drills fizzle out before anyone learns much.",
+   "criticalFailure": "The drills turn into a shoving match, someone gets hurt, and the whole thing ends in angry words."
+  },
+  "watchtower-gap": {
+   "criticalSuccess": "A lookout goes up fast, and the first night it's manned the watch catches the smugglers in the act.",
+   "success": "A lookout goes up, and the crossing quiets down once the smugglers notice someone's watching.",
+   "failure": "The lookout never quite gets built, and the crossing stays open to anyone who wants it.",
+   "criticalFailure": "While the work stalls, the smugglers grow bold enough to rob the work crew."
+  },
+  "deserters": {
+   "criticalSuccess": "The runaways come back on their own after a quiet talk, and their story fixes the problems that made them run.",
+   "success": "The runaways are found and brought back without a fuss. They grumble, but they stay.",
+   "failure": "The runaways can't be found. Their bunks stay empty, and the others notice.",
+   "criticalFailure": "The hunt for the runaways turns ugly, and the whole countryside takes their side."
+  },
+  "arms-shipment": {
+   "criticalSuccess": "The deal is a steal: good steel at a fair price, with a little extra thrown in to seal the friendship.",
+   "success": "The deal goes through, and the armory is fuller for it.",
+   "failure": "Haggling drags on until the seller loses patience and takes the goods elsewhere.",
+   "criticalFailure": "The goods turn out to be rusted junk under a layer of grease, and the realm paid for the privilege."
+  },
+  "road-tolls": {
+   "criticalSuccess": "The thugs are rounded up, and the tolls they took go back to the travelers they took them from.",
+   "success": "The thugs are run off, and the road is free again.",
+   "failure": "The thugs scatter when the watch comes, and drift back when it leaves.",
+   "criticalFailure": "The watch is beaten off, and the toll goes up to pay for the trouble."
+  },
+  "veterans-grievance": {
+   "criticalSuccess": "The old soldiers get a hearing, a feast, and a place of honor. They become the realm's loudest supporters.",
+   "success": "The old soldiers are heard out and given something fair. The grumbling dies down.",
+   "failure": "The old soldiers feel brushed off, and they're telling anyone who'll listen.",
+   "criticalFailure": "The old soldiers march on the hall, and the crowd that gathers isn't on the leaders' side."
+  },
+  "border-raid": {
+   "criticalSuccess": "The raiders are caught at the border with the herd. The animals come home, and so does a lesson for the raiders.",
+   "success": "The riders are chased off and most of the herd is brought back.",
+   "failure": "The trail goes cold past the border. The raiders keep what they took.",
+   "criticalFailure": "The pursuit rides into an ambush, and the raiders take more than cattle this time."
+  },
+  "tournament": {
+   "criticalSuccess": "The contest is the talk of the season: good bouts, no broken heads, and a champion everyone cheers.",
+   "success": "The contest goes off well. A few bruises, a lot of cheering.",
+   "failure": "The contest is a damp, half-attended affair that nobody will remember.",
+   "criticalFailure": "The contest turns into a brawl that spills into the fair and wrecks half the stalls."
+  },
+  "hedge-witch": {
+   "criticalSuccess": "The real cause is found, the witch is cleared, and she becomes the village's favorite healer.",
+   "success": "The feud is settled with apologies on both sides and a cask of cider.",
+   "failure": "Nobody can prove anything either way, and the bad feeling lingers.",
+   "criticalFailure": "Accusations fly, charms start flying too, and both households lose more than goats."
+  },
+  "book-bequest": {
+   "criticalSuccess": "The books find a home, and a few of them turn out to be priceless.",
+   "success": "The books find a home where people will read them.",
+   "failure": "The books sit in crates in a damp cellar, slowly going to mold.",
+   "criticalFailure": "The books are lost to a leaky roof and a careless carter, and the scholar's family is furious."
+  },
+  "marsh-lights": {
+   "criticalSuccess": "The lights are traced to a harmless marsh gas, and the herders turn it into a local wonder.",
+   "success": "The lights are explained, and the herders go back to their pastures.",
+   "failure": "Nobody gets to the bottom of the lights, and the herders keep their animals away.",
+   "criticalFailure": "Whatever the lights are, they lead a herder astray, and the marsh doesn't give him back."
+  },
+  "apprentice-accident": {
+   "criticalSuccess": "The barn is rebuilt by the apprentice's own hands, and the lesson makes them a careful mage for life.",
+   "success": "The damage is paid for and the apprentice is put under a stricter master.",
+   "failure": "The matter is shrugged off, and folks start eyeing every apprentice warily.",
+   "criticalFailure": "A second accident follows the first, and the village wants every spellcaster gone."
+  },
+  "star-charts": {
+   "criticalSuccess": "The almanac is uncanny: the planting dates are perfect and the farmers swear by it.",
+   "success": "The almanac is useful, and a few farmers try their luck with it.",
+   "failure": "The almanac is full of guesses dressed up as stars.",
+   "criticalFailure": "The almanac gets the frost wrong, and the early planting is lost."
+  },
+  "cursed-relic": {
+   "criticalSuccess": "The coin is laid to rest properly, and the luck it took comes back with interest.",
+   "success": "The coin is sealed away, and the bad luck stops.",
+   "failure": "The coin is locked in a box, but it keeps turning up in people's pockets.",
+   "criticalFailure": "The coin passes from hand to hand, and the misfortune follows it through the village."
+  },
+  "schoolroom": {
+   "criticalSuccess": "The school opens with a good teacher, and the children take to it at once.",
+   "success": "The school opens, and the children learn their letters.",
+   "failure": "The school never gets past the planning, and the parents give up asking.",
+   "criticalFailure": "The school opens with the wrong teacher, and it closes in disgrace."
+  },
+  "fey-bargain": {
+   "criticalSuccess": "A fair deal is struck with the sprite, and the bridge becomes a lucky place to cross.",
+   "success": "The sprite accepts a fair offering and stops troubling folks.",
+   "failure": "The sprite refuses every offer, and folks take the long way round.",
+   "criticalFailure": "The sprite takes offense, and its pranks follow people home."
+  },
+  "irrigation": {
+   "criticalSuccess": "The ditch is dug true, and the lower fields have their best year ever.",
+   "success": "The ditch is dug, and the lower fields drink.",
+   "failure": "The digging stalls halfway, and the ditch fills with mud.",
+   "criticalFailure": "The ditch floods the wrong field and drowns the crop in it."
+  },
+  "blight": {
+   "criticalSuccess": "The rust is burned out early, and the treatment works so well it's taught across the realm.",
+   "success": "The rust is caught before it spreads.",
+   "failure": "The rust slows but doesn't stop, and one more field is lost.",
+   "criticalFailure": "The rust spreads from farm to farm, and the granaries will feel it."
+  },
+  "bridge-damage": {
+   "criticalSuccess": "The new bridge is better than the old one, and the miller throws a party to open it.",
+   "success": "The bridge is mended and the long way round is forgotten.",
+   "failure": "The repair is slow and shaky, and folks still go the long way.",
+   "criticalFailure": "The patched bridge gives way under a loaded cart."
+  },
+  "market-day": {
+   "criticalSuccess": "Market day is a roaring success, and merchants from three villages over ask when the next one is.",
+   "success": "Market day comes off well, and coin changes hands.",
+   "failure": "Market day is quiet: a few stalls, fewer buyers.",
+   "criticalFailure": "Market day ends in a fight over stall space, and the merchants swear they won't come back."
+  },
+  "foul-well": {
+   "criticalSuccess": "The well is cleaned and the cause found, and the sick recover quickly.",
+   "success": "The well is cleaned and the sickness passes.",
+   "failure": "The well is boarded up, and folks haul water from the stream.",
+   "criticalFailure": "The foul water reaches more homes before anyone acts, and the sickness spreads."
+  },
+  "new-settlers": {
+   "criticalSuccess": "The family settles in and works hard, and their letters home bring more like them.",
+   "success": "The family is given land and gets to work.",
+   "failure": "The family can't find good land and moves on.",
+   "criticalFailure": "The family is cheated out of their land by a neighbor, and they leave bitter."
+  },
+  "wolves-at-the-fold": {
+   "criticalSuccess": "The pack is driven off, and the shepherds' new dogs keep them away for good.",
+   "success": "The wolves are hunted down, and the flocks are safe again.",
+   "failure": "The hunters come back empty-handed, and the losses go on.",
+   "criticalFailure": "The hunt goes wrong, and it's not only sheep the wolves take this time."
+  },
+  "roofs-and-rot": {
+   "criticalSuccess": "Every roof is mended before the rains, and the work gives idle hands a trade.",
+   "success": "The worst roofs are patched and folks stay dry.",
+   "failure": "A few roofs are mended, and the rest keep dripping.",
+   "criticalFailure": "A rotten roof gives way in the night and takes a family's home with it."
+  },
+  "petitioners-line": {
+   "criticalSuccess": "Every petitioner is heard by sundown, and the ones with real troubles go home with answers.",
+   "success": "The line is worked through, and most folks leave satisfied.",
+   "failure": "The line barely moves, and folks go home tired and grumbling.",
+   "criticalFailure": "The doors close on a long line, and the crowd outside turns ugly."
+  },
+  "whisper-campaign": {
+   "criticalSuccess": "The rumor is traced to its source, and the open books prove the leaders clean.",
+   "success": "The rumor dies down once the truth is told plainly.",
+   "failure": "The rumor fades a little, but folks still wonder.",
+   "criticalFailure": "The denial makes it worse, and the story grows with every telling."
+  },
+  "local-election": {
+   "criticalSuccess": "The choosing goes smoothly, and the new reeve is popular and loyal.",
+   "success": "The choosing is blessed, and the village has its reeve.",
+   "failure": "The choosing ends in a squabble, and nobody is happy with the result.",
+   "criticalFailure": "The choosing splits the village down the middle, and the losers won't accept it."
+  },
+  "bribed-official": {
+   "criticalSuccess": "The crooked reeve is exposed and the money paid back. The village cheers the crown.",
+   "success": "The reeve is removed and a better one put in.",
+   "failure": "The reeve is warned, but nobody believes anything has changed.",
+   "criticalFailure": "The reeve slips through, and the villagers decide the crown is in on it."
+  },
+  "royal-progress": {
+   "criticalSuccess": "The visit is a delight. The miller's family tells the story for years, and so does everyone who saw it.",
+   "success": "The visit goes well and the village feels seen.",
+   "failure": "The visit is short and stiff, and the village is a little let down.",
+   "criticalFailure": "The visit goes badly wrong, and the village feels insulted."
+  },
+  "informants": {
+   "criticalSuccess": "The barkeep's ear proves golden, and the realm hears about trouble before it starts.",
+   "success": "The arrangement works, and useful word comes in now and then.",
+   "failure": "The tips are mostly gossip and rarely worth the coin.",
+   "criticalFailure": "The arrangement is discovered, and the tavern regulars feel spied on."
+  },
+  "succession-gossip": {
+   "criticalSuccess": "A clear answer is given, and the steadiness of it calms the whole realm.",
+   "success": "The worry is answered well enough, and the talk dies down.",
+   "failure": "The answer is vague, and the question keeps coming back.",
+   "criticalFailure": "The non-answer sets factions scheming over who would take the seat."
+  },
+  "amnesty": {
+   "criticalSuccess": "The pardoned poachers turn gamekeepers, and they're the best the realm has ever had.",
+   "success": "The pardon holds, and the poachers settle down.",
+   "failure": "The pardon is offered, but the poachers don't trust it.",
+   "criticalFailure": "The pardoned poachers go straight back to it, and the realm looks a fool."
+  },
+  "traveling-players": {
+   "criticalSuccess": "The players put on a show nobody will forget, and they promise to come back every year.",
+   "success": "The players perform, the village laughs, and everyone is fed.",
+   "failure": "The show is thin and the crowd thinner.",
+   "criticalFailure": "The players mock the leaders on stage, and the crowd laughs along a little too hard."
+  },
+  "shrine-dispute": {
+   "criticalSuccess": "A shared arrangement is found that both congregations are proud of.",
+   "success": "A schedule is agreed, and the candles stay put.",
+   "failure": "The bickering continues, quieter but not gone.",
+   "criticalFailure": "The quarrel turns into shoving at the shrine door, and both faiths blame the crown."
+  },
+  "harvest-festival": {
+   "criticalSuccess": "The supper and bonfire are the best in memory, and the village sings until dawn.",
+   "success": "The festival is warm and well fed.",
+   "failure": "The festival is rained out, and folks go home early.",
+   "criticalFailure": "The bonfire gets away from them and takes a haystack with it."
+  },
+  "bad-omen": {
+   "criticalSuccess": "The omen is read as good fortune, and the village takes heart.",
+   "success": "The omen is explained away, and folks go back to their work.",
+   "failure": "Folks keep muttering about the omen.",
+   "criticalFailure": "The omen spreads panic, and every misfortune is blamed on it."
+  },
+  "local-legend": {
+   "criticalSuccess": "The tales are written down beautifully, and copies are passed hand to hand across the realm.",
+   "success": "The tales are written down before they're lost.",
+   "failure": "Only a few of the tales are saved.",
+   "criticalFailure": "The old woman takes offense at how her tales were treated and refuses to share any more."
+  },
+  "vandalized-statue": {
+   "criticalSuccess": "The culprit is caught and does the cleaning, and the village has a good laugh about it.",
+   "success": "The paint is scrubbed off and the vandal warned.",
+   "failure": "The paint fades, but whoever did it is still out there.",
+   "criticalFailure": "The vandal strikes again, bolder, and the pictures get worse."
+  },
+  "wedding": {
+   "criticalSuccess": "The wedding is a joy, and both families count the realm as friends for life.",
+   "success": "The wedding goes off well, with a leader there to witness it.",
+   "failure": "The wedding is a stiff affair and the families feel slighted.",
+   "criticalFailure": "The wedding ends in a quarrel between the families, and the crown gets the blame."
+  },
+  "burial-rites": {
+   "criticalSuccess": "A fitting new ground is blessed, and folks find peace in it.",
+   "success": "A new burial ground is set aside and accepted.",
+   "failure": "The new plot is used, but nobody likes it.",
+   "criticalFailure": "Folks refuse the new plot, and the bodies wait."
+  },
+  "foreign-envoy": {
+   "criticalSuccess": "The visit is a triumph, and the realm gains a warm friend abroad.",
+   "success": "The visit goes well, and letters keep coming.",
+   "failure": "The visit is polite and goes nowhere.",
+   "criticalFailure": "The visit goes badly, and the envoy leaves offended."
+  },
+  "river-pirates": {
+   "criticalSuccess": "The pirates are caught red-handed, and the river is safe for a long while.",
+   "success": "The pirates are driven off, and the barges sleep easy.",
+   "failure": "The pirates go quiet for a while, then come back.",
+   "criticalFailure": "The pirates grow bolder and take a whole barge."
+  },
+  "border-dispute": {
+   "criticalSuccess": "The line is settled fairly, and both farmers shake hands on it.",
+   "success": "The line is marked and the matter is closed.",
+   "failure": "Neither side accepts the ruling, and the stones keep moving.",
+   "criticalFailure": "The quarrel turns into a fight, and the neighbor's lord takes his side."
+  },
+  "ferry-service": {
+   "criticalSuccess": "The ferry runs like clockwork, and trade on both banks picks up.",
+   "success": "The ferry begins its crossings.",
+   "failure": "The ferry runs when it feels like it.",
+   "criticalFailure": "The ferry capsizes on its second crossing."
+  },
+  "insulted-guest": {
+   "criticalSuccess": "The merchant leaves delighted and tells everyone how gracious the realm is.",
+   "success": "The merchant is soothed and the matter dropped.",
+   "failure": "The merchant leaves grumbling.",
+   "criticalFailure": "The merchant tells the story everywhere, and it gets worse every time."
+  },
+  "lost-boat": {
+   "criticalSuccess": "The boat is found with everyone safe, and the rescue is the talk of the lake.",
+   "success": "The boat is found and the crew brought home.",
+   "failure": "The boat is found, but not everyone came home.",
+   "criticalFailure": "The search finds nothing, and another boat is lost looking."
+  },
+  "hostage-exchange": {
+   "criticalSuccess": "The exchange goes smoothly and opens the door to a lasting truce.",
+   "success": "The captives are traded safely.",
+   "failure": "The talks stall, and the trapper is still held.",
+   "criticalFailure": "The exchange goes wrong, and blood is spilled on both sides."
+  },
+  "river-festival": {
+   "criticalSuccess": "The races are a riot of color and cheering, and folks come from all over to watch.",
+   "success": "The races are a happy day on the water.",
+   "failure": "The races are a soggy, small affair.",
+   "criticalFailure": "A race ends in a collision and a drowning."
+  },
+  "counterfeit-coin": {
+   "criticalSuccess": "The forger is caught with the molds, and honest coin flows again.",
+   "success": "The false coins are pulled from circulation.",
+   "failure": "The false coins keep turning up, though fewer of them.",
+   "criticalFailure": "The false coin spreads, and merchants start refusing the realm's money."
+  },
+  "new-workshop": {
+   "criticalSuccess": "The forge thrives and draws more craftsfolk in its wake.",
+   "success": "The forge is lit and the first iron sold.",
+   "failure": "The forge struggles and barely keeps its fire.",
+   "criticalFailure": "The forge fails and the smith leaves owing money."
+  },
+  "price-gouging": {
+   "criticalSuccess": "Fair prices return, and a second seller sets up shop to keep them fair.",
+   "success": "The prices come back down to something fair.",
+   "failure": "The prices drop a little, but folks still pay too much.",
+   "criticalFailure": "The prices climb higher, and folks go without."
+  },
+  "guild-charter": {
+   "criticalSuccess": "The guild is founded with fair rules, and the work it turns out is the best in the region.",
+   "success": "The guild is chartered and sets fair wages.",
+   "failure": "The guild talks go round in circles.",
+   "criticalFailure": "The guild forms against the crown's wishes and starts making demands."
+  },
+  "tax-dodgers": {
+   "criticalSuccess": "The missing tithes are found, with interest, and the village pays up willingly.",
+   "success": "The tithes are collected.",
+   "failure": "Some of the tithes come in; the rest are still lost on the road.",
+   "criticalFailure": "The village refuses to pay, and its neighbors start asking why they should."
+  },
+  "mine-accident": {
+   "criticalSuccess": "The miners are dug out alive, and the rescue makes heroes of everyone who helped.",
+   "success": "The miners are brought out alive.",
+   "failure": "The rescue is slow, and one of the miners doesn't make it.",
+   "criticalFailure": "The rescue fails, and the dig is abandoned."
+  },
+  "merchant-caravan": {
+   "criticalSuccess": "The trade route blossoms, and more traders follow the first.",
+   "success": "The route is set up and the caravan comes each month.",
+   "failure": "The trader comes once or twice and then stops.",
+   "criticalFailure": "The trader is robbed on the way, and the word on the road is to stay away."
+  },
+  "debt-collector": {
+   "criticalSuccess": "The debts are settled fairly, and the families keep their homes.",
+   "success": "The moneylender agrees to fairer terms.",
+   "failure": "A few families are saved; others lose everything.",
+   "criticalFailure": "The moneylender takes what he can, and families end up on the road."
+  },
+  "trail-markers": {
+   "criticalSuccess": "The trails are marked so well that even strangers find their way.",
+   "success": "The trails are marked and folks stop getting lost.",
+   "failure": "Only some trails get marked before the work stops.",
+   "criticalFailure": "The markers are set wrong and lead a party astray."
+  },
+  "lost-hunters": {
+   "criticalSuccess": "The hunters are found alive, and they bring back word of good game.",
+   "success": "The hunters are found and brought home.",
+   "failure": "Only one hunter is found.",
+   "criticalFailure": "The searchers find nothing, and two of them go missing too."
+  },
+  "poachers": {
+   "criticalSuccess": "The poachers are caught, and the snares they set feed the poor for a month.",
+   "success": "The poachers are run off.",
+   "failure": "The snares are cleared, but they keep coming back.",
+   "criticalFailure": "The poachers clear out the woods, and the crown's game is gone for a season."
+  },
+  "wild-harvest": {
+   "criticalSuccess": "The harvest is plentiful and fetches a great price at market.",
+   "success": "The foragers bring in a good harvest.",
+   "failure": "The harvest is middling.",
+   "criticalFailure": "The foragers eat something they shouldn't have, and the season ends in sickness."
+  },
+  "strange-tracks": {
+   "criticalSuccess": "The creature is found and turns out to be harmless, and even a little lucky.",
+   "success": "The tracks are explained and the herders calm down.",
+   "failure": "Nobody can name the tracks, and the herders keep watch.",
+   "criticalFailure": "Whatever made the tracks comes back and takes a herd."
+  },
+  "ruins-found": {
+   "criticalSuccess": "The ruins hold a real find, and scholars come to study them.",
+   "success": "The ruins are cleared and recorded.",
+   "failure": "The ruins are interesting but empty.",
+   "criticalFailure": "The ruins wake something better left asleep."
+  },
+  "forest-fire": {
+   "criticalSuccess": "The fire is stopped at the ridge, and the firebreak becomes a road.",
+   "success": "The fire is put out before it reaches the village.",
+   "failure": "The fire burns out on its own, after taking a lot of good timber.",
+   "criticalFailure": "The fire reaches the village."
+  },
+  "frontier-scouts": {
+   "criticalSuccess": "The scouts come back with maps and stories, and their work opens new land.",
+   "success": "The scouts bring back useful word of the land beyond.",
+   "failure": "The scouts come back with little to report.",
+   "criticalFailure": "The scouts run into trouble past the border, and not all of them come back."
+  },
+  "land-grant": {
+   "criticalSuccess": "The grant is a fine investment, and the bigger shop serves the whole region.",
+   "success": "The land is granted and put to good use.",
+   "failure": "The grant is tangled in arguments over boundaries.",
+   "criticalFailure": "The grant offends the neighbors, who say the crown plays favorites."
+  },
+  "unpopular-law": {
+   "criticalSuccess": "The law is changed in a way everyone can live with, and folks praise the leaders for listening.",
+   "success": "The law is softened and the anger cools.",
+   "failure": "The law stays, and folks keep grumbling.",
+   "criticalFailure": "The protest turns into a riot."
+  },
+  "stolen-seal": {
+   "criticalSuccess": "The thief is caught with the seal and the forgeries are undone.",
+   "success": "The seal is recovered.",
+   "failure": "A new seal is made, but the forged permits keep turning up.",
+   "criticalFailure": "The forgeries spread, and nobody trusts a permit any more."
+  },
+  "oath-day": {
+   "criticalSuccess": "The oath-taking is moving, and the new settlers are the realm's most loyal.",
+   "success": "The oaths are sworn properly.",
+   "failure": "The ceremony is rushed and feels hollow.",
+   "criticalFailure": "The ceremony is botched, and the settlers feel unwelcome."
+  },
+  "orphans": {
+   "criticalSuccess": "The children find loving homes, and their families are traced.",
+   "success": "The children are cared for.",
+   "failure": "The children are housed, but nobody really takes them in.",
+   "criticalFailure": "The children run off, and nobody knows where they went."
+  },
+  "sculptor": {
+   "criticalSuccess": "The carving is a marvel, and visitors come just to see it.",
+   "success": "The carving is fine work, and the village is proud of it.",
+   "failure": "The carving is fine, if plain.",
+   "criticalFailure": "The carving is a disaster, and the village is a laughingstock."
+  },
+  "saints-day": {
+   "criticalSuccess": "The feast is a joyous day of prayer and food, and the shrine's fame spreads.",
+   "success": "The feast is held well.",
+   "failure": "The feast is thin.",
+   "criticalFailure": "The feast is spoiled, and folks call it a bad sign."
+  },
+  "bawdy-songs": {
+   "criticalSuccess": "The leaders answer with a better song, and the whole realm sings it.",
+   "success": "The song fades as folks move on to the next tune.",
+   "failure": "The song keeps going round.",
+   "criticalFailure": "Every attempt to stop the song makes it more popular."
+  },
+  "drill-accident": {
+   "criticalSuccess": "The farmhand heals well and the drills are made safe, and the militia is better for it.",
+   "success": "The farmhand is cared for and the drills are fixed.",
+   "failure": "The farmhand limps for the rest of his life, and recruits are harder to find.",
+   "criticalFailure": "Another accident follows the first, and the militia falls apart."
+  },
+  "old-fort": {
+   "criticalSuccess": "The old palisade is made strong again and becomes the pride of the border.",
+   "success": "The old palisade is patched and garrisoned.",
+   "failure": "The repairs drag on and the work is shaky.",
+   "criticalFailure": "The old palisade collapses during the work."
+  },
+  "mercenaries": {
+   "criticalSuccess": "The sellswords prove loyal and keep the roads safe for a fair price.",
+   "success": "The sellswords are hired and earn their pay.",
+   "failure": "The sellswords take the coin and do little.",
+   "criticalFailure": "The sellswords turn to banditry themselves."
+  },
+  "siege-rumors": {
+   "criticalSuccess": "The rumor is put to rest quickly, and the barricades become a fine new wall.",
+   "success": "The rumor is shown to be false and the barricades come down.",
+   "failure": "The panic lingers.",
+   "criticalFailure": "The panic leads to a stampede."
+  },
+  "hostile-delegation": {
+   "criticalSuccess": "The steward leaves calmed and even friendly.",
+   "success": "The complaint is settled.",
+   "failure": "The steward leaves unhappy.",
+   "criticalFailure": "The steward leaves furious, and his lord takes it as an insult."
+  },
+  "lake-trade": {
+   "criticalSuccess": "The trade flourishes, and both shores prosper.",
+   "success": "The trade gets going.",
+   "failure": "The trade is slow to start.",
+   "criticalFailure": "The deal falls apart and both sides feel cheated."
+  },
+  "smuggler-boats": {
+   "criticalSuccess": "The night boat is boarded at the landing with a hold full of untaxed goods, and the cargo goes to the treasury.",
+   "success": "A few nights of lanterns on the bank, and the boat stops coming.",
+   "failure": "The boat simply changes its route, and the lights-out runs go on downstream.",
+   "criticalFailure": "The smugglers grow so bold they unload in broad daylight and laugh at the watch."
+  },
+  "cultural-exchange": {
+   "criticalSuccess": "The scholar stays the whole season, writes warmly of the realm, and sends students the next spring.",
+   "success": "The scholar's stay is pleasant and both sides learn a little.",
+   "failure": "The scholar grows bored with village life and leaves early.",
+   "criticalFailure": "The scholar takes offense at the hospitality and writes a scathing account back home."
+  },
+  "forbidden-book": {
+   "criticalSuccess": "Every copy is found and burned with the proper rites, and the nightmares stop the same night.",
+   "success": "The book is locked away where it can't hurt anyone.",
+   "failure": "The peddler sold more copies than anyone knew, and a few are still out there.",
+   "criticalFailure": "The book is copied and passed around in secret, and the nightmares spread with it."
+  },
+  "enchanted-tools": {
+   "criticalSuccess": "The charmed plow cuts like a hot knife, and every farmer in the valley wants one.",
+   "success": "The charm holds and the plow stays sharp all season.",
+   "failure": "The charm fades before the season is out.",
+   "criticalFailure": "The charm goes wrong, and the plow drags its ox through a neighbor's fence."
+  },
+  "weather-witch": {
+   "criticalSuccess": "The witch is cleared, and her weather-sense saves the next harvest from a late frost.",
+   "success": "The hail is shown to be bad luck, not a curse, and the witch is left in peace.",
+   "failure": "Nobody can say whether she did it, and the farmers keep giving her hard looks.",
+   "criticalFailure": "The village drives the witch out, and the hail comes again anyway."
+  },
+  "lecture-tour": {
+   "criticalSuccess": "The lecture fills the hall twice over, and a dozen young people take up the stars.",
+   "success": "The lecture is well attended and talked about for days.",
+   "failure": "A handful of people come, and half of them fall asleep.",
+   "criticalFailure": "The lecturer mocks a local belief, and the crowd breaks up the talk."
+  },
+  "bank-run": {
+   "criticalSuccess": "The crown's backing stops the panic in a day, and the moneylender ends up trusted more than before.",
+   "success": "The panic is calmed before the moneylender runs dry.",
+   "failure": "The panic burns out, but not before some families lose their savings.",
+   "criticalFailure": "The moneylender goes under, and the savings of half the village go with him."
+  },
+  "new-quarry": {
+   "criticalSuccess": "The stone is the finest in the region, and builders send for it from far away.",
+   "success": "The quarry is opened and the first stone cut.",
+   "failure": "The seam turns out thinner and cruder than it looked.",
+   "criticalFailure": "The pit collapses on the first crew to work it."
+  },
+  "strike": {
+   "criticalSuccess": "A fair deal is struck, and the mill hands go back to work cheering.",
+   "success": "The mill hands and the owner settle on new wages.",
+   "failure": "The strike drags on and the mill sits idle.",
+   "criticalFailure": "The strike turns to fists and broken windows."
+  },
+  "luxury-trade": {
+   "criticalSuccess": "The furs fetch a princely sum, and the buyers ask for the same again next season.",
+   "success": "The furs are sold at a fair price.",
+   "failure": "The furs go for less than the trappers hoped.",
+   "criticalFailure": "The furs are stolen on the road to market."
+  },
+  "windmill": {
+   "criticalSuccess": "The windmill turns sweetly from the first breeze, and the farmers save days of hauling.",
+   "success": "The windmill is raised and starts grinding.",
+   "failure": "The windmill is built, but it turns only in a strong wind.",
+   "criticalFailure": "The windmill blows down in its first storm."
+  },
+  "flood": {
+   "criticalSuccess": "The banks are raised in time, and the new dikes protect the low fields for years.",
+   "success": "The water goes down with little harm done.",
+   "failure": "The low fields are lost for the season.",
+   "criticalFailure": "The water reaches the houses, and families flee to the hills."
+  },
+  "orchard": {
+   "criticalSuccess": "Nearly every sapling takes, and in a few years the orchard is famous.",
+   "success": "The saplings are planted and most of them take.",
+   "failure": "Only a few saplings survive the first winter.",
+   "criticalFailure": "The saplings carry a blight that spreads to the old trees."
+  },
+  "locusts": {
+   "criticalSuccess": "The swarm is smoked out before it moves on, and the fields are saved.",
+   "success": "The grasshoppers are driven off with little lost.",
+   "failure": "One farm's crop is eaten to the ground.",
+   "criticalFailure": "The swarm moves from field to field and the harvest suffers."
+  },
+  "hermit": {
+   "criticalSuccess": "The hermit takes a liking to the realm and becomes its best guide in the deep woods.",
+   "success": "The hermit shares a few of his paths.",
+   "failure": "The hermit keeps his paths to himself.",
+   "criticalFailure": "The hermit takes offense and sends travelers the wrong way."
+  },
+  "bridge-trolls": {
+   "criticalSuccess": "The troll is outwitted at his own riddles and ends up keeping the bridge for the crown.",
+   "success": "The troll is driven from the bridge.",
+   "failure": "The troll stays, and folks take the long way round.",
+   "criticalFailure": "A traveler gets a riddle wrong, and the troll has supper."
+  },
+  "mapping-caves": {
+   "criticalSuccess": "Deep in the caves the mappers find something valuable, and the map is worth its weight in silver.",
+   "success": "The caves are mapped as far as anyone dares to go.",
+   "failure": "The mappers turn back before they get far.",
+   "criticalFailure": "A mapping party loses its light and takes days to find its way out, if it finds it at all."
+  },
+  "wild-animals": {
+   "criticalSuccess": "The beast is brought down, and the whole village feasts on it.",
+   "success": "The beast is driven back into the woods.",
+   "failure": "The beast is still out there, and folks keep their children close.",
+   "criticalFailure": "The beast charges again, and this time someone is badly hurt."
+  },
+  "archaeological-find": {
+   "criticalSuccess": "The dig turns up treasures of an older people, and the whole realm is proud of its deep roots.",
+   "success": "The site gives up a few fine pieces and a story worth telling.",
+   "failure": "The ruin keeps its secrets this time.",
+   "criticalFailure": "The dig collapses on itself, and whatever was down there is buried again."
+  },
+  "assassination-attempt": {
+   "criticalSuccess": "The killers are caught before they strike, and the one who hired them is named.",
+   "success": "The attempt is foiled and the court is safe.",
+   "failure": "The attempt fails, but the killers get away, and the court sleeps badly.",
+   "criticalFailure": "A blade finds its mark, and the realm is shaken."
+  },
+  "bandit-activity": {
+   "criticalSuccess": "The bandits are broken, and the roads are safer than they've been in years.",
+   "success": "The bandits are driven off the roads.",
+   "failure": "The bandits lie low, but they're still out there.",
+   "criticalFailure": "The bandits grow bolder and hit a settlement."
+  },
+  "boomtown": {
+   "criticalSuccess": "The boom is handled well, and the town grows into a real center of trade.",
+   "success": "The boom brings good money to the realm.",
+   "failure": "The boom fizzles before anyone can make much of it.",
+   "criticalFailure": "The boom turns to chaos and crime."
+  },
+  "building-demand": {
+   "criticalSuccess": "The townsfolk get their way, and they're delighted with the result.",
+   "success": "The demand is met.",
+   "failure": "The demand goes unanswered, and folks grumble.",
+   "criticalFailure": "The demand turns into protest."
+  },
+  "crop-failure": {
+   "criticalSuccess": "The blight is stopped cold, and the fields recover.",
+   "success": "The damage is contained.",
+   "failure": "The blight takes a good part of the harvest.",
+   "criticalFailure": "The blight spreads, and hunger follows."
+  },
+  "cult-activity": {
+   "criticalSuccess": "The cult is rooted out and its captives freed.",
+   "success": "The cult is pushed back, its hiding places found.",
+   "failure": "The cult slips away to hide elsewhere.",
+   "criticalFailure": "The cult grows bolder, and more people vanish."
+  },
+  "diplomatic-overture": {
+   "criticalSuccess": "The envoy leaves with a firm promise of friendship and a gift for the court.",
+   "success": "The talks go well and the envoy promises to write.",
+   "failure": "The talks are polite and end with nothing agreed.",
+   "criticalFailure": "The envoy leaves insulted, and the neighbor's court hears all about it."
+  },
+  "discovery": {
+   "criticalSuccess": "The breakthrough is real, and the realm's scholars are the talk of the region.",
+   "success": "The work bears fruit, and the scholars have something to show for it.",
+   "failure": "The breakthrough doesn't come, and the notes go back on the shelf.",
+   "criticalFailure": "The experiment goes badly wrong, and a workshop burns."
+  },
+  "drug-den": {
+   "criticalSuccess": "The den is raided, its suppliers caught, and the streets clear within a month.",
+   "success": "The den is shut down.",
+   "failure": "The den closes, but it opens again a few streets over.",
+   "criticalFailure": "The poison spreads further while the watch looks the other way."
+  },
+  "economic-surge": {
+   "criticalSuccess": "The realm rides the boom well, and the treasury swells.",
+   "success": "The markets do well and the realm takes its share.",
+   "failure": "The boom passes the realm by.",
+   "criticalFailure": "The boom collapses into a slump, and debts are called in."
+  },
+  "expansion-demand": {
+   "criticalSuccess": "The settlers are given new land and bless the crown for it.",
+   "success": "The demand is met for now.",
+   "failure": "The settlers grow restless and start looking past the border.",
+   "criticalFailure": "The settlers take matters into their own hands and move on land that isn't theirs."
+  },
+  "festive-invitation": {
+   "criticalSuccess": "The court shines at the festival, and the friendship between the two realms deepens.",
+   "success": "The visit is a pleasant one.",
+   "failure": "The visit is forgettable.",
+   "criticalFailure": "The visit ends in an embarrassing scene that both courts will remember."
+  },
+  "feud": {
+   "criticalSuccess": "The two families are reconciled, and a marriage seals the peace.",
+   "success": "The feud is calmed with a hard-won truce.",
+   "failure": "The feud smolders on, waiting for a spark.",
+   "criticalFailure": "The feud turns bloody."
+  },
+  "food-shortage": {
+   "criticalSuccess": "Careful rationing and a few clever deals see the realm through without anyone going hungry.",
+   "success": "The granaries hold out until the next harvest.",
+   "failure": "Some families go hungry before the shortage ends.",
+   "criticalFailure": "Hunger turns to anger, and the anger turns on the crown."
+  },
+  "food-surplus": {
+   "criticalSuccess": "The surplus is stored and traded wisely, and the realm will eat well for a long time.",
+   "success": "The surplus is put to good use.",
+   "failure": "Much of the surplus spoils before anyone can use it.",
+   "criticalFailure": "The surplus is squandered in a season of waste."
+  },
+  "good-weather": {
+   "criticalSuccess": "The fine weather is put to full use, and the whole realm is in good spirits.",
+   "success": "The sunshine lifts everyone's mood.",
+   "failure": "The weather turns before anyone can make the most of it.",
+   "criticalFailure": "The fine spell breaks into a violent storm."
+  },
+  "inquisition": {
+   "criticalSuccess": "The zealots are calmed with patience and plain words, and neighbors make peace.",
+   "success": "The zealots are quieted.",
+   "failure": "The zealots keep preaching on the street corners.",
+   "criticalFailure": "The zealots turn on their neighbors, and blood is spilled."
+  },
+  "justice-prevails": {
+   "criticalSuccess": "The verdict is celebrated in the streets, and faith in the crown grows.",
+   "success": "The realm takes heart from it.",
+   "failure": "Folks barely notice.",
+   "criticalFailure": "The case is reopened and the old wrong comes back."
+  },
+  "land-rush": {
+   "criticalSuccess": "The rush is managed with fair surveys, and the new land is settled in good order.",
+   "success": "The squabbles are settled.",
+   "failure": "The quarrels over the land go on.",
+   "criticalFailure": "The quarrels turn violent at the border."
+  },
+  "local-disaster": {
+   "criticalSuccess": "The response is swift, and the settlement rebuilds stronger than before.",
+   "success": "The damage is contained.",
+   "failure": "The damage is heavy, and it will take a long time to put right.",
+   "criticalFailure": "The disaster spreads before anyone can stop it."
+  },
+  "monster-activity": {
+   "criticalSuccess": "The beast is slain, and its hide hangs in the hall.",
+   "success": "The beast is driven back into the wild.",
+   "failure": "The beast is still out there.",
+   "criticalFailure": "The beast strikes a settlement."
+  },
+  "natural-disaster": {
+   "criticalSuccess": "The realm weathers it well, and the way everyone pulled together is remembered.",
+   "success": "The damage is limited.",
+   "failure": "The damage is widespread.",
+   "criticalFailure": "The disaster devastates whole stretches of the land."
+  },
+  "natures-blessing": {
+   "criticalSuccess": "The wonder draws visitors from far away, and the realm's name spreads with them.",
+   "success": "The realm enjoys the wonder while it lasts.",
+   "failure": "The wonder fades before many people see it.",
+   "criticalFailure": "Careless visitors trample the wonder into nothing."
+  },
+  "new-subjects": {
+   "criticalSuccess": "The newcomers settle in quickly and add to the realm's strength.",
+   "success": "The newcomers are welcomed.",
+   "failure": "The newcomers struggle to fit in.",
+   "criticalFailure": "The newcomers are turned away, and they leave bitter."
+  },
+  "noblesse-oblige": {
+   "criticalSuccess": "The family's gift turns the town into a jewel of the realm.",
+   "success": "The town is made a little finer.",
+   "failure": "The gift is smaller than promised.",
+   "criticalFailure": "The gift comes with strings that cause trouble at court."
+  },
+  "outstanding-success": {
+   "criticalSuccess": "The work is celebrated far and wide, and the realm basks in it.",
+   "success": "The work brings the realm some pride.",
+   "failure": "The work goes mostly unnoticed.",
+   "criticalFailure": "The work is stolen and claimed by someone else."
+  },
+  "pilgrimage": {
+   "criticalSuccess": "The pilgrims are welcomed and cared for, and the shrines' fame grows.",
+   "success": "The pilgrims are looked after.",
+   "failure": "The pilgrims pass through without much fuss.",
+   "criticalFailure": "The pilgrims bring trouble with them, and the roads are crowded with it."
+  },
+  "plague": {
+   "criticalSuccess": "The sickness is stopped early, and the healers are heroes.",
+   "success": "The sickness is contained.",
+   "failure": "The sickness takes many before it passes.",
+   "criticalFailure": "The sickness spreads across the realm."
+  },
+  "political-calm": {
+   "criticalSuccess": "The quiet season is used well, and the realm gets a great deal done.",
+   "success": "The calm holds.",
+   "failure": "The calm is short.",
+   "criticalFailure": "The calm shatters in a burst of quarreling."
+  },
+  "public-scandal": {
+   "criticalSuccess": "The scandal is turned around, and the official comes out of it cleared.",
+   "success": "The scandal fades.",
+   "failure": "The scandal lingers.",
+   "criticalFailure": "The scandal grows with every new detail."
+  },
+  "remarkable-treasure": {
+   "criticalSuccess": "The treasure is shared well and enriches the realm.",
+   "success": "The realm gets its share.",
+   "failure": "The adventurers leave with everything.",
+   "criticalFailure": "The treasure starts a feud over who it belongs to."
+  },
+  "sacrifices": {
+   "criticalSuccess": "The cult behind the disappearances is found and destroyed.",
+   "success": "The disappearances stop.",
+   "failure": "The disappearances slow, but don't stop.",
+   "criticalFailure": "More people are taken from the roads."
+  },
+  "sensational-crime": {
+   "criticalSuccess": "The criminal is caught in a famous arrest that the bards will sing about.",
+   "success": "The criminal is caught.",
+   "failure": "The criminal slips away again.",
+   "criticalFailure": "The criminal strikes again, more boldly than ever."
+  },
+  "squatters": {
+   "criticalSuccess": "The families are given homes, and they turn out to be good neighbors.",
+   "success": "The squatters are settled somewhere better.",
+   "failure": "The squatters stay where they are.",
+   "criticalFailure": "The squatters' camp grows, and so does the trouble."
+  },
+  "undead-uprising": {
+   "criticalSuccess": "The dead are laid to rest for good, and the graveyards are quiet again.",
+   "success": "The dead are put down.",
+   "failure": "The dead keep rising.",
+   "criticalFailure": "The dead overwhelm a settlement."
+  },
+  "unexpected-find": {
+   "criticalSuccess": "The glowing find is a wonder, and scholars come to see it.",
+   "success": "The find proves useful.",
+   "failure": "The find is a curiosity and nothing more.",
+   "criticalFailure": "The find turns out to be dangerous."
+  },
+  "vandals": {
+   "criticalSuccess": "The vandals are caught and made to repair what they wrecked.",
+   "success": "The vandals are stopped.",
+   "failure": "The vandals still strike now and then.",
+   "criticalFailure": "The damage spreads night after night."
+  },
+  "visiting-celebrity": {
+   "criticalSuccess": "The visit is a triumph, and the celebrity tells everyone about the realm.",
+   "success": "The visit goes well.",
+   "failure": "The visit is dull.",
+   "criticalFailure": "The visit is a disaster, and the celebrity says so loudly."
+  },
+  "wealthy-immigrant": {
+   "criticalSuccess": "The estate is built, and the newcomer's money enriches the capital.",
+   "success": "The newcomer settles in.",
+   "failure": "The newcomer changes their mind and leaves.",
+   "criticalFailure": "The newcomer causes trouble with the old families."
+  },
+  "claim-hex": {
+   "criticalSuccess": "Surveyors stake out the new land, and the first families are already moving in.",
+   "success": "The banner goes up over new land.",
+   "failure": "The claim doesn't take this time.",
+   "criticalFailure": "The claim ends badly, and the effort is wasted."
+  },
+  "build-road": {
+   "criticalSuccess": "The road is laid straight and true, and wagons roll on it before the last stone is set.",
+   "success": "The road is finished.",
+   "failure": "The road crew can't finish the stretch.",
+   "criticalFailure": "The road washes out before it's done."
+  },
+  "establish-farmland": {
+   "criticalSuccess": "The new fields are rich, and the first harvest promises plenty.",
+   "success": "The fields are cleared and planted.",
+   "failure": "The ground won't take a plow this season.",
+   "criticalFailure": "The work ruins the ground for a while."
+  },
+  "establish-work-site": {
+   "criticalSuccess": "The work site is up and running, and the first loads are already coming in.",
+   "success": "The work site is set up.",
+   "failure": "The work site stalls.",
+   "criticalFailure": "The work site collapses on the crew."
+  },
+  "found-settlement": {
+   "criticalSuccess": "The new village rises fast, full of hope and hammering.",
+   "success": "The new village is founded.",
+   "failure": "The settlers lose heart, and the founding stalls.",
+   "criticalFailure": "The founding fails, and the settlers scatter."
+  },
+  "build-structure": {
+   "criticalSuccess": "The building goes up ahead of time, and the town turns out to admire it.",
+   "success": "The building is finished.",
+   "failure": "The building isn't finished this time.",
+   "criticalFailure": "Part of the building comes down during the work."
+  },
+  "fortify-hex": {
+   "criticalSuccess": "The fortifications are strong, and anyone watching takes note.",
+   "success": "The fortifications go up.",
+   "failure": "The fortifications aren't finished.",
+   "criticalFailure": "The half-built works collapse."
+  },
+  "muster-troops": {
+   "criticalSuccess": "The troops muster in fine order, proud and ready.",
+   "success": "The troops muster.",
+   "failure": "The muster is half-hearted.",
+   "criticalFailure": "The muster turns into a brawl."
+  },
+  "signature-ekundayo": {
+   "criticalSuccess": "Ekundayo's hunt is a triumph, and the hides and meat fill the stores.",
+   "success": "Ekundayo brings back a good haul.",
+   "failure": "The hunt comes back light.",
+   "criticalFailure": "The hunt goes wrong out in the wild."
+  },
+  "signature-jubilost": {
+   "criticalSuccess": "Jubilost finds a hidden fortune in the ledgers and is insufferable about it.",
+   "success": "Jubilost finds money the realm was owed.",
+   "failure": "Jubilost finds little worth the trouble.",
+   "criticalFailure": "Jubilost's digging upsets people who'd rather the books stayed closed."
+  },
+  "signature-linzi": {
+   "criticalSuccess": "Linzi's tale of the leaders is on every tongue, and it gets better each time it's told.",
+   "success": "Linzi's story spreads nicely.",
+   "failure": "Linzi's story doesn't catch on.",
+   "criticalFailure": "Linzi's story gets garbled into something embarrassing."
+  },
+  "signature-nok-nok": {
+   "criticalSuccess": "Nok-Nok comes back with eager new recruits who scare the realm's enemies more than its friends.",
+   "success": "Nok-Nok finds a few willing monsters.",
+   "failure": "Nok-Nok comes back alone and sulking.",
+   "criticalFailure": "Nok-Nok's recruits cause more trouble than they're worth."
+  },
+  "signature-tristian": {
+   "criticalSuccess": "Tristian's wards and remedies are ready for whatever comes, and folks feel safer for it.",
+   "success": "Tristian's preparations are made.",
+   "failure": "Tristian's preparations fall short.",
+   "criticalFailure": "Tristian's work goes wrong, and he's crushed about it."
+  },
+  "signature-valerie": {
+   "criticalSuccess": "Valerie drills the troops until they move like one body, and she's almost satisfied.",
+   "success": "Valerie's drills sharpen the troops.",
+   "failure": "The drills don't take.",
+   "criticalFailure": "The drills end in injuries and bad blood."
+  },
+  "signature-harrim": {
+   "criticalSuccess": "Harrim's doom-preaching somehow lifts every heart that hears it.",
+   "success": "Harrim's sermons find an audience.",
+   "failure": "Harrim preaches to an empty square.",
+   "criticalFailure": "Harrim's sermons frighten folks badly."
+  },
+  "signature-jaethal": {
+   "criticalSuccess": "Jaethal's feast is the stuff of legend, and everyone who was there is proud to say so.",
+   "success": "Jaethal's feast is a fine night.",
+   "failure": "The feast is extravagant and dull.",
+   "criticalFailure": "The feast goes too far and the scandal follows."
+  },
+  "signature-kalikke": {
+   "criticalSuccess": "Kalikke's plan is a masterpiece, and every trouble has a careful answer.",
+   "success": "Kalikke's plan is sound.",
+   "failure": "Kalikke's plan misses something.",
+   "criticalFailure": "Kalikke's plan backfires."
+  },
+  "signature-kanerah": {
+   "criticalSuccess": "Kanerah's false victory is believed everywhere, and spirits soar.",
+   "success": "The story of the victory spreads.",
+   "failure": "Nobody quite believes the story.",
+   "criticalFailure": "The lie is exposed."
+  },
+  "signature-regongar": {
+   "criticalSuccess": "Regongar's march cows the worst streets in the realm.",
+   "success": "The show of force works.",
+   "failure": "The march does little.",
+   "criticalFailure": "The march turns ugly."
+  },
+  "public-outbreak": {
+   "criticalSuccess": "Calm voices and quick quarantines turn the fear into resolve, and the realm braces together.",
+   "success": "The fear is talked down before it turns to panic.",
+   "failure": "The fear keeps spreading from village to village.",
+   "criticalFailure": "The fear boils over, and neighbors turn on anyone who looks sick."
+  },
+  "too-close-to-home": {
+   "criticalSuccess": "The thing is hunted down before it hurts anyone else, and the family is cared for.",
+   "success": "The creature is tracked and destroyed.",
+   "failure": "The creature slips away into the countryside.",
+   "criticalFailure": "The creature strikes again before anyone can find it."
+  },
+  "urban-outbreak": {
+   "criticalSuccess": "The monster is cornered and killed in the square, and the town cheers its defenders.",
+   "success": "The monster is put down, though the street is a wreck.",
+   "failure": "The monster is driven off but not killed.",
+   "criticalFailure": "The monster tears through the town before it's stopped."
+  }
+ }
+}

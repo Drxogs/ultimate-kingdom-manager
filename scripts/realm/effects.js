@@ -7,6 +7,7 @@ import { newId } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { completeProject, refundProject } from "./projects.js";
 import { syncKingdomSettlements } from "./settlements.js";
+import { announceAnarchy, guardWithFame } from "./standing.js";
 
 const { DialogV2 } = foundry.applications.api;
 
@@ -552,6 +553,8 @@ export async function commitKingdomChanges(ctx) {
     update["resources.fame.value"] = Math.clamp(fame.value + ctx.fame, 0, fame.max);
   }
 
-  if (Object.keys(update).length) await kingdom.update(update);
+  const unrestBefore = kingdom.unrest?.value ?? 0;
+  if (Object.keys(update).length) await kingdom.update(await guardWithFame(update));
+  if ("unrest.value" in update) await announceAnarchy(unrestBefore);
   if (ctx.syncSettlements) await syncKingdomSettlements();
 }

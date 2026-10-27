@@ -1,14 +1,15 @@
 import { DEGREE_POINTS, DEGREES, HIRED_PENALTY, LEVEL_DC, MODULE_ID, SEATS, SKILL_ABILITY, SKILL_TO_STAT } from "../constants.js";
-import { getCardEvent, getCompanion, getEvent } from "../content/data.js";
-import { getControlDC, getKingdom, getPartyLevel, getPlayerCharacters } from "../integrations/party.js";
+import { getCardEvent, getCompanion, getEvent, getStory } from "../content/data.js";
+import { getControlDC, getFame, getKingdom, getPartyLevel, getPlayerCharacters } from "../integrations/party.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { createCard } from "./deck.js";
 import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
-import { addStatPoints, cardWorkDays, isHired, rankBonus, seatCompanionId } from "./rules.js";
+import { addStatPoints, cardWorkDays, isHired, rankBonus, seatCompanionId, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { isLeader } from "./leader.js";
 import { structureModifiers } from "./settlements.js";
+import { inAnarchy } from "./standing.js";
 
 const ACTIVE = ["open", "assigned", "rolled"];
 
@@ -300,6 +301,31 @@ function takeFortune(realm, skill) {
   return true;
 }
 
+/** Spend 1 Fame to reroll a waiting result, as the book allows. The new result stands. */
+export async function useFame({ cardId, userId }) {
+  const user = game.users.get(userId) ?? game.user;
+  const card = getRealm().cards.find((c) => c.id === cardId);
+  if (!card || card.status !== "rolled" || !card.pendingRoll) return { ok: false, reason: "NotRolled" };
+  if (!canCallBack(user, card)) return { ok: false, reason: "NotYourSeat" };
+  if (card.pendingRoll.fortuneUsed) return { ok: false, reason: "AlreadyRerolled" };
+  const kingdom = getKingdom();
+  const fame = getFame();
+  if (!kingdom || fame.value < 1) return { ok: false, reason: "NoFame" };
+  await kingdom.update({ "resources.fame.value": fame.value - 1 });
+  let done = false;
+  await updateRealm(async (realm) => {
+    const target = realm.cards.find((c) => c.id === cardId);
+    if (!target?.pendingRoll) return;
+    const check = await rollCheck(target, realm, { reroll: true });
+    if (!check) return;
+    target.pendingRoll = { ...check, rolledAt: game.time.worldTime, fortuneUsed: true };
+    done = true;
+  });
+  if (!done) return { ok: false, reason: "NoReroll" };
+  await handRollToPlayer(card);
+  return { ok: true };
+}
+
 /**
  * Spend one of the realm's rerolls on a result that's waiting to be accepted.
  * The check is rolled again and the new result stands (one reroll per check).
@@ -398,6 +424,11 @@ async function settleCard(realm, card, degreeName, { points = true, skill = null
 
   const stat = SKILL_TO_STAT[skill ?? cardStage(card).skills[0]];
   if (points && stat) addStatPoints(realm, stat, DEGREE_POINTS[degreeName] ?? 0, getKingdom()?.level ?? 1);
+  if (points && degreeName === "criticalSuccess" && card.kind !== "audience") {
+    const windfall = Math.max(1, Math.round(weeklyIncome(realm).base / 7));
+    realm.treasury += windfall;
+    ctx.note(loc("Windfall", { bp: windfall }));
+  }
 
   const advancedStage = (card.stage ?? 0) !== stageBefore && event?.stages?.[card.stage];
   const continuous = !!event?.continuous || ctx.continueCard;
@@ -423,7 +454,8 @@ async function postSummary(card, degreeName, ctx, check) {
   const by = check?.personal ? loc("HandledBy", { name: check.name }) : card.assignee?.name ? loc("AdvisedBy", { name: card.assignee.name }) : "";
   const status = card.status === "open" ? `<p class="hint">${loc("Continues")}</p>` : "";
   const result = card.kind === "audience" ? loc("Ignored") : game.i18n.localize(`UKM.Degree.${degreeName}`);
-  const content = `<div class="ukm-chat"><h3>${card.name}</h3><p><strong>${result}</strong>${by ? ` · ${by}` : ""}</p>${lines ? `<ul>${lines}</ul>` : ""}${status}</div>`;
+  const story = card.kind === "audience" ? null : getStory(card.eventId, degreeName);
+  const content = `<div class="ukm-chat"><h3>${card.name}</h3><p><strong>${result}</strong>${by ? ` · ${by}` : ""}</p>${story ? `<p class="ukm-story">${Handlebars.escapeExpression(story)}</p>` : ""}${lines ? `<ul>${lines}</ul>` : ""}${status}</div>`;
   await ChatMessage.create({ content, speaker: { alias: kingdom?.name || game.i18n.localize("UKM.Manager.Unnamed") } });
 
   if (ctx.gmTasks.length) {
@@ -481,8 +513,9 @@ async function handRollToPlayer(card) {
 }
 
 function finalDegree(roll) {
-  if (roll.personal && roll.degree === 2) return 3;
-  return roll.degree;
+  let degree = roll.personal && roll.degree === 2 ? 3 : roll.degree;
+  if (roll.anarchy) degree = Math.max(0, degree - 1);
+  return degree;
 }
 
 /** Apply a rolled card's result. A new degree replaces the pending one (after a reroll). */
@@ -498,8 +531,10 @@ export async function acceptRoll(cardId, rerolledDegree = null) {
     if (Number.isInteger(rerolledDegree)) roll.degree = rerolledDegree;
     assignee = card.assignee;
     card.pendingRoll = null;
+    roll.anarchy = inAnarchy();
     const degreeName = DEGREES[finalDegree(roll)];
     ctx = await settleCard(realm, card, degreeName, { skill: roll.skill });
+    if (roll.anarchy) ctx.lines.unshift(loc("AnarchyWorse"));
     if (roll.personal && roll.degree === 3) ctx.fame += 1;
   });
   if (!ctx) return null;
