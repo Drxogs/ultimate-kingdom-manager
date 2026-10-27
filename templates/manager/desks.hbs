@@ -32,6 +32,7 @@
           <span class="ukm-holder">
             {{#if advisor}}{{localize "UKM.Manager.AdvisedBy" name=advisor}} · {{/if}}
             {{#if supervisor}}{{localize "UKM.Manager.SupervisedBy" name=supervisor}} · {{/if}}
+            {{#if openToAll}}<span data-tooltip="{{localize "UKM.Manager.AnyPlayerHint"}}">{{localize "UKM.Manager.AnyPlayer"}}</span> · {{/if}}
             {{#if sulking}}<span class="ukm-urgent">{{sulking}}</span> · {{/if}}
             {{stat}}
           </span>

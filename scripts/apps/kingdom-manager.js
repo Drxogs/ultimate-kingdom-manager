@@ -29,6 +29,7 @@ import { sendRequest } from "../realm/requests.js";
 import {
   busyWith,
   canActForSeat,
+  seatOpenToAll,
   canCallBack,
   cardLevelMod,
   cardStage,
@@ -479,6 +480,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         advisor: leader && companion && !leader.name.toLowerCase().startsWith(companion.name.toLowerCase()) ? companion.name : null,
         supervisor: supervisor && supervisor.uuid !== leader?.uuid ? supervisor.name : null,
         mine,
+        openToAll: seatOpenToAll(seat),
         tiedUp: lentTo ? game.i18n.format("UKM.Card.DeskBusy", { card: lentTo.name }) : null,
         canStartProject: canAct && hasCapital(realm) && projectsForSeat(seat).length > 0,
         canTap: seat === "treasurer" && canAct && tapMode() !== "disabled",

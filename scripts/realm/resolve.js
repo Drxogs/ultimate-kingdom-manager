@@ -63,14 +63,27 @@ export function canCallBack(user, card) {
   return !!fromUuidSync(card.assignee.actorUuid)?.testUserPermission?.(user, "OWNER");
 }
 
-/** Whether a user may act for a seat: the GM, an owner of the seat holder, or the seat's supervising player. */
+/**
+ * A seat nobody at the table plays: held by an NPC (an actor no player owns), or advised by a companion or a
+ * hired advisor, with no supervising player picked. Any player can act for it.
+ */
+export function seatOpenToAll(seat) {
+  if (getSetting(SETTINGS.seatAssignments)?.[seat]?.supervisor) return false;
+  const leaderUuid = getKingdom()?.leadership?.[seat]?.uuid;
+  const leader = leaderUuid ? fromUuidSync(leaderUuid) : null;
+  if (leader) return !leader.hasPlayerOwner;
+  return !!seatCompanionId(seat) || isHired(seat);
+}
+
+/** Whether a user may act for a seat: the GM, an owner of the seat holder, the seat's supervising player, or anyone for an NPC seat. */
 export function canActForSeat(user, seat) {
   if (user.isGM) return true;
   const leaderUuid = getKingdom()?.leadership?.[seat]?.uuid;
   const leader = leaderUuid ? fromUuidSync(leaderUuid) : null;
   const supervisorUuid = getSetting(SETTINGS.seatAssignments)?.[seat]?.supervisor;
   const supervisor = supervisorUuid ? fromUuidSync(supervisorUuid) : null;
-  return [leader, supervisor].some((actor) => actor?.testUserPermission?.(user, "OWNER"));
+  if ([leader, supervisor].some((actor) => actor?.testUserPermission?.(user, "OWNER"))) return true;
+  return seatOpenToAll(seat);
 }
 
 function seatHolderName(seat) {

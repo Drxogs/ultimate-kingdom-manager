@@ -723,41 +723,36 @@
 .ukm-sheet .ukm-seats th { color: var(--ukm-head); font: 600 var(--font-size-13, 13px) var(--serif, serif); border-bottom: 1px solid var(--ukm-divider); }
 .ukm-sheet .ukm-seats td { border-bottom: 1px solid rgba(186, 169, 145, 0.5); }
 
-.ukm-sheet .ukm-setup-body button,
-.ukm-sheet .ukm-import-body button,
-.ukm-sheet .form-footer button {
+/* Every button in the module's windows and dialogs looks like the desk buttons (Start project, Delegate). */
+.ukm-sheet :where(.window-content) button {
   width: auto;
-  min-height: 1.9rem;
-  padding: 0 0.75rem;
+  min-height: 1.75rem;
+  margin: 0;
+  padding: 0 0.6rem;
   border: 1px solid var(--ukm-divider);
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.35);
   color: var(--ukm-head);
-  font: 600 var(--font-size-12, 12px) / 1 var(--sans-serif, sans-serif);
+  font: 500 var(--font-size-11, 11px) / 1 var(--sans-serif, sans-serif);
   text-transform: uppercase;
-  box-shadow: var(--ukm-shadow);
+  box-shadow: none;
 }
 
 .ukm-sheet .form-footer button { flex: 1; }
 
-.ukm-sheet .ukm-setup-body button:hover,
-.ukm-sheet .ukm-import-body button:hover,
-.ukm-sheet .form-footer button:hover,
-.ukm-sheet .form-footer button:focus-visible {
-  background: rgba(255, 255, 255, 0.75);
-  box-shadow: 0 0 4px #5a3e2b;
-}
-
+/* The default choice is marked by a darker edge, not a different colour. */
 .ukm-sheet .form-footer button.default,
-.ukm-sheet .form-footer button[type="submit"],
-.ukm-dialog .form-footer button.default {
-  background: linear-gradient(#7a1d14, #5e0000);
-  border-color: #3a0000;
-  color: #f6eadb;
+.ukm-sheet .form-footer button[type="submit"] {
+  border-color: #8a7560;
+  font-weight: 600;
 }
 
-.ukm-sheet .form-footer button.default:hover,
-.ukm-sheet .form-footer button[type="submit"]:hover { background: linear-gradient(#8f2a1f, #6e0a05); color: #fff; }
+.ukm-sheet :where(.window-content) button:hover,
+.ukm-sheet :where(.window-content) button:focus-visible {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 4px #5a3e2b;
+  color: var(--ukm-head);
+}
 
 .ukm-dialog .window-content { padding: 0.75rem; }
 .ukm-dialog .window-content > .dialog-content,

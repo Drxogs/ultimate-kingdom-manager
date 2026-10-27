@@ -148,7 +148,9 @@
       "Capital": "Capital",
       "NoCapital": "no capital yet",
       "Week": "wk",
-      "GmAway": "No GM is online. You can read the desks, but nothing can be done until the GM is back."
+      "GmAway": "No GM is online. You can read the desks, but nothing can be done until the GM is back.",
+      "AnyPlayer": "any player",
+      "AnyPlayerHint": "Nobody at the table plays this seat, so any player can handle its cards and choices. Pick a supervising player in Setup to give it to one person."
     },
     "Card": {
       "Kind": {
