@@ -4,7 +4,7 @@ import { getStoryEvents } from "../content/data.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
 import { buildableStructures, setFortified } from "./projects.js";
-import { addBuilding, removeBuilding, settlements, syncKingdomSettlements } from "./settlements.js";
+import { addBuilding, fitSize, refreshDerived, removeBuilding, settlements, syncKingdomSettlements } from "./settlements.js";
 import { getKingdom } from "../integrations/party.js";
 import { applyStartingPoint } from "./midcampaign.js";
 import { completeGmTask, dismissCard, recordOutcome, rollCard } from "./resolve.js";
@@ -51,6 +51,8 @@ const OPS = {
     if (!structure) return { ok: false, reason: "NoStructure" };
     await updateRealm((realm) => {
       addBuilding(realm, settlementId, structure, null);
+      const target = settlements(realm).find((s) => s.id === settlementId);
+      if (target) fitSize(target);
       addLog(realm, { type: "placed", text: `${structure.name}, ${settlement.name}` });
     });
     await syncKingdomSettlements();
@@ -71,7 +73,11 @@ const OPS = {
         for (const s of settlements(realm)) s.capital = s.id === settlementId;
         capitalName = target.name;
       }
-      if (remove) realm.settlements = settlements(realm).filter((s) => s.id !== settlementId);
+      if (remove) {
+        realm.settlements = settlements(realm).filter((s) => s.id !== settlementId);
+        realm.settlementsStarted = true;
+        refreshDerived(realm);
+      }
     });
     const kingdom = getKingdom();
     if (remove && kingdom) await kingdom.update({ [`settlements.-=${settlementId}`]: null });

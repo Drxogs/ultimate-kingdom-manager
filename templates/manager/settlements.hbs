@@ -53,6 +53,10 @@
           {{#unless onMap}}<p class="hint">{{localize "UKM.Settlement.NotOnMap"}}</p>{{/unless}}
           <p class="ukm-facts-head">{{localize "UKM.Settlement.Bonuses"}}</p>
           {{#if bonuses.length}}<p>{{#each bonuses}}<span class="ukm-tag">{{this}}</span> {{/each}}</p>{{else}}<p class="hint">{{localize "UKM.Settlement.NoBonuses"}}</p>{{/if}}
+          {{#if unplaced.length}}
+            <p class="ukm-facts-head">{{localize "UKM.Settlement.Unplaced"}}</p>
+            <p>{{#each unplaced}}<span class="ukm-tag" data-index="{{index}}">{{name}}{{#if @root.isGM}} <a data-action="removeBuilding"><i class="fa-solid fa-xmark"></i></a>{{/if}}</span> {{/each}}</p>
+          {{/if}}
           {{#if infrastructure.length}}
             <p class="ukm-facts-head">{{localize "UKM.Settlement.InfrastructureHead"}}</p>
             <p>{{#each infrastructure}}<span class="ukm-tag" data-index="{{index}}">{{name}}{{#if @root.isGM}} <a data-action="removeBuilding"><i class="fa-solid fa-xmark"></i></a>{{/if}}</span> {{/each}}</p>

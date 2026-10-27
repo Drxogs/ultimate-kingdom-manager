@@ -6,7 +6,7 @@ import { canRankUp, rankBonus, weeklyIncome } from "./rules.js";
 import { busyWith, canActForSeat } from "./resolve.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
-import { statusNote } from "./bonuses.js";
+import { convertWasted, statusNote } from "./bonuses.js";
 import { isLeader } from "./leader.js";
 
 export const RANK_UP_DAYS = 14;
@@ -42,14 +42,18 @@ export function rankUpChoices(project) {
     title: scene.title,
     scene: scene.scene,
     always: always.map(describeEffect),
-    options: scene.options.map((o) => ({
-      id: o.id,
-      label: o.label,
-      text: o.text,
-      effects: o.effects[level] ?? [],
-      lines: (o.effects[level] ?? []).map(describeEffect),
-      warning: statusNote(o.effects[level] ?? [])
-    }))
+    options: scene.options.map((o) => {
+      const raw = o.effects[level] ?? [];
+      const { effects, converted } = convertWasted(raw);
+      return {
+        id: o.id,
+        label: o.label,
+        text: o.text,
+        effects,
+        lines: effects.map(describeEffect),
+        warning: converted ? game.i18n.localize("UKM.Bonus.WillConvert") : statusNote(raw)
+      };
+    })
   };
 }
 

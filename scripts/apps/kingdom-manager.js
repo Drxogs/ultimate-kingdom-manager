@@ -140,7 +140,9 @@ function layoutGrid(buildings, openBlocks) {
     .filter((b) => !b.infrastructure)
     .sort((a, b) => (b.lots ?? 1) - (a.lots ?? 1) || a.index - b.index);
   const seen = new Map();
+  const placed = new Set();
   const place = (block, cells, b) => {
+    placed.add(b.index);
     for (const c of cells) block.cells[c] = b.index;
     const art = b.art?.length ? b.art : structureArtFor(b);
     const n = seen.get(b.slug) ?? 0;
@@ -186,6 +188,7 @@ function layoutGrid(buildings, openBlocks) {
       }
     }
   }
+  blocks.unplaced = order.filter((b) => !placed.has(b.index)).map((b) => ({ name: b.name, index: b.index }));
   for (const block of blocks) {
     block.empty = block.open
       ? block.cells.map((c, i) => (c === null ? `grid-column: ${(i % 2) + 1}; grid-row: ${Math.floor(i / 2) + 1};` : null)).filter(Boolean)
@@ -496,6 +499,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
           bonuses: Object.entries(settlementBonuses(s, state)).map(([k, v]) => `${skill(k)} +${v}`),
           infrastructure: state.buildings.filter((b) => b.infrastructure).map((b) => ({ name: b.name, index: state.buildings.indexOf(b) })),
           grid,
+          unplaced: grid.unplaced,
           growth: next
             ? game.i18n.format("UKM.Settlement.GrowsNext", { type: label(next) })
             : nextInfo

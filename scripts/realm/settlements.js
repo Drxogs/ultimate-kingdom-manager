@@ -261,8 +261,38 @@ export function builtSlugs(realm) {
   return settlements(realm).flatMap((s) => (s.buildings ?? []).map((b) => b.slug));
 }
 
-function refreshDerived(realm) {
-  if (settlements(realm).length) realm.structures = builtSlugs(realm);
+export function refreshDerived(realm) {
+  if (settlements(realm).length || realm.settlementsStarted) realm.structures = builtSlugs(realm);
+}
+
+/** A settlement holding more than its size allows (placed by hand, or from before) grows to fit. */
+export function fitSize(settlement) {
+  let state = settlementState(settlement);
+  while (state.lots > state.capacity && SETTLEMENT_INFO[settlement.type]?.next) {
+    settlement.type = SETTLEMENT_INFO[settlement.type].next;
+    state = settlementState(settlement);
+  }
+  if (settlement.type === "metropolis") {
+    while (state.lots > state.capacity) {
+      settlement.grids = (settlement.grids ?? 2) + 1;
+      state = settlementState(settlement);
+    }
+  }
+  return settlement;
+}
+
+/** Run once when the GM's window starts: fix any settlement that's too small for what's in it. */
+export async function repairSettlements() {
+  if (!isLeader()) return;
+  const realm = getRealm();
+  const needs = settlements(realm).some((s) => settlementState(s).lots > settlementState(s).capacity);
+  if (!needs && (realm.settlementsStarted || !settlements(realm).length)) return;
+  await updateRealm((r) => {
+    for (const s of settlements(r)) fitSize(s);
+    if (settlements(r).length) r.settlementsStarted = true;
+    refreshDerived(r);
+  });
+  await syncKingdomSettlements();
 }
 
 /** Map hex of a settlement, matched by the name the GM gave it on the Kingmaker map. */
@@ -360,11 +390,15 @@ export async function foundCapital(request) {
     }
     record.capital = true;
     if (request.waterside !== undefined && !fromMap) record.waterside = !!request.waterside;
-    for (const slug of r.structures ?? []) {
-      if (record.buildings.some((b) => b.slug === slug)) continue;
-      const entry = catalogEntry(slug);
-      if (entry) record.buildings.push({ slug, name: entry.name, lots: entry.lots ?? 1, built: game.time.worldTime });
+    if (!r.settlementsStarted) {
+      for (const slug of r.structures ?? []) {
+        if (record.buildings.some((b) => b.slug === slug)) continue;
+        const entry = catalogEntry(slug);
+        if (entry) record.buildings.push({ slug, name: entry.name, lots: entry.lots ?? 1, built: game.time.worldTime });
+      }
     }
+    r.settlementsStarted = true;
+    fitSize(record);
     if (!fromMap) {
       const place = where ? game.i18n.format("UKM.Project.PartyWhere", { where }) : game.i18n.localize("UKM.Project.PartyHex");
       r.gmTasks.push({ id: newId(), text: game.i18n.format("UKM.Settlement.CapitalTask", { name, where: place }), card: null, hexKey: null, created: game.time.worldTime, done: false });
@@ -403,6 +437,7 @@ export async function adoptMapSettlements() {
   await updateRealm((r) => {
     for (const hex of fresh) {
       r.settlements.push(newSettlement({ name: hex.name, type: hex.type, hexKey: hex.key }));
+      r.settlementsStarted = true;
       addLog(r, { type: "settlement", text: hex.name });
     }
   });

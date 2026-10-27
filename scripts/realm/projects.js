@@ -407,6 +407,7 @@ export function completeProject(ctx) {
     ctx.realm.settlements ??= [];
     if (!ctx.realm.settlements.some((s) => s.name.toLowerCase() === card.project.founding.name.toLowerCase())) {
       ctx.realm.settlements.push(newSettlement(card.project.founding));
+      ctx.realm.settlementsStarted = true;
       ctx.note(game.i18n.format("UKM.Settlement.Founded", { name: card.project.founding.name }));
       ctx.syncSettlements = true;
     }

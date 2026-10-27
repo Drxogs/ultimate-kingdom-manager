@@ -587,7 +587,8 @@
     "Bonus": {
       "Wasted": "Adds nothing right now: these checks already get a +{existing} status bonus, and status bonuses don't stack.",
       "Partial": "Only adds +{gain} right now: these checks already get a +{existing} status bonus, and status bonuses don't stack.",
-      "Converted": "The status bonus wouldn't have added anything here, so it became two rerolls on the same checks instead."
+      "Converted": "The status bonus wouldn't have added anything here, so it became two rerolls on the same checks instead.",
+      "WillConvert": "Its status bonus would add nothing here (these checks already have one, and status bonuses don't stack), so it becomes two rerolls on the same checks instead."
     },
     "Settlement": {
       "Type": {
@@ -643,7 +644,8 @@
       "InfrastructureHead": "Infrastructure",
       "Place": "Place a building",
       "PlaceHint": "For buildings that were already standing before the module was installed. No cost, no roll, no Unrest or Fame.",
-      "Placed": "{name} placed in {settlement}."
+      "Placed": "{name} placed in {settlement}.",
+      "Unplaced": "Not on the grid (no room left in a block that fits)"
     },
     "Ability": {
       "culture": "Culture",

@@ -12,6 +12,7 @@ import { buildStructureCatalog, isFortified, structureCatalog } from "./realm/pr
 import { ensureHandbook, openHandbook } from "./content/handbook.js";
 import { isLeader, leaderSettled, startLeader } from "./realm/leader.js";
 import { clearInvested } from "./realm/leadership.js";
+import { repairSettlements } from "./realm/settlements.js";
 import { cardsOnHex } from "./realm/pins.js";
 import { daysUntil } from "./realm/time.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
@@ -56,6 +57,7 @@ Hooks.once("ready", async () => {
   if (isLeader()) {
     await syncKingdomLevel();
     await clearInvested();
+    await repairSettlements();
     await tick();
     if (getSetting(SETTINGS.storyImported)) await buildStructureCatalog();
     await ensureHandbook().catch((err) => console.error(`${MODULE_ID} |`, err));
