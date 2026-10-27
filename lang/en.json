@@ -71,7 +71,8 @@
       "TrainingHint": "When the kingdom is founded, the party trains {count} kingdom skills of its choice, however many players there are. Leaders aren't invested in this module: any role ticked as invested on the kingdom sheet is unticked, so the status bonus is left for advisors and rank-up rewards. Picks only ever raise a skill.",
       "TrainingGovernment": "The government already trains {skills}.",
       "TrainingPick": "Skill {n}",
-      "TrainingDuplicate": "The same skill was picked twice; it only counts once."
+      "TrainingDuplicate": "The same skill was picked twice; it only counts once.",
+      "NotSuited": "{name} (doesn’t suit this seat)"
     },
     "Import": {
       "Title": "Import Story Content",
@@ -561,12 +562,12 @@
     "Handbook": {
       "Open": "Handbook",
       "Missing": "The handbook hasn't been set up yet. The GM needs to log in once with this version of the module.",
-      "Suits": "Suited seats",
       "Skill": "Skill",
-      "PreferredOnly": "Only from a suited seat",
       "Costs": "Costs {cost} BP",
       "WhoSuitsWhat": "Who suits which seat",
-      "NoAbility": "no special ability"
+      "PlayersOnly": "none (a party member or a hired advisor)",
+      "Companions": "Companions who suit it",
+      "Ability": "Seat ability"
     },
     "Pins": {
       "Reveal": "Show players where this is",
@@ -661,7 +662,8 @@
       "culture": "Culture",
       "economy": "Economy",
       "loyalty": "Loyalty",
-      "stability": "Stability"
+      "stability": "Stability",
+      "TheAdvisor": "The advisor"
     },
     "Start": {
       "Title": "Joining mid-campaign",

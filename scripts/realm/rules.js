@@ -106,19 +106,25 @@ export function seatCompanionId(seat) {
   return attitudeAtLeast(id, "indifferent") ? id : null;
 }
 
-/** The companion placed in a seat, whatever their mood. */
+/** Whether a companion can advise a seat: only the seats they're suited to. */
+export function suitsSeat(companionId, seat) {
+  return !!getCompanion(companionId)?.seats?.includes(seat);
+}
+
+/** The companion placed in a seat, whatever their mood. A companion put in a seat they don't suit doesn't count. */
 export function rawSeatCompanionId(seat) {
   const chosen = getSetting(SETTINGS.seatAssignments)?.[seat]?.companion;
-  if (chosen) return chosen;
+  if (chosen === HIRED_ADVISOR) return chosen;
+  if (chosen) return suitsSeat(chosen, seat) ? chosen : null;
   const uuid = getKingdom()?.leadership?.[seat]?.uuid;
   const name = uuid ? fromUuidSync(uuid)?.name?.toLowerCase() : null;
   if (!name) return null;
-  return (
+  const id =
     getCompanions().find((c) => {
       const n = c.name.toLowerCase();
       return name === n || name.startsWith(`${n} `) || name.startsWith(`${n},`) || name.startsWith(`${n} (`);
-    })?.id ?? null
-  );
+    })?.id ?? null;
+  return id && suitsSeat(id, seat) ? id : null;
 }
 
 /** Whether someone sits in a seat, and whether it's a companion in a role they're suited to. */

@@ -121,7 +121,7 @@ export async function assignCard(request) {
     }
   } else {
     const event = cardStage(card).event;
-    const name = event?.signature ? getCompanion(event.companion)?.name ?? seatHolderName(card.seat) : seatHolderName(card.seat);
+    const name = event?.signature ? getCompanion(seatCompanionId(card.seat))?.name ?? seatHolderName(card.seat) : seatHolderName(card.seat);
     if (!name) return { ok: false, reason: "SeatVacant" };
     assignee = { type: "advisor", seat: card.seat, name, skill };
   }
@@ -454,7 +454,8 @@ async function postSummary(card, degreeName, ctx, check) {
   const by = check?.personal ? loc("HandledBy", { name: check.name }) : card.assignee?.name ? loc("AdvisedBy", { name: card.assignee.name }) : "";
   const status = card.status === "open" ? `<p class="hint">${loc("Continues")}</p>` : "";
   const result = card.kind === "audience" ? loc("Ignored") : game.i18n.localize(`UKM.Degree.${degreeName}`);
-  const story = card.kind === "audience" ? null : getStory(card.eventId, degreeName, card.tier);
+  const advisor = card.assignee?.name ?? getCompanion(seatCompanionId(card.seat))?.name ?? game.i18n.localize("UKM.Ability.TheAdvisor");
+  const story = card.kind === "audience" ? null : getStory(card.eventId, degreeName, card.tier)?.replaceAll("{advisor}", advisor);
   const content = `<div class="ukm-chat"><h3>${card.name}</h3><p><strong>${result}</strong>${by ? ` · ${by}` : ""}</p>${story ? `<p class="ukm-story">${Handlebars.escapeExpression(story)}</p>` : ""}${lines ? `<ul>${lines}</ul>` : ""}${status}</div>`;
   await ChatMessage.create({ content, speaker: { alias: kingdom?.name || game.i18n.localize("UKM.Manager.Unnamed") } });
 

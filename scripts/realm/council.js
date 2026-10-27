@@ -19,7 +19,7 @@ export async function proposeProject(request) {
   const user = game.users.get(request.userId) ?? game.user;
   const def = getProject(request.type);
   if (!def) return { ok: false, reason: "Unknown" };
-  const seatDef = def.signature ? SEATS.map((s) => signatureForSeat(s)).find((s) => s?.id === def.id) : def;
+  const seatDef = def.signature ? signatureForSeat(def.seat) : def;
   if (!seatDef?.seat || !canActForSeat(user, seatDef.seat)) return { ok: false, reason: "NotYourSeat" };
   const targets = projectTargets(seatDef);
   const target =

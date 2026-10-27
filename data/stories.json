@@ -2226,71 +2226,47 @@
    "failure": "The levies were called up, but the muster was half-hearted. Too few came, and those who did dragged their feet.",
    "criticalFailure": "The levies were called up, and the muster turned into a brawl between rival villages' men."
   },
-  "signature-ekundayo": {
-   "criticalSuccess": "Ekundayo led a hunt through the realm's wild lands for meat, hides and trade goods. It was a triumph, and the realm's stores are full to the rafters.",
-   "success": "Ekundayo led a hunt through the realm's wild lands for meat, hides and trade goods, and came back with a good haul.",
-   "failure": "Ekundayo led a hunt through the realm's wild lands, but the game was scarce, and the hunt came back light.",
-   "criticalFailure": "Ekundayo led a hunt through the realm's wild lands, and it went wrong out in the wild. The party came back hurt and empty-handed."
+  "seat-ability-general": {
+   "criticalSuccess": "{advisor} drilled the realm's soldiers until they moved as one body, from the first trumpet to the last wheel of the line. Even the old sergeants were impressed.",
+   "success": "{advisor} drilled the realm's soldiers hard for a week, and the troops are sharper and quicker on their feet for it.",
+   "failure": "{advisor} drilled the realm's soldiers for a week, but the drills didn't take, and the troops slipped back into their old habits.",
+   "criticalFailure": "{advisor} drilled the realm's soldiers far too hard, and the drills ended in injuries, grumbling and bad blood in the barracks."
   },
-  "signature-jubilost": {
-   "criticalSuccess": "Jubilost went through the ledgers looking for money the realm didn't know it was owed. He found a hidden fortune, and he's been insufferable about it ever since.",
-   "success": "Jubilost went through the ledgers looking for money the realm was owed, and he found some.",
-   "failure": "Jubilost went through the ledgers looking for money the realm was owed, but found little worth the trouble.",
-   "criticalFailure": "Jubilost went through the ledgers looking for money the realm was owed, and his digging upset people who'd rather the books stayed closed."
+  "seat-ability-warden": {
+   "criticalSuccess": "{advisor} led a hunt through the realm's wild lands for meat, hides and trade goods. It was a triumph, and the realm's stores are full to the rafters.",
+   "success": "{advisor} led a hunt through the realm's wild lands for meat, hides and trade goods, and the hunters came home with a good haul.",
+   "failure": "{advisor} led a hunt through the realm's wild lands, but the game had moved on, and the hunters came home with little to show for it.",
+   "criticalFailure": "{advisor} led a hunt through the realm's wild lands, and it went wrong out in the wild. The party came back hurt and empty-handed."
   },
-  "signature-linzi": {
-   "criticalSuccess": "Linzi wrote up the leaders' latest deeds and made sure everyone heard about them. Her tale is on every tongue, and it gets better each time it's told.",
-   "success": "Linzi wrote up the leaders' latest deeds and spread the word, and the story is doing nicely.",
-   "failure": "Linzi wrote up the leaders' latest deeds, but the story didn't catch on.",
-   "criticalFailure": "Linzi wrote up the leaders' latest deeds, and the story got garbled in the retelling into something embarrassing."
+  "seat-ability-treasurer": {
+   "criticalSuccess": "{advisor} went through the realm's ledgers looking for money it didn't know it was owed, and turned up a small fortune in forgotten fees and unpaid tolls.",
+   "success": "{advisor} went through the realm's ledgers looking for money it was owed, and found enough unpaid fees to make the work worthwhile.",
+   "failure": "{advisor} went through the realm's ledgers and collected a few old fees, but the merchants who had to pay them are grumbling.",
+   "criticalFailure": "{advisor} went through the realm's ledgers and collected some old fees, but the digging upset powerful people who'd rather the books stayed closed."
   },
-  "signature-nok-nok": {
-   "criticalSuccess": "Nok-Nok went looking for monsters who'd rather work for the realm than against it. He came back with eager recruits who scare the realm's enemies even more than its friends.",
-   "success": "Nok-Nok went looking for monsters who'd rather work for the realm, and he found a few willing ones.",
-   "failure": "Nok-Nok went looking for monsters who'd rather work for the realm, and came back alone and sulking.",
-   "criticalFailure": "Nok-Nok went looking for monsters who'd rather work for the realm, and the recruits he brought back are causing more trouble than they're worth."
+  "seat-ability-counselor": {
+   "criticalSuccess": "{advisor} wrote up the leaders' latest deeds and made sure everyone heard them. The tale is on every tongue, and it gets better each time it's told.",
+   "success": "{advisor} wrote up the leaders' latest deeds and spread them through the taverns and markets, and folks are cheered by the story.",
+   "failure": "{advisor} wrote up the leaders' latest deeds, but the story didn't catch on beyond a few taverns.",
+   "criticalFailure": "{advisor} wrote up the leaders' latest deeds, and the story got garbled in the retelling into something embarrassing."
   },
-  "signature-tristian": {
-   "criticalSuccess": "Tristian prepared wards and remedies against whatever might come next. They're ready for anything, and folks feel safer knowing it.",
-   "success": "Tristian prepared wards and remedies against whatever might come next, and his preparations are made.",
-   "failure": "Tristian prepared wards and remedies against what might come, but his preparations fell short.",
-   "criticalFailure": "Tristian prepared wards and remedies against what might come, and the work went wrong. He's crushed about it."
+  "seat-ability-viceroy": {
+   "criticalSuccess": "{advisor} sat down with every report on the realm's troubles and made a plan. It's a masterpiece, with a careful answer ready for whatever comes next.",
+   "success": "{advisor} sat down with every report on the realm's troubles and made a sound plan, and the realm's officials know what to do when trouble comes.",
+   "failure": "{advisor} sat down with every report on the realm's troubles and made a plan, but it misses too much to be of real use.",
+   "criticalFailure": "{advisor} sat down with every report on the realm's troubles and made a plan, and following it has tangled the officials in knots."
   },
-  "signature-valerie": {
-   "criticalSuccess": "Valerie drilled the realm's soldiers until they moved as one body. She's almost satisfied, which for Valerie is high praise.",
-   "success": "Valerie drilled the realm's soldiers hard, and the troops are sharper for it.",
-   "failure": "Valerie drilled the realm's soldiers, but the drills didn't take.",
-   "criticalFailure": "Valerie drilled the realm's soldiers too hard, and the drills ended in injuries and bad blood."
+  "seat-ability-magister": {
+   "criticalSuccess": "{advisor} prepared wards and remedies against whatever might come next. They're ready for anything, and folks sleep easier knowing it.",
+   "success": "{advisor} prepared wards and remedies against whatever might come next, and the realm is better guarded for it.",
+   "failure": "{advisor} prepared wards and remedies against what might come, but the work fell short and little came of it.",
+   "criticalFailure": "{advisor} prepared wards and remedies against what might come, and the work went badly wrong, wasting costly reagents."
   },
-  "signature-harrim": {
-   "criticalSuccess": "Harrim preached doom in the streets, and somehow every heart that heard him was lifted. Folks are walking taller for having faced the worst.",
-   "success": "Harrim preached doom in the streets, and his gloomy sermons found an oddly cheerful audience.",
-   "failure": "Harrim preached doom in the streets, but he preached to an empty square.",
-   "criticalFailure": "Harrim preached doom in the streets, and his sermons frightened folks badly."
-  },
-  "signature-jaethal": {
-   "criticalSuccess": "Jaethal threw a feast at the treasury's expense that nobody will forget. It's the stuff of legend, and everyone who was there is proud to say so.",
-   "success": "Jaethal threw a feast at the treasury's expense, and it was a fine night.",
-   "failure": "Jaethal threw a feast at the treasury's expense, and it was extravagant and dull.",
-   "criticalFailure": "Jaethal threw a feast at the treasury's expense, and it went too far. The scandal followed."
-  },
-  "signature-kalikke": {
-   "criticalSuccess": "Kalikke sat down with every report on the realm's troubles and made a plan. It's a masterpiece, with a careful answer to every one.",
-   "success": "Kalikke sat down with every report on the realm's troubles and made a sound plan.",
-   "failure": "Kalikke sat down with every report on the realm's troubles and made a plan, but it misses something.",
-   "criticalFailure": "Kalikke sat down with every report on the realm's troubles and made a plan, and it backfired."
-  },
-  "signature-kanerah": {
-   "criticalSuccess": "Kanerah spread word of a triumph that never quite happened. It's believed everywhere, and spirits are soaring.",
-   "success": "Kanerah spread word of a triumph that never quite happened, and the story is spreading.",
-   "failure": "Kanerah spread word of a triumph that never quite happened, but nobody quite believed it.",
-   "criticalFailure": "Kanerah spread word of a triumph that never quite happened, and the lie was exposed."
-  },
-  "signature-regongar": {
-   "criticalSuccess": "Regongar marched the troops through the worst parts of town. The streets were cowed, and they've stayed quiet since.",
-   "success": "Regongar marched the troops through the worst parts of town, and the show of force worked.",
-   "failure": "Regongar marched the troops through the worst parts of town, but it did little.",
-   "criticalFailure": "Regongar marched the troops through the worst parts of town, and the march turned ugly."
+  "seat-ability-emissary": {
+   "criticalSuccess": "{advisor} threw a feast for the realm's guests and neighbors at the treasury's expense. It's the stuff of legend, and everyone who was there is proud to say so.",
+   "success": "{advisor} threw a feast for the realm's guests and neighbors at the treasury's expense, and it was a fine night that left everyone in good humor.",
+   "failure": "{advisor} threw a feast for the realm's guests and neighbors at the treasury's expense, but it was extravagant and dull.",
+   "criticalFailure": "{advisor} threw a feast for the realm's guests and neighbors at the treasury's expense, and it went too far. The scandal followed."
   }
  }
 }

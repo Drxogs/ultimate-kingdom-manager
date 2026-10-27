@@ -1,5 +1,5 @@
 import { COMMODITY_BP, FLAG_SCOPE, MODULE_ID, SEATS } from "../constants.js";
-import { getCompanion, getProject, getProjects, getSignature } from "../content/data.js";
+import { getCompanion, getProject, getProjects, getSeatAbility } from "../content/data.js";
 import {
   getAllHexStates,
   getClaimedHexes,
@@ -151,12 +151,11 @@ export function projectQuote(def, target, structure = null) {
   return { cost: Math.max(1, Math.round(baseCost(def) * factor)), days: Math.max(3, Math.round(def.workDays * factor)) };
 }
 
-/** The signature ability of the companion advising a seat, if they have one and it's usable now. */
+/** The seat's special ability, when a friendly companion advises it, and whether it's usable now. */
 export function signatureForSeat(seat, realm = getRealm()) {
   const companionId = seatCompanionId(seat);
-  const def = companionId ? getSignature(companionId) : null;
+  const def = companionId ? getSeatAbility(seat, companionId) : null;
   if (!def) return null;
-  if (def.requiresSeat && !getCompanion(companionId)?.seats?.includes(seat)) return null;
   if (!attitudeAtLeast(companionId, "friendly")) return null;
   const readyAt = realm.cooldowns?.[def.id] ?? 0;
   const busy = realm.cards.some((c) => c.eventId === `project:${def.id}` && ["open", "assigned", "rolled"].includes(c.status));
@@ -273,8 +272,7 @@ export async function startProject(request, { canActForSeat }) {
   const user = game.users.get(request.userId) ?? game.user;
   let def = getProject(request.type);
   if (def?.signature) {
-    const seat = SEATS.find((s) => seatCompanionId(s) === def.companion);
-    const usable = seat ? signatureForSeat(seat) : null;
+    const usable = signatureForSeat(def.seat);
     if (!usable?.available) return { ok: false, reason: "NotReady" };
     def = usable;
   }

@@ -1,7 +1,7 @@
 import { FLAG_SCOPE, MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
 import { describeEffect } from "../realm/effects.js";
 import { structureCatalog } from "../realm/projects.js";
-import { getAmbition, getCompanions, getProjects, getRankUpScene } from "./data.js";
+import { getAmbition, getCompanions, getProjects, getRankUpScene, getSeatAbilities } from "./data.js";
 import { isLeader } from "../realm/leader.js";
 import { KINGMAKER_SHEET, kingmakerSheetAvailable } from "./story-import.js";
 
@@ -86,22 +86,23 @@ function projectsPage() {
 
 function companionsPage() {
   const parts = [
-    "<p>A companion advising a seat brings their own ability, started from that desk's Start project button. Only the advisor can do it; it takes a week and then can't be used again for 30 days. A companion in a seat they suit also gives that desk's rolls a bonus.</p>"
+    "<p>Each seat can be held by a player character, advised by a companion who suits it, or given to a hired advisor. Only companions who suit a seat can advise it, and a companion advising a seat always gives that desk's advisor rolls a status bonus (+1, +2 from level 8, +3 from level 16).</p>" +
+      "<p>Every seat except the Ruler's has a special ability. It appears under that desk's Start project button while a friendly companion advises the seat. Only the advisor can do it; it takes a week and then can't be used again for 30 days.</p>"
   ];
-  parts.push(
-    `<h2>${esc(t("UKM.Handbook.WhoSuitsWhat"))}</h2><ul>${getCompanions()
-      .map((c) => `<li><strong>${esc(c.name)}</strong>: ${esc(c.seats.map((x) => t(`UKM.Seat.${x}`)).join(" or "))}${c.signature ? "" : ` (${esc(t("UKM.Handbook.NoAbility"))})`}</li>`)
-      .join("")}</ul>`
-  );
-  for (const c of getCompanions().filter((x) => x.signature)) {
-    const s = c.signature;
+  const abilities = getSeatAbilities();
+  const rows = SEATS.map((seat) => {
+    const who = getCompanions().filter((c) => c.seats?.includes(seat)).map((c) => c.name);
+    return [esc(t(`UKM.Seat.${seat}`)), esc(who.length ? who.join(", ") : t("UKM.Handbook.PlayersOnly")), esc(abilities[seat]?.name ?? "—")];
+  });
+  parts.push(`<h2>${esc(t("UKM.Handbook.WhoSuitsWhat"))}</h2>` + table([t("UKM.Setup.Seat"), t("UKM.Handbook.Companions"), t("UKM.Handbook.Ability")], rows));
+  for (const seat of SEATS) {
+    const s = abilities[seat];
+    if (!s) continue;
     const notes = [
-      `${t("UKM.Handbook.Suits")}: ${c.seats.map((x) => t(`UKM.Seat.${x}`)).join(" or ")}`,
       `${t("UKM.Handbook.Skill")}: ${s.skill.map((x) => t(`UKM.Skill.${x}`)).join(" or ")}`,
-      s.requiresSeat ? t("UKM.Handbook.PreferredOnly") : "",
       s.cost ? game.i18n.format("UKM.Handbook.Costs", { cost: s.cost }) : ""
     ].filter(Boolean);
-    parts.push(`<h2>${esc(c.name)}: ${esc(s.name)}</h2><p>${esc(s.hook)}</p><p><em>${esc(notes.join(" · "))}</em></p>`);
+    parts.push(`<h2>${esc(t(`UKM.Seat.${seat}`))}: ${esc(s.name)}</h2><p>${esc(String(s.hook).replaceAll("{advisor}", t("UKM.Ability.TheAdvisor")))}</p><p><em>${esc(notes.join(" · "))}</em></p>`);
     parts.push(
       `<ul>${["criticalSuccess", "success", "failure", "criticalFailure"]
         .map((d) => `<li><strong>${esc(t(`UKM.Degree.${d}`))}:</strong> ${effects(s.outcomes[d])}</li>`)

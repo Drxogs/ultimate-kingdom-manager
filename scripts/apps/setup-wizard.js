@@ -12,12 +12,16 @@ import { SHEET_CLASSES, UkmDialog, bannerContext } from "./dialog.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-function isCompanionActor(actor, companions) {
+function companionOfActor(actor, companions) {
   const name = actor.name.toLowerCase();
-  return companions.some((c) => {
+  return companions.find((c) => {
     const target = c.name.toLowerCase();
     return name === target || name.startsWith(`${target} `) || name.startsWith(`${target},`) || name.startsWith(`${target} (`);
-  });
+  }) ?? null;
+}
+
+function isCompanionActor(actor, companions) {
+  return !!companionOfActor(actor, companions);
 }
 
 export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -64,9 +68,14 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     const characters = getPlayerCharacters();
     const companions = getCompanions();
     const actorChoices = Object.fromEntries(characters.map((a) => [a.uuid, a.name]));
-    const companionChoices = {
-      ...Object.fromEntries(companions.map((c) => [c.id, c.seats?.length ? `${c.name} (${c.seats.map((x) => game.i18n.localize(`UKM.Seat.${x}`)).join(", ")})` : c.name])),
-      [HIRED_ADVISOR]: game.i18n.localize("UKM.Hired.Option")
+    // Each seat offers only the companions suited to it (and a hired advisor). Someone already placed
+    // in a seat they don't suit stays listed, marked, so the GM can see why they no longer count.
+    const companionChoicesFor = (seat, current) => {
+      const choices = Object.fromEntries(companions.filter((c) => c.seats?.includes(seat)).map((c) => [c.id, c.name]));
+      const misplaced = current && current !== HIRED_ADVISOR && !choices[current] ? companions.find((c) => c.id === current) : null;
+      if (misplaced) choices[misplaced.id] = game.i18n.format("UKM.Setup.NotSuited", { name: misplaced.name });
+      choices[HIRED_ADVISOR] = game.i18n.localize("UKM.Hired.Option");
+      return choices;
     };
     const attitudes = getSetting(SETTINGS.companionAttitudes) ?? {};
     const attitudeChoices = Object.fromEntries(ATTITUDES.map((a) => [a, `UKM.Attitude.${a}`]));
@@ -76,11 +85,13 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       const leader = kingdom?.leadership?.[seat] ?? {};
       const assignment = assignments[seat] ?? {};
       const saved = draft?.seats?.[seat];
+      const companion = saved?.companion ?? assignment.companion ?? "";
       return {
         seat,
         label: game.i18n.localize(`UKM.Seat.${seat}`),
         holder: saved?.holder ?? leader.uuid ?? "",
-        companion: saved?.companion ?? assignment.companion ?? "",
+        companion,
+        companionChoices: companionChoicesFor(seat, companion),
         supervisor: saved?.supervisor ?? assignment.supervisor ?? ""
       };
     });
@@ -91,6 +102,21 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       .filter((a) => !pcIds.has(a.uuid) && ["npc", "character"].includes(a.type))
       .filter((a) => this.#showAllActors || assigned.has(a.uuid) || isCompanionActor(a, companions))
       .sort((a, b) => a.name.localeCompare(b.name));
+
+    // Companion actors are offered as holders only for the seats they suit; a player character fits any seat.
+    const holderGroupsFor = (seat, current) => {
+      const others = otherActors.filter((a) => {
+        const companion = companionOfActor(a, companions);
+        return !companion || companion.seats?.includes(seat) || a.uuid === current;
+      });
+      return [
+        { label: game.i18n.localize("UKM.Setup.GroupCharacters"), choices: actorChoices },
+        {
+          label: game.i18n.localize(this.#showAllActors ? "UKM.Setup.GroupOthers" : "UKM.Setup.GroupCompanions"),
+          choices: Object.fromEntries(others.map((a) => [a.uuid, a.name]))
+        }
+      ].filter((g) => Object.keys(g.choices).length);
+    };
 
     const picked = foundingPicks(getRealm());
     const statChoices = Object.fromEntries(
@@ -119,7 +145,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
         allowed: "UKM.Settings.TapTreasury.Allowed",
         disabled: "UKM.Settings.TapTreasury.Disabled"
       },
-      seats,
+      seats: seats.map((row) => ({ ...row, holderGroups: holderGroupsFor(row.seat, row.holder) })),
       holderGroups: [
         { label: game.i18n.localize("UKM.Setup.GroupCharacters"), choices: actorChoices },
         {
@@ -128,7 +154,6 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
         }
       ].filter((g) => Object.keys(g.choices).length),
       supervisorChoices: actorChoices,
-      companionChoices,
       attitudeChoices,
       companionRows: companions.map((c) => ({ id: c.id, name: c.name, attitude: draft?.attitudes?.[c.id] ?? attitudes[c.id] ?? "friendly" })),
       training: this.#trainingContext(kingdom),

@@ -24,7 +24,7 @@ export function getEvents() {
  */
 export function getStory(eventId, degreeName, tier = null) {
   const stories = cache.stories?.stories ?? {};
-  const id = String(eventId ?? "").replace(/^project:/, "");
+  const id = abilityId(eventId);
   const entry = stories[id];
   if (!entry) return null;
   const set = (tier && entry[tier]) || (entry[degreeName] ? entry : entry.early ?? entry.middle ?? entry.late);
@@ -43,28 +43,46 @@ export function getProjects() {
   return cache.projects?.projects ?? [];
 }
 
-/** A companion's signature ability, shaped like a project. */
-export function getSignature(companionId) {
-  const companion = getCompanion(companionId);
-  const sig = companion?.signature;
-  if (!sig) return null;
+/** Each seat's special ability, used by a suited companion advising that seat. */
+export function getSeatAbilities() {
+  return cache.companions?.seatAbilities ?? {};
+}
+
+const ABILITY_PREFIX = "seat-ability-";
+
+/** Older saves name abilities after the companion (signature-valerie); they now belong to the seat. */
+export function abilityId(id) {
+  const raw = String(id ?? "").replace(/^project:/, "");
+  if (!raw.startsWith("signature-")) return raw;
+  const seat = getCompanion(raw.slice(10))?.seats?.[0];
+  return seat ? `${ABILITY_PREFIX}${seat}` : raw;
+}
+
+/** A seat's special ability, shaped like a project, told with the advising companion's name. */
+export function getSeatAbility(seat, companionId = null) {
+  const ability = getSeatAbilities()[seat];
+  if (!ability) return null;
+  const companion = companionId ? getCompanion(companionId) : null;
+  const who = companion?.name ?? game.i18n.localize("UKM.Ability.TheAdvisor");
   return {
-    id: `signature-${companion.id}`,
+    id: `${ABILITY_PREFIX}${seat}`,
     kind: "project",
-    seat: null,
     target: "none",
     advisorOnly: true,
     signature: true,
-    companion: companion.id,
-    costBP: sig.cost ?? 0,
-    ...sig,
-    name: `${sig.name} (${companion.name})`
+    companion: companion?.id ?? null,
+    costBP: ability.cost ?? 0,
+    ...ability,
+    seat,
+    hook: String(ability.hook ?? "").replaceAll("{advisor}", who),
+    name: companion ? `${ability.name} (${companion.name})` : ability.name
   };
 }
 
 export function getProject(type) {
-  if (typeof type === "string" && type.startsWith("signature-")) return getSignature(type.slice(10));
-  return getProjects().find((p) => p.id === type) ?? null;
+  const id = abilityId(type);
+  if (id.startsWith(ABILITY_PREFIX)) return getSeatAbility(id.slice(ABILITY_PREFIX.length));
+  return getProjects().find((p) => p.id === id) ?? null;
 }
 
 export function getAmbition(seat) {

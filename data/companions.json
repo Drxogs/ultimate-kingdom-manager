@@ -1,761 +1,566 @@
 {
-  "version": 1,
-  "companions": [
+ "version": 2,
+ "companions": [
+  {
+   "id": "amiri",
+   "name": "Amiri",
+   "seats": [
+    "warden"
+   ],
+   "joins": {
+    "influence": 0
+   },
+   "unlocks": {
+    "structures": [
+     "gladiatorial-arena"
+    ]
+   },
+   "eventBonus": [
     {
-      "id": "amiri",
-      "name": "Amiri",
-      "seats": [
-        "warden"
-      ],
-      "joins": {
-        "influence": 0
-      },
-      "unlocks": {
-        "structures": [
-          "gladiatorial-arena"
-        ]
-      },
-      "eventBonus": [
-        {
-          "event": "monster-activity",
-          "type": "circumstance",
-          "value": 2
-        }
-      ],
-      "storyEvents": [
-        "monster-hunt",
-        "barbarian-immigrants"
-      ]
-    },
-    {
-      "id": "ekundayo",
-      "name": "Ekundayo",
-      "seats": [
-        "general",
-        "warden"
-      ],
-      "joins": {
-        "attitude": "helpful"
-      },
-      "signature": {
-        "name": "Supplementary Hunting",
-        "skill": [
-          "wilderness"
-        ],
-        "hook": "Ekundayo leads a hunt through the realm's wild lands for meat, hides and trade goods.",
-        "outcomes": {
-          "criticalSuccess": [
-            {
-              "food": "1d4"
-            },
-            {
-              "luxuries": 1
-            },
-            {
-              "bpDice": 1
-            }
-          ],
-          "success": [
-            {
-              "choose": {
-                "n": 1,
-                "from": [
-                  [
-                    {
-                      "food": "1d4"
-                    }
-                  ],
-                  [
-                    {
-                      "luxuries": 1
-                    }
-                  ],
-                  [
-                    {
-                      "bpDice": 1
-                    }
-                  ]
-                ]
-              }
-            }
-          ],
-          "failure": [],
-          "criticalFailure": [
-            {
-              "choose": {
-                "n": 1,
-                "from": [
-                  [
-                    {
-                      "unrest": "1d4"
-                    }
-                  ],
-                  [
-                    {
-                      "ruin": {
-                        "choice": 1
-                      }
-                    }
-                  ]
-                ]
-              }
-            }
-          ]
-        },
-        "workDays": 7,
-        "cooldownDays": 30
-      },
-      "influence8": [
-        {
-          "constructionDc": {
-            "lumberCost": true,
-            "value": -2
-          }
-        }
-      ]
-    },
-    {
-      "id": "jubilost",
-      "name": "Jubilost",
-      "seats": [
-        "treasurer"
-      ],
-      "joins": {
-        "onFounding": true
-      },
-      "signature": {
-        "name": "Process Hidden Fees",
-        "skill": [
-          "trade"
-        ],
-        "requiresSeat": true,
-        "hook": "Jubilost goes through the ledgers and finds money the realm didn't know it was owed.",
-        "outcomes": {
-          "criticalSuccess": [
-            {
-              "bpDice": 2
-            }
-          ],
-          "success": [
-            {
-              "bpDice": 1
-            }
-          ],
-          "failure": [
-            {
-              "bpDice": 1
-            },
-            {
-              "unrest": 1
-            }
-          ],
-          "criticalFailure": [
-            {
-              "bpDice": 1
-            },
-            {
-              "unrest": "1d6"
-            }
-          ]
-        },
-        "workDays": 7,
-        "cooldownDays": 30
-      },
-      "influence8": [
-        {
-          "freeStructure": "alchemy-laboratory"
-        }
-      ]
-    },
-    {
-      "id": "linzi",
-      "name": "Linzi",
-      "seats": [
-        "counselor"
-      ],
-      "joins": {
-        "onFounding": true
-      },
-      "signature": {
-        "name": "Spread the Legend",
-        "skill": [
-          "arts"
-        ],
-        "hook": "Linzi writes up the leaders' latest deeds and makes sure everyone hears about them.",
-        "outcomes": {
-          "criticalSuccess": [
-            {
-              "unrest": "-1d6"
-            },
-            {
-              "fame": 1
-            }
-          ],
-          "success": [
-            {
-              "unrest": "-1d6"
-            }
-          ],
-          "failure": [
-            {
-              "unrest": -1
-            }
-          ],
-          "criticalFailure": [
-            {
-              "unrest": "1d4"
-            }
-          ]
-        },
-        "workDays": 7,
-        "cooldownDays": 30
-      },
-      "storyEvents": [
-        "the-local-paper"
-      ]
-    },
-    {
-      "id": "nok-nok",
-      "name": "Nok-Nok",
-      "seats": [
-        "emissary"
-      ],
-      "anySeat": true,
-      "joins": {
-        "influence": 8
-      },
-      "signature": {
-        "name": "Recruit Monsters",
-        "skill": [
-          "intrigue"
-        ],
-        "hook": "Nok-Nok goes looking for monsters who'd rather work for the realm than against it.",
-        "outcomes": {
-          "criticalSuccess": [
-            {
-              "reroll": {
-                "skills": [
-                  "defense",
-                  "exploration",
-                  "folklore",
-                  "intrigue"
-                ],
-                "uses": 1,
-                "days": 180
-              }
-            },
-            {
-              "note": "A monster owes the realm a favor: the next check against bandits, monsters, cults or the undead can be rolled twice."
-            }
-          ],
-          "success": [
-            {
-              "reroll": {
-                "skills": [
-                  "defense",
-                  "exploration",
-                  "folklore",
-                  "intrigue"
-                ],
-                "uses": 1,
-                "days": 30
-              }
-            }
-          ],
-          "failure": [],
-          "criticalFailure": [
-            {
-              "spawn": "monster-activity"
-            }
-          ]
-        },
-        "workDays": 7,
-        "cooldownDays": 30
-      },
-      "onAppoint": [
-        {
-          "if": {
-            "fame": "famous"
-          },
-          "then": [
-            {
-              "spawn": "goblin-backlash"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "tristian",
-      "name": "Tristian",
-      "seats": [
-        "magister"
-      ],
-      "joins": {
-        "famous": {
-          "influence": 0
-        },
-        "infamous": {
-          "influence": 8
-        }
-      },
-      "signature": {
-        "name": "Preventative Measures",
-        "skill": [
-          "magic"
-        ],
-        "requiresSeat": true,
-        "hook": "Tristian prepares wards and remedies against whatever comes next.",
-        "outcomes": {
-          "criticalSuccess": [
-            {
-              "modifier": {
-                "type": "status",
-                "value": 2,
-                "selector": [
-                  "events"
-                ],
-                "days": 30
-              }
-            },
-            {
-              "ruin": {
-                "choice": -1
-              }
-            }
-          ],
-          "success": [
-            {
-              "modifier": {
-                "type": "status",
-                "value": 2,
-                "selector": [
-                  "events"
-                ],
-                "days": 30
-              }
-            }
-          ],
-          "failure": [],
-          "criticalFailure": [
-            {
-              "bpDice": -2
-            }
-          ]
-        },
-        "workDays": 7,
-        "cooldownDays": 30
-      },
-      "influence8": [
-        {
-          "freeStructure": "orphanage"
-        },
-        {
-          "freeStructure": "shrine"
-        }
-      ]
-    },
-    {
-      "id": "valerie",
-      "name": "Valerie",
-      "seats": [
-        "general"
-      ],
-      "joins": {
-        "influence": 0
-      },
-      "signature": {
-        "name": "Warfare Exercises",
-        "skill": [
-          "warfare"
-        ],
-        "hook": "Valerie drills the realm's soldiers until they move as one.",
-        "outcomes": {
-          "criticalSuccess": [
-            {
-              "modifier": {
-                "type": "status",
-                "value": 2,
-                "selector": [
-                  "warfare",
-                  "defense"
-                ],
-                "days": 30
-              }
-            }
-          ],
-          "success": [
-            {
-              "modifier": {
-                "type": "status",
-                "value": 1,
-                "selector": [
-                  "warfare",
-                  "defense"
-                ],
-                "days": 30
-              }
-            }
-          ],
-          "failure": [],
-          "criticalFailure": [
-            {
-              "modifier": {
-                "type": "status",
-                "value": -1,
-                "selector": [
-                  "warfare",
-                  "defense"
-                ],
-                "days": 30
-              }
-            }
-          ]
-        },
-        "workDays": 7,
-        "cooldownDays": 30
-      }
-    },
-    {
-      "id": "harrim",
-      "name": "Harrim",
-      "seats": [
-        "magister"
-      ],
-      "joins": {
-        "influence": 8
-      },
-      "signature": {
-        "name": "Evangelize the End",
-        "skill": [
-          "folklore"
-        ],
-        "hook": "Harrim preaches doom in the streets, and somehow folks feel better for it.",
-        "outcomes": {
-          "criticalSuccess": [
-            {
-              "unrest": "-1d4"
-            },
-            {
-              "choose": {
-                "n": 1,
-                "from": [
-                  [
-                    {
-                      "ruin": {
-                        "crime": -2
-                      }
-                    }
-                  ],
-                  [
-                    {
-                      "ruin": {
-                        "corruption": -1
-                      }
-                    }
-                  ],
-                  [
-                    {
-                      "ruin": {
-                        "strife": -1
-                      }
-                    }
-                  ]
-                ]
-              }
-            }
-          ],
-          "success": [
-            {
-              "unrest": "-1d3"
-            }
-          ],
-          "failure": [
-            {
-              "unrest": -1
-            }
-          ],
-          "criticalFailure": [
-            {
-              "unrest": "1d4"
-            },
-            {
-              "ruin": {
-                "decay": 1
-              }
-            }
-          ]
-        },
-        "workDays": 7,
-        "cooldownDays": 30
-      }
-    },
-    {
-      "id": "jaethal",
-      "name": "Jaethal",
-      "seats": [
-        "emissary"
-      ],
-      "joins": {
-        "influence": 6
-      },
-      "onAppoint": [
-        {
-          "if": {
-            "fame": "famous"
-          },
-          "then": [
-            {
-              "unrest": "1d3"
-            }
-          ]
-        }
-      ],
-      "signature": {
-        "name": "Decadent Feasts",
-        "skill": [
-          "agriculture",
-          "trade"
-        ],
-        "cost": 10,
-        "hook": "Jaethal throws a feast nobody will forget, at the treasury's expense.",
-        "outcomes": {
-          "criticalSuccess": [
-            {
-              "unrest": "-1d6"
-            }
-          ],
-          "success": [
-            {
-              "unrest": "-1d3"
-            }
-          ],
-          "failure": [
-            {
-              "unrest": -1
-            }
-          ],
-          "criticalFailure": [
-            {
-              "unrest": "1d4"
-            },
-            {
-              "ruin": {
-                "corruption": 1
-              }
-            }
-          ]
-        },
-        "workDays": 7,
-        "cooldownDays": 30
-      }
-    },
-    {
-      "id": "kalikke",
-      "name": "Kalikke",
-      "seats": [
-        "counselor"
-      ],
-      "sharesBodyWith": "kanerah",
-      "joins": {
-        "influence": 4
-      },
-      "signature": {
-        "name": "Deliberate Planning",
-        "skill": [
-          "scholarship"
-        ],
-        "hook": "Kalikke sits down with every report on the realm's ongoing troubles and makes a plan.",
-        "outcomes": {
-          "criticalSuccess": [
-            {
-              "reroll": {
-                "skills": [
-                  "agriculture",
-                  "arts",
-                  "boating",
-                  "defense",
-                  "engineering",
-                  "exploration",
-                  "folklore",
-                  "industry",
-                  "intrigue",
-                  "magic",
-                  "politics",
-                  "scholarship",
-                  "statecraft",
-                  "trade",
-                  "warfare",
-                  "wilderness"
-                ],
-                "uses": 1,
-                "days": 30
-              }
-            },
-            {
-              "modifier": {
-                "type": "status",
-                "value": 1,
-                "selector": [
-                  "events"
-                ],
-                "days": 30
-              }
-            }
-          ],
-          "success": [
-            {
-              "modifier": {
-                "type": "status",
-                "value": 1,
-                "selector": [
-                  "events"
-                ],
-                "days": 30
-              }
-            }
-          ],
-          "failure": [],
-          "criticalFailure": [
-            {
-              "modifier": {
-                "type": "status",
-                "value": -1,
-                "selector": [
-                  "events"
-                ],
-                "days": 30
-              }
-            }
-          ]
-        },
-        "workDays": 7,
-        "cooldownDays": 30
-      }
-    },
-    {
-      "id": "kanerah",
-      "name": "Kanerah",
-      "seats": [
-        "emissary"
-      ],
-      "sharesBodyWith": "kalikke",
-      "joins": {
-        "influence": 4
-      },
-      "signature": {
-        "name": "False Victory",
-        "skill": [
-          "intrigue"
-        ],
-        "hook": "Kanerah spreads word of a triumph that never quite happened.",
-        "outcomes": {
-          "criticalSuccess": [
-            {
-              "unrest": "-1d6"
-            },
-            {
-              "ruin": {
-                "choice": -1
-              }
-            }
-          ],
-          "success": [
-            {
-              "unrest": "-1d3"
-            }
-          ],
-          "failure": [
-            {
-              "unrest": 1
-            }
-          ],
-          "criticalFailure": [
-            {
-              "spawn": "public-scandal"
-            }
-          ]
-        },
-        "workDays": 7,
-        "cooldownDays": 30
-      }
-    },
-    {
-      "id": "octavia",
-      "name": "Octavia",
-      "seats": [
-        "magister"
-      ],
-      "joins": {
-        "influence": 6
-      },
-      "skillSubstitution": {
-        "skill": "magic",
-        "for": [
-          "celebrate-holiday",
-          "craft-luxuries",
-          "create-a-masterpiece",
-          "rest-and-relax"
-        ]
-      }
-    },
-    {
-      "id": "regongar",
-      "name": "Regongar",
-      "seats": [
-        "general"
-      ],
-      "joins": {
-        "influence": 8
-      },
-      "signature": {
-        "name": "Show of Force",
-        "skill": [
-          "warfare"
-        ],
-        "hook": "Regongar marches the troops through the worst parts of town.",
-        "outcomes": {
-          "criticalSuccess": [
-            {
-              "ruin": {
-                "crime": -2
-              }
-            },
-            {
-              "ruin": {
-                "choice": -1,
-                "exclude": [
-                  "crime"
-                ]
-              }
-            }
-          ],
-          "success": [
-            {
-              "ruin": {
-                "crime": -1
-              }
-            }
-          ],
-          "failure": [
-            {
-              "unrest": 1
-            }
-          ],
-          "criticalFailure": [
-            {
-              "unrest": "1d4"
-            },
-            {
-              "ruin": {
-                "crime": 1
-              }
-            }
-          ]
-        },
-        "workDays": 7,
-        "cooldownDays": 30
-      }
+     "event": "monster-activity",
+     "type": "circumstance",
+     "value": 2
     }
-  ]
+   ],
+   "storyEvents": [
+    "monster-hunt",
+    "barbarian-immigrants"
+   ]
+  },
+  {
+   "id": "ekundayo",
+   "name": "Ekundayo",
+   "seats": [
+    "general",
+    "warden"
+   ],
+   "joins": {
+    "attitude": "helpful"
+   },
+   "influence8": [
+    {
+     "constructionDc": {
+      "lumberCost": true,
+      "value": -2
+     }
+    }
+   ]
+  },
+  {
+   "id": "jubilost",
+   "name": "Jubilost",
+   "seats": [
+    "treasurer",
+    "viceroy"
+   ],
+   "joins": {
+    "onFounding": true
+   },
+   "influence8": [
+    {
+     "freeStructure": "alchemy-laboratory"
+    }
+   ]
+  },
+  {
+   "id": "linzi",
+   "name": "Linzi",
+   "seats": [
+    "counselor"
+   ],
+   "joins": {
+    "onFounding": true
+   },
+   "storyEvents": [
+    "the-local-paper"
+   ]
+  },
+  {
+   "id": "nok-nok",
+   "name": "Nok-Nok",
+   "seats": [
+    "emissary"
+   ],
+   "joins": {
+    "influence": 8
+   },
+   "onAppoint": [
+    {
+     "if": {
+      "fame": "famous"
+     },
+     "then": [
+      {
+       "spawn": "goblin-backlash"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tristian",
+   "name": "Tristian",
+   "seats": [
+    "magister"
+   ],
+   "joins": {
+    "famous": {
+     "influence": 0
+    },
+    "infamous": {
+     "influence": 8
+    }
+   },
+   "influence8": [
+    {
+     "freeStructure": "orphanage"
+    },
+    {
+     "freeStructure": "shrine"
+    }
+   ]
+  },
+  {
+   "id": "valerie",
+   "name": "Valerie",
+   "seats": [
+    "general"
+   ],
+   "joins": {
+    "influence": 0
+   }
+  },
+  {
+   "id": "harrim",
+   "name": "Harrim",
+   "seats": [
+    "magister"
+   ],
+   "joins": {
+    "influence": 8
+   }
+  },
+  {
+   "id": "jaethal",
+   "name": "Jaethal",
+   "seats": [
+    "emissary"
+   ],
+   "joins": {
+    "influence": 6
+   },
+   "onAppoint": [
+    {
+     "if": {
+      "fame": "famous"
+     },
+     "then": [
+      {
+       "unrest": "1d3"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "kalikke",
+   "name": "Kalikke",
+   "seats": [
+    "counselor",
+    "viceroy"
+   ],
+   "sharesBodyWith": "kanerah",
+   "joins": {
+    "influence": 4
+   }
+  },
+  {
+   "id": "kanerah",
+   "name": "Kanerah",
+   "seats": [
+    "emissary"
+   ],
+   "sharesBodyWith": "kalikke",
+   "joins": {
+    "influence": 4
+   }
+  },
+  {
+   "id": "octavia",
+   "name": "Octavia",
+   "seats": [
+    "magister"
+   ],
+   "joins": {
+    "influence": 6
+   },
+   "skillSubstitution": {
+    "skill": "magic",
+    "for": [
+     "celebrate-holiday",
+     "craft-luxuries",
+     "create-a-masterpiece",
+     "rest-and-relax"
+    ]
+   }
+  },
+  {
+   "id": "regongar",
+   "name": "Regongar",
+   "seats": [
+    "general"
+   ],
+   "joins": {
+    "influence": 8
+   }
+  }
+ ],
+ "seatAbilities": {
+  "general": {
+   "name": "Warfare Exercises",
+   "skill": [
+    "warfare"
+   ],
+   "hook": "{advisor} drills the realm's soldiers until they move as one.",
+   "outcomes": {
+    "criticalSuccess": [
+     {
+      "modifier": {
+       "type": "status",
+       "value": 2,
+       "selector": [
+        "warfare",
+        "defense"
+       ],
+       "days": 30
+      }
+     }
+    ],
+    "success": [
+     {
+      "modifier": {
+       "type": "status",
+       "value": 1,
+       "selector": [
+        "warfare",
+        "defense"
+       ],
+       "days": 30
+      }
+     }
+    ],
+    "failure": [],
+    "criticalFailure": [
+     {
+      "modifier": {
+       "type": "status",
+       "value": -1,
+       "selector": [
+        "warfare",
+        "defense"
+       ],
+       "days": 30
+      }
+     }
+    ]
+   },
+   "workDays": 7,
+   "cooldownDays": 30
+  },
+  "warden": {
+   "name": "Supplementary Hunting",
+   "skill": [
+    "wilderness"
+   ],
+   "hook": "{advisor} leads a hunt through the realm's wild lands for meat, hides and trade goods.",
+   "outcomes": {
+    "criticalSuccess": [
+     {
+      "food": "1d4"
+     },
+     {
+      "luxuries": 1
+     },
+     {
+      "bpDice": 1
+     }
+    ],
+    "success": [
+     {
+      "choose": {
+       "n": 1,
+       "from": [
+        [
+         {
+          "food": "1d4"
+         }
+        ],
+        [
+         {
+          "luxuries": 1
+         }
+        ],
+        [
+         {
+          "bpDice": 1
+         }
+        ]
+       ]
+      }
+     }
+    ],
+    "failure": [],
+    "criticalFailure": [
+     {
+      "choose": {
+       "n": 1,
+       "from": [
+        [
+         {
+          "unrest": "1d4"
+         }
+        ],
+        [
+         {
+          "ruin": {
+           "choice": 1
+          }
+         }
+        ]
+       ]
+      }
+     }
+    ]
+   },
+   "workDays": 7,
+   "cooldownDays": 30
+  },
+  "treasurer": {
+   "name": "Process Hidden Fees",
+   "skill": [
+    "trade"
+   ],
+   "hook": "{advisor} goes through the ledgers and finds money the realm didn't know it was owed.",
+   "outcomes": {
+    "criticalSuccess": [
+     {
+      "bpDice": 2
+     }
+    ],
+    "success": [
+     {
+      "bpDice": 1
+     }
+    ],
+    "failure": [
+     {
+      "bpDice": 1
+     },
+     {
+      "unrest": 1
+     }
+    ],
+    "criticalFailure": [
+     {
+      "bpDice": 1
+     },
+     {
+      "unrest": "1d6"
+     }
+    ]
+   },
+   "workDays": 7,
+   "cooldownDays": 30
+  },
+  "counselor": {
+   "name": "Spread the Legend",
+   "skill": [
+    "arts"
+   ],
+   "hook": "{advisor} writes up the leaders' latest deeds and makes sure everyone hears about them.",
+   "outcomes": {
+    "criticalSuccess": [
+     {
+      "unrest": "-1d6"
+     },
+     {
+      "fame": 1
+     }
+    ],
+    "success": [
+     {
+      "unrest": "-1d6"
+     }
+    ],
+    "failure": [
+     {
+      "unrest": -1
+     }
+    ],
+    "criticalFailure": [
+     {
+      "unrest": "1d4"
+     }
+    ]
+   },
+   "workDays": 7,
+   "cooldownDays": 30
+  },
+  "viceroy": {
+   "name": "Deliberate Planning",
+   "skill": [
+    "engineering",
+    "agriculture"
+   ],
+   "hook": "{advisor} sits down with every report on the realm's ongoing troubles and makes a plan.",
+   "outcomes": {
+    "criticalSuccess": [
+     {
+      "reroll": {
+       "skills": [
+        "agriculture",
+        "arts",
+        "boating",
+        "defense",
+        "engineering",
+        "exploration",
+        "folklore",
+        "industry",
+        "intrigue",
+        "magic",
+        "politics",
+        "scholarship",
+        "statecraft",
+        "trade",
+        "warfare",
+        "wilderness"
+       ],
+       "uses": 1,
+       "days": 30
+      }
+     },
+     {
+      "modifier": {
+       "type": "status",
+       "value": 1,
+       "selector": [
+        "events"
+       ],
+       "days": 30
+      }
+     }
+    ],
+    "success": [
+     {
+      "modifier": {
+       "type": "status",
+       "value": 1,
+       "selector": [
+        "events"
+       ],
+       "days": 30
+      }
+     }
+    ],
+    "failure": [],
+    "criticalFailure": [
+     {
+      "modifier": {
+       "type": "status",
+       "value": -1,
+       "selector": [
+        "events"
+       ],
+       "days": 30
+      }
+     }
+    ]
+   },
+   "workDays": 7,
+   "cooldownDays": 30
+  },
+  "magister": {
+   "name": "Preventative Measures",
+   "skill": [
+    "magic"
+   ],
+   "hook": "{advisor} prepares wards and remedies against whatever comes next.",
+   "outcomes": {
+    "criticalSuccess": [
+     {
+      "modifier": {
+       "type": "status",
+       "value": 2,
+       "selector": [
+        "events"
+       ],
+       "days": 30
+      }
+     },
+     {
+      "ruin": {
+       "choice": -1
+      }
+     }
+    ],
+    "success": [
+     {
+      "modifier": {
+       "type": "status",
+       "value": 2,
+       "selector": [
+        "events"
+       ],
+       "days": 30
+      }
+     }
+    ],
+    "failure": [],
+    "criticalFailure": [
+     {
+      "bpDice": -2
+     }
+    ]
+   },
+   "workDays": 7,
+   "cooldownDays": 30
+  },
+  "emissary": {
+   "name": "Decadent Feasts",
+   "skill": [
+    "statecraft"
+   ],
+   "cost": 10,
+   "hook": "{advisor} throws a feast for the realm's guests and neighbors that nobody will forget, at the treasury's expense.",
+   "outcomes": {
+    "criticalSuccess": [
+     {
+      "unrest": "-1d6"
+     }
+    ],
+    "success": [
+     {
+      "unrest": "-1d3"
+     }
+    ],
+    "failure": [
+     {
+      "unrest": -1
+     }
+    ],
+    "criticalFailure": [
+     {
+      "unrest": "1d4"
+     },
+     {
+      "ruin": {
+       "corruption": 1
+      }
+     }
+    ]
+   },
+   "workDays": 7,
+   "cooldownDays": 30
+  }
+ }
 }

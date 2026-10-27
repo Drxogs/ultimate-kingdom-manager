@@ -96,7 +96,7 @@
           <td>
             <select name="seats.{{seat}}.holder">
               <option value="">{{localize "UKM.Setup.None"}}</option>
-              {{#each @root.holderGroups}}
+              {{#each holderGroups}}
                 <optgroup label="{{label}}">{{selectOptions choices selected=../holder}}</optgroup>
               {{/each}}
             </select>
@@ -104,7 +104,7 @@
           <td>
             <select name="seats.{{seat}}.companion">
               <option value="">{{localize "UKM.Setup.None"}}</option>
-              {{selectOptions @root.companionChoices selected=companion}}
+              {{selectOptions companionChoices selected=companion}}
             </select>
           </td>
           <td>
