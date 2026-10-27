@@ -564,7 +564,9 @@
       "Suits": "Suited seats",
       "Skill": "Skill",
       "PreferredOnly": "Only from a suited seat",
-      "Costs": "Costs {cost} BP"
+      "Costs": "Costs {cost} BP",
+      "WhoSuitsWhat": "Who suits which seat",
+      "NoAbility": "no special ability"
     },
     "Pins": {
       "Reveal": "Show players where this is",
@@ -595,7 +597,8 @@
       "Wasted": "Adds nothing right now: these checks already get a +{existing} status bonus, and status bonuses don't stack.",
       "Partial": "Only adds +{gain} right now: these checks already get a +{existing} status bonus, and status bonuses don't stack.",
       "Converted": "The status bonus wouldn't have added anything here, so it became two rerolls on the same checks instead.",
-      "WillConvert": "Its status bonus would add nothing here (these checks already have one, and status bonuses don't stack), so it becomes two rerolls on the same checks instead."
+      "WillConvert": "Its status bonus would add nothing here (these checks already have one, and status bonuses don't stack), so it becomes two rerolls on the same checks instead.",
+      "RankLabel": "{stat} rank"
     },
     "Settlement": {
       "Type": {

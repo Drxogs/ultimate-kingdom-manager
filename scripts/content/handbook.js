@@ -88,6 +88,11 @@ function companionsPage() {
   const parts = [
     "<p>A companion advising a seat brings their own ability, started from that desk's Start project button. Only the advisor can do it; it takes a week and then can't be used again for 30 days. A companion in a seat they suit also gives that desk's rolls a bonus.</p>"
   ];
+  parts.push(
+    `<h2>${esc(t("UKM.Handbook.WhoSuitsWhat"))}</h2><ul>${getCompanions()
+      .map((c) => `<li><strong>${esc(c.name)}</strong>: ${esc(c.seats.map((x) => t(`UKM.Seat.${x}`)).join(" or "))}${c.signature ? "" : ` (${esc(t("UKM.Handbook.NoAbility"))})`}</li>`)
+      .join("")}</ul>`
+  );
   for (const c of getCompanions().filter((x) => x.signature)) {
     const s = c.signature;
     const notes = [

@@ -65,7 +65,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     const companions = getCompanions();
     const actorChoices = Object.fromEntries(characters.map((a) => [a.uuid, a.name]));
     const companionChoices = {
-      ...Object.fromEntries(companions.map((c) => [c.id, c.name])),
+      ...Object.fromEntries(companions.map((c) => [c.id, c.seats?.length ? `${c.name} (${c.seats.map((x) => game.i18n.localize(`UKM.Seat.${x}`)).join(", ")})` : c.name])),
       [HIRED_ADVISOR]: game.i18n.localize("UKM.Hired.Option")
     };
     const attitudes = getSetting(SETTINGS.companionAttitudes) ?? {};

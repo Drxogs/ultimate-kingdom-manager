@@ -210,7 +210,7 @@ function advisorModifiers(realm, card, stat) {
   const mods = companionModifiers(realm, card);
   if (hiredOnly(card.seat)) mods.push({ slug: "ukm-hired", label: game.i18n.localize("UKM.Hired.Name"), modifier: HIRED_PENALTY, type: "untyped" });
   const bonus = rankBonus(realm.stats[stat]?.rank ?? 0);
-  if (bonus) mods.push({ slug: `ukm-rank-${stat}`, label: game.i18n.localize(`UKM.Stat.${stat}`), modifier: bonus, type: "circumstance" });
+  if (bonus) mods.push({ slug: `ukm-rank-${stat}`, label: game.i18n.format("UKM.Bonus.RankLabel", { stat: game.i18n.localize(`UKM.Stat.${stat}`) }), modifier: bonus, type: "circumstance" });
   return mods;
 }
 
