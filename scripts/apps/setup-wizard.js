@@ -1,5 +1,5 @@
 import { ATTITUDES, FOUNDING_PICKS, HIRED_ADVISOR, MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
-import { getCompanions } from "../content/data.js";
+import { companionForName, getCompanions } from "../content/data.js";
 import { inspectSources } from "../content/story-import.js";
 import { getKingdom, getPlayerCharacters, syncKingdomLevel } from "../integrations/party.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
@@ -8,20 +8,17 @@ import { getRealm } from "../realm/state.js";
 import { StoryImportApp } from "./story-import-app.js";
 import { MidCampaignApp } from "./midcampaign-app.js";
 import { FOUNDING_TRAINED, trainFoundingSkills } from "../realm/leadership.js";
+import { isKnownAdvisor } from "../realm/rules.js";
 import { SHEET_CLASSES, UkmDialog, bannerContext } from "./dialog.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-function companionOfActor(actor, companions) {
-  const name = actor.name.toLowerCase();
-  return companions.find((c) => {
-    const target = c.name.toLowerCase();
-    return name === target || name.startsWith(`${target} `) || name.startsWith(`${target},`) || name.startsWith(`${target} (`);
-  }) ?? null;
+function companionOfActor(actor) {
+  return companionForName(actor.name);
 }
 
-function isCompanionActor(actor, companions) {
-  return !!companionOfActor(actor, companions);
+function isCompanionActor(actor) {
+  return !!companionOfActor(actor);
 }
 
 export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -45,6 +42,8 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       openKingdom: SetupWizard.#openKingdom,
       toggleActors: SetupWizard.#toggleActors,
       resetFounding: SetupWizard.#resetFounding,
+      addAdvisor: SetupWizard.#addAdvisor,
+      removeAdvisor: SetupWizard.#removeAdvisor,
       openMidCampaign: () => new MidCampaignApp().render(true)
     }
   };
@@ -70,8 +69,11 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     const actorChoices = Object.fromEntries(characters.map((a) => [a.uuid, a.name]));
     // Each seat offers only the companions suited to it (and a hired advisor). Someone already placed
     // in a seat they don't suit stays listed, marked, so the GM can see why they no longer count.
+    const draftKnown = this.#draft?.advisors;
+    const known = (id) => draftKnown?.[id]?.known ?? isKnownAdvisor(id);
+    // Only advisors the party has met (the GM ticks Known below) are offered.
     const companionChoicesFor = (seat, current) => {
-      const choices = Object.fromEntries(companions.filter((c) => c.seats?.includes(seat)).map((c) => [c.id, c.name]));
+      const choices = Object.fromEntries(companions.filter((c) => c.seats?.includes(seat) && (known(c.id) || c.id === current)).map((c) => [c.id, c.name]));
       const misplaced = current && current !== HIRED_ADVISOR && !choices[current] ? companions.find((c) => c.id === current) : null;
       if (misplaced) choices[misplaced.id] = game.i18n.format("UKM.Setup.NotSuited", { name: misplaced.name });
       choices[HIRED_ADVISOR] = game.i18n.localize("UKM.Hired.Option");
@@ -106,8 +108,8 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     // Companion actors are offered as holders only for the seats they suit; a player character fits any seat.
     const holderGroupsFor = (seat, current) => {
       const others = otherActors.filter((a) => {
-        const companion = companionOfActor(a, companions);
-        return !companion || companion.seats?.includes(seat) || a.uuid === current;
+        const companion = companionOfActor(a);
+        return !companion || (companion.seats?.includes(seat) && known(companion.id)) || a.uuid === current;
       });
       return [
         { label: game.i18n.localize("UKM.Setup.GroupCharacters"), choices: actorChoices },
@@ -155,7 +157,16 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       ].filter((g) => Object.keys(g.choices).length),
       supervisorChoices: actorChoices,
       attitudeChoices,
-      companionRows: companions.map((c) => ({ id: c.id, name: c.name, attitude: draft?.attitudes?.[c.id] ?? attitudes[c.id] ?? "friendly" })),
+      advisorRows: companions.map((c) => ({
+        id: c.id,
+        name: c.name,
+        seats: c.seats.map((x) => game.i18n.localize(`UKM.Seat.${x}`)).join(", "),
+        kind: game.i18n.localize(c.custom ? "UKM.Setup.AdvisorCustom" : c.npc ? "UKM.Setup.AdvisorNpc" : "UKM.Setup.AdvisorCompanion"),
+        custom: !!c.custom,
+        known: known(c.id),
+        attitude: draft?.advisors?.[c.id]?.attitude ?? attitudes[c.id] ?? "friendly"
+      })),
+      seatChoices: Object.fromEntries(SEATS.filter((x) => x !== "ruler").map((x) => [x, `UKM.Seat.${x}`])),
       training: this.#trainingContext(kingdom),
       buttons: [{ type: "submit", icon: "fa-solid fa-check", label: "UKM.Setup.Save" }]
     };
@@ -177,7 +188,16 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #onSubmit(event, form, formData) {
     const data = foundry.utils.expandObject(formData.object);
     await setSetting(SETTINGS.tapTreasury, data.tapTreasury);
-    if (data.attitudes) await setSetting(SETTINGS.companionAttitudes, data.attitudes);
+    if (data.advisors) {
+      const attitudes = {};
+      const known = {};
+      for (const [id, row] of Object.entries(data.advisors)) {
+        attitudes[id] = row.attitude;
+        known[id] = !!row.known;
+      }
+      await setSetting(SETTINGS.companionAttitudes, attitudes);
+      await setSetting(SETTINGS.knownAdvisors, known);
+    }
 
     const assignments = {};
     const leadership = {};
@@ -217,7 +237,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #resetFounding() {
-    const ok = await foundry.applications.api.UkmDialog.confirm({
+    const ok = await UkmDialog.confirm({
       window: { title: game.i18n.localize("UKM.Setup.Founding") },
       content: `<p>${game.i18n.localize("UKM.Setup.FoundingResetConfirm")}</p>`,
       rejectClose: false
@@ -225,6 +245,34 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!ok) return;
     this.#draft = foundry.utils.expandObject(new foundry.applications.ux.FormDataExtended(this.element).object);
     await resetFounding();
+    this.render();
+  }
+
+  /** Add an NPC of the GM's own as an advisor for one seat. Saved straight away; the rest of the form is kept. */
+  static async #addAdvisor() {
+    const draft = foundry.utils.expandObject(new foundry.applications.ux.FormDataExtended(this.element).object);
+    const name = String(draft.newAdvisor?.name ?? "").trim();
+    const seat = draft.newAdvisor?.seat;
+    if (!name || !seat) {
+      ui.notifications.warn(game.i18n.localize("UKM.Setup.AdvisorNeedsName"));
+      return;
+    }
+    const list = getSetting(SETTINGS.customAdvisors) ?? [];
+    const id = `custom-${foundry.utils.randomID(8)}`;
+    await setSetting(SETTINGS.customAdvisors, [...list, { id, name, seats: [seat] }]);
+    delete draft.newAdvisor;
+    this.#draft = draft;
+    this.render();
+  }
+
+  static async #removeAdvisor(event, target) {
+    const id = target.closest("[data-advisor]")?.dataset.advisor;
+    if (!id) return;
+    const draft = foundry.utils.expandObject(new foundry.applications.ux.FormDataExtended(this.element).object);
+    await setSetting(SETTINGS.customAdvisors, (getSetting(SETTINGS.customAdvisors) ?? []).filter((a) => a.id !== id));
+    for (const row of Object.values(draft.seats ?? {})) if (row.companion === id) row.companion = "";
+    if (draft.advisors) delete draft.advisors[id];
+    this.#draft = draft;
     this.render();
   }
 

@@ -1,5 +1,5 @@
 import { ATTITUDES, DIE_AVERAGE, HIRED_ADVISOR, POINTS_PER_RANK, REALM_STATS, ROUTINE_ADVISOR_BONUS, ROUTINE_POINTS } from "../constants.js";
-import { getCompanion, getCompanions } from "../content/data.js";
+import { companionForName, getCompanion, getCompanions } from "../content/data.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { getKingdom, getResourceDie } from "../integrations/party.js";
 import { summarizeRealm, isKingmakerActive } from "../integrations/kingmaker.js";
@@ -106,6 +106,21 @@ export function seatCompanionId(seat) {
   return attitudeAtLeast(id, "indifferent") ? id : null;
 }
 
+/** Advisors the party meets at Oleg's Trading Post at the start, known unless the GM says otherwise. */
+const KNOWN_AT_START = new Set(["oleg", "svetlana", "kesten"]);
+
+/** Whether the party has met an advisor, so they're offered for seats. Advisors the GM added are always known. */
+export function isKnownAdvisor(id) {
+  const companion = getCompanion(id);
+  if (!companion) return false;
+  if (companion.custom) return true;
+  const known = getSetting(SETTINGS.knownAdvisors)?.[id];
+  if (known !== undefined) return known;
+  // Until the GM says otherwise: met at Oleg's, or already sitting in a seat.
+  const placed = Object.values(getSetting(SETTINGS.seatAssignments) ?? {}).some((a) => a?.companion === id);
+  return KNOWN_AT_START.has(id) || placed;
+}
+
 /** Whether a companion can advise a seat: only the seats they're suited to. */
 export function suitsSeat(companionId, seat) {
   return !!getCompanion(companionId)?.seats?.includes(seat);
@@ -119,11 +134,7 @@ export function rawSeatCompanionId(seat) {
   const uuid = getKingdom()?.leadership?.[seat]?.uuid;
   const name = uuid ? fromUuidSync(uuid)?.name?.toLowerCase() : null;
   if (!name) return null;
-  const id =
-    getCompanions().find((c) => {
-      const n = c.name.toLowerCase();
-      return name === n || name.startsWith(`${n} `) || name.startsWith(`${n},`) || name.startsWith(`${n} (`);
-    })?.id ?? null;
+  const id = companionForName(name)?.id ?? null;
   return id && suitsSeat(id, seat) ? id : null;
 }
 

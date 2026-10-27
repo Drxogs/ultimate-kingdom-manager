@@ -121,15 +121,35 @@
   </section>
 
   <section>
-    <h3>{{localize "UKM.Attitude.Heading"}}</h3>
+    <h3>{{localize "UKM.Setup.Advisors"}}</h3>
+    <p class="hint">{{localize "UKM.Setup.AdvisorsHint"}}</p>
     <p class="hint">{{localize "UKM.Attitude.Hint"}}</p>
-    <div class="ukm-attitudes">
-      {{#each companionRows}}
-        <div class="form-group">
-          <label>{{name}}</label>
-          <select name="attitudes.{{id}}">{{selectOptions @root.attitudeChoices selected=attitude localize=true}}</select>
-        </div>
-      {{/each}}
+    <table class="ukm-seats ukm-advisors">
+      <thead>
+        <tr>
+          <th>{{localize "UKM.Setup.AdvisorName"}}</th>
+          <th>{{localize "UKM.Setup.AdvisorSeats"}}</th>
+          <th>{{localize "UKM.Setup.AdvisorKnown"}}</th>
+          <th>{{localize "UKM.Setup.AdvisorAttitude"}}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each advisorRows}}
+        <tr data-advisor="{{id}}">
+          <td>{{name}} <span class="hint">· {{kind}}</span></td>
+          <td>{{seats}}</td>
+          <td><input type="checkbox" name="advisors.{{id}}.known" {{#if known}}checked{{/if}}></td>
+          <td><select name="advisors.{{id}}.attitude">{{selectOptions @root.attitudeChoices selected=attitude localize=true}}</select></td>
+          <td>{{#if custom}}<a data-action="removeAdvisor" data-tooltip="{{localize "UKM.Setup.AdvisorRemove"}}"><i class="fa-solid fa-trash"></i></a>{{/if}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    <div class="ukm-add-advisor">
+      <input type="text" name="newAdvisor.name" placeholder="{{localize "UKM.Setup.AdvisorNewName"}}">
+      <select name="newAdvisor.seat">{{selectOptions seatChoices localize=true}}</select>
+      <button type="button" data-action="addAdvisor"><i class="fa-solid fa-user-plus"></i> {{localize "UKM.Setup.AdvisorAdd"}}</button>
     </div>
   </section>
 </div>

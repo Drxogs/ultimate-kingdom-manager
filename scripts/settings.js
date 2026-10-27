@@ -16,6 +16,8 @@ export const SETTINGS = {
   structureCatalog: "structureCatalog",
   audiences: "audiences",
   companionAttitudes: "companionAttitudes",
+  knownAdvisors: "knownAdvisors",
+  customAdvisors: "customAdvisors",
   toolsNotice: "toolsNotice",
   council: "council"
 };
@@ -96,6 +98,8 @@ export function registerSettings() {
   world(SETTINGS.seatAssignments, { config: false, type: Object, default: {} });
   world(SETTINGS.structureCatalog, { config: false, type: Array, default: [] });
   world(SETTINGS.companionAttitudes, { config: false, type: Object, default: {} });
+  world(SETTINGS.knownAdvisors, { config: false, type: Object, default: {} });
+  world(SETTINGS.customAdvisors, { config: false, type: Array, default: [] });
   world(SETTINGS.toolsNotice, { config: false, type: Boolean, default: false });
 }
 

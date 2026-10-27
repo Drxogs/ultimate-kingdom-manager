@@ -783,3 +783,8 @@
 .ukm-sheet .ukm-sheet-header .ruin small { font-size: var(--font-size-11, 11px); opacity: 0.95; }
 .ukm-sheet .ukm-sheet-header .ruin .ukm-bar { height: 7px; border-color: rgba(0, 0, 0, 0.6); background: rgba(255, 255, 255, 0.75); }
 .ukm-sheet .ukm-sheet-header .ruin .ukm-bar > span { background: linear-gradient(90deg, #8b1e1e, #c4402f); }
+
+.ukm-setup .ukm-add-advisor { display: flex; gap: 0.4rem; align-items: center; margin-top: 0.5rem; }
+.ukm-setup .ukm-add-advisor input { flex: 2; }
+.ukm-setup .ukm-add-advisor select { flex: 1; }
+.ukm-setup .ukm-advisors td:nth-child(3), .ukm-setup .ukm-advisors th:nth-child(3) { text-align: center; }

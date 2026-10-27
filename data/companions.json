@@ -31,7 +31,6 @@
    "id": "ekundayo",
    "name": "Ekundayo",
    "seats": [
-    "general",
     "warden"
    ],
    "joins": {
@@ -50,8 +49,7 @@
    "id": "jubilost",
    "name": "Jubilost",
    "seats": [
-    "treasurer",
-    "viceroy"
+    "treasurer"
    ],
    "joins": {
     "onFounding": true
@@ -163,29 +161,6 @@
    ]
   },
   {
-   "id": "kalikke",
-   "name": "Kalikke",
-   "seats": [
-    "counselor",
-    "viceroy"
-   ],
-   "sharesBodyWith": "kanerah",
-   "joins": {
-    "influence": 4
-   }
-  },
-  {
-   "id": "kanerah",
-   "name": "Kanerah",
-   "seats": [
-    "emissary"
-   ],
-   "sharesBodyWith": "kalikke",
-   "joins": {
-    "influence": 4
-   }
-  },
-  {
    "id": "octavia",
    "name": "Octavia",
    "seats": [
@@ -205,14 +180,67 @@
    }
   },
   {
-   "id": "regongar",
-   "name": "Regongar",
+   "id": "oleg",
+   "name": "Oleg Leveton",
+   "seats": [
+    "treasurer"
+   ],
+   "npc": true,
+   "aliases": [
+    "Oleg"
+   ]
+  },
+  {
+   "id": "svetlana",
+   "name": "Svetlana Leveton",
+   "seats": [
+    "viceroy"
+   ],
+   "npc": true,
+   "aliases": [
+    "Svetlana"
+   ]
+  },
+  {
+   "id": "jhod",
+   "name": "Jhod Kavken",
+   "seats": [
+    "viceroy"
+   ],
+   "npc": true,
+   "aliases": [
+    "Jhod"
+   ]
+  },
+  {
+   "id": "kesten",
+   "name": "Kesten Garess",
+   "seats": [
+    "warden"
+   ],
+   "npc": true,
+   "aliases": [
+    "Kesten"
+   ]
+  },
+  {
+   "id": "akiros",
+   "name": "Akiros Ismort",
    "seats": [
     "general"
    ],
-   "joins": {
-    "influence": 8
-   }
+   "npc": true,
+   "aliases": [
+    "Akiros"
+   ]
+  },
+  {
+   "id": "bokken",
+   "name": "Bokken",
+   "seats": [
+    "magister"
+   ],
+   "npc": true
   }
  ],
  "seatAbilities": {

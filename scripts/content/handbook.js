@@ -86,15 +86,11 @@ function projectsPage() {
 
 function companionsPage() {
   const parts = [
-    "<p>Each seat can be held by a player character, advised by a companion who suits it, or given to a hired advisor. Only companions who suit a seat can advise it, and a companion advising a seat always gives that desk's advisor rolls a status bonus (+1, +2 from level 8, +3 from level 16).</p>" +
-      "<p>Every seat except the Ruler's has a special ability. It appears under that desk's Start project button while a friendly companion advises the seat. Only the advisor can do it; it takes a week and then can't be used again for 30 days.</p>"
+    "<p>Each seat can be held by a player character, advised by someone who suits it, or given to a hired advisor. An advisor in a seat always gives that desk's advisor rolls a status bonus (+1, +2 from level 8, +3 from level 16).</p>" +
+      "<p>Every seat except the Ruler's has a special ability. It appears under that desk's Start project button while a friendly advisor holds the seat. Only the advisor can do it; it takes a week and then can't be used again for 30 days.</p>"
   ];
+  parts.push("<p>Advisors are companions and people of the Stolen Lands you meet along the way. Once the party knows someone, the GM can seat them as the advisor of a seat that suits them.</p>");
   const abilities = getSeatAbilities();
-  const rows = SEATS.map((seat) => {
-    const who = getCompanions().filter((c) => c.seats?.includes(seat)).map((c) => c.name);
-    return [esc(t(`UKM.Seat.${seat}`)), esc(who.length ? who.join(", ") : t("UKM.Handbook.PlayersOnly")), esc(abilities[seat]?.name ?? "—")];
-  });
-  parts.push(`<h2>${esc(t("UKM.Handbook.WhoSuitsWhat"))}</h2>` + table([t("UKM.Setup.Seat"), t("UKM.Handbook.Companions"), t("UKM.Handbook.Ability")], rows));
   for (const seat of SEATS) {
     const s = abilities[seat];
     if (!s) continue;

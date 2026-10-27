@@ -141,8 +141,33 @@ export function getRankUpAlways(stat) {
   return cache.rankups?.always?.[stat] ?? [];
 }
 
+/** Advisors the GM added by name in Setup (an NPC they made up or met in play). */
+function customAdvisors() {
+  try {
+    const list = game.settings.get(MODULE_ID, "customAdvisors");
+    return (Array.isArray(list) ? list : []).filter((a) => a?.id && a?.name && a?.seats?.length).map((a) => ({ ...a, custom: true }));
+  } catch {
+    return [];
+  }
+}
+
+/** Everyone who can advise a seat: the book's companions, the adventure's NPCs, and the GM's own. */
 export function getCompanions() {
-  return cache.companions?.companions ?? [];
+  return [...(cache.companions?.companions ?? []), ...customAdvisors()];
+}
+
+/** The advisor an actor stands for, matched by name (or a short name like "Oleg"). */
+export function companionForName(actorName) {
+  const name = String(actorName ?? "").toLowerCase();
+  if (!name) return null;
+  return (
+    getCompanions().find((c) =>
+      [c.name, ...(c.aliases ?? [])].some((raw) => {
+        const n = raw.toLowerCase();
+        return name === n || name.startsWith(`${n} `) || name.startsWith(`${n},`) || name.startsWith(`${n} (`);
+      })
+    ) ?? null
+  );
 }
 
 export function getCompanion(id) {

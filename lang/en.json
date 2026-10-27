@@ -72,7 +72,20 @@
       "TrainingGovernment": "The government already trains {skills}.",
       "TrainingPick": "Skill {n}",
       "TrainingDuplicate": "The same skill was picked twice; it only counts once.",
-      "NotSuited": "{name} (doesn’t suit this seat)"
+      "NotSuited": "{name} (doesn’t suit this seat)",
+      "Advisors": "Advisors",
+      "AdvisorsHint": "Companions and NPCs who can advise a seat. Tick Known once the party has met them; only known advisors are offered in the seat lists above. Add your own NPCs at the bottom.",
+      "AdvisorName": "Advisor",
+      "AdvisorSeats": "Suits",
+      "AdvisorKnown": "Known",
+      "AdvisorCompanion": "companion",
+      "AdvisorNpc": "adventure NPC",
+      "AdvisorCustom": "your NPC",
+      "AdvisorRemove": "Remove this advisor",
+      "AdvisorNewName": "Name of an NPC",
+      "AdvisorAdd": "Add advisor",
+      "AdvisorNeedsName": "Give the NPC a name and a seat.",
+      "AdvisorAttitude": "Attitude"
     },
     "Import": {
       "Title": "Import Story Content",
