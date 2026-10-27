@@ -19,6 +19,7 @@ import { KingdomManager } from "./apps/kingdom-manager.js";
 import { SetupWizard } from "./apps/setup-wizard.js";
 import { StoryImportApp } from "./apps/story-import-app.js";
 import { bindFlatButtons } from "./realm/flat.js";
+import { announceAnarchy, noteUnrest } from "./realm/standing.js";
 
 const TEMPLATES = [
   "setup/setup.hbs",
@@ -59,6 +60,7 @@ Hooks.once("ready", async () => {
     await syncKingdomLevel();
     await clearInvested();
     await repairSettlements();
+    noteUnrest();
     await tick();
     if (getSetting(SETTINGS.storyImported)) await buildStructureCatalog();
     await ensureHandbook().catch((err) => console.error(`${MODULE_ID} |`, err));
@@ -151,6 +153,8 @@ function addHexEditorSection(app, html) {
 
 Hooks.on("updateActor", (actor, changes) => {
   if (actor.type === "party" && foundry.utils.hasProperty(changes, "system.campaign.leadership")) clearInvested().catch((err) => console.error(`${MODULE_ID} |`, err));
+  // Anarchy starts or ends however Unrest changed, including by hand on the kingdom sheet.
+  if (actor.type === "party" && foundry.utils.hasProperty(changes, "system.campaign.unrest")) announceAnarchy().catch((err) => console.error(`${MODULE_ID} |`, err));
 });
 
 // Flat-check buttons in chat: any player can roll them.

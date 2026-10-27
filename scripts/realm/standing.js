@@ -68,14 +68,25 @@ export async function guardWithFame(update) {
 export async function setUnrest(value) {
   const kingdom = getKingdom();
   if (!kingdom) return;
-  const before = getUnrest();
   const update = await guardWithFame({ "unrest.value": Math.max(0, value) });
   await kingdom.update(update);
-  await announceAnarchy(before);
+  await announceAnarchy();
 }
 
-export async function announceAnarchy(before) {
+// The Unrest last announced, so anarchy is announced once when it starts and once when it ends,
+// whether the module changed Unrest or someone typed it on the kingdom sheet.
+let lastUnrest = null;
+
+/** Remember the current Unrest without announcing anything (the GM's window starting up). */
+export function noteUnrest() {
+  lastUnrest = getUnrest();
+}
+
+export async function announceAnarchy() {
+  if (!isLeader()) return;
   const now = getUnrest();
+  const before = lastUnrest ?? now;
+  lastUnrest = now;
   if (before < ANARCHY_AT && now >= ANARCHY_AT) {
     await ChatMessage.create({ speaker: speaker(), content: `<div class="ukm-chat"><h3>${loc("AnarchyTitle")}</h3><p>${loc("Anarchy")}</p></div>` });
   } else if (before >= ANARCHY_AT && now < ANARCHY_AT) {

@@ -563,9 +563,8 @@ export async function commitKingdomChanges(ctx) {
     update["resources.fame.value"] = Math.clamp(fame.value + ctx.fame, 0, fame.max);
   }
 
-  const unrestBefore = kingdom.unrest?.value ?? 0;
   if (Object.keys(update).length) await kingdom.update(await guardWithFame(update));
-  if ("unrest.value" in update) await announceAnarchy(unrestBefore);
+  if ("unrest.value" in update) await announceAnarchy();
   if (ctx.syncSettlements) await syncKingdomSettlements();
   if (!ctx.deferFlats) await postFlatChecks(ctx);
 }
