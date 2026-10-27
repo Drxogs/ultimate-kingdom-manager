@@ -320,7 +320,8 @@
         "NotRolled": "There's no result waiting on that card.",
         "AlreadyRerolled": "That check has already been rerolled.",
         "NoReroll": "No reroll fits that check.",
-        "NoFame": "The realm has no Fame to spend."
+        "NoFame": "The realm has no Fame to spend.",
+        "AlreadyRolled": "That flat check has already been rolled."
       }
     },
     "Effect": {
@@ -402,7 +403,9 @@
         "taint": "{card}: the leader is tainted for a while; more scandals may follow.",
         "noModGrowth": "{card}: the next outbreak doesn't get harder."
       },
-      "RerollMany": "{uses} rerolls on these checks, kept for {days} days"
+      "RerollMany": "{uses} rerolls on these checks, kept for {days} days",
+      "FlatPending": "Flat check DC {dc}: roll it from the chat card",
+      "FlatWhy": "Fate decides the rest: roll a flat check, DC {dc}."
     },
     "Difficulty": {
       "veryEasy": "Very easy",
@@ -725,7 +728,16 @@
       "Trouble": "With Unrest at 10 or more, things fall apart: {ruin}.",
       "HexLost": "Flat check {roll} against 11: a hex slips out of the realm's control. The GM marks it unclaimed.",
       "HexHeld": "Flat check {roll} against 11: the borders hold this month.",
-      "LoseHexTask": "Unrest cost the realm a hex: unclaim one claimed hex of the party's choice on the map."
+      "LoseHexTask": "Unrest cost the realm a hex: unclaim one claimed hex of the party's choice on the map.",
+      "FlatWhy": "Each month Unrest stays at 10 or more, the realm risks losing a hex: roll a flat check, DC 11. On a failure the GM unclaims a hex.",
+      "HexHeldNote": "The borders hold this month."
+    },
+    "Flat": {
+      "Title": "Flat check",
+      "Roll": "Roll flat check (DC {dc})",
+      "Flavor": "Flat check, DC {dc}",
+      "Passed": "Rolled {total} against DC {dc}: passed.",
+      "Failed": "Rolled {total} against DC {dc}: failed."
     }
   }
 }

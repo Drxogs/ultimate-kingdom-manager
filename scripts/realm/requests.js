@@ -8,6 +8,7 @@ import { gmAction } from "./gm.js";
 import { fundProposal, proposeProject, rejectProposal, voteProposal } from "./council.js";
 import { chooseRankUp, startRankUp } from "./ranks.js";
 import { foundCapital } from "./settlements.js";
+import { resolveFlat } from "./flat.js";
 
 const SOCKET = `module.${MODULE_ID}`;
 const TIMEOUT = 15000;
@@ -32,7 +33,8 @@ const HANDLERS = {
   chooseRankUp,
   foundCapital,
   useFortune,
-  useFame
+  useFame,
+  resolveFlat
 };
 
 const pending = new Map();

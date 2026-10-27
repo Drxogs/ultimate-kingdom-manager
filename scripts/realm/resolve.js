@@ -3,7 +3,7 @@ import { getCardEvent, getCompanion, getEvent, getStory } from "../content/data.
 import { getControlDC, getFame, getKingdom, getPartyLevel, getPlayerCharacters } from "../integrations/party.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { createCard } from "./deck.js";
-import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
+import { applyEffects, commitKingdomChanges, describeEffect, EffectContext, postFlatChecks } from "./effects.js";
 import { addStatPoints, cardWorkDays, isHired, rankBonus, seatCompanionId, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
@@ -483,8 +483,10 @@ async function postSummary(card, degreeName, ctx, check) {
 }
 
 async function finish(card, degreeName, ctx, check) {
+  ctx.deferFlats = true;
   await commitKingdomChanges(ctx);
   await postSummary(card, degreeName, ctx, check);
+  await postFlatChecks(ctx);
   Hooks.callAll(`${MODULE_ID}.cardResolved`, { card, degree: degreeName });
 }
 

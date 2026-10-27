@@ -1,6 +1,7 @@
 import { RUINS, RUIN_ABILITY } from "../constants.js";
 import { getFame, getKingdom, getUnrest } from "../integrations/party.js";
-import { addLog, newId, updateRealm } from "./state.js";
+import { addLog, updateRealm } from "./state.js";
+import { postFlatCheck, queueFlatCheck } from "./flat.js";
 import { isLeader } from "./leader.js";
 import { UkmDialog } from "../apps/dialog.js";
 
@@ -97,7 +98,6 @@ export async function monthlyStanding() {
   const unrest = getUnrest();
   if (unrest < TROUBLE_AT) return;
   const roll = await new Roll("1d10").evaluate();
-  const flat = await new Roll("1d20").evaluate();
   const spread = Object.fromEntries(RUINS.map((r) => [r, 0]));
   const order = RUINS.slice().sort((a, b) => (kingdom.abilities?.[RUIN_ABILITY[a]]?.ruin?.value ?? 0) - (kingdom.abilities?.[RUIN_ABILITY[b]]?.ruin?.value ?? 0));
   for (let i = 0; i < roll.total; i++) spread[order[i % order.length]] += 1;
@@ -119,16 +119,22 @@ export async function monthlyStanding() {
   }
   await kingdom.update(await guardWithFame(update));
 
-  const lostHex = flat.total < 11;
+  // The DC 11 flat check for losing a hex is rolled by a player from chat (see flat.js).
   const parts = RUINS.filter((r) => spread[r]).map((r) => `${game.i18n.localize(`UKM.Ruin.${r}`)} +${spread[r]}`).join(", ");
+  let flat = null;
   await updateRealm((realm) => {
     addLog(realm, { type: "unrest-trouble", text: parts });
-    if (lostHex) {
-      realm.gmTasks.push({ id: newId(), text: loc("LoseHexTask"), card: null, hexKey: null, created: game.time.worldTime, done: false });
-    }
+    flat = queueFlatCheck(realm, {
+      dc: 11,
+      success: [{ note: loc("HexHeldNote") }],
+      failure: [{ gm: loc("LoseHexTask") }],
+      title: loc("TroubleTitle", { unrest }),
+      why: loc("FlatWhy")
+    });
   });
   await ChatMessage.create({
     speaker: speaker(),
-    content: `<div class="ukm-chat"><h3>${loc("TroubleTitle", { unrest })}</h3><p>${loc("Trouble", { ruin: parts })}</p><p>${lostHex ? loc("HexLost", { roll: flat.total }) : loc("HexHeld", { roll: flat.total })}</p></div>`
+    content: `<div class="ukm-chat"><h3>${loc("TroubleTitle", { unrest })}</h3><p>${loc("Trouble", { ruin: parts })}</p></div>`
   });
+  if (flat) await postFlatCheck(flat);
 }

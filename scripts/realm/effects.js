@@ -9,6 +9,7 @@ import { completeProject, refundProject } from "./projects.js";
 import { syncKingdomSettlements } from "./settlements.js";
 import { announceAnarchy, guardWithFame } from "./standing.js";
 import { UkmDialog } from "../apps/dialog.js";
+import { postFlatCheck, queueFlatCheck } from "./flat.js";
 
 
 const loc = (key, data) => (data ? game.i18n.format(`UKM.Effect.${key}`, data) : game.i18n.localize(`UKM.Effect.${key}`));
@@ -373,10 +374,19 @@ export async function applyEffects(ctx, effects = []) {
         break;
       }
       case "flat": {
-        const roll = await new Roll("1d20").evaluate();
-        const passed = roll.total >= value.dc;
-        ctx.note(loc("Flat", { dc: value.dc, total: roll.total, result: game.i18n.localize(passed ? "UKM.Effect.Pass" : "UKM.Effect.Fail") }));
-        await applyEffects(ctx, passed ? value.success ?? [] : value.failure ?? []);
+        // Rolled at the table: chat gets a button any player can press (see flat.js).
+        const flat = queueFlatCheck(realm, {
+          dc: value.dc ?? 11,
+          success: value.success ?? [],
+          failure: value.failure ?? [],
+          title: ctx.card?.name ?? "",
+          why: loc("FlatWhy", { dc: value.dc ?? 11 }),
+          cardId: ctx.card?.id ?? null,
+          hexKey: ctx.card?.target?.hexKey ?? null
+        });
+        ctx.flatChecks ??= [];
+        ctx.flatChecks.push(flat);
+        ctx.note(loc("FlatPending", { dc: value.dc ?? 11 }));
         break;
       }
       case "choose": {
@@ -557,4 +567,11 @@ export async function commitKingdomChanges(ctx) {
   if (Object.keys(update).length) await kingdom.update(await guardWithFame(update));
   if ("unrest.value" in update) await announceAnarchy(unrestBefore);
   if (ctx.syncSettlements) await syncKingdomSettlements();
+  if (!ctx.deferFlats) await postFlatChecks(ctx);
+}
+
+/** Post the chat buttons for flat checks an outcome called for. */
+export async function postFlatChecks(ctx) {
+  for (const flat of ctx.flatChecks ?? []) await postFlatCheck(flat);
+  ctx.flatChecks = [];
 }

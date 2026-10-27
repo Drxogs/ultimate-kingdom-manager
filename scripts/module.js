@@ -18,6 +18,7 @@ import { daysUntil } from "./realm/time.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
 import { SetupWizard } from "./apps/setup-wizard.js";
 import { StoryImportApp } from "./apps/story-import-app.js";
+import { bindFlatButtons } from "./realm/flat.js";
 
 const TEMPLATES = [
   "setup/setup.hbs",
@@ -151,6 +152,9 @@ function addHexEditorSection(app, html) {
 Hooks.on("updateActor", (actor, changes) => {
   if (actor.type === "party" && foundry.utils.hasProperty(changes, "system.campaign.leadership")) clearInvested().catch((err) => console.error(`${MODULE_ID} |`, err));
 });
+
+// Flat-check buttons in chat: any player can roll them.
+Hooks.on("renderChatMessageHTML", (message, html) => bindFlatButtons(html));
 
 Hooks.on("renderHexHUD", addHexHudLine);
 Hooks.on("renderKingmakerHexHUD", addHexHudLine);
