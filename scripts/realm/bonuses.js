@@ -11,7 +11,7 @@ export function skillsFor(selector) {
   return ALL_SKILLS.filter((skill) => wanted.includes(skill) || wanted.includes(SKILL_ABILITY[skill]));
 }
 
-/** The best status bonus a skill already gets: from the kingdom sheet (invested leaders and the like) or a timed bonus. */
+/** The best status bonus a skill already gets: from the kingdom sheet or a timed bonus. */
 export function currentStatus(skill, realm = getRealm()) {
   const statistic = getKingdom()?.skills?.[skill];
   const fromSheet = (statistic?.modifiers ?? [])

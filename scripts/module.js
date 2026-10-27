@@ -11,6 +11,7 @@ import { onRerollMessage } from "./realm/resolve.js";
 import { buildStructureCatalog, isFortified, structureCatalog } from "./realm/projects.js";
 import { ensureHandbook, openHandbook } from "./content/handbook.js";
 import { isLeader, leaderSettled, startLeader } from "./realm/leader.js";
+import { clearInvested } from "./realm/leadership.js";
 import { cardsOnHex } from "./realm/pins.js";
 import { daysUntil } from "./realm/time.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
@@ -54,6 +55,7 @@ Hooks.once("ready", async () => {
   await leaderSettled();
   if (isLeader()) {
     await syncKingdomLevel();
+    await clearInvested();
     await tick();
     if (getSetting(SETTINGS.storyImported)) await buildStructureCatalog();
     await ensureHandbook().catch((err) => console.error(`${MODULE_ID} |`, err));
@@ -143,6 +145,10 @@ function addHexEditorSection(app, html) {
   if (footer) footer.before(section);
   else (root.querySelector(".window-content") ?? root).append(section);
 }
+
+Hooks.on("updateActor", (actor, changes) => {
+  if (actor.type === "party" && foundry.utils.hasProperty(changes, "system.campaign.leadership")) clearInvested().catch((err) => console.error(`${MODULE_ID} |`, err));
+});
 
 Hooks.on("renderHexHUD", addHexHudLine);
 Hooks.on("renderKingmakerHexHUD", addHexHudLine);

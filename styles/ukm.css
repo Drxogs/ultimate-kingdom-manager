@@ -659,3 +659,6 @@
 .ukm-manager .ukm-fold > summary::before { content: "\25B8"; font-size: 0.8em; transition: transform 0.1s; }
 .ukm-manager .ukm-fold[open] > summary::before { transform: rotate(90deg); }
 .ukm-manager .ukm-fold > summary .hint { font: 400 var(--font-size-12, 12px) var(--sans-serif, sans-serif); }
+
+/* Invested leaders aren't used with this module */
+.sheet.kingdom .leaders .leader .invested { display: none; }

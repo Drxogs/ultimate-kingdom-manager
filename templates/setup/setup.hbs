@@ -32,6 +32,22 @@
     </div>
   </section>
 
+  {{#if kingdomActive}}
+  <section>
+    <h3>{{localize "UKM.Setup.Training"}}</h3>
+    <p class="hint">{{localize "UKM.Setup.TrainingHint" count=training.count}}{{#if training.government}} {{localize "UKM.Setup.TrainingGovernment" skills=training.government}}{{/if}}</p>
+    {{#each training.slots}}
+      <div class="form-group">
+        <label>{{localize "UKM.Setup.TrainingPick" n=number}}</label>
+        <select name="training.{{index}}">
+          <option value="">{{localize "UKM.Setup.None"}}</option>
+          {{selectOptions @root.training.choices selected=selected}}
+        </select>
+      </div>
+    {{/each}}
+  </section>
+  {{/if}}
+
   <section>
     <h3>{{localize "UKM.Setup.Founding"}}</h3>
     <p class="hint">{{localize "UKM.Setup.FoundingHint"}}</p>

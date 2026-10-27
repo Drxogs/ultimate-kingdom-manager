@@ -66,7 +66,12 @@
       "FoundingReset": "Pick again",
       "FoundingResetConfirm": "Take back the founding focus? Both stats lose the rank and points it gave them.",
       "FoundingIncomplete": "Pick two different stats for the founding focus, or leave both empty.",
-      "ToolsNotice": "Kingdom Building, Camping & Weather is active. Its camping and weather work fine alongside this module; just don't use its kingdom sheet, since Ultimate Kingdom Manager runs the kingdom."
+      "ToolsNotice": "Kingdom Building, Camping & Weather is active. Its camping and weather work fine alongside this module; just don't use its kingdom sheet, since Ultimate Kingdom Manager runs the kingdom.",
+      "Training": "Founding training",
+      "TrainingHint": "When the kingdom is founded, the party trains {count} kingdom skills of its choice, however many players there are. Leaders aren't invested in this module: any role ticked as invested on the kingdom sheet is unticked, so the status bonus is left for advisors and rank-up rewards. Picks only ever raise a skill.",
+      "TrainingGovernment": "The government already trains {skills}.",
+      "TrainingPick": "Skill {n}",
+      "TrainingDuplicate": "The same skill was picked twice; it only counts once."
     },
     "Import": {
       "Title": "Import Story Content",
