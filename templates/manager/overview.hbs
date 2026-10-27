@@ -64,6 +64,16 @@
     {{/each}}
   </ol>
 
+  <header class="ukm-major">{{localize "UKM.Fortune.Heading"}}{{#if fortunes.length}} <span class="ukm-tag">{{fortunes.length}}</span>{{/if}}</header>
+  {{#if fortunes.length}}
+    <ul class="ukm-fortunes">
+      {{#each fortunes}}<li><i class="fa-solid fa-rotate"></i> {{text}} {{#if from}}<span class="hint">· {{from}}</span>{{/if}}</li>{{/each}}
+    </ul>
+    <p class="hint">{{localize "UKM.Fortune.What"}}</p>
+  {{else}}
+    <p class="hint">{{localize "UKM.Fortune.None"}}</p>
+  {{/if}}
+
   <details class="ukm-fold" data-fold="ambitions" {{#if foldOpen.ambitions}}open{{/if}}>
   <summary class="ukm-major">{{localize "UKM.Ambition.Heading"}} <span class="hint">{{localize "UKM.Ambition.Summary" done=ambitionsDone total=ambitions.length}}</span></summary>
   <p class="hint">{{localize "UKM.Ambition.What"}}</p>

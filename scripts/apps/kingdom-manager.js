@@ -35,6 +35,7 @@ import {
   completeGmTask,
   dismissCard,
   estimateCheck,
+  fortuneUses,
   outcomePreview,
   recordOutcome,
   rollCard,
@@ -230,6 +231,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       handlePersonally: KingdomManager.#handlePersonally,
       unassign: KingdomManager.#unassign,
       accept: KingdomManager.#accept,
+      useFortune: KingdomManager.#useFortune,
       escalate: KingdomManager.#escalate,
       rollNow: KingdomManager.#rollNow,
       recordOutcome: KingdomManager.#recordOutcome,
@@ -342,6 +344,18 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     context.council = this.#prepareCouncil(realm);
     context.ambitions = ambitionsView(realm);
     context.ambitionsDone = context.ambitions.filter((a) => a.complete).length;
+    const nowTime = game.time.worldTime;
+    context.fortunes = (realm.fortunes ?? [])
+      .filter((f) => f.uses > 0 && f.expires > nowTime)
+      .sort((a, b) => a.expires - b.expires)
+      .map((f) => ({
+        text: game.i18n.format("UKM.Fortune.Line", {
+          uses: f.uses,
+          skills: f.skills?.length ? f.skills.map((s) => game.i18n.localize(`UKM.Skill.${s}`)).join(", ") : game.i18n.localize("UKM.Fortune.AnySkill"),
+          date: formatDate(f.expires)
+        }),
+        from: f.label ? game.i18n.format("UKM.Fortune.From", { name: f.label }) : ""
+      }));
     context.foldOpen = { ambitions: readFold("ambitions") };
     context.gmTasks = game.user.isGM
       ? realm.gmTasks
@@ -417,6 +431,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             isRolled: card.status === "rolled",
             rolledResult: card.pendingRoll ? game.i18n.localize(`UKM.Degree.${DEGREES[card.pendingRoll.personal && card.pendingRoll.degree === 2 ? 3 : card.pendingRoll.degree]}`) : null,
             canAccept: card.status === "rolled" && canAct,
+            rerolls: card.status === "rolled" && card.pendingRoll && !card.pendingRoll.fortuneUsed && canCallBack(game.user, card) ? fortuneUses(realm, card.pendingRoll.skill) : 0,
+            rerollTag: ["open", "assigned"].includes(card.status) ? Math.max(0, ...stage.skills.map((sk) => fortuneUses(realm, sk))) : 0,
             workDays: card.workUntil ? Math.max(0, daysUntil(card.workUntil, now)) : null,
             assigneeName: card.assignee?.name ?? null,
             assigneePersonal: card.assignee?.type === "pc",
@@ -992,6 +1008,11 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #reveal(event, target) {
     const card = findCard(target);
     if (card && game.user.isGM) await sendRequest("gm", { op: "reveal", cardId: card.id, revealed: !card.revealed });
+  }
+
+  static async #useFortune(event, target) {
+    const card = findCard(target);
+    if (card) await sendRequest("useFortune", { cardId: card.id });
   }
 
   static async #accept(event, target) {

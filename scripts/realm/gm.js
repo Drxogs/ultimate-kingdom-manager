@@ -4,7 +4,7 @@ import { getStoryEvents } from "../content/data.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
 import { buildableStructures, setFortified } from "./projects.js";
-import { addBuilding, fitSize, refreshDerived, removeBuilding, settlements, syncKingdomSettlements } from "./settlements.js";
+import { addBuilding, fitSize, growIfReady, refreshDerived, removeBuilding, settlements, syncKingdomSettlements } from "./settlements.js";
 import { getKingdom } from "../integrations/party.js";
 import { applyStartingPoint } from "./midcampaign.js";
 import { completeGmTask, dismissCard, recordOutcome, rollCard } from "./resolve.js";
@@ -52,7 +52,10 @@ const OPS = {
     await updateRealm((realm) => {
       addBuilding(realm, settlementId, structure, null);
       const target = settlements(realm).find((s) => s.id === settlementId);
-      if (target) fitSize(target);
+      if (target) {
+        fitSize(target);
+        growIfReady(realm, target);
+      }
       addLog(realm, { type: "placed", text: `${structure.name}, ${settlement.name}` });
     });
     await syncKingdomSettlements();

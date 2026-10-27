@@ -662,3 +662,7 @@
 
 /* Invested leaders aren't used with this module */
 .sheet.kingdom .leaders .leader .invested { display: none; }
+.ukm-manager .ukm-fortunes { list-style: none; margin: 0 0 0.25rem; padding: 0; display: grid; gap: 0.2rem; }
+.ukm-manager .ukm-fortunes li { padding: 0.2rem 0.5rem; background: var(--ukm-paper-bg); box-shadow: var(--ukm-shadow); }
+.ukm-manager .ukm-fortunes i, .ukm-manager .ukm-reroll-tag { color: #1f4f80; border-color: #1f4f80; }
+.ukm-manager .ukm-card-actions .ukm-reroll { color: #1f4f80; border-color: #1f4f80; font-weight: 600; }

@@ -14,7 +14,7 @@ import { syncPins } from "./pins.js";
 import { resolveDue } from "./resolve.js";
 import { advanceRankUps } from "./ranks.js";
 import { isLeader } from "./leader.js";
-import { adoptMapSettlements, hasCapital, overcrowdedCount } from "./settlements.js";
+import { adoptMapSettlements, growSettlements, hasCapital, overcrowdedCount } from "./settlements.js";
 
 const MAX_CATCH_UP_WEEKS = 26;
 const MAX_MATTERS_PER_TICK = 2;
@@ -56,6 +56,7 @@ export async function tick() {
       await checkAmbitions();
       await runWatchers();
       await adoptMapSettlements();
+      await growSettlements();
       await syncPins();
       return;
     }
@@ -91,6 +92,8 @@ export async function tick() {
     await advanceRankUps();
     await checkAmbitions();
     await runWatchers();
+    await adoptMapSettlements();
+    await growSettlements();
     await syncPins();
 
     if (newMonth && getSetting(SETTINGS.council)) await announceCouncil();

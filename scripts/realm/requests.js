@@ -1,5 +1,5 @@
 import { MODULE_ID } from "../constants.js";
-import { acceptRequest, assignCard, canActForSeat, escalateCard, unassignCard } from "./resolve.js";
+import { acceptRequest, assignCard, canActForSeat, escalateCard, unassignCard, useFortune } from "./resolve.js";
 import { startProject } from "./projects.js";
 import { repayDebt, tapTreasury } from "./treasury.js";
 import { answerAudience } from "./audiences.js";
@@ -30,7 +30,8 @@ const HANDLERS = {
   repayDebt,
   startProject: (payload) => startProject(payload, { canActForSeat }),
   chooseRankUp,
-  foundCapital
+  foundCapital,
+  useFortune
 };
 
 const pending = new Map();

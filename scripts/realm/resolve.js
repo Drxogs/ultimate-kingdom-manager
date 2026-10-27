@@ -281,29 +281,62 @@ export function estimateCheck(card, choice, realm = getRealm()) {
   return { skill, total, dc, chance, personal, key, label: game.i18n.localize(`UKM.Difficulty.${key}`) };
 }
 
+/** Rerolls the realm holds for a skill (a reroll with no skills listed works on any check). */
+export function fortunesFor(realm, skill) {
+  const now = game.time.worldTime;
+  return (realm.fortunes ?? []).filter((f) => f.expires > now && f.uses > 0 && (!(f.skills ?? []).length || f.skills.includes(skill)));
+}
+
+export function fortuneUses(realm, skill) {
+  return fortunesFor(realm, skill).reduce((n, f) => n + f.uses, 0);
+}
+
 function takeFortune(realm, skill) {
   const now = game.time.worldTime;
-  const fortune = realm.fortunes.find((f) => f.expires > now && f.uses > 0 && (f.skills ?? []).includes(skill));
+  const fortune = fortunesFor(realm, skill).sort((a, b) => a.expires - b.expires)[0];
   if (!fortune) return false;
   fortune.uses -= 1;
   realm.fortunes = realm.fortunes.filter((f) => f.uses > 0 && f.expires > now);
   return true;
 }
 
+/**
+ * Spend one of the realm's rerolls on a result that's waiting to be accepted.
+ * The check is rolled again and the new result stands (one reroll per check).
+ */
+export async function useFortune({ cardId, userId }) {
+  const user = game.users.get(userId) ?? game.user;
+  const card = getRealm().cards.find((c) => c.id === cardId);
+  if (!card || card.status !== "rolled" || !card.pendingRoll) return { ok: false, reason: "NotRolled" };
+  if (!canCallBack(user, card)) return { ok: false, reason: "NotYourSeat" };
+  if (card.pendingRoll.fortuneUsed) return { ok: false, reason: "AlreadyRerolled" };
+  let done = false;
+  await updateRealm(async (realm) => {
+    const target = realm.cards.find((c) => c.id === cardId);
+    if (!target?.pendingRoll || !takeFortune(realm, target.pendingRoll.skill)) return;
+    const check = await rollCheck(target, realm, { reroll: true });
+    if (!check) return;
+    target.pendingRoll = { ...check, rolledAt: game.time.worldTime, fortuneUsed: true };
+    done = true;
+  });
+  if (!done) return { ok: false, reason: "NoReroll" };
+  await handRollToPlayer(card);
+  return { ok: true };
+}
+
 function toModifiers(list) {
   return list.map((m) => new game.pf2e.Modifier(m));
 }
 
-async function rollCheck(card, realm) {
+async function rollCheck(card, realm, { reroll = false } = {}) {
   const kingdom = getKingdom();
   const { skills } = cardStage(card);
   const skill = card.assignee?.skill ?? skills[0];
   const mod = cardLevelMod(card, realm) + (card.dcAdjust ?? 0);
   const stat = SKILL_TO_STAT[skill];
   const modifiers = timedModifiers(realm, skill, card.eventId);
-  const fortune = takeFortune(realm, skill);
   const label = `${card.name}${card.assignee ? ` — ${card.assignee.name}` : ""}`;
-  const options = { skipDialog: true, rollTwice: fortune ? "keep-higher" : false, label, extraRollOptions: [`ukm:event:${card.eventId}`, `ukm:card:${card.id}`] };
+  const options = { skipDialog: true, label: reroll ? `${label} (${game.i18n.localize("UKM.Fortune.Rerolled")})` : label, extraRollOptions: [`ukm:event:${card.eventId}`, `ukm:card:${card.id}`] };
 
   if (card.assignee?.type === "pc") {
     const actor = fromUuidSync(card.assignee.actorUuid);

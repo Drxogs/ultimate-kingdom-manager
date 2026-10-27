@@ -281,14 +281,51 @@ export function fitSize(settlement) {
   return settlement;
 }
 
+/**
+ * A settlement that meets the next size's requirements (kingdom level, lots built, enough homes)
+ * becomes that size straight away. Returns the sizes it passed through.
+ */
+export function growIfReady(realm, settlement) {
+  const grown = [];
+  let next = canGrow(settlement);
+  while (next && next !== settlement.type) {
+    settlement.type = next;
+    grown.push(next);
+    addLog(realm, { type: "settlement-grew", text: `${settlement.name} (${game.i18n.localize(`UKM.Settlement.Type.${next}`)})` });
+    next = canGrow(settlement);
+  }
+  return grown;
+}
+
+/** Grow every settlement that's ready, and say so in chat. */
+export async function growSettlements() {
+  if (!isLeader()) return;
+  if (!settlements().some((s) => canGrow(s))) return;
+  const news = [];
+  await updateRealm((realm) => {
+    for (const s of settlements(realm)) {
+      for (const type of growIfReady(realm, s)) news.push(game.i18n.format("UKM.Settlement.Grew", { name: s.name, type: game.i18n.localize(`UKM.Settlement.Type.${type}`) }));
+    }
+  });
+  if (!news.length) return;
+  await syncKingdomSettlements();
+  await ChatMessage.create({
+    speaker: { alias: getKingdom()?.name || game.i18n.localize("UKM.Manager.Unnamed") },
+    content: `<div class="ukm-chat">${news.map((n) => `<p>${Handlebars.escapeExpression(n)}</p>`).join("")}</div>`
+  });
+}
+
 /** Run once when the GM's window starts: fix any settlement that's too small for what's in it. */
 export async function repairSettlements() {
   if (!isLeader()) return;
   const realm = getRealm();
-  const needs = settlements(realm).some((s) => settlementState(s).lots > settlementState(s).capacity);
+  const needs = settlements(realm).some((s) => settlementState(s).lots > settlementState(s).capacity || canGrow(s));
   if (!needs && (realm.settlementsStarted || !settlements(realm).length)) return;
   await updateRealm((r) => {
-    for (const s of settlements(r)) fitSize(s);
+    for (const s of settlements(r)) {
+      fitSize(s);
+      growIfReady(r, s);
+    }
     if (settlements(r).length) r.settlementsStarted = true;
     refreshDerived(r);
   });
@@ -335,12 +372,11 @@ export function addBuilding(realm, settlementId, structure, ctx = null) {
   settlement.buildings.push({ slug: structure.slug, name: structure.name, lots: structure.lots ?? 1, built: game.time.worldTime });
   let after = settlementState(settlement);
   if (settlement.type === "metropolis" && after.lots > after.capacity) settlement.grids = (settlement.grids ?? 2) + 1;
-  if (grow && after.lots > before.capacity) {
-    settlement.type = grow;
-    ctx?.note(game.i18n.format("UKM.Settlement.Grew", { name: settlement.name, type: game.i18n.localize(`UKM.Settlement.Type.${grow}`) }));
-    addLog(realm, { type: "settlement-grew", text: `${settlement.name} (${game.i18n.localize(`UKM.Settlement.Type.${grow}`)})` });
-    after = settlementState(settlement);
+  if (grow && after.lots > before.capacity) settlement.type = grow;
+  for (const type of growIfReady(realm, settlement)) {
+    ctx?.note(game.i18n.format("UKM.Settlement.Grew", { name: settlement.name, type: game.i18n.localize(`UKM.Settlement.Type.${type}`) }));
   }
+  after = settlementState(settlement);
   const info = catalogEntry(structure.slug) ?? structure;
   if (ctx) {
     if (info.unrest) ctx.unrest -= info.unrest;

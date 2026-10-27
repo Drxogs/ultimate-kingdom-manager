@@ -310,7 +310,10 @@
         "NoCapital": "Found the capital first.",
         "HasCapital": "The realm already has a capital.",
         "NoName": "Give it a name.",
-        "NameTaken": "A settlement already has that name."
+        "NameTaken": "A settlement already has that name.",
+        "NotRolled": "There's no result waiting on that card.",
+        "AlreadyRerolled": "That check has already been rerolled.",
+        "NoReroll": "No reroll fits that check."
       }
     },
     "Effect": {
@@ -336,7 +339,7 @@
         "stability": "Stability",
         "events": "event"
       },
-      "Reroll": "A reroll to use within the month",
+      "Reroll": "A reroll, kept for a month",
       "TradeAgreement": "A new trade agreement",
       "End": "The matter ends",
       "Manual": "Special (see the event)",
@@ -392,7 +395,7 @@
         "taint": "{card}: the leader is tainted for a while; more scandals may follow.",
         "noModGrowth": "{card}: the next outbreak doesn't get harder."
       },
-      "RerollMany": "{uses} rerolls on these checks within {days} days"
+      "RerollMany": "{uses} rerolls on these checks, kept for {days} days"
     },
     "Difficulty": {
       "veryEasy": "Very easy",
@@ -623,8 +626,8 @@
       "Consumption": "Food {n} a month",
       "Bonuses": "Bonuses",
       "NoBonuses": "No skill bonuses yet.",
-      "GrowsNext": "Grows into a {type} with the next building.",
-      "GrowNeeds": "Becomes a {type} at kingdom level {level} with {lots} lots built and enough homes.",
+      "GrowsNext": "Ready to become a {type}.",
+      "GrowNeeds": "Becomes a {type} at kingdom level {level}, once {lots} lots are built and it has enough homes.",
       "Build": "Build here",
       "Remove": "Remove this building",
       "RemoveConfirm": "Remove {name} from {settlement}? Use this for rubble or a building the story destroyed.",
@@ -681,6 +684,18 @@
       "Prof3": "Master",
       "Prof4": "Legendary",
       "Nudge": "The party is level {level} but every realm stat is still at rank 0. If you're starting the module partway through the adventure, set the realm's starting point here."
+    },
+    "Fortune": {
+      "Heading": "Rerolls",
+      "None": "The realm has no rerolls right now. Some rewards give them.",
+      "Line": "{uses} × {skills}, until {date}",
+      "AnySkill": "any check",
+      "From": "from {name}",
+      "Use": "Reroll ({n})",
+      "UseHint": "Spend one of the realm's rerolls: roll this check again and keep the new result.",
+      "Available": "{n} reroll(s) available",
+      "Rerolled": "reroll",
+      "What": "Rerolls come from some rewards. When a card has rolled and the result is waiting, its seat can spend one to roll again; the new result stands, one reroll per check."
     }
   }
 }
