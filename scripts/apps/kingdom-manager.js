@@ -46,8 +46,9 @@ import { getSetting, SETTINGS } from "../settings.js";
 import { SetupWizard } from "./setup-wizard.js";
 import { StoryImportApp } from "./story-import-app.js";
 import { MidCampaignApp } from "./midcampaign-app.js";
+import { UkmDialog } from "./dialog.js";
 
-const { ApplicationV2, DialogV2, HandlebarsApplicationMixin } = foundry.applications.api;
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 function findCard(target) {
   const id = target.closest("[data-card]")?.dataset.card;
@@ -57,7 +58,7 @@ function findCard(target) {
 async function pickKingdomSkill(card) {
   const { skills } = cardStage(card);
   if (skills.length < 2) return skills[0];
-  return DialogV2.wait({
+  return UkmDialog.wait({
     window: { title: card.name },
     content: `<p>${game.i18n.localize("UKM.Card.ChooseSkill")}</p>`,
     buttons: skills.map((s) => {
@@ -217,7 +218,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static DEFAULT_OPTIONS = {
     id: "ukm-manager",
-    classes: ["ukm", "ukm-manager", "themed", "theme-light"],
+    classes: ["ukm", "ukm-sheet", "ukm-manager", "themed", "theme-light"],
     window: { title: "UKM.Manager.Title", icon: "fa-solid fa-chess-rook", resizable: true },
     position: { width: 860, height: 720 },
     actions: {
@@ -573,7 +574,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       .map(({ group, options }) => `<optgroup label="${Handlebars.escapeExpression(group)}">${options.map((o) => `<option value="${o.value}">${Handlebars.escapeExpression(o.label)}</option>`).join("")}</optgroup>`)
       .join("");
     const dc = game.i18n.localize("UKM.Card.PersonalHint");
-    const choice = await DialogV2.prompt({
+    const choice = await UkmDialog.prompt({
       window: { title: card.name },
       content: `<p class="hint">${dc}</p><div class="form-group"><label>${game.i18n.localize("UKM.Card.Who")}</label><select name="choice">${select}</select></div>`,
       ok: { label: game.i18n.localize("UKM.Card.HandlePersonally"), callback: (event, button) => button.form.elements.choice.value },
@@ -613,7 +614,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const type =
       defs.length === 1
         ? defs[0].id
-        : await DialogV2.wait({
+        : await UkmDialog.wait({
             window: { title: game.i18n.localize("UKM.Project.StartTitle") },
             content: `<ul class="ukm-scene-options">${defs.map((d) => `<li><strong>${esc(d.name)}</strong> ${esc(d.hook)}</li>`).join("")}</ul>`,
             buttons: defs.map((d) => ({ action: d.id, label: d.name })),
@@ -650,7 +651,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       ui.notifications.warn(game.i18n.localize("UKM.Settlement.NoRoom").replace("{name}", settlement.name));
       return;
     }
-    const key = await DialogV2.prompt({
+    const key = await UkmDialog.prompt({
       window: { title: `${game.i18n.localize("UKM.Settlement.Place")}: ${settlement.name}` },
       position: { width: 560 },
       content: `<p class="hint">${game.i18n.localize("UKM.Settlement.PlaceHint")}</p>${KingdomManager.#buildList(structures)}`,
@@ -684,7 +685,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     let structures = [];
     if (def.target === "settlement") {
       if (!settlementId && targets.length > 1) {
-        settlementId = await DialogV2.wait({
+        settlementId = await UkmDialog.wait({
           window: { title: def.name },
           content: `<p>${game.i18n.localize("UKM.Settlement.PickSettlement")}</p>`,
           buttons: targets.map((t) => ({ action: t.settlementId, label: t.label })),
@@ -741,7 +742,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     };
     const buttons = [{ action: "start", label: game.i18n.localize("UKM.Project.Start"), icon: "fa-solid fa-hammer", default: true, callback: read("start") }];
     if (getSetting(SETTINGS.council)) buttons.push({ action: "propose", label: game.i18n.localize("UKM.Council.Propose"), icon: "fa-solid fa-landmark-dome", callback: read("propose") });
-    const choice = await DialogV2.wait({ window: { title: def.name }, position: { width: 560 }, content, buttons, rejectClose: false });
+    const choice = await UkmDialog.wait({ window: { title: def.name }, position: { width: 560 }, content, buttons, rejectClose: false });
     if (!choice?.mode) return;
     if (def.id === "found-settlement" && !choice.settlementName.trim()) {
       ui.notifications.warn(game.i18n.localize("UKM.Request.Reason.NoName"));
@@ -774,7 +775,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       <p class="hint">${game.i18n.localize("UKM.Settlement.WatersideHint")}</p>
       <div class="form-group"><label>${game.i18n.localize("UKM.Project.WhereNote")}</label><input type="text" name="where" maxlength="80" placeholder="${esc(game.i18n.localize("UKM.Project.WherePlaceholder"))}"></div>
       <p class="hint">${game.i18n.localize("UKM.Project.WhereHint")}</p>`;
-    const choice = await DialogV2.prompt({
+    const choice = await UkmDialog.prompt({
       window: { title: game.i18n.localize("UKM.Settlement.FoundCapital") },
       position: { width: 480 },
       content,
@@ -803,7 +804,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const settlement = settlements().find((s) => s.id === settlementId);
     const building = settlement?.buildings?.[Number(index)];
     if (!building || !game.user.isGM) return;
-    const ok = await DialogV2.confirm({
+    const ok = await UkmDialog.confirm({
       window: { title: settlement.name },
       content: `<p>${game.i18n.format("UKM.Settlement.RemoveConfirm", { name: Handlebars.escapeExpression(building.name), settlement: Handlebars.escapeExpression(settlement.name) })}</p>`,
       rejectClose: false
@@ -826,7 +827,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const settlementId = target.closest("[data-settlement]")?.dataset.settlement;
     const settlement = settlements().find((s) => s.id === settlementId);
     if (!settlement) return;
-    const ok = await DialogV2.confirm({
+    const ok = await UkmDialog.confirm({
       window: { title: settlement.name },
       content: `<p>${game.i18n.format("UKM.Settlement.DeleteConfirm", { name: Handlebars.escapeExpression(settlement.name) })}</p>`,
       rejectClose: false
@@ -873,7 +874,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const content = `<div class="ukm-scene"><p><strong>${esc(data.petitioner)}</strong></p><p class="ukm-scene-text">"${esc(data.request)}"</p><ul class="ukm-scene-options">${data.responses
       .map((r) => `<li><strong>${esc(r.label)}</strong>${r.lines.length ? `<br><span class="hint">${r.lines.map(esc).join("; ")}</span>` : ""}</li>`)
       .join("")}</ul></div>`;
-    const response = await DialogV2.wait({
+    const response = await UkmDialog.wait({
       window: { title: card.name },
       position: { width: 520 },
       content,
@@ -919,7 +920,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       ${debt ? `<p class="ukm-urgent">${game.i18n.format("UKM.Tap.DebtWarning", { debt })}</p>` : ""}
       ${tapMode() === "approval" && !game.user.isGM ? `<p class="hint">${game.i18n.localize("UKM.Tap.NeedsApproval")}</p>` : ""}
       <div class="form-group"><label>${game.i18n.localize("UKM.Tap.Recipient")}</label><select name="actor">${options}</select></div>`;
-    const actorUuid = await DialogV2.prompt({
+    const actorUuid = await UkmDialog.prompt({
       window: { title: game.i18n.localize("UKM.Tap.Title") },
       position: { width: 480 },
       content,
@@ -933,7 +934,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const options = KingdomManager.#characterOptions();
     const debt = getRealm().debt.amount;
     if (!options || !debt) return;
-    const choice = await DialogV2.prompt({
+    const choice = await UkmDialog.prompt({
       window: { title: game.i18n.localize("UKM.Tap.RepayTitle") },
       content: `<p>${game.i18n.format("UKM.Tap.RepayExplain", { debt })}</p>
         <div class="form-group"><label>${game.i18n.localize("UKM.Tap.Payer")}</label><select name="actor">${options}</select></div>
@@ -951,7 +952,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const stat = target.closest("[data-stat]")?.dataset.stat;
     if (!stat) return;
     const cost = rankUpCost();
-    const ok = await DialogV2.confirm({
+    const ok = await UkmDialog.confirm({
       window: { title: game.i18n.format("UKM.Rank.ProjectName", { stat: game.i18n.localize(`UKM.Stat.${stat}`) }) },
       content: `<p>${game.i18n.format("UKM.Rank.BeginConfirm", { cost, days: 14 })}</p>`,
       rejectClose: false
@@ -976,7 +977,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!choices) return;
     const label = game.i18n.localize(`UKM.Stat.${stat}`);
     const intro = `<p class="hint">${game.i18n.format("UKM.Rank.PreviewHint", { stat: label, rank })}</p>`;
-    await DialogV2.prompt({
+    await UkmDialog.prompt({
       window: { title: game.i18n.format("UKM.Rank.PreviewTitle", { stat: label, rank }) },
       position: { width: 520 },
       content: KingdomManager.#choicesHtml(choices, intro),
@@ -991,7 +992,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const choices = project ? rankUpChoices(project) : null;
     if (!choices) return;
     const content = KingdomManager.#choicesHtml(choices);
-    const option = await DialogV2.wait({
+    const option = await UkmDialog.wait({
       window: { title: `${choices.title} — ${game.i18n.format("UKM.Rank.ToRank", { stat: game.i18n.localize(`UKM.Stat.${stat}`), rank: project.rank })}` },
       position: { width: 520 },
       content,
@@ -1030,7 +1031,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #escalate(event, target) {
     const card = findCard(target);
     if (!card) return;
-    const ok = await DialogV2.confirm({
+    const ok = await UkmDialog.confirm({
       window: { title: card.name },
       content: `<p>${game.i18n.localize("UKM.Card.EscalateConfirm")}</p>`,
       rejectClose: false
@@ -1046,7 +1047,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #recordOutcome(event, target) {
     const card = findCard(target);
     if (!card || !game.user.isGM) return;
-    const degree = await DialogV2.wait({
+    const degree = await UkmDialog.wait({
       window: { title: card.name },
       content: `<p>${game.i18n.localize("UKM.Card.RecordPrompt")}</p>`,
       buttons: DEGREES.slice().reverse().map((d) => ({ action: d, label: game.i18n.localize(`UKM.Degree.${d}`) })),
@@ -1058,7 +1059,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #dismiss(event, target) {
     const card = findCard(target);
     if (!card || !game.user.isGM) return;
-    const ok = await DialogV2.confirm({
+    const ok = await UkmDialog.confirm({
       window: { title: card.name },
       content: `<p>${game.i18n.localize("UKM.Card.DismissConfirm")}</p>`,
       rejectClose: false
@@ -1076,7 +1077,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const events = getStoryEvents();
     if (!events.length) return;
     const esc = Handlebars.escapeExpression;
-    const eventId = await DialogV2.wait({
+    const eventId = await UkmDialog.wait({
       window: { title: game.i18n.localize("UKM.Manager.StoryEvents") },
       content: `<p class="hint">${game.i18n.localize("UKM.Manager.StoryEventsHint")}</p><ul class="ukm-scene-options">${events
         .map((e) => `<li><strong>${esc(e.name)}</strong> ${esc(e.hook ?? "")}</li>`)

@@ -8,8 +8,8 @@ import { secondsPerDay } from "./time.js";
 import { completeProject, refundProject } from "./projects.js";
 import { syncKingdomSettlements } from "./settlements.js";
 import { announceAnarchy, guardWithFame } from "./standing.js";
+import { UkmDialog } from "../apps/dialog.js";
 
-const { DialogV2 } = foundry.applications.api;
 
 const loc = (key, data) => (data ? game.i18n.format(`UKM.Effect.${key}`, data) : game.i18n.localize(`UKM.Effect.${key}`));
 
@@ -148,7 +148,7 @@ async function chooseRuin(ctx, amount, { exclude = [], count = 1 } = {}) {
   const chosen = [];
   for (let i = 0; i < count; i++) {
     const remaining = options.filter((r) => !chosen.includes(r));
-    const pick = await DialogV2.wait({
+    const pick = await UkmDialog.wait({
       window: { title: ctx.card?.name ?? game.i18n.localize("UKM.Effect.ChooseRuinTitle") },
       content: `<p>${loc(amount > 0 ? "ChooseRuinUp" : "ChooseRuinDown", { amount: Math.abs(amount) })}</p>`,
       buttons: remaining.map((r) => ({ action: r, label: game.i18n.localize(`UKM.Ruin.${r}`) })),
@@ -164,7 +164,7 @@ async function chooseOption(ctx, n, options) {
   for (let i = 0; i < n; i++) {
     const remaining = options.map((o, index) => ({ o, index })).filter(({ index }) => !picked.includes(index));
     if (!remaining.length) break;
-    const pick = await DialogV2.wait({
+    const pick = await UkmDialog.wait({
       window: { title: ctx.card?.name ?? "" },
       content: `<p>${loc(n > 1 ? "ChooseMany" : "ChooseOne", { n, i: i + 1 })}</p>`,
       buttons: remaining.map(({ o, index }) => ({ action: String(index), label: o.map(describeEffect).join("; ") })),
@@ -217,7 +217,7 @@ function testCondition(ctx, condition = {}) {
 }
 
 async function askGM(ctx, question) {
-  return DialogV2.confirm({
+  return UkmDialog.confirm({
     window: { title: ctx.card?.name ?? "" },
     content: `<p>${question}</p>`,
     rejectClose: false
@@ -394,7 +394,7 @@ export async function applyEffects(ctx, effects = []) {
       case "endEventOneOf": {
         const active = realm.cards.filter((c) => value.includes(c.eventId) && ["open", "assigned", "rolled"].includes(c.status));
         if (!active.length) break;
-        const pick = await DialogV2.wait({
+        const pick = await UkmDialog.wait({
           window: { title: ctx.card?.name ?? "" },
           content: `<p>${loc("ChooseEnd")}</p>`,
           buttons: active.map((c) => ({ action: c.id, label: c.name })),

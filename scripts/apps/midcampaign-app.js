@@ -4,6 +4,7 @@ import { boostPlan, skillPlan, suggestedRanks, suggestedTreasury } from "../real
 import { rankCap } from "../realm/rules.js";
 import { getRealm } from "../realm/state.js";
 import { sendRequest } from "../realm/requests.js";
+import { SHEET_CLASSES, bannerContext } from "./dialog.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -11,16 +12,23 @@ export class MidCampaignApp extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: "ukm-midcampaign",
     tag: "form",
-    classes: ["ukm", "ukm-setup", "ukm-midcampaign"],
+    classes: [...SHEET_CLASSES, "ukm-setup", "ukm-midcampaign"],
     window: { title: "UKM.Start.Title", icon: "fa-solid fa-forward", resizable: true },
     position: { width: 620, height: 700 },
     form: { handler: MidCampaignApp.#onSubmit, closeOnSubmit: true }
   };
 
   static PARTS = {
+    banner: { template: `modules/${MODULE_ID}/templates/common/banner.hbs` },
     form: { template: `modules/${MODULE_ID}/templates/setup/midcampaign.hbs`, scrollable: [".ukm-setup-body"] },
     footer: { template: "templates/generic/form-footer.hbs" }
   };
+
+  async _preparePartContext(partId, context, options) {
+    context = await super._preparePartContext(partId, context, options);
+    if (partId === "banner") context.banner = bannerContext("UKM.Start.Title");
+    return context;
+  }
 
   async _prepareContext() {
     const kingdom = getKingdom();

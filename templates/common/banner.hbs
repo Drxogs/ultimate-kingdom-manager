@@ -1,0 +1,9 @@
+<header class="ukm-sheet-header ukm-banner">
+  <div class="frame-container">
+    {{#if banner.img}}<img class="ukm-crest" src="{{banner.img}}" alt="">{{else}}<span class="ukm-crest ukm-crest-icon"><i class="{{banner.icon}}"></i></span>{{/if}}
+  </div>
+  <div class="details">
+    <div class="title"><span class="name">{{banner.title}}</span></div>
+    {{#if banner.subtitle}}<label class="subtitle"><span>{{banner.subtitle}}</span></label>{{/if}}
+  </div>
+</header>

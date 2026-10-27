@@ -8,6 +8,7 @@ import { getRealm } from "../realm/state.js";
 import { StoryImportApp } from "./story-import-app.js";
 import { MidCampaignApp } from "./midcampaign-app.js";
 import { FOUNDING_TRAINED, trainFoundingSkills } from "../realm/leadership.js";
+import { SHEET_CLASSES, UkmDialog, bannerContext } from "./dialog.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -31,7 +32,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: "ukm-setup",
     tag: "form",
-    classes: ["ukm", "ukm-setup"],
+    classes: [...SHEET_CLASSES, "ukm-setup"],
     window: { title: "UKM.Setup.Title", icon: "fa-solid fa-crown", resizable: true },
     position: { width: 680, height: 720 },
     form: { handler: SetupWizard.#onSubmit, closeOnSubmit: true },
@@ -45,9 +46,16 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
   };
 
   static PARTS = {
+    banner: { template: `modules/${MODULE_ID}/templates/common/banner.hbs` },
     form: { template: `modules/${MODULE_ID}/templates/setup/setup.hbs`, scrollable: [".ukm-setup-body"] },
     footer: { template: "templates/generic/form-footer.hbs" }
   };
+
+  async _preparePartContext(partId, context, options) {
+    context = await super._preparePartContext(partId, context, options);
+    if (partId === "banner") context.banner = bannerContext("UKM.Setup.Title");
+    return context;
+  }
 
   async _prepareContext() {
     const kingdom = getKingdom();
@@ -184,7 +192,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #resetFounding() {
-    const ok = await foundry.applications.api.DialogV2.confirm({
+    const ok = await foundry.applications.api.UkmDialog.confirm({
       window: { title: game.i18n.localize("UKM.Setup.Founding") },
       content: `<p>${game.i18n.localize("UKM.Setup.FoundingResetConfirm")}</p>`,
       rejectClose: false

@@ -7,8 +7,8 @@ import { commitKingdomChanges, EffectContext, rollAmount } from "./effects.js";
 import { canActForSeat } from "./resolve.js";
 import { weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
+import { UkmDialog } from "../apps/dialog.js";
 
-const { DialogV2 } = foundry.applications.api;
 
 /** Core Rulebook, Party Treasure by Level: currency per additional PC. */
 const TAP_LIMIT = [0, 10, 18, 30, 50, 80, 125, 180, 250, 350, 500, 700, 1000, 1500, 2250, 3250, 5000, 7500, 12000, 20000, 35000];
@@ -66,7 +66,7 @@ export async function tapTreasury({ actorUuid, userId }) {
   if (realm.treasury < cost) return { ok: false, reason: "TooPoor", data: { cost } };
 
   if (mode === "approval" && !user.isGM) {
-    const approved = await DialogV2.confirm({
+    const approved = await UkmDialog.confirm({
       window: { title: game.i18n.localize("UKM.Tap.Title") },
       content: `<p>${game.i18n.format("UKM.Tap.ApprovalAsk", { user: user.name, actor: actor.name, gold: limit, cost })}</p>`,
       rejectClose: false

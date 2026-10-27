@@ -2,8 +2,8 @@ import { RUINS, RUIN_ABILITY } from "../constants.js";
 import { getFame, getKingdom, getUnrest } from "../integrations/party.js";
 import { addLog, newId, updateRealm } from "./state.js";
 import { isLeader } from "./leader.js";
+import { UkmDialog } from "../apps/dialog.js";
 
-const { DialogV2 } = foundry.applications.api;
 
 export const ANARCHY_AT = 20;
 const TROUBLE_AT = 10;
@@ -25,7 +25,7 @@ export function inAnarchy() {
 async function offerFame(text) {
   const fame = getFame().value;
   if (fame < 1) return false;
-  return DialogV2.confirm({
+  return UkmDialog.confirm({
     window: { title: loc("FameTitle") },
     content: `<p>${text}</p><p>${loc("FameAsk", { fame })}</p>`,
     rejectClose: false

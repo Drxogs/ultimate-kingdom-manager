@@ -3,6 +3,7 @@ import { inspectSources, runStoryImport } from "../content/story-import.js";
 import { buildStructureCatalog } from "../realm/projects.js";
 import { ensureHandbook } from "../content/handbook.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
+import { SHEET_CLASSES, bannerContext } from "./dialog.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -13,7 +14,7 @@ export class StoryImportApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static DEFAULT_OPTIONS = {
     id: "ukm-story-import",
-    classes: ["ukm", "ukm-import"],
+    classes: [...SHEET_CLASSES, "ukm-import"],
     window: { title: "UKM.Import.Title", icon: "fa-solid fa-book-open" },
     position: { width: 520, height: "auto" },
     actions: {
@@ -23,8 +24,15 @@ export class StoryImportApp extends HandlebarsApplicationMixin(ApplicationV2) {
   };
 
   static PARTS = {
+    banner: { template: `modules/${MODULE_ID}/templates/common/banner.hbs` },
     body: { template: `modules/${MODULE_ID}/templates/import/import.hbs` }
   };
+
+  async _preparePartContext(partId, context, options) {
+    context = await super._preparePartContext(partId, context, options);
+    if (partId === "banner") context.banner = bannerContext("UKM.Import.Title");
+    return context;
+  }
 
   async _prepareContext() {
     const sources = inspectSources();
