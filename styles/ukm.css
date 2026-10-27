@@ -173,7 +173,8 @@
   display: grid;
   grid-template:
     "title title title title title" auto
-    "size dc bp unrest fame" auto / auto auto auto auto 1fr;
+    "size dc bp unrest fame" auto
+    "ruins ruins ruins ruins ruins" auto / auto auto auto auto 1fr;
   align-items: baseline;
   gap: 0 1rem;
   margin: 4px 0;
@@ -774,3 +775,11 @@
 }
 .ukm-chat.ukm-flat button:hover:not(:disabled) { background: rgba(255, 255, 255, 0.7); box-shadow: 0 0 4px #5a3e2b; }
 .ukm-chat.ukm-flat button:disabled { opacity: 0.5; }
+
+/* Ruin, always in view in the header */
+.ukm-sheet .ukm-sheet-header .ruins { grid-area: ruins; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; margin: 0.15rem 0 0.35rem; }
+.ukm-sheet .ukm-sheet-header .ruin { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.35rem; font: 600 var(--font-size-11, 11px) / 1 var(--sans-serif, sans-serif); }
+.ukm-sheet .ukm-sheet-header .ruin > span { color: var(--ukm-sheet-gold); text-transform: uppercase; letter-spacing: 0.03em; }
+.ukm-sheet .ukm-sheet-header .ruin small { font-size: var(--font-size-11, 11px); opacity: 0.95; }
+.ukm-sheet .ukm-sheet-header .ruin .ukm-bar { height: 7px; border-color: rgba(0, 0, 0, 0.6); background: rgba(255, 255, 255, 0.75); }
+.ukm-sheet .ukm-sheet-header .ruin .ukm-bar > span { background: linear-gradient(90deg, #8b1e1e, #c4402f); }

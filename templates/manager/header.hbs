@@ -17,6 +17,15 @@
       <span>{{localize "UKM.Manager.Fame"}}</span>
       <span class="pips">{{#each kingdom.famePips}}<i class="{{#if this}}fa-solid{{else}}fa-regular{{/if}} fa-circle"></i>{{/each}}</span>
     </label>
+    <div class="ruins">
+      {{#each kingdom.ruin}}
+        <div class="ruin" data-tooltip="{{label}} {{value}} / {{max}}{{#if penalty}} (−{{penalty}}){{/if}}">
+          <span>{{label}}</span>
+          <div class="ukm-bar small"><span style="width: {{percent}}%"></span></div>
+          <small>{{value}}/{{max}}{{#if penalty}} −{{penalty}}{{/if}}</small>
+        </div>
+      {{/each}}
+    </div>
   </div>
   <div class="level-badge">
     <label>{{localize "UKM.Manager.Level"}}</label>

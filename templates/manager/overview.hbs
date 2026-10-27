@@ -24,16 +24,6 @@
     </p>
   {{/if}}
 
-  <div class="ukm-pressure">
-    {{#each kingdom.ruin}}
-      <div class="ukm-meter ukm-ruin">
-        <label>{{label}}</label>
-        <div class="ukm-bar small"><span style="width: {{percent}}%"></span></div>
-        <span class="ukm-value">{{value}} / {{max}}{{#if penalty}} (−{{penalty}}){{/if}}</span>
-      </div>
-    {{/each}}
-  </div>
-
   <header class="ukm-major">{{localize "UKM.Manager.RealmStats"}}</header>
   <ol class="ukm-stats">
     {{#each stats}}
