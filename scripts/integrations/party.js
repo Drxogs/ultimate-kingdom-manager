@@ -1,14 +1,15 @@
 import { MODULE_ID } from "../constants.js";
 import { isLeader } from "../realm/leader.js";
+import { currentKingdom } from "../realm/kingdom.js";
 
 export function getParty() {
   return game.actors.party ?? game.actors.find((a) => a.type === "party") ?? null;
 }
 
-/** The PF2e system's kingdom model on the party actor. */
+/** The kingdom: our own numbers, kept on the party actor (the PF2e kingdom sheet isn't used). */
 export function getKingdom() {
-  const kingdom = getParty()?.campaign;
-  return kingdom?.constructor?.name === "Kingdom" || kingdom?.type === "kingmaker" ? kingdom : null;
+  if (!getParty()) return null;
+  return currentKingdom();
 }
 
 export function isKingdomActive() {

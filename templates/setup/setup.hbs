@@ -10,17 +10,21 @@
         <i class="fa-solid {{#if sources.adventureImported}}fa-circle-check{{else}}fa-triangle-exclamation{{/if}}"></i>
         {{localize "UKM.Setup.AdventureImported"}}
       </li>
-      <li class="{{#if kingdomActive}}ok{{else}}warn{{/if}}">
-        <i class="fa-solid {{#if kingdomActive}}fa-circle-check{{else}}fa-triangle-exclamation{{/if}}"></i>
-        {{localize "UKM.Setup.KingdomActive"}}
-        {{#unless kingdomActive}}<a data-action="openKingdom">{{localize "UKM.Setup.OpenPartySheet"}}</a>{{/unless}}
-      </li>
       <li class="{{#if storyImported}}ok{{else}}warn{{/if}}">
         <i class="fa-solid {{#if storyImported}}fa-circle-check{{else}}fa-triangle-exclamation{{/if}}"></i>
         {{localize "UKM.Setup.StoryImported"}}
         {{#if sources.adventureImported}}<a data-action="openImport">{{#if storyImported}}{{localize "UKM.Setup.Reimport"}}{{else}}{{localize "UKM.Setup.Import"}}{{/if}}</a>{{/if}}
       </li>
     </ul>
+  </section>
+
+  <section>
+    <h3>{{localize "UKM.Setup.Kingdom"}}</h3>
+    <div class="form-group">
+      <label>{{localize "UKM.Setup.KingdomName"}}</label>
+      <input type="text" name="kingdomName" value="{{kingdomName}}" placeholder="{{localize "UKM.Setup.KingdomNamePlaceholder"}}">
+    </div>
+    <p class="hint">{{#if kingdomActive}}{{localize "UKM.Setup.KingdomHint"}}{{else}}{{localize "UKM.Setup.KingdomNew"}}{{/if}}</p>
   </section>
 
   <section>
@@ -32,23 +36,7 @@
     </div>
   </section>
 
-  {{#if kingdomActive}}
-  <section>
-    <h3>{{localize "UKM.Setup.Training"}}</h3>
-    <p class="hint">{{localize "UKM.Setup.TrainingHint" count=training.count}}{{#if training.government}} {{localize "UKM.Setup.TrainingGovernment" skills=training.government}}{{/if}}</p>
-    {{#each training.slots}}
-      <div class="form-group">
-        <label>{{localize "UKM.Setup.TrainingPick" n=number}}</label>
-        <select name="training.{{index}}">
-          <option value="">{{localize "UKM.Setup.None"}}</option>
-          {{selectOptions @root.training.choices selected=selected}}
-        </select>
-      </div>
-    {{/each}}
-  </section>
-  {{/if}}
 
-  {{#if kingdomActive}}
   <section>
     <h3>{{localize "UKM.Setup.CapitalHeading"}}</h3>
     {{#if capital}}
@@ -58,13 +46,13 @@
       <p><button type="button" data-action="foundCapital"><i class="fa-solid fa-flag"></i> {{localize "UKM.Settlement.FoundCapital"}}</button></p>
     {{/if}}
   </section>
-  {{/if}}
 
   <section>
     <h3>{{localize "UKM.Setup.Founding"}}</h3>
     <p class="hint">{{localize "UKM.Setup.FoundingHint"}}</p>
     {{#if founding.done}}
-      <p>{{founding.picked}} · <a data-action="resetFounding">{{localize "UKM.Setup.FoundingReset"}}</a></p>
+      <p>{{founding.picked}}</p>
+      <p><button type="button" data-action="resetFounding"><i class="fa-solid fa-rotate-left"></i> {{localize "UKM.Setup.FoundingReset"}}</button></p>
     {{else}}
       {{#each founding.slots}}
         <div class="form-group">
@@ -91,7 +79,6 @@
       {{#if showAllActors}}{{localize "UKM.Setup.ShowingAll"}}{{else}}{{localize "UKM.Setup.ShowingCompanions"}}{{/if}}
       <a data-action="toggleActors">{{#if showAllActors}}{{localize "UKM.Setup.ShowFewer"}}{{else}}{{localize "UKM.Setup.ShowAll"}}{{/if}}</a>
     </p>
-    {{#unless kingdomActive}}<p class="ukm-notice">{{localize "UKM.Setup.SeatsNeedKingdom"}}</p>{{/unless}}
     <table class="ukm-seats">
       <thead>
         <tr>

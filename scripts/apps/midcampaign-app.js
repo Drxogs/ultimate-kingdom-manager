@@ -1,6 +1,6 @@
 import { MODULE_ID, REALM_STATS } from "../constants.js";
 import { getKingdom } from "../integrations/party.js";
-import { boostPlan, skillPlan, suggestedRanks, suggestedTreasury } from "../realm/midcampaign.js";
+import { suggestedRanks, suggestedTreasury } from "../realm/midcampaign.js";
 import { rankCap } from "../realm/rules.js";
 import { getRealm } from "../realm/state.js";
 import { sendRequest } from "../realm/requests.js";
@@ -36,7 +36,6 @@ export class MidCampaignApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const level = kingdom?.level ?? 1;
     const suggested = suggestedRanks(level, realm);
     const founding = new Set(realm.founding?.stats ?? []);
-    const rank = (n) => game.i18n.localize(`UKM.Start.Prof${n}`);
     return {
       level,
       cap: rankCap(level),
@@ -49,16 +48,6 @@ export class MidCampaignApp extends HandlebarsApplicationMixin(ApplicationV2) {
         founding: founding.has(key)
       })),
       treasury: suggestedTreasury(realm),
-      skills: skillPlan(level, kingdom).map((row) => ({
-        label: game.i18n.localize(`UKM.Skill.${row.skill}`),
-        now: rank(row.now),
-        planned: rank(row.planned),
-        changed: row.changed
-      })),
-      boosts: boostPlan(level, kingdom).map((row) => ({
-        level: row.level,
-        text: row.boosts.map((a) => game.i18n.localize(`UKM.Ability.${a}`)).join(", ")
-      })),
       buttons: [{ type: "submit", icon: "fa-solid fa-check", label: "UKM.Start.Apply" }]
     };
   }
@@ -67,7 +56,7 @@ export class MidCampaignApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const data = foundry.utils.expandObject(formData.object);
     await sendRequest("gm", {
       op: "startingPoint",
-      data: { ranks: data.ranks ?? {}, treasury: Number(data.treasury), skills: !!data.skills, boosts: !!data.boosts }
+      data: { ranks: data.ranks ?? {}, treasury: Number(data.treasury) }
     });
   }
 }

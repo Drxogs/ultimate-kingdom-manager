@@ -501,60 +501,11 @@ export async function adoptMapSettlements() {
   await syncKingdomSettlements();
 }
 
-/** Mirror the realm's settlements onto the PF2e kingdom so its sheet and Consumption match. */
-export async function syncKingdomSettlements() {
-  const kingdom = getKingdom();
-  if (!kingdom || !isLeader()) return;
-  const update = {};
-  for (const s of settlements()) {
-    const state = settlementState(s);
-    update[`settlements.${s.id}`] = {
-      name: s.name,
-      type: s.type,
-      level: state.level,
-      overcrowded: state.overcrowded,
-      consumption: { reduction: state.reduction }
-    };
-  }
-  if (Object.keys(update).length) await kingdom.update(update);
-}
-
 /**
- * The Settlements tab is the one list. A settlement typed on the PF2e kingdom sheet by hand is moved into it
- * (or dropped, if the tab already has one by that name), so its food is never counted twice.
+ * Settlements used to be copied onto the PF2e kingdom sheet so its Consumption matched. The kingdom's
+ * numbers are this module's own now (food is added up from the Settlements tab), so there's nothing to copy.
  */
-export async function adoptSheetSettlements() {
-  const kingdom = getKingdom();
-  if (!kingdom || !isLeader()) return;
-  const ours = settlements();
-  const ids = new Set(ours.map((s) => s.id));
-  const names = new Set(ours.map((s) => s.name.toLowerCase()));
-  const stray = Object.entries(kingdom.settlements ?? {}).filter(([id, s]) => s?.name && !ids.has(id));
-  if (!stray.length) return;
-  const adopted = [];
-  const removal = {};
-  await updateRealm((r) => {
-    r.settlements ??= [];
-    for (const [id, s] of stray) {
-      removal[`settlements.-=${id}`] = null;
-      if (names.has(s.name.toLowerCase())) continue;
-      const record = newSettlement({ name: s.name, type: s.type });
-      r.settlements.push(record);
-      names.add(s.name.toLowerCase());
-      adopted.push(s.name);
-      addLog(r, { type: "settlement", text: s.name });
-    }
-  });
-  await kingdom.update(removal);
-  await syncKingdomSettlements();
-  if (adopted.length) {
-    await ChatMessage.create({
-      whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
-      speaker: { alias: game.i18n.localize("UKM.Manager.Title") },
-      content: `<div class="ukm-chat"><p>${game.i18n.format("UKM.Settlement.Adopted", { names: adopted.map((n) => Handlebars.escapeExpression(n)).join(", ") })}</p></div>`
-    });
-  }
-}
+export async function syncKingdomSettlements() {}
 
 /** Overcrowded settlements each add 1 Unrest a month. */
 export function overcrowdedCount(realm) {

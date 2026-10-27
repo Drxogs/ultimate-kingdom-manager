@@ -37,15 +37,12 @@
       "Status": "Before you begin",
       "KingmakerModule": "Pathfinder: Kingmaker module is active",
       "AdventureImported": "Adventure has been imported into this world",
-      "KingdomActive": "Kingdom has been founded on the party sheet",
-      "OpenPartySheet": "Open party sheet",
       "StoryImported": "Story content imported",
       "Import": "Import now",
       "Reimport": "Re-import",
       "Table": "Your table",
       "Seats": "Leadership seats",
       "SeatsHint": "Give each seat a holder: a player character, an NPC actor, or a companion advisor. Seats held by advisors need a player to supervise them, so every desk has someone at the table looking after it.",
-      "SeatsNeedKingdom": "Seat holders are saved to the PF2e kingdom, so found the kingdom first. Companion and supervisor choices are saved either way.",
       "Seat": "Seat",
       "Holder": "Holder",
       "Companion": "Advisor",
@@ -67,11 +64,6 @@
       "FoundingResetConfirm": "Take back the founding focus? Both stats lose the rank and points it gave them.",
       "FoundingIncomplete": "Pick two different stats for the founding focus, or leave both empty.",
       "ToolsNotice": "Kingdom Building, Camping & Weather is active. Its camping and weather work fine alongside this module; just don't use its kingdom sheet, since Ultimate Kingdom Manager runs the kingdom.",
-      "Training": "Founding training",
-      "TrainingHint": "When the kingdom is founded, the party trains {count} kingdom skills of its choice, however many players there are. Leaders aren't invested in this module: any role ticked as invested on the kingdom sheet is unticked, so the status bonus is left for advisors and rank-up rewards. Picks only ever raise a skill.",
-      "TrainingGovernment": "The government already trains {skills}.",
-      "TrainingPick": "Skill {n}",
-      "TrainingDuplicate": "The same skill was picked twice; it only counts once.",
       "NotSuited": "{name} (doesn’t suit this seat)",
       "Advisors": "Advisors",
       "AdvisorsHint": "Companions and NPCs who can advise a seat. Tick Known once the party has met them; only known advisors are offered in the seat lists above. Add your own NPCs at the bottom.",
@@ -88,7 +80,12 @@
       "AdvisorAttitude": "Attitude",
       "CapitalHeading": "The capital",
       "CapitalHint": "Found the capital here first: pick a settlement already on the map or name a new one. It comes with a free Founders' Hall (a home that also cuts the capital's food need by 1). Until there's a capital, no cards or projects appear.",
-      "CapitalDone": "{name} is the capital. Its buildings are managed on the Settlements tab."
+      "CapitalDone": "{name} is the capital. Its buildings are managed on the Settlements tab.",
+      "Kingdom": "The kingdom",
+      "KingdomName": "Kingdom name",
+      "KingdomNamePlaceholder": "The Kingdom of Monkeyton",
+      "KingdomNew": "Saving Setup founds the kingdom: its name, its seats and its level (always the party's).",
+      "KingdomHint": "The kingdom's numbers (Unrest, Ruin, Fame, level) are kept by the Kingdom Manager, not the PF2e kingdom sheet."
     },
     "Import": {
       "Title": "Import Story Content",
@@ -117,7 +114,7 @@
       "Open": "Kingdom Manager",
       "Short": "Kingdom",
       "Unnamed": "Unnamed Kingdom",
-      "NoKingdom": "No kingdom has been founded yet. Found it from the Kingdom tab of the party sheet.",
+      "NoKingdom": "No kingdom has been founded yet. The GM founds it in Setup.",
       "Tab": {
         "Overview": "Realm",
         "Desks": "Desks",
@@ -403,7 +400,7 @@
       "ClaimMet": "{card}: the new claim satisfied the demand.",
       "Gm": {
         "retry": "{card}: the party can try again as a project, at a higher DC.",
-        "leaderOut": "{card}: if the target was a leader, they're out of action ({days} days, or for good on a critical failure). Mark the seat vacant on the kingdom sheet.",
+        "leaderOut": "{card}: if the target was a leader, they're out of action ({days} days, or for good on a critical failure). Clear the seat in Setup until they return.",
         "settlementItemBonus": "{card}: double the item bonuses of structures in {where} for {days} days.",
         "breakRelations": "{card}: relations with that group are broken. Reestablishing them is harder.",
         "giftReturn": "{card}: work out the return on the gifts the realm sent, as the event text describes.",
@@ -677,8 +674,7 @@
       "Place": "Place a building",
       "PlaceHint": "For buildings that were already standing before the module was installed. No cost, no roll, no Unrest or Fame.",
       "Placed": "{name} placed in {settlement}.",
-      "Unplaced": "Not on the grid (no room left in a block that fits)",
-      "Adopted": "Moved {names} from the kingdom sheet into the Settlements tab, which is the one list of settlements, so their food isn’t counted twice. Add settlements there or on the map."
+      "Unplaced": "Not on the grid (no room left in a block that fits)"
     },
     "Ability": {
       "culture": "Culture",
@@ -700,20 +696,8 @@
       "Founding": "founding",
       "Treasury": "Treasury",
       "TreasuryHint": "Suggested: about a month of base income, or what's there now if it's more.",
-      "Skills": "Kingdom skills (PF2e sheet)",
-      "SkillsHint": "Training lives on the PF2e kingdom sheet and is normally the players' choice. Tick this to apply a typical plan instead: four trained skills at founding (one from each filled seat, in seat order), then one increase at 3rd level and every odd level after, raising those four evenly. Nothing already on the sheet is lowered.",
-      "ApplySkills": "Apply this skill plan",
-      "ApplyBoosts": "Fill in missing ability boosts",
-      "BoostLine": "Level {level}: {abilities}",
-      "Skill": "Skill",
-      "Planned": "With the plan",
       "Apply": "Apply",
       "Applied": "The realm has been set for a level {level} kingdom.",
-      "Prof0": "Untrained",
-      "Prof1": "Trained",
-      "Prof2": "Expert",
-      "Prof3": "Master",
-      "Prof4": "Legendary",
       "Nudge": "The party is level {level} but every realm stat is still at rank 0. If you're starting the module partway through the adventure, set the realm's starting point here."
     },
     "Fortune": {
@@ -755,6 +739,11 @@
       "Flavor": "Flat check, DC {dc}",
       "Passed": "Rolled {total} against DC {dc}: passed.",
       "Failed": "Rolled {total} against DC {dc}: failed."
+    },
+    "Check": {
+      "Level": "Kingdom level",
+      "Unrest": "Unrest",
+      "Line": "{skill} check, DC {dc}"
     }
   }
 }

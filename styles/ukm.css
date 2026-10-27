@@ -790,3 +790,13 @@
 .ukm-setup .ukm-add-advisor input { flex: 2; }
 .ukm-setup .ukm-add-advisor select { flex: 1; }
 .ukm-setup .ukm-advisors td:nth-child(3), .ukm-setup .ukm-advisors th:nth-child(3) { text-align: center; }
+
+/* Kingdom checks rolled by the module (the PF2e kingdom sheet isn't used). */
+.ukm-chat.ukm-check .ukm-check-skill { margin: 0 0 0.2rem; color: #555; }
+.ukm-chat.ukm-check .ukm-check-mods { display: flex; flex-wrap: wrap; gap: 0.2rem; margin: 0.2rem 0; }
+.ukm-chat.ukm-check .ukm-tag { display: inline-block; padding: 0 0.35rem; border: 1px solid #8a7a66; border-radius: 3px; font-size: 0.85em; color: #3c2f22; background: rgba(255, 255, 255, 0.4); }
+.ukm-chat.ukm-check .ukm-check-result { margin: 0.2rem 0 0; font-size: 1.05em; }
+.ukm-chat.ukm-check .degree-criticalSuccess strong { color: #2f6b1f; }
+.ukm-chat.ukm-check .degree-success strong { color: #3e7c2c; }
+.ukm-chat.ukm-check .degree-failure strong { color: #8a3b1e; }
+.ukm-chat.ukm-check .degree-criticalFailure strong { color: #7a1f1f; }

@@ -7,7 +7,6 @@ import { applyFounding, foundingPicks, resetFounding } from "../realm/ranks.js";
 import { getRealm } from "../realm/state.js";
 import { StoryImportApp } from "./story-import-app.js";
 import { MidCampaignApp } from "./midcampaign-app.js";
-import { FOUNDING_TRAINED, trainFoundingSkills } from "../realm/leadership.js";
 import { isKnownAdvisor } from "../realm/rules.js";
 import { SHEET_CLASSES, UkmDialog, bannerContext } from "./dialog.js";
 
@@ -39,7 +38,6 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     form: { handler: SetupWizard.#onSubmit, closeOnSubmit: true },
     actions: {
       openImport: SetupWizard.#openImport,
-      openKingdom: SetupWizard.#openKingdom,
       toggleActors: SetupWizard.#toggleActors,
       resetFounding: SetupWizard.#resetFounding,
       addAdvisor: SetupWizard.#addAdvisor,
@@ -168,22 +166,9 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
         attitude: draft?.advisors?.[c.id]?.attitude ?? attitudes[c.id] ?? "friendly"
       })),
       seatChoices: Object.fromEntries(SEATS.filter((x) => x !== "ruler").map((x) => [x, `UKM.Seat.${x}`])),
-      training: this.#trainingContext(kingdom),
+      kingdomName: this.#draft?.kingdomName ?? kingdom?.name ?? "",
       capital: (getRealm().settlements ?? []).find((s) => s.capital)?.name ?? null,
       buttons: [{ type: "submit", icon: "fa-solid fa-check", label: "UKM.Setup.Save" }]
-    };
-  }
-
-  #trainingContext(kingdom) {
-    const government = new Set(kingdom?.build?.government?.skills ?? []);
-    const skills = Object.values(REALM_STATS).flatMap((def) => def.skills);
-    const trained = skills.filter((s) => !government.has(s) && (kingdom?.build?.skills?.[s]?.rank ?? 0) >= 1);
-    const choices = Object.fromEntries(skills.filter((s) => !government.has(s)).map((s) => [s, game.i18n.localize(`UKM.Skill.${s}`)]));
-    return {
-      count: FOUNDING_TRAINED,
-      government: [...government].map((s) => game.i18n.localize(`UKM.Skill.${s}`)).join(", "),
-      slots: Array.from({ length: FOUNDING_TRAINED }, (_, i) => ({ index: i, number: i + 1, selected: this.#draft?.training?.[i] ?? trained[i] ?? "" })),
-      choices
     };
   }
 
@@ -212,12 +197,11 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     await setSetting(SETTINGS.seatAssignments, assignments);
 
     const kingdom = getKingdom();
-    if (kingdom?.active) {
-      await kingdom.update(foundry.utils.expandObject(leadership));
+    if (kingdom) {
+      // Saving Setup is what starts the kingdom: its name, its seats, and its level from the party.
+      const name = String(data.kingdomName ?? "").trim() || kingdom.name || game.i18n.localize("UKM.Manager.Unnamed");
+      await kingdom.update({ ...leadership, name, active: true });
       await syncKingdomLevel();
-      const training = Object.values(data.training ?? {}).filter(Boolean);
-      if (new Set(training).size < training.length) ui.notifications.warn(game.i18n.localize("UKM.Setup.TrainingDuplicate"));
-      await trainFoundingSkills(training);
       const picks = Object.values(data.founding ?? {}).filter(Boolean);
       if (picks.length === FOUNDING_PICKS && new Set(picks).size === FOUNDING_PICKS) await applyFounding(picks);
       else if (picks.length) ui.notifications.warn(game.i18n.localize("UKM.Setup.FoundingIncomplete"));
@@ -289,9 +273,6 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     new StoryImportApp().render(true);
   }
 
-  static #openKingdom() {
-    getKingdom()?.actor?.sheet?.render(true, { tab: "kingdom" });
-  }
 }
 
 Hooks.on(`${MODULE_ID}.refresh`, () => {

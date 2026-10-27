@@ -5,14 +5,13 @@ import { inspectSources } from "./content/story-import.js";
 import { onRegionChange } from "./integrations/kingmaker.js";
 import { getParty, syncKingdomLevel } from "./integrations/party.js";
 import { registerClock, tick } from "./realm/clock.js";
-import { getRealm } from "./realm/state.js";
+import { getRealm, REALM_FLAG } from "./realm/state.js";
 import { registerRequests, sendRequest } from "./realm/requests.js";
 import { onRerollMessage } from "./realm/resolve.js";
 import { buildStructureCatalog, isFortified, structureCatalog } from "./realm/projects.js";
 import { ensureHandbook, openHandbook } from "./content/handbook.js";
 import { isLeader, leaderSettled, startLeader } from "./realm/leader.js";
-import { clearInvested } from "./realm/leadership.js";
-import { adoptSheetSettlements, repairSettlements } from "./realm/settlements.js";
+import { repairSettlements } from "./realm/settlements.js";
 import { cardsOnHex } from "./realm/pins.js";
 import { daysUntil } from "./realm/time.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
@@ -58,9 +57,7 @@ Hooks.once("ready", async () => {
   await leaderSettled();
   if (isLeader()) {
     await syncKingdomLevel();
-    await clearInvested();
     await repairSettlements();
-    await adoptSheetSettlements();
     noteUnrest();
     await tick();
     if (getSetting(SETTINGS.storyImported)) await buildStructureCatalog();
@@ -152,11 +149,27 @@ function addHexEditorSection(app, html) {
   else (root.querySelector(".window-content") ?? root).append(section);
 }
 
+// Anarchy starts or ends whenever Unrest changes in the realm.
 Hooks.on("updateActor", (actor, changes) => {
-  if (actor.type === "party" && foundry.utils.hasProperty(changes, "system.campaign.leadership")) clearInvested().catch((err) => console.error(`${MODULE_ID} |`, err));
-  // Anarchy starts or ends however Unrest changed, including by hand on the kingdom sheet.
-  if (actor.type === "party" && foundry.utils.hasProperty(changes, "system.campaign.unrest")) announceAnarchy().catch((err) => console.error(`${MODULE_ID} |`, err));
-  if (actor.type === "party" && foundry.utils.hasProperty(changes, "system.campaign.settlements")) adoptSheetSettlements().catch((err) => console.error(`${MODULE_ID} |`, err));
+  if (actor.type === "party" && foundry.utils.hasProperty(changes, `flags.${MODULE_ID}.${REALM_FLAG}`)) announceAnarchy().catch((err) => console.error(`${MODULE_ID} |`, err));
+});
+
+/**
+ * The kingdom's numbers live in this module now, so the PF2e Kingdom tab on the party sheet is
+ * hidden: typing there would change nothing. The Kingdom Manager button stays in the header.
+ */
+function hidePartyKingdomTab(app, html) {
+  const root = html instanceof HTMLElement ? html : html?.[0] ?? app?.element;
+  if (!root) return;
+  const tabs = root.querySelectorAll('[data-tab="kingdom"]');
+  if (!tabs.length) return;
+  const wasActive = [...tabs].some((el) => el.classList.contains("active"));
+  tabs.forEach((el) => el.remove());
+  if (wasActive) root.querySelector('nav [data-tab]')?.click();
+}
+Hooks.on("renderPartySheetPF2e", hidePartyKingdomTab);
+Hooks.on("renderActorSheet", (app, html) => {
+  if (app.actor?.type === "party") hidePartyKingdomTab(app, html);
 });
 
 // Flat-check buttons in chat: any player can roll them.

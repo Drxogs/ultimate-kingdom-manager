@@ -3,7 +3,7 @@ import { getEvent } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
 import { resourceDieValue, weeklyIncome } from "./rules.js";
 import { isKingmakerActive, summarizeRealm } from "../integrations/kingmaker.js";
-import { newId } from "./state.js";
+import { getRealm, newId } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { completeProject, refundProject } from "./projects.js";
 import { syncKingdomSettlements } from "./settlements.js";
@@ -280,9 +280,8 @@ export async function checkWatchers(realm) {
   return ctx;
 }
 
-function settlementCount() {
-  const settlements = getKingdom()?.settlements ?? {};
-  return Math.max(1, Object.keys(settlements).length);
+function settlementCount(realm = getRealm()) {
+  return Math.max(1, (realm.settlements ?? []).length);
 }
 
 /** Apply a list of effects. Anything the module can't do itself becomes a GM task. */
@@ -343,7 +342,7 @@ export async function applyEffects(ctx, effects = []) {
         const until = effect.monthlyUntilEnd ? ctx.card?.id ?? null : null;
         if (value === "skip") realm.consumptionAdjustments.push({ id: newId(), skip: true, amount: 0, weeks });
         else {
-          const amount = value === "perSettlement" ? settlementCount() : await rollAmount(value);
+          const amount = value === "perSettlement" ? settlementCount(realm) : await rollAmount(value);
           realm.consumptionAdjustments.push({ id: newId(), amount, weeks: until ? 9999 : weeks, until });
         }
         ctx.note(describeEffect(effect));

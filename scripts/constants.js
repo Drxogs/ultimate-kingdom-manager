@@ -1,4 +1,4 @@
-export const MODULE_ID = "ultimate-kingdom-manager";
+export const MODULE_ID = "ultimate-kingdom-manager-next";
 export const FLAG_SCOPE = MODULE_ID;
 
 export const SEATS = ["ruler", "counselor", "general", "emissary", "magister", "treasurer", "viceroy", "warden"];

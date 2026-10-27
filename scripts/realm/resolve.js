@@ -4,7 +4,7 @@ import { getControlDC, getFame, getKingdom, getPartyLevel, getPlayerCharacters }
 import { getSetting, SETTINGS } from "../settings.js";
 import { createCard } from "./deck.js";
 import { applyEffects, commitKingdomChanges, describeEffect, EffectContext, postFlatChecks } from "./effects.js";
-import { addStatPoints, cardWorkDays, isHired, rankBonus, seatCompanionId, weeklyIncome } from "./rules.js";
+import { addStatPoints, cardWorkDays, isHired, seatCompanionId, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { isLeader } from "./leader.js";
@@ -222,8 +222,7 @@ function companionModifiers(realm, card) {
 function advisorModifiers(realm, card, stat) {
   const mods = companionModifiers(realm, card);
   if (hiredOnly(card.seat)) mods.push({ slug: "ukm-hired", label: game.i18n.localize("UKM.Hired.Name"), modifier: HIRED_PENALTY, type: "untyped" });
-  const bonus = rankBonus(realm.stats[stat]?.rank ?? 0);
-  if (bonus) mods.push({ slug: `ukm-rank-${stat}`, label: game.i18n.format("UKM.Bonus.RankLabel", { stat: game.i18n.localize(`UKM.Stat.${stat}`) }), modifier: bonus, type: "circumstance" });
+  // The stat's rank bonus is part of the kingdom check itself now (see kingdom.js).
   return mods;
 }
 
@@ -285,8 +284,8 @@ export function estimateCheck(card, choice, realm = getRealm()) {
   } else {
     const statistic = kingdom?.skills?.[skill];
     if (!statistic) return null;
-    base = statistic.mod;
-    extras.push(...advisorModifiers(realm, card, SKILL_TO_STAT[skill]), ...structureModifiers(realm, card, skill));
+    extras.push(...statistic.modifiers, ...advisorModifiers(realm, card, SKILL_TO_STAT[skill]), ...structureModifiers(realm, card, skill));
+    base = 0;
     dc = getControlDC() + mod;
   }
   const total = base + stackedTotal(extras);

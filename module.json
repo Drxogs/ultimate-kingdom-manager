@@ -1,8 +1,8 @@
 {
-  "id": "ultimate-kingdom-manager",
-  "title": "Ultimate Kingdom Manager",
-  "description": "Advisor-driven kingdom management for the Kingmaker Adventure Path in Pathfinder Second Edition. Events and projects arrive on a living calendar, each leader runs their own desk, and the kingdom grows alongside the party. Written with Claude, Anthropic's AI model; see the README for details.",
-  "version": "0.22.0",
+  "id": "ultimate-kingdom-manager-next",
+  "title": "Ultimate Kingdom Manager (Next)",
+  "description": "Test build of the Ultimate Kingdom Manager redesign: the kingdom's numbers kept by the module instead of the PF2e kingdom sheet. Install alongside the regular module, but enable only one of them in a world. Written with Claude, Anthropic's AI model; see the README for details.",
+  "version": "0.90.0",
   "authors": [
     {
       "name": "Drxogs",
@@ -10,8 +10,8 @@
     }
   ],
   "url": "https://github.com/Drxogs/ultimate-kingdom-manager",
-  "manifest": "https://github.com/Drxogs/ultimate-kingdom-manager/releases/latest/download/module.json",
-  "download": "https://github.com/Drxogs/ultimate-kingdom-manager/releases/download/v0.22.0/module.zip",
+  "manifest": "https://github.com/Drxogs/ultimate-kingdom-manager/releases/download/next-latest/module.json",
+  "download": "https://github.com/Drxogs/ultimate-kingdom-manager/releases/download/next-v0.90.0/module.zip",
   "bugs": "https://github.com/Drxogs/ultimate-kingdom-manager/issues",
   "compatibility": {
     "minimum": "13",
@@ -38,6 +38,13 @@
         "id": "socketlib",
         "type": "module",
         "reason": "Lets players act on their desks while the GM is connected."
+      }
+    ],
+    "conflicts": [
+      {
+        "id": "ultimate-kingdom-manager",
+        "type": "module",
+        "reason": "The regular Ultimate Kingdom Manager. Enable only one of the two in a world."
       }
     ]
   },

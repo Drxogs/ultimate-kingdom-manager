@@ -41,54 +41,8 @@ function maxRankAt(level) {
 }
 
 /**
- * A plain kingdom skill plan for a given level: four trained skills at founding (besides the
- * government's), then one increase at 3rd level and every odd level after, raising those four
- * evenly as far as the level allows. Never lowers anything already on the sheet.
- */
-export function skillPlan(level, kingdom = getKingdom()) {
-  const order = skillPriority();
-  const government = new Set(kingdom?.build?.government?.skills ?? []);
-  const ranks = Object.fromEntries(order.map((s) => [s, government.has(s) ? 1 : 0]));
-  const core = order.filter((s) => !government.has(s)).slice(0, 4);
-  for (const skill of core) ranks[skill] = 1;
-  for (let at = 3; at <= level; at += 2) {
-    const cap = maxRankAt(at);
-    const pool = core.filter((s) => ranks[s] < cap);
-    const candidates = pool.length ? pool : order.filter((s) => ranks[s] < cap);
-    if (!candidates.length) continue;
-    const lowest = Math.min(...candidates.map((s) => ranks[s]));
-    ranks[candidates.find((s) => ranks[s] === lowest)] += 1;
-  }
-  const current = kingdom?.build?.skills ?? {};
-  return order.map((skill) => {
-    const now = current[skill]?.rank ?? 0;
-    const planned = Math.max(now, ranks[skill]);
-    return { skill, now, planned, changed: planned > now };
-  });
-}
-
-/** Ability boosts for kingdom levels already reached that were never chosen. */
-export function boostPlan(level, kingdom = getKingdom()) {
-  const focus = skillPriority().slice(0, 4);
-  const weight = {};
-  for (const skill of focus) {
-    const ability = SKILL_ABILITY[skill];
-    weight[ability] = (weight[ability] ?? 0) + 1;
-  }
-  const abilities = ["culture", "economy", "loyalty", "stability"].sort((a, b) => (weight[b] ?? 0) - (weight[a] ?? 0));
-  const out = [];
-  for (const at of ABILITY_LEVELS) {
-    if (at > level) continue;
-    const chosen = kingdom?.build?.boosts?.[at] ?? [];
-    if (chosen.length >= 2) continue;
-    out.push({ level: at, boosts: abilities.slice(0, 2) });
-  }
-  return out;
-}
-
-/**
  * Put the realm where it would be had the module been running from the start.
- * data: { ranks: { stat: rank }, treasury, skills: bool, boosts: bool }
+ * data: { ranks: { stat: rank }, treasury }
  */
 export async function applyStartingPoint(data) {
   const kingdom = getKingdom();
@@ -104,13 +58,4 @@ export async function applyStartingPoint(data) {
     realm.startingPoint = { level, time: game.time.worldTime };
     addLog(realm, { type: "starting-point", text: String(level) });
   });
-  if (!kingdom) return;
-  const update = {};
-  if (data.skills) {
-    for (const row of skillPlan(level, kingdom)) if (row.changed) update[`build.skills.${row.skill}.rank`] = row.planned;
-  }
-  if (data.boosts) {
-    for (const row of boostPlan(level, kingdom)) update[`build.boosts.${row.level}`] = row.boosts;
-  }
-  if (Object.keys(update).length) await kingdom.update(update);
 }

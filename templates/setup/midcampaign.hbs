@@ -27,25 +27,4 @@
     <p class="hint">{{localize "UKM.Start.TreasuryHint"}}</p>
   </section>
 
-  <section>
-    <h3>{{localize "UKM.Start.Skills"}}</h3>
-    <p class="hint">{{localize "UKM.Start.SkillsHint"}}</p>
-    <div class="form-group">
-      <label>{{localize "UKM.Start.ApplySkills"}}</label>
-      <input type="checkbox" name="skills">
-    </div>
-    <table class="ukm-seats ukm-skill-plan">
-      <thead><tr><th>{{localize "UKM.Start.Skill"}}</th><th>{{localize "UKM.Start.Now"}}</th><th>{{localize "UKM.Start.Planned"}}</th></tr></thead>
-      <tbody>
-        {{#each skills}}<tr class="{{#if changed}}changed{{/if}}"><td>{{label}}</td><td>{{now}}</td><td>{{planned}}</td></tr>{{/each}}
-      </tbody>
-    </table>
-    {{#if boosts.length}}
-      <div class="form-group">
-        <label>{{localize "UKM.Start.ApplyBoosts"}}</label>
-        <input type="checkbox" name="boosts">
-      </div>
-      <ul class="hint">{{#each boosts}}<li>{{localize "UKM.Start.BoostLine" level=level abilities=text}}</li>{{/each}}</ul>
-    {{/if}}
-  </section>
 </div>

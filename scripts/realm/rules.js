@@ -8,10 +8,12 @@ export function rankCap(kingdomLevel) {
   return Math.ceil(Math.clamp(kingdomLevel, 1, 20) / 2);
 }
 
+/** What a stat's rank adds to its skills' checks (Rules v1: one number in place of training). */
 export function rankBonus(rank) {
-  if (rank >= 6) return 3;
-  if (rank >= 3) return 2;
-  if (rank >= 1) return 1;
+  if (rank >= 9) return 11;
+  if (rank >= 6) return 9;
+  if (rank >= 3) return 6;
+  if (rank >= 1) return 3;
   return 0;
 }
 

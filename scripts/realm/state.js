@@ -3,6 +3,7 @@ import { getParty } from "../integrations/party.js";
 import { isLeader } from "./leader.js";
 
 const FLAG_KEY = "realm";
+export const REALM_FLAG = FLAG_KEY;
 const VERSION = 1;
 const LOG_LIMIT = 300;
 
@@ -25,13 +26,40 @@ export function defaultRealm() {
     settlements: [],
     levelModBoosts: {},
     founding: null,
+    kingdom: defaultKingdomData(),
     log: []
+  };
+}
+
+/** The kingdom's own numbers, kept by this module instead of the PF2e kingdom sheet. */
+export function defaultKingdomData() {
+  const ability = () => ({ ruin: { value: 0, max: 10 }, penalty: 0 });
+  return {
+    active: false,
+    name: "",
+    img: null,
+    level: 1,
+    capital: null,
+    unrest: { value: 0 },
+    resources: { fame: { value: 0, max: 3 } },
+    abilities: { culture: ability(), economy: ability(), stability: ability(), loyalty: ability() },
+    leadership: {},
+    size: 1
   };
 }
 
 export function getRealm() {
   const stored = getParty()?.getFlag(FLAG_SCOPE, FLAG_KEY);
-  return foundry.utils.mergeObject(defaultRealm(), stored ?? {}, { inplace: false });
+  const realm = foundry.utils.mergeObject(defaultRealm(), stored ?? {}, { inplace: false });
+  realm.kingdom = { ...defaultKingdomData(), ...(stored?.kingdom ?? {}) };
+  return realm;
+}
+
+// The realm being changed right now, if any, so the kingdom can read and write it mid-change.
+let inFlight = null;
+
+export function realmInFlight() {
+  return inFlight;
 }
 
 /**
@@ -46,7 +74,12 @@ export function updateRealm(mutator) {
     const party = getParty();
     if (!party) return null;
     const realm = getRealm();
-    await mutator(realm);
+    inFlight = realm;
+    try {
+      await mutator(realm);
+    } finally {
+      inFlight = null;
+    }
     if (realm.log.length > LOG_LIMIT) realm.log = realm.log.slice(-LOG_LIMIT);
     await party.setFlag(FLAG_SCOPE, FLAG_KEY, realm);
     return realm;
