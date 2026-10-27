@@ -37,21 +37,23 @@ export async function postFlatCheck(flat) {
 /** Any player presses the button: roll in the open, then hand the total to the GM's window. */
 async function rollFromChat(event) {
   const button = event.currentTarget;
-  button.disabled = true;
+  // Like Foundry's own roll requests: the button goes away once someone presses it.
+  const slot = button.closest(".ukm-flat-slot");
+  button.remove();
   const id = button.dataset.ukmFlat;
   const dc = Number(button.dataset.dc) || 11;
   const roll = await new Roll("1d20").evaluate();
   await roll.toMessage({ flavor: loc("Flavor", { dc }), speaker: ChatMessage.getSpeaker() });
   const { sendRequest } = await import("./requests.js");
   const result = await sendRequest("resolveFlat", { id, total: roll.total });
-  if (!result?.ok) button.disabled = false;
+  if (!result?.ok && result?.reason !== "AlreadyRolled") slot?.append(button);
 }
 
 export function bindFlatButtons(html) {
   const root = html instanceof HTMLElement ? html : html?.[0];
   root?.querySelectorAll?.("[data-ukm-flat]").forEach((button) => {
     if (!getRealm().pendingFlats?.some((f) => f.id === button.dataset.ukmFlat)) {
-      button.disabled = true;
+      button.remove();
       return;
     }
     button.addEventListener("click", rollFromChat);
