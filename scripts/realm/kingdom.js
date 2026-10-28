@@ -1,4 +1,5 @@
 import { LEVEL_DC, MODULE_ID, SKILL_TO_STAT } from "../constants.js";
+import { chatClass, chatKicker } from "./chat-style.js";
 import { isKingmakerActive, summarizeRealm } from "../integrations/kingmaker.js";
 import { defaultKingdomData, getRealm, realmInFlight, updateRealm } from "./state.js";
 import { settlementState } from "./settlements.js";
@@ -240,7 +241,7 @@ function esc(s) {
 }
 
 /** Roll a kingdom check in the open: d20 + our modifiers against the DC, posted to chat. */
-export async function rollKingdomCheck(kingdom, skill, { dc, modifiers = [], label = "" } = {}) {
+export async function rollKingdomCheck(kingdom, skill, { dc, modifiers = [], label = "", card = null } = {}) {
   const base = kingdom.baseModifiers(skill);
   const extra = (modifiers ?? []).map((m) => ({ slug: m.slug, label: m.label, modifier: m.modifier, type: m.type, enabled: m.enabled, ignored: m.ignored }));
   const all = [...base, ...extra];
@@ -257,8 +258,8 @@ export async function rollKingdomCheck(kingdom, skill, { dc, modifiers = [], lab
     .map((m) => `<span class="ukm-tag">${esc(m.label)} ${sign(m.modifier)}</span>`)
     .join(" ");
   const skillLabel = game.i18n.localize(`UKM.Skill.${skill}`);
-  const flavor = `<div class="ukm-chat ukm-check">
-    <h3>${esc(label || skillLabel)}</h3>
+  const flavor = `<div class="ukm-chat ukm-check${chatClass(card)}">
+    ${chatKicker(card)}<h3>${esc(label || skillLabel)}</h3>
     <p class="ukm-check-skill">${esc(game.i18n.format("UKM.Check.Line", { skill: skillLabel, dc: target }))}</p>
     <p class="ukm-check-mods">${tags}</p>
     <p class="ukm-check-result degree-${DEGREE_NAMES[degree]}"><strong>${esc(game.i18n.localize(`UKM.Degree.${DEGREE_NAMES[degree]}`))}</strong></p>

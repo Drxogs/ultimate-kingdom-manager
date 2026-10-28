@@ -849,6 +849,11 @@
       "Quiet": "Easy start: no trouble cards for another {days} days.",
       "Tag": "Trouble",
       "AllOut": "Every trouble card this settlement can draw is already on a desk. Resolve one to draw it again."
+    },
+    "Chat": {
+      "Project": "Project",
+      "Audience": "Audience",
+      "Story": "Story event"
     }
   }
 }

@@ -1,4 +1,5 @@
 import { MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
+import { chatClass, chatKicker } from "./chat-style.js";
 import { getAudience, getAudiences } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
 import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
@@ -103,7 +104,7 @@ export async function answerAudience({ cardId, response, userId }) {
   const lines = ctx.lines.map((l) => `<li>${l}</li>`).join("");
   await ChatMessage.create({
     speaker: { alias: getKingdom()?.name || game.i18n.localize("UKM.Manager.Unnamed") },
-    content: `<div class="ukm-chat"><h3>${esc(card.name)}</h3><p><em>"${esc(data.request)}"</em></p><p>${game.i18n.format("UKM.Audience.Answered", {
+    content: `<div class="ukm-chat${chatClass(card)}">${chatKicker(card)}<h3>${esc(card.name)}</h3><p><em>"${esc(data.request)}"</em></p><p>${game.i18n.format("UKM.Audience.Answered", {
       holder: esc(holder),
       answer: `<strong>${esc(answer.label)}</strong>`
     })}</p>${lines ? `<ul>${lines}</ul>` : ""}</div>`

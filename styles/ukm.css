@@ -803,3 +803,13 @@
 @media (max-width: 700px) { .ukm-sheet .ukm-track { grid-template-columns: 1fr; gap: 0.25rem; } }
 .ukm-sheet .ukm-settlement-fold > summary.ukm-track-summary { font: 600 var(--font-size-14, 14px) var(--serif, serif); color: var(--ukm-head); padding: 0.25rem 0; border-top: 1px solid var(--ukm-divider); }
 .ukm-sheet .ukm-settlement-fold[open] > summary.ukm-track-summary { margin-bottom: 0.35rem; }
+
+/* Special cards in chat: coloured edge, tinted background and a small labelled icon above the title. */
+.ukm-chat.ukm-chat-special { --ukm-chat-accent: #8a7a66; border-left: 4px solid var(--ukm-chat-accent); padding: 0.15rem 0 0.15rem 0.45rem; border-radius: 2px; background: color-mix(in srgb, var(--ukm-chat-accent) 9%, transparent); }
+.ukm-chat .ukm-chat-kicker { margin: 0 0 0.1rem; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ukm-chat-accent); }
+.ukm-chat .ukm-chat-kicker i { margin-right: 0.2rem; }
+.ukm-chat.ukm-chat-trouble { --ukm-chat-accent: #a8322b; }
+.ukm-chat.ukm-chat-project { --ukm-chat-accent: #a7791f; }
+.ukm-chat.ukm-chat-matter { --ukm-chat-accent: #3d6680; }
+.ukm-chat.ukm-chat-audience { --ukm-chat-accent: #6b4a86; }
+.ukm-chat.ukm-chat-story { --ukm-chat-accent: #2f6b4f; }

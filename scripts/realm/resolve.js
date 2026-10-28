@@ -10,6 +10,7 @@ import { addLog, getRealm, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { isLeader } from "./leader.js";
 import { structureModifiers } from "./settlements.js";
+import { chatClass, chatKicker } from "./chat-style.js";
 import { inAnarchy } from "./standing.js";
 
 const ACTIVE = ["open", "assigned", "rolled"];
@@ -159,7 +160,7 @@ export async function assignCard(request) {
     const desks = assignee.lockSeats.map((s) => game.i18n.localize(`UKM.Seat.${s}`)).join(", ");
     await ChatMessage.create({
       speaker: { alias: getKingdom()?.name || game.i18n.localize("UKM.Manager.Unnamed") },
-      content: `<div class="ukm-chat"><h3>${Handlebars.escapeExpression(card.name)}</h3><p>${game.i18n.format("UKM.Card.HelpingChat", { name: Handlebars.escapeExpression(assignee.name), seat: game.i18n.localize(`UKM.Seat.${card.seat}`), days, desks })}</p></div>`
+      content: `<div class="ukm-chat${chatClass(card)}">${chatKicker(card)}<h3>${Handlebars.escapeExpression(card.name)}</h3><p>${game.i18n.format("UKM.Card.HelpingChat", { name: Handlebars.escapeExpression(assignee.name), seat: game.i18n.localize(`UKM.Seat.${card.seat}`), days, desks })}</p></div>`
     });
   }
   return { ok: true, days };
@@ -415,7 +416,7 @@ async function rollCheck(card, realm, { reroll = false } = {}) {
   const stat = SKILL_TO_STAT[skill];
   const modifiers = timedModifiers(realm, skill, card.eventId);
   const label = `${card.name}${card.assignee ? ` — ${card.assignee.name}` : ""}`;
-  const options = { skipDialog: true, label: reroll ? `${label} (${game.i18n.localize("UKM.Fortune.Rerolled")})` : label, extraRollOptions: [`ukm:event:${card.eventId}`, `ukm:card:${card.id}`] };
+  const options = { skipDialog: true, card, label: reroll ? `${label} (${game.i18n.localize("UKM.Fortune.Rerolled")})` : label, extraRollOptions: [`ukm:event:${card.eventId}`, `ukm:card:${card.id}`] };
 
   if (card.assignee?.type === "pc") {
     const actor = fromUuidSync(card.assignee.actorUuid);
@@ -423,7 +424,9 @@ async function rollCheck(card, realm, { reroll = false } = {}) {
     if (!statistic) return null;
     const dc = (LEVEL_DC[Math.clamp(kingdom?.level ?? 1, 0, 20)] ?? 14) + mod;
     modifiers.push(...structureModifiers(realm, card, skill), ...unrestModifiers());
-    const roll = await statistic.roll({ ...options, dc: { value: dc }, modifiers: toModifiers(modifiers) });
+    // A character's own skill roll goes through PF2e, which doesn't know our card.
+    const { card: _card, ...pcOptions } = options;
+    const roll = await statistic.roll({ ...pcOptions, dc: { value: dc }, modifiers: toModifiers(modifiers) });
     if (!roll) return null;
     return { degree: roll.degreeOfSuccess, skill, stat, personal: true, total: roll.total, dc };
   }
@@ -509,7 +512,7 @@ async function postSummary(card, degreeName, ctx, check) {
   const result = card.kind === "audience" ? loc("Ignored") : game.i18n.localize(`UKM.Degree.${degreeName}`);
   const advisor = card.assignee?.name ?? getCompanion(seatCompanionId(card.seat))?.name ?? game.i18n.localize("UKM.Ability.TheAdvisor");
   const story = card.kind === "audience" ? null : getStory(card.eventId, degreeName, card.tier)?.replaceAll("{advisor}", advisor);
-  const content = `<div class="ukm-chat"><h3>${card.name}</h3><p><strong>${result}</strong>${by ? ` · ${by}` : ""}</p>${story ? `<p class="ukm-story">${Handlebars.escapeExpression(story)}</p>` : ""}${lines ? `<ul>${lines}</ul>` : ""}${status}</div>`;
+  const content = `<div class="ukm-chat${chatClass(card)}">${chatKicker(card)}<h3>${card.name}</h3><p><strong>${result}</strong>${by ? ` · ${by}` : ""}</p>${story ? `<p class="ukm-story">${Handlebars.escapeExpression(story)}</p>` : ""}${lines ? `<ul>${lines}</ul>` : ""}${status}</div>`;
   await ChatMessage.create({ content, speaker: { alias: kingdom?.name || game.i18n.localize("UKM.Manager.Unnamed") } });
 
   if (ctx.gmTasks.length) {
