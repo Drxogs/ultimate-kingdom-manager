@@ -96,3 +96,46 @@ export function addLog(realm, entry) {
 export function newId() {
   return foundry.utils.randomID(12);
 }
+
+/**
+ * Next 0.91 went from eight seats to six. A realm saved before that has cards on the Ruler's and
+ * Warden's desks and points in Loyalty and Stability; move them to the seats that took over.
+ * Runs once on the GM's window.
+ */
+export async function migrateSixSeats() {
+  const { SEAT_ALIASES, STAT_ALIASES } = await import("../constants.js");
+  const realm = getRealm();
+  if (realm.seatsVersion === 6) return;
+  await updateRealm((r) => {
+    for (const card of r.cards ?? []) if (SEAT_ALIASES[card.seat]) card.seat = SEAT_ALIASES[card.seat];
+    for (const [old, now] of Object.entries(STAT_ALIASES)) {
+      const from = r.stats?.[old];
+      if (!from) continue;
+      const to = (r.stats[now] ??= { points: 0, rank: 0 });
+      to.points = Math.max(to.points, from.points);
+      to.rank = Math.max(to.rank, from.rank);
+      delete r.stats[old];
+    }
+    for (const [old, now] of Object.entries(SEAT_ALIASES)) {
+      if (r.ambitions?.[old] !== undefined) delete r.ambitions[old];
+      const lead = r.kingdom?.leadership?.[old];
+      // Whoever held the Ruler's seat becomes the ruler, if they're a player character.
+      if (old === "ruler" && lead?.uuid && !r.kingdom.ruler && fromUuidSync(lead.uuid)?.type === "character") r.kingdom.ruler = lead.uuid;
+      if (lead?.uuid && !r.kingdom.leadership[now]?.uuid) r.kingdom.leadership[now] = lead;
+      if (r.kingdom?.leadership) delete r.kingdom.leadership[old];
+    }
+    if (r.founding?.stats) r.founding.stats = [...new Set(r.founding.stats.map((s) => STAT_ALIASES[s] ?? s))];
+    r.seatsVersion = 6;
+  });
+  const { getSetting, setSetting, SETTINGS } = await import("../settings.js");
+  const assignments = { ...(getSetting(SETTINGS.seatAssignments) ?? {}) };
+  let changed = false;
+  for (const [old, now] of Object.entries(SEAT_ALIASES)) {
+    if (!assignments[old]) continue;
+    const empty = !assignments[now]?.companion && !assignments[now]?.supervisor;
+    if (empty) assignments[now] = assignments[old];
+    delete assignments[old];
+    changed = true;
+  }
+  if (changed) await setSetting(SETTINGS.seatAssignments, assignments);
+}

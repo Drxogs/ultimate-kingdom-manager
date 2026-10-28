@@ -5,7 +5,7 @@ import { inspectSources } from "./content/story-import.js";
 import { onRegionChange } from "./integrations/kingmaker.js";
 import { getParty, syncKingdomLevel } from "./integrations/party.js";
 import { registerClock, tick } from "./realm/clock.js";
-import { getRealm, REALM_FLAG } from "./realm/state.js";
+import { getRealm, migrateSixSeats, REALM_FLAG } from "./realm/state.js";
 import { registerRequests, sendRequest } from "./realm/requests.js";
 import { onRerollMessage } from "./realm/resolve.js";
 import { buildStructureCatalog, isFortified, structureCatalog } from "./realm/projects.js";
@@ -57,6 +57,7 @@ Hooks.once("ready", async () => {
   await leaderSettled();
   if (isLeader()) {
     await syncKingdomLevel();
+    await migrateSixSeats();
     await repairSettlements();
     noteUnrest();
     await tick();
