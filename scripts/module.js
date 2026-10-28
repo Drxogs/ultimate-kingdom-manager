@@ -168,6 +168,38 @@ function hidePartyKingdomTab(app, html) {
   if (wasActive) root.querySelector('nav [data-tab]')?.click();
 }
 Hooks.on("renderPartySheetPF2e", hidePartyKingdomTab);
+
+/**
+ * The party's folder in the Actors sidebar has a "Create Kingdom" button (a crown) that opens the
+ * PF2e kingdom builder. The kingdom is set up in our Setup now, so that button opens the Kingdom
+ * Manager instead.
+ */
+function swapCreateKingdomButton(app, html) {
+  const root = html instanceof HTMLElement ? html : html?.[0] ?? app?.element;
+  if (!root) return;
+  const buttons = root.querySelectorAll('[data-tooltip="Create Kingdom"], [data-tooltip="PF2E.Kingmaker.Kingdom.CreateKingdom"], [data-action="createKingdom"], [data-action="openKingdomBuilder"]');
+  for (const old of buttons) {
+    if (old.dataset.ukmSwapped) continue;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = old.className;
+    button.dataset.ukmSwapped = "1";
+    button.dataset.tooltip = game.i18n.localize("UKM.Manager.Open");
+    button.setAttribute("aria-label", game.i18n.localize("UKM.Manager.Open"));
+    button.innerHTML = '<i class="fa-solid fa-chess-rook" inert></i>';
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      KingdomManager.open();
+    });
+    old.replaceWith(button);
+  }
+}
+Hooks.on("renderActorDirectory", (app, html) => {
+  swapCreateKingdomButton(app, html);
+  // Some modules add their sidebar buttons after us; check again once they've run.
+  setTimeout(() => swapCreateKingdomButton(app, html), 0);
+});
 Hooks.on("renderActorSheet", (app, html) => {
   if (app.actor?.type === "party") hidePartyKingdomTab(app, html);
 });

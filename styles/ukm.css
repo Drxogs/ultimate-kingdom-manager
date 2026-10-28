@@ -464,7 +464,7 @@
 .ukm-sheet .ukm-leader {
   display: grid;
   grid-template-areas: "img name" "img label";
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   grid-template-rows: 1fr auto;
 }
 
@@ -494,7 +494,14 @@
   font-weight: 600;
 }
 
-.ukm-sheet .ukm-leader .controls { display: flex; gap: 0.25rem; }
+.ukm-sheet .ukm-leader .controls { display: flex; gap: 0.25rem; flex-shrink: 0; }
+.ukm-sheet .ukm-leader .name { min-width: 0; }
+.ukm-sheet .ukm-leader .holder-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ukm-sheet .ukm-leader .details { min-width: 0; }
+.ukm-sheet .ukm-leader .role { flex-shrink: 0; }
+.ukm-sheet .ukm-leader .ukm-holder { display: flex; align-items: center; gap: 0.45rem; min-width: 0; }
+.ukm-sheet .ukm-leader .ukm-holder i { color: #6b5a48; cursor: help; }
+.ukm-sheet .ukm-leader .ukm-holder .stat { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .ukm-sheet .ukm-leader .details {
   grid-area: label;

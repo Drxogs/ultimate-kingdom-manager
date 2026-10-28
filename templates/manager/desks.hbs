@@ -21,7 +21,7 @@
       <header class="ukm-leader">
         <div class="image">{{#if img}}<img src="{{img}}" alt="">{{/if}}</div>
         <div class="name">
-          <span>{{#if holder}}{{holder}}{{#if isCompanion}} <span class="ukm-tag">{{localize "UKM.Manager.Advisor"}}</span>{{/if}}{{else}}<em>{{localize "UKM.Manager.Vacant"}}</em>{{/if}}</span>
+          <span class="holder-name" data-tooltip="{{holder}}">{{#if holder}}{{holder}}{{#if isCompanion}} <span class="ukm-tag">{{localize "UKM.Manager.Advisor"}}</span>{{/if}}{{else}}<em>{{localize "UKM.Manager.Vacant"}}</em>{{/if}}</span>
           <span class="controls">
             {{#if canTap}}<button type="button" class="ukm-desk-action" data-action="tapTreasury" data-tooltip="{{localize "UKM.Tap.Hint"}}"><i class="fa-solid fa-sack-dollar"></i> {{localize "UKM.Tap.Title"}}</button>{{/if}}
             {{#if canStartProject}}<button type="button" class="ukm-desk-action" data-action="startProject"><i class="fa-solid fa-trowel-bricks"></i> {{localize "UKM.Project.Start"}}</button>{{/if}}
@@ -30,11 +30,11 @@
         <div class="details">
           <span class="role">{{label}}</span>
           <span class="ukm-holder">
-            {{#if advisor}}{{localize "UKM.Manager.AdvisedBy" name=advisor}} · {{/if}}
-            {{#if supervisor}}{{localize "UKM.Manager.SupervisedBy" name=supervisor}} · {{/if}}
-            {{#if openToAll}}<span data-tooltip="{{localize "UKM.Manager.AnyPlayerHint"}}">{{localize "UKM.Manager.AnyPlayer"}}</span> · {{/if}}
-            {{#if sulking}}<span class="ukm-urgent">{{sulking}}</span> · {{/if}}
-            {{stat}}
+            {{#if advisor}}<i class="fa-solid fa-user-tie" data-tooltip="{{localize "UKM.Manager.AdvisedBy" name=advisor}}" aria-label="{{localize "UKM.Manager.AdvisedBy" name=advisor}}"></i>{{/if}}
+            {{#if supervisor}}<i class="fa-solid fa-eye" data-tooltip="{{localize "UKM.Manager.SupervisedBy" name=supervisor}}" aria-label="{{localize "UKM.Manager.SupervisedBy" name=supervisor}}"></i>{{/if}}
+            {{#if openToAll}}<i class="fa-solid fa-users" data-tooltip="{{localize "UKM.Manager.AnyPlayer"}}: {{localize "UKM.Manager.AnyPlayerHint"}}" aria-label="{{localize "UKM.Manager.AnyPlayer"}}"></i>{{/if}}
+            {{#if sulking}}<span class="ukm-urgent" data-tooltip="{{sulking}}"><i class="fa-solid fa-face-frown"></i></span>{{/if}}
+            <span class="stat">{{stat}}</span>
           </span>
         </div>
       </header>
