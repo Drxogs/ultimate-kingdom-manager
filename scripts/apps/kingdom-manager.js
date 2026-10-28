@@ -492,6 +492,9 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
           panorama: renderPanorama(s, { terrain: hexes.get(hexKey)?.terrain ?? null }),
           bonuses: Object.entries(trackBonuses(s)).map(([k, v]) => `${skill(k)} +${v}`),
           missing: missing.length ? game.i18n.format("UKM.Track.Missing", { size: label(sizeFor(s)), list: missing.join(", ") }) : null,
+          foldKey: `settlement-${s.id}`,
+          foldOpen: readFold(`settlement-${s.id}`),
+          tracksSummary: game.i18n.format("UKM.Track.Summary", { built: tracks.filter((t) => t.now).length, total: tracks.length, ready: tracks.filter((t) => t.canBuild).length }),
           tracks
         };
       });

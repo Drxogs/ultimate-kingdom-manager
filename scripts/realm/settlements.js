@@ -308,7 +308,8 @@ export function settlementHex(settlement) {
 /** Settlements drawn on the map that the realm doesn't know about yet. */
 export function unknownMapSettlements(realm = getRealm()) {
   const names = new Set(settlements(realm).map((s) => s.name.toLowerCase()));
-  return settlementHexes().filter((h) => h.name && !names.has(h.name.toLowerCase()));
+  const keys = new Set(settlements(realm).map((s) => s.hexKey).filter(Boolean).map(String));
+  return settlementHexes().filter((h) => h.name && !names.has(h.name.toLowerCase()) && !keys.has(String(h.key)));
 }
 
 export function newSettlement({ name, type = "village", capital = false, waterside = false, hexKey = null }) {
@@ -490,6 +491,8 @@ export async function renameSettlement(settlementId, newName) {
   await updateRealm((r) => {
     const s = r.settlements.find((x) => x.id === settlementId);
     if (!s) return;
+    // Remember its hex first, so the map's old label isn't mistaken for a new settlement.
+    s.hexKey ??= settlementHex(s);
     s.name = name;
     for (const card of r.cards ?? []) if (card.target?.settlement === old) card.target.settlement = name;
     addLog(r, { type: "settlement-renamed", text: `${old} → ${name}` });

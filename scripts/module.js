@@ -11,7 +11,7 @@ import { onRerollMessage } from "./realm/resolve.js";
 import { buildStructureCatalog, isFortified, structureCatalog } from "./realm/projects.js";
 import { ensureHandbook, openHandbook } from "./content/handbook.js";
 import { isLeader, leaderSettled, startLeader } from "./realm/leader.js";
-import { repairSettlements } from "./realm/settlements.js";
+import { adoptMapSettlements, repairSettlements } from "./realm/settlements.js";
 import { cardsOnHex } from "./realm/pins.js";
 import { daysUntil } from "./realm/time.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
@@ -50,7 +50,11 @@ Hooks.once("ready", async () => {
   startLeader();
   registerRequests();
   registerClock();
-  onRegionChange(() => KingdomManager.refresh());
+  // A settlement drawn on the map joins the realm as soon as the map is saved (the leader GM does it).
+  onRegionChange(async () => {
+    await adoptMapSettlements();
+    KingdomManager.refresh();
+  });
 
   if (!game.user.isGM) return;
 

@@ -599,7 +599,7 @@
 .ukm-sheet .ukm-first-step p { margin: 0 0 0.4rem; }
 .ukm-sheet .ukm-first-step button { width: auto; }
 
-.ukm-sheet .ukm-settlement { margin-bottom: 0.75rem; }
+.ukm-sheet .ukm-settlement { margin-bottom: 1.25rem; padding: 0.5rem 0.6rem 0.6rem; border: 1px solid var(--ukm-divider); border-radius: 5px; background: rgba(255, 255, 255, 0.25); box-shadow: var(--ukm-shadow); }
 .ukm-sheet .ukm-settlement header.ukm-major { display: flex; align-items: baseline; gap: 0.4rem; }
 .ukm-sheet .ukm-settlement header .fa-crown { color: #a98f39; }
 .ukm-sheet .ukm-settlement-type { font: 400 var(--font-size-13, 13px) var(--sans-serif, sans-serif); color: #4a3b2e; font-variant: small-caps; }
@@ -801,3 +801,5 @@
 .ukm-sheet .ukm-track-underway { color: #a98f39; }
 .ukm-sheet .ukm-track-gm { display: inline-flex; gap: 0.15rem; margin-left: 0.3rem; vertical-align: middle; }
 @media (max-width: 700px) { .ukm-sheet .ukm-track { grid-template-columns: 1fr; gap: 0.25rem; } }
+.ukm-sheet .ukm-settlement-fold > summary.ukm-track-summary { font: 600 var(--font-size-14, 14px) var(--serif, serif); color: var(--ukm-head); padding: 0.25rem 0; border-top: 1px solid var(--ukm-divider); }
+.ukm-sheet .ukm-settlement-fold[open] > summary.ukm-track-summary { margin-bottom: 0.35rem; }

@@ -821,7 +821,7 @@
       "MissingNone": "Every need for its size is met.",
       "MissingItem": "{track} {stage}",
       "Size": "{size} · Homes {stage}",
-      "Bonuses": "Skill bonuses here",
+      "Bonuses": "Skill bonuses here (the best one counts)",
       "PinnacleHint": "One per kingdom. Needs a metropolis.",
       "StartTitle": "{track} in {settlement}",
       "StartBody": "Build {stage}: {cost}. The {seat} runs it with {stat} skills.",
@@ -835,7 +835,9 @@
         "NeedsHomes": "Raise Homes first.",
         "CapitalOnly": "Only in the capital.",
         "Unknown": "Unknown track."
-      }
+      },
+      "Heading": "Tracks",
+      "Summary": "{built} of {total} built · {ready} you can build now"
     }
   }
 }

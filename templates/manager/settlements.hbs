@@ -35,6 +35,8 @@
         {{#unless onMap}}<span class="hint">{{localize "UKM.Settlement.NotOnMap"}}</span>{{/unless}}
         {{#if missing}}<span class="ukm-urgent"><i class="fa-solid fa-triangle-exclamation"></i> {{missing}}</span>{{else}}<span class="hint">{{localize "UKM.Track.MissingNone"}}</span>{{/if}}
       </div>
+      <details class="ukm-fold ukm-settlement-fold" data-fold="{{foldKey}}" {{#if foldOpen}}open{{/if}}>
+      <summary class="ukm-track-summary">{{localize "UKM.Track.Heading"}} <span class="hint">{{tracksSummary}}</span></summary>
       {{#if bonuses.length}}<p class="ukm-settlement-bonuses"><span class="ukm-facts-head">{{localize "UKM.Track.Bonuses"}}</span> {{#each bonuses}}<span class="ukm-tag">{{this}}</span> {{/each}}</p>{{/if}}
       <div class="ukm-tracks">
         {{#each tracks}}
@@ -75,6 +77,7 @@
           </div>
         {{/each}}
       </div>
+      </details>
     </article>
   {{else}}
     {{#if hasCapital}}<p class="hint">{{localize "UKM.Settlement.Empty"}}</p>{{/if}}
