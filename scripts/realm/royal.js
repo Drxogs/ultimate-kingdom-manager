@@ -4,6 +4,7 @@ import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } fro
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { setUnrest } from "./standing.js";
 import { monthKey, secondsPerDay } from "./time.js";
+import { kingdomPerks } from "./tracks.js";
 
 /*
  * The ruler is a title, not a seat: the GM names one player character king or queen in Setup.
@@ -40,8 +41,9 @@ export function canUseRoyal(user = game.user, realm = getRealm()) {
 }
 
 /** Uses of each power a month. (A Palace will add one in stage 3.) */
-export function usesPerMonth() {
-  return 1;
+/** Each power once a month; a Palace adds one more. */
+export function usesPerMonth(realm = getRealm()) {
+  return 1 + kingdomPerks(realm.settlements ?? []).royalExtra;
 }
 
 export function usesLeft(power, realm = getRealm()) {

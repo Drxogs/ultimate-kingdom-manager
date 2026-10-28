@@ -16,7 +16,11 @@ function measure(goal, seat, realm) {
     case "rank":
       return { value: realm.stats[goal.stat]?.rank ?? 0, target: goal.n };
     case "structures":
-      return { value: (realm.structures ?? []).length, target: goal.n };
+      // Track stages of +1 and up across the realm's settlements; a pinnacle counts as one more.
+      return {
+        value: (realm.settlements ?? []).reduce((sum, s) => sum + Object.values(s.tracks ?? {}).reduce((n, stage) => n + Math.max(0, stage), 0) + (s.pinnacles?.length ?? 0), 0),
+        target: goal.n
+      };
     case "trade":
       return { value: realm.tradeAgreements.length, target: goal.n };
     case "projects":

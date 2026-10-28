@@ -1,0 +1,685 @@
+{
+  "version": 1,
+  "costs": [
+    {
+      "bp": 2,
+      "days": 3
+    },
+    {
+      "bp": 8,
+      "days": 7
+    },
+    {
+      "bp": 25,
+      "days": 14
+    },
+    {
+      "bp": 60,
+      "days": 21
+    }
+  ],
+  "pinnacleCost": {
+    "bp": 120,
+    "days": 28
+  },
+  "needs": {
+    "village": {
+      "homes": 0,
+      "food": 0,
+      "faith": 0
+    },
+    "town": {
+      "food": 1,
+      "faith": 1,
+      "watch": 0
+    },
+    "city": {
+      "food": 2,
+      "faith": 2,
+      "watch": 1,
+      "walls": 1,
+      "publicworks": 1
+    },
+    "metropolis": {
+      "food": 3,
+      "faith": 2,
+      "watch": 2,
+      "walls": 2,
+      "publicworks": 2,
+      "governance": 1
+    }
+  },
+  "tracks": [
+    {
+      "id": "homes",
+      "name": "Homes",
+      "stat": "community",
+      "seat": "viceroy",
+      "basic": true,
+      "stages": [
+        {
+          "name": "Huts",
+          "description": "A ring of mud-and-wattle huts in a clearing, smoke curling from every roof hole. Everyone knows everyone, and everyone's business.",
+          "gives": "Meets the basic need. The settlement is a village."
+        },
+        {
+          "name": "Tenements",
+          "description": "Crooked timber blocks lean over dirty streets. There's a roof for every newcomer, if not much else.",
+          "gives": "The settlement becomes a town. +1 Community skills here. While it's the top stage, crime cards are more likely here and crime checks here take −1 (dirty streets).",
+          "skills": [
+            "agriculture",
+            "wilderness",
+            "exploration"
+          ]
+        },
+        {
+          "name": "Neighborhoods",
+          "description": "Orderly lanes of whitewashed houses, each with a garden and a neighbour who keeps an eye out.",
+          "gives": "The settlement becomes a city. +2 Community skills here.",
+          "skills": [
+            "agriculture",
+            "wilderness",
+            "exploration"
+          ]
+        },
+        {
+          "name": "Boroughs",
+          "description": "Sprawling districts, each with its own market square, temple bells and fierce local pride.",
+          "gives": "The settlement becomes a metropolis. +3 Community skills here.",
+          "skills": [
+            "agriculture",
+            "wilderness",
+            "exploration"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "food",
+      "name": "Food",
+      "stat": "community",
+      "seat": "viceroy",
+      "basic": true,
+      "stages": [
+        {
+          "name": "Campfire",
+          "description": "A great fire pit where the stew pot never empties and hunters trade the day's catch.",
+          "gives": "Meets the basic need."
+        },
+        {
+          "name": "Public House",
+          "description": "A smoky, sticky-floored room with one cook, one barrel and one opinion: take it or leave it.",
+          "gives": "Food need −1 here. +1 Exploration here (rumours of the wilds).",
+          "food": 1,
+          "skills": [
+            "exploration"
+          ]
+        },
+        {
+          "name": "Tavern",
+          "description": "Warm, loud and honest. A proper kitchen, rooms upstairs, and a board of notices for anyone hiring blades.",
+          "gives": "Food need −2 here. +2 Exploration, Agriculture here.",
+          "food": 2,
+          "skills": [
+            "exploration",
+            "agriculture"
+          ]
+        },
+        {
+          "name": "Inn",
+          "description": "Polished oak, roast pheasant, feather beds. Travellers plan their routes to sleep here, and spend freely.",
+          "gives": "Food need −3 here. +3 Exploration, Agriculture here. +1 BP a week.",
+          "food": 3,
+          "skills": [
+            "exploration",
+            "agriculture"
+          ],
+          "income": 1
+        }
+      ],
+      "pinnacle": {
+        "name": "Granary Hall",
+        "description": "Stone silos and a cooks' guild; no winter will starve this realm.",
+        "gives": "No Food Shortage or Crop Failure can hit the kingdom while it stands. Food need −2 in every settlement.",
+        "foodAll": 2
+      }
+    },
+    {
+      "id": "faith",
+      "name": "Faith",
+      "stat": "culture",
+      "seat": "counselor",
+      "basic": true,
+      "stages": [
+        {
+          "name": "Shrine",
+          "description": "A carved post and a bowl of offerings at the clearing's edge. People touch it for luck on the way past.",
+          "gives": "Meets the basic need."
+        },
+        {
+          "name": "Church",
+          "description": "A small timber church with a bell, a priest who knows every name, and a roof that leaks on holy days.",
+          "gives": "+1 Folklore here. −1 Unrest when built.",
+          "skills": [
+            "folklore"
+          ],
+          "onBuild": {
+            "unrest": -1
+          }
+        },
+        {
+          "name": "Temple",
+          "description": "A stone temple with healers in the side halls and pilgrims at the steps.",
+          "gives": "+2 Folklore, Arts here. +2 vs Plague here.",
+          "skills": [
+            "folklore",
+            "arts"
+          ]
+        },
+        {
+          "name": "Cathedral",
+          "description": "Spires that catch the dawn, windows of coloured glass, choirs heard across the river.",
+          "gives": "+3 Folklore, Arts here. −1 Corruption a month. Fame +1 when built.",
+          "skills": [
+            "folklore",
+            "arts"
+          ],
+          "monthly": {
+            "ruin": {
+              "corruption": -1
+            }
+          },
+          "onBuild": {
+            "fame": 1
+          }
+        }
+      ],
+      "pinnacle": {
+        "name": "Monastery",
+        "description": "Quiet cloisters, terraced fields and monks who brew the best ale in the realm.",
+        "gives": "−1 Unrest each month, kingdom-wide. Pilgrims: Fame +1 each year.",
+        "monthly": {
+          "unrest": -1
+        }
+      }
+    },
+    {
+      "id": "performance",
+      "name": "Performance",
+      "stat": "culture",
+      "seat": "counselor",
+      "basic": false,
+      "stages": [
+        {
+          "name": "Fireside Tales",
+          "description": "When the work's done, someone always has a story, a fiddle, or a song about the old days.",
+          "gives": "No bonus yet; opens the track."
+        },
+        {
+          "name": "Festival Green",
+          "description": "A common with a maypole, a stage of hay bales and a fair every season.",
+          "gives": "+1 Arts here. −1 Unrest when a festival matter succeeds here.",
+          "skills": [
+            "arts"
+          ]
+        },
+        {
+          "name": "Theater",
+          "description": "Painted scenery, a paid company and plays the nobles pretend not to enjoy.",
+          "gives": "+2 Arts, Folklore here.",
+          "skills": [
+            "arts",
+            "folklore"
+          ]
+        },
+        {
+          "name": "Opera House",
+          "description": "Gilded boxes and a stage the size of a field; singers come from Restov to be heard here.",
+          "gives": "+3 Arts, Folklore here. Fame +1 when built.",
+          "skills": [
+            "arts",
+            "folklore"
+          ],
+          "onBuild": {
+            "fame": 1
+          }
+        }
+      ],
+      "pinnacle": {
+        "name": "Arena",
+        "description": "Roaring crowds, sand and steel; champions become heroes overnight.",
+        "gives": "Once a month the ruler can call the Games: −1d4 Unrest. Some Games bring a champion's challenge the party can take on themselves.",
+        "manual": true
+      }
+    },
+    {
+      "id": "commerce",
+      "name": "Commerce",
+      "stat": "economy",
+      "seat": "treasurer",
+      "basic": false,
+      "stages": [
+        {
+          "name": "Trading Post",
+          "description": "A stockade, a counter and a trader who'll swap anything for anything, at a price.",
+          "gives": "No bonus yet; opens the track."
+        },
+        {
+          "name": "Market",
+          "description": "Stalls in the square on market day: cheese, cloth, gossip and the odd stolen goat.",
+          "gives": "+1 Trade here. +0.5 BP a week.",
+          "skills": [
+            "trade"
+          ],
+          "income": 0.5
+        },
+        {
+          "name": "Bazaar",
+          "description": "Covered lanes of shops that never close, spices from distant ports, haggling in five tongues.",
+          "gives": "+2 Trade, Boating here. +1 BP a week.",
+          "skills": [
+            "trade",
+            "boating"
+          ],
+          "income": 1
+        },
+        {
+          "name": "Pavilion",
+          "description": "A grand glass-roofed exchange where fortunes change hands over a glass of wine.",
+          "gives": "+3 Trade, Boating here. +2 BP a week.",
+          "skills": [
+            "trade",
+            "boating"
+          ],
+          "income": 2
+        }
+      ],
+      "pinnacle": {
+        "name": "Counting House",
+        "description": "Ledgers, vaults and bankers who lend to princes.",
+        "gives": "+2 BP a week, and the treasury borrows at half the interest.",
+        "income": 2,
+        "manual": true
+      }
+    },
+    {
+      "id": "industry",
+      "name": "Industry",
+      "stat": "economy",
+      "seat": "treasurer",
+      "basic": false,
+      "stages": [
+        {
+          "name": "Woodpile",
+          "description": "Stacked logs, a charcoal pit and an axe everyone shares.",
+          "gives": "No bonus yet; opens the track."
+        },
+        {
+          "name": "Worksite",
+          "description": "Sawpits, a lime kiln and a crew who'll build you anything if you feed them.",
+          "gives": "+1 Industry here. +0.5 BP a week per work site in its hex area.",
+          "skills": [
+            "industry"
+          ],
+          "income": 0.5
+        },
+        {
+          "name": "Workshops",
+          "description": "A street of craftsmen: cobblers, coopers, weavers, each with an apprentice and a grudge.",
+          "gives": "+2 Industry, Trade here. Cuts project costs here by 10%.",
+          "skills": [
+            "industry",
+            "trade"
+          ],
+          "discount": 10
+        },
+        {
+          "name": "Smithies",
+          "description": "Hammers ring dawn to dusk; the furnaces glow all night.",
+          "gives": "+3 Industry, Trade here. Cuts project costs here by 20%.",
+          "skills": [
+            "industry",
+            "trade"
+          ],
+          "discount": 20
+        }
+      ],
+      "pinnacle": {
+        "name": "Foundry",
+        "description": "Great bellows and molten rivers of iron; the realm's arms and tools come from here.",
+        "gives": "Every project in the kingdom costs 10% less; armies are outfitted for less.",
+        "discountAll": 10
+      }
+    },
+    {
+      "id": "governance",
+      "name": "Governance",
+      "stat": "relations",
+      "seat": "emissary",
+      "basic": false,
+      "stages": [
+        {
+          "name": "Meeting Stump",
+          "description": "An old oak stump where folk stand to speak and the elders listen.",
+          "gives": "No bonus yet; opens the track."
+        },
+        {
+          "name": "Longhouse",
+          "description": "A long timber hall with a fire down the middle, where disputes are settled over mead.",
+          "gives": "+1 Politics, Statecraft here. +1 vs audiences here.",
+          "skills": [
+            "politics",
+            "statecraft"
+          ]
+        },
+        {
+          "name": "Town Hall",
+          "description": "A stone hall with a clock tower, clerks, records and a mayor's chain of office.",
+          "gives": "+2 Politics, Statecraft here. −1 Corruption when built.",
+          "skills": [
+            "politics",
+            "statecraft"
+          ],
+          "onBuild": {
+            "ruin": {
+              "corruption": -1
+            }
+          }
+        },
+        {
+          "name": "Palace",
+          "description": "Marble halls, a throne room and the court of the realm. Envoys wait days to be seen.",
+          "gives": "+3 Politics, Statecraft here. Capital only. Each royal power can be used twice a month.",
+          "skills": [
+            "politics",
+            "statecraft"
+          ],
+          "capitalOnly": true,
+          "royalExtra": 1
+        }
+      ],
+      "pinnacle": {
+        "name": "Embassy Row",
+        "description": "Flags of a dozen nations, guarded gates and dinners where treaties are written on napkins.",
+        "gives": "+2 vs Emissary matters and audiences anywhere in the kingdom, and every audience offers one extra answer.",
+        "manual": true
+      }
+    },
+    {
+      "id": "watch",
+      "name": "Watch",
+      "stat": "relations",
+      "seat": "emissary",
+      "basic": false,
+      "stages": [
+        {
+          "name": "Lantern Post",
+          "description": "A lantern on a pole and a volunteer with a cudgel and a loud voice.",
+          "gives": "No bonus yet; opens the track."
+        },
+        {
+          "name": "Watch House",
+          "description": "A small barracks for the night watch, with a cell that's usually full of drunks.",
+          "gives": "+1 Intrigue here. +1 vs crime events here.",
+          "skills": [
+            "intrigue"
+          ]
+        },
+        {
+          "name": "Constabulary",
+          "description": "Uniformed constables, a jail and a sergeant who knows every fence in town.",
+          "gives": "+2 Intrigue here. +2 vs crime events. Crime −1 when built.",
+          "skills": [
+            "intrigue"
+          ],
+          "onBuild": {
+            "ruin": {
+              "crime": -1
+            }
+          }
+        },
+        {
+          "name": "Magistrate's Court",
+          "description": "Robed judges, a courtroom gallery and justice that is seen to be done.",
+          "gives": "+3 Intrigue, Politics here. −1 Crime a month.",
+          "skills": [
+            "intrigue",
+            "politics"
+          ],
+          "monthly": {
+            "ruin": {
+              "crime": -1
+            }
+          }
+        }
+      ],
+      "pinnacle": {
+        "name": "Shadow Network",
+        "description": "Informants in every tavern; nothing happens here the crown doesn't hear of.",
+        "gives": "You see the next event card before it lands, and can have the Emissary try to head it off.",
+        "manual": true
+      }
+    },
+    {
+      "id": "walls",
+      "name": "Walls",
+      "stat": "military",
+      "seat": "general",
+      "basic": false,
+      "stages": [
+        {
+          "name": "Palisade",
+          "description": "Sharpened logs and a ditch; enough to stop wolves and keep out the curious.",
+          "gives": "+1 vs Bandits and Monsters here."
+        },
+        {
+          "name": "Earthworks",
+          "description": "Banked ramparts with a timber gatehouse and a watchtower over the road.",
+          "gives": "+1 Defense here. +1 vs all dangerous events here.",
+          "skills": [
+            "defense"
+          ],
+          "eventsHere": 1
+        },
+        {
+          "name": "Stone Walls",
+          "description": "Grey walls, towers on every corner and gates that close at sunset.",
+          "gives": "+2 Defense here. +2 vs dangerous events here.",
+          "skills": [
+            "defense"
+          ],
+          "eventsHere": 2
+        },
+        {
+          "name": "Citadel",
+          "description": "Walls within walls, a keep on the hill and granaries for a year-long siege.",
+          "gives": "+3 Defense, Warfare here. +3 vs dangerous events. −1 Strife a month.",
+          "skills": [
+            "defense",
+            "warfare"
+          ],
+          "eventsHere": 3,
+          "monthly": {
+            "ruin": {
+              "strife": -1
+            }
+          }
+        }
+      ],
+      "pinnacle": {
+        "name": "Watchtowers",
+        "description": "A ring of beacons across the hills; no raider arrives unannounced.",
+        "gives": "+1 vs dangerous events in every hex next to any of your settlements.",
+        "manual": true
+      }
+    },
+    {
+      "id": "army",
+      "name": "Army",
+      "stat": "military",
+      "seat": "general",
+      "basic": false,
+      "stages": [
+        {
+          "name": "Muster Field",
+          "description": "A trampled field where farmers drill with spears on feast days.",
+          "gives": "No bonus yet; opens the track."
+        },
+        {
+          "name": "Barracks",
+          "description": "Bunks, a mess hall and a sergeant who wakes everyone before dawn.",
+          "gives": "+1 Warfare here. +1 vs Bandits and Monsters here.",
+          "skills": [
+            "warfare"
+          ]
+        },
+        {
+          "name": "Garrison",
+          "description": "A walled compound of professional soldiers, stables and an armoury.",
+          "gives": "+2 Warfare, Defense here. +2 vs Bandits and Monsters here.",
+          "skills": [
+            "warfare",
+            "defense"
+          ]
+        },
+        {
+          "name": "War College",
+          "description": "Officers study maps of old battles; the realm's generals are made here.",
+          "gives": "+3 Warfare, Defense here. +1 Military realm-stat point a week.",
+          "skills": [
+            "warfare",
+            "defense"
+          ],
+          "points": {
+            "military": 1
+          }
+        }
+      ],
+      "pinnacle": {
+        "name": "Knightly Order",
+        "description": "A chapterhouse of sworn knights who ride out at the first sign of trouble.",
+        "gives": "Fame +1 when built, and one free reroll a month on any Military card.",
+        "onBuild": {
+          "fame": 1
+        },
+        "manual": true
+      }
+    },
+    {
+      "id": "learning",
+      "name": "Learning",
+      "stat": "arcane",
+      "seat": "magister",
+      "basic": false,
+      "stages": [
+        {
+          "name": "Hedge-Witch's Hut",
+          "description": "A crooked hut of herbs and bones where the wise woman reads the signs.",
+          "gives": "No bonus yet; opens the track."
+        },
+        {
+          "name": "Library",
+          "description": "Shelves of salvaged books and a librarian who guards them like a dragon.",
+          "gives": "+1 Scholarship, Magic here.",
+          "skills": [
+            "scholarship",
+            "magic"
+          ]
+        },
+        {
+          "name": "Academy",
+          "description": "Lecture halls, students arguing in the yard, a tower for star-watching.",
+          "gives": "+2 Scholarship, Magic here. +1 Arcane realm-stat point a week.",
+          "skills": [
+            "scholarship",
+            "magic"
+          ],
+          "points": {
+            "arcane": 1
+          }
+        },
+        {
+          "name": "Arcane College",
+          "description": "Wizards' towers around a quad; the air hums and the lamps light themselves.",
+          "gives": "+3 Magic, Scholarship here. +1 Arcane point a week. Fame +1 when built.",
+          "skills": [
+            "magic",
+            "scholarship"
+          ],
+          "points": {
+            "arcane": 1
+          },
+          "onBuild": {
+            "fame": 1
+          }
+        }
+      ],
+      "pinnacle": {
+        "name": "University",
+        "description": "Scholars of every field, from law to medicine; the realm's minds are trained here.",
+        "gives": "+2 Arcane points a week, and one free reroll a month on any Arcane card.",
+        "points": {
+          "arcane": 2
+        },
+        "manual": true
+      }
+    },
+    {
+      "id": "publicworks",
+      "name": "Public Works",
+      "stat": "arcane",
+      "seat": "magister",
+      "basic": false,
+      "stages": [
+        {
+          "name": "Well and Ditches",
+          "description": "A dug well and drainage ditches; the mud is almost manageable.",
+          "gives": "No bonus yet; opens the track."
+        },
+        {
+          "name": "Paved Streets",
+          "description": "Cobbled roads and a bridge over the stream; carts no longer sink to the axle.",
+          "gives": "+1 Engineering here. Decay −1 when built.",
+          "skills": [
+            "engineering"
+          ],
+          "onBuild": {
+            "ruin": {
+              "decay": -1
+            }
+          }
+        },
+        {
+          "name": "Aqueduct",
+          "description": "Arches stride over the fields carrying clean water to every fountain.",
+          "gives": "+2 Engineering here. +2 vs Plague and Local Disaster here.",
+          "skills": [
+            "engineering"
+          ]
+        },
+        {
+          "name": "Sewers and Lamps",
+          "description": "Tunnels beneath, glowing lamps above; the city is clean and bright at night.",
+          "gives": "+3 Engineering, Magic here. −1 Decay a month. Food need −1.",
+          "skills": [
+            "engineering",
+            "magic"
+          ],
+          "monthly": {
+            "ruin": {
+              "decay": -1
+            }
+          },
+          "food": 1
+        }
+      ],
+      "pinnacle": {
+        "name": "Great Bridge",
+        "description": "A span of stone that turns the river from a barrier into a highway.",
+        "gives": "+1 Boating everywhere and +1 BP a week. Needs a waterside metropolis.",
+        "income": 1,
+        "waterside": true
+      }
+    }
+  ]
+}

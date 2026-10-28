@@ -14,55 +14,66 @@
     </div>
   {{/unless}}
   {{#each settlements}}
-    <article class="ukm-settlement {{#if overcrowded}}crowded{{/if}}" data-settlement="{{id}}">
+    <article class="ukm-settlement" data-settlement="{{id}}">
       <header class="ukm-major">
         {{#if capital}}<i class="fa-solid fa-crown" data-tooltip="{{localize "UKM.Settlement.Capital"}}"></i>{{/if}}
         {{name}}
-        <span class="ukm-settlement-type">{{typeLabel}} · {{localize "UKM.Settlement.Level" level=level}}</span>
+        <span class="ukm-settlement-type">{{typeLabel}}</span>
         <span class="controls">
-          {{#if @root.canBuild}}<button type="button" class="ukm-desk-action" data-action="buildHere"><i class="fa-solid fa-trowel-bricks"></i> {{localize "UKM.Settlement.Build"}}</button>{{/if}}
           {{#if hexKey}}<button type="button" class="ukm-icon" data-action="focusHex" data-hex="{{hexKey}}" data-tooltip="{{localize "UKM.Card.Focus"}}"><i class="fa-solid fa-map-location-dot"></i></button>{{/if}}
           {{#if @root.isGM}}
-            <button type="button" class="ukm-icon" data-action="placeBuilding" data-tooltip="{{localize "UKM.Settlement.Place"}}"><i class="fa-solid fa-house-circle-check"></i></button>
             {{#unless capital}}<button type="button" class="ukm-icon" data-action="makeCapital" data-tooltip="{{localize "UKM.Settlement.MakeCapital"}}"><i class="fa-solid fa-crown"></i></button>{{/unless}}
             <button type="button" class="ukm-icon {{#if waterside}}on{{/if}}" data-action="toggleWaterside" data-tooltip="{{localize "UKM.Settlement.ToggleWater"}}"><i class="fa-solid fa-water"></i></button>
             <button type="button" class="ukm-icon" data-action="deleteSettlement" data-tooltip="{{localize "UKM.Settlement.Delete"}}"><i class="fa-solid fa-trash"></i></button>
           {{/if}}
         </span>
       </header>
-      <div class="ukm-settlement-body">
-        <div class="ukm-grid {{#if @root.isGM}}editable{{/if}}">
-          {{#each grid}}
-            <div class="ukm-block {{#unless open}}locked{{/unless}}">
-              {{#each empty}}<div class="ukm-lot empty" style="{{this}}"></div>{{/each}}
-              {{#each items}}
-                <div class="ukm-lot built {{#if residential}}home{{/if}} {{#if img}}art{{/if}}" style="{{style}}{{#if img}} background-image: url('{{img}}');{{/if}}" data-index="{{index}}" data-tooltip="{{name}}">
-                  {{#unless img}}<span>{{name}}</span>{{/unless}}
-                  {{#if @root.isGM}}<a class="ukm-lot-remove" data-action="removeBuilding" data-tooltip="{{localize "UKM.Settlement.Remove"}}"><i class="fa-solid fa-xmark"></i></a>{{/if}}
-                </div>
-              {{/each}}
+      <div class="ukm-panorama">{{{panorama}}}</div>
+      <div class="ukm-settlement-facts row">
+        <span><i class="fa-solid fa-wheat-awn"></i> {{localize "UKM.Track.FoodNeed" n=consumption}}</span>
+        {{#if waterside}}<span><i class="fa-solid fa-water"></i> {{localize "UKM.Settlement.Waterside"}}</span>{{/if}}
+        {{#unless onMap}}<span class="hint">{{localize "UKM.Settlement.NotOnMap"}}</span>{{/unless}}
+        {{#if missing}}<span class="ukm-urgent"><i class="fa-solid fa-triangle-exclamation"></i> {{missing}}</span>{{else}}<span class="hint">{{localize "UKM.Track.MissingNone"}}</span>{{/if}}
+      </div>
+      {{#if bonuses.length}}<p class="ukm-settlement-bonuses"><span class="ukm-facts-head">{{localize "UKM.Track.Bonuses"}}</span> {{#each bonuses}}<span class="ukm-tag">{{this}}</span> {{/each}}</p>{{/if}}
+      <div class="ukm-tracks">
+        {{#each tracks}}
+          <div class="ukm-track {{#if now}}built{{else}}unbuilt{{/if}} {{#if pinnacle}}pinnacle{{/if}}" data-track="{{id}}" data-stage="{{stage}}">
+            <div class="ukm-track-name">
+              <strong>{{name}}</strong>
+              <span class="hint">{{seatLabel}}{{#if basic}} · {{localize "UKM.Track.Basic"}}{{/if}}</span>
             </div>
-          {{/each}}
-        </div>
-        <div class="ukm-settlement-facts">
-          <p>{{localize "UKM.Settlement.Lots" used=used capacity=capacity}}</p>
-          <p class="{{#if overcrowded}}ukm-urgent{{/if}}"><i class="fa-solid fa-house"></i> {{localize "UKM.Settlement.Homes" homes=homes needed=homesNeeded}}</p>
-          {{#if overcrowded}}<p class="ukm-urgent">{{localize "UKM.Settlement.Overcrowded"}}</p>{{/if}}
-          <p><i class="fa-solid fa-wheat-awn"></i> {{localize "UKM.Settlement.Consumption" n=consumption}}</p>
-          {{#if waterside}}<p><i class="fa-solid fa-water"></i> {{localize "UKM.Settlement.Waterside"}}</p>{{/if}}
-          {{#unless onMap}}<p class="hint">{{localize "UKM.Settlement.NotOnMap"}}</p>{{/unless}}
-          <p class="ukm-facts-head">{{localize "UKM.Settlement.Bonuses"}}</p>
-          {{#if bonuses.length}}<p>{{#each bonuses}}<span class="ukm-tag">{{this}}</span> {{/each}}</p>{{else}}<p class="hint">{{localize "UKM.Settlement.NoBonuses"}}</p>{{/if}}
-          {{#if unplaced.length}}
-            <p class="ukm-facts-head">{{localize "UKM.Settlement.Unplaced"}}</p>
-            <p>{{#each unplaced}}<span class="ukm-tag" data-index="{{index}}">{{name}}{{#if @root.isGM}} <a data-action="removeBuilding"><i class="fa-solid fa-xmark"></i></a>{{/if}}</span> {{/each}}</p>
-          {{/if}}
-          {{#if infrastructure.length}}
-            <p class="ukm-facts-head">{{localize "UKM.Settlement.InfrastructureHead"}}</p>
-            <p>{{#each infrastructure}}<span class="ukm-tag" data-index="{{index}}">{{name}}{{#if @root.isGM}} <a data-action="removeBuilding"><i class="fa-solid fa-xmark"></i></a>{{/if}}</span> {{/each}}</p>
-          {{/if}}
-          {{#if growth}}<p class="hint">{{growth}}</p>{{/if}}
-        </div>
+            <div class="ukm-track-now">
+              {{#if now}}
+                <p><span class="ukm-track-stage">{{stageLabel}}</span> <strong>{{now.name}}</strong></p>
+                <p class="ukm-track-desc">{{now.description}}</p>
+                <p class="ukm-track-gives">{{now.gives}}</p>
+              {{else}}
+                <p class="hint">{{localize "UKM.Track.None"}}</p>
+              {{/if}}
+            </div>
+            <div class="ukm-track-next">
+              {{#if next}}
+                <p><span class="ukm-track-stage">{{#if nextIsPinnacle}}{{localize "UKM.Track.Pinnacle"}}{{else}}{{localize "UKM.Track.Next"}}{{/if}}</span> <strong>{{next.name}}</strong></p>
+                <p class="ukm-track-gives">{{next.gives}}</p>
+                {{#if cost}}<p class="hint">{{cost}}</p>{{/if}}
+              {{/if}}
+              {{#if underway}}
+                <p class="ukm-track-underway"><i class="fa-solid fa-hammer"></i> {{localize "UKM.Track.Underway"}}</p>
+              {{else if canBuild}}
+                <button type="button" class="ukm-desk-action" data-action="developTrack"><i class="fa-solid fa-trowel-bricks"></i> {{buildLabel}}</button>
+              {{else if blocked}}
+                <p class="hint">{{blocked}}</p>
+              {{/if}}
+              {{#if @root.isGM}}
+                <span class="ukm-track-gm">
+                  {{#if canDown}}<button type="button" class="ukm-icon" data-action="gmTrackStage" data-step="-1" data-tooltip="{{localize "UKM.Track.GmDown"}}"><i class="fa-solid fa-minus"></i></button>{{/if}}
+                  {{#if canUp}}<button type="button" class="ukm-icon" data-action="gmTrackStage" data-step="1" data-tooltip="{{localize "UKM.Track.GmUp"}}"><i class="fa-solid fa-plus"></i></button>{{/if}}
+                </span>
+              {{/if}}
+            </div>
+          </div>
+        {{/each}}
       </div>
     </article>
   {{else}}

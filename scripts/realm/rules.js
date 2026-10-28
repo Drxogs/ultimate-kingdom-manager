@@ -3,6 +3,7 @@ import { companionForName, getCompanion, getCompanions } from "../content/data.j
 import { getSetting, SETTINGS } from "../settings.js";
 import { getKingdom, getResourceDie } from "../integrations/party.js";
 import { summarizeRealm, isKingmakerActive } from "../integrations/kingmaker.js";
+import { kingdomPerks } from "./tracks.js";
 
 export function rankCap(kingdomLevel) {
   return Math.ceil(Math.clamp(kingdomLevel, 1, 20) / 2);
@@ -64,12 +65,14 @@ export function weeklyIncome(realm) {
   );
 
   const trade = realm.tradeAgreements.reduce((sum, t) => sum + (t.weekly ?? 0), 0);
+  // Markets, inns and the like in the settlements' tracks.
+  const tracks = kingdomPerks(realm.settlements ?? []).income;
   const adjustments = realm.incomeAdjustments.reduce((sum, a) => sum + a.perWeek, 0);
   const debtFactor = realm.debt.amount > 0 ? 0.75 : 1;
 
-  const gross = (base + worksites + ranks + trade) * debtFactor;
+  const gross = (base + worksites + ranks + trade + tracks) * debtFactor;
   const total = Math.max(0, Math.round(gross + adjustments));
-  return { base, worksites, ranks, trade, adjustments, debtFactor, total };
+  return { base, worksites, ranks, trade, tracks, adjustments, debtFactor, total };
 }
 
 /** Food upkeep for one week, in BP owed after farms. */

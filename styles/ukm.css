@@ -88,7 +88,7 @@
 
 .ukm-import .ukm-summary { columns: 2; }
 
-.ukm-chat h3 { margin: 0 0 0.2rem; font-size: 1.5em; } /* a quarter smaller than Foundry's 28px chat heading */
+.ukm-chat h3 { margin: 0 0 0.2rem; font-size: 18px; }
 .ukm-chat ul { margin: 0.3rem 0 0; padding-left: 1.1rem; }
 .ukm-scene .ukm-scene-text { font-style: italic; }
 .ukm-scene .ukm-scene-options { margin: 0.5rem 0; padding-left: 1.1rem; display: grid; gap: 0.4rem; }
@@ -607,59 +607,12 @@
 .ukm-sheet .ukm-icon.on { color: #1f4f80; }
 .ukm-sheet .ukm-icon:hover { color: #2b1d12; background: rgba(255, 255, 255, 0.5); }
 
-.ukm-sheet .ukm-settlement-body { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start; }
-
-.ukm-sheet .ukm-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 6.6rem);
-  gap: 6px;
-  padding: 6px;
-  background: rgba(94, 74, 58, 0.25);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.35);
-}
-
-.ukm-sheet .ukm-block {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 3.1rem);
-  gap: 2px;
-  padding: 2px;
-  background: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 0 0 1px rgba(94, 74, 58, 0.5);
-}
-
-.ukm-sheet .ukm-block.locked { background: rgba(0, 0, 0, 0.12); box-shadow: none; }
-
-.ukm-sheet .ukm-lot {
-  position: relative;
-  overflow: hidden;
-  font-size: 0.62rem;
-  line-height: 1.05;
-  padding: 2px;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ukm-sheet .ukm-lot.empty { background: rgba(255, 255, 255, 0.45); outline: 1px dashed rgba(94, 74, 58, 0.35); outline-offset: -2px; }
-.ukm-sheet .ukm-lot.locked { background: transparent; }
-.ukm-sheet .ukm-lot.built { background: #c9b48a; color: #2b2118; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25); }
-.ukm-sheet .ukm-lot.built.home { background: #b7c99a; }
-.ukm-sheet .ukm-lot.span { background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%); background-size: 8px 8px; }
-.ukm-sheet .ukm-lot-remove { position: absolute; top: 0; right: 2px; font-size: 0.6rem; opacity: 0; color: #8b1e1e; }
-.ukm-sheet .ukm-lot:hover .ukm-lot-remove { opacity: 1; }
-
 .ukm-sheet .ukm-settlement-facts p { margin: 0 0 0.3rem; }
 .ukm-sheet .ukm-settlement-facts .ukm-facts-head { margin-top: 0.5rem; font: 600 var(--font-size-13, 13px) var(--serif, serif); color: var(--ukm-head); }
 .ukm-sheet .ukm-settlement-facts .ukm-tag a { margin-left: 0.2rem; color: #8b1e1e; }
-.ukm-sheet .ukm-settlement.crowded .ukm-grid { box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba(139, 30, 30, 0.5); }
 
 .ukm-radio { display: flex; align-items: center; gap: 0.4rem; margin: 0.15rem 0; }
 .form-group.stacked select { width: 100%; }
-.ukm-sheet .ukm-lot.built.art { background-size: cover; background-position: center; background-color: #8a7a5a; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35); }
-.ukm-sheet .ukm-lot.built.art.home { box-shadow: inset 0 0 0 2px rgba(90, 140, 60, 0.85); }
-.ukm-sheet .ukm-lot.built.art:hover { filter: brightness(1.1); }
 .ukm-build-list { max-height: 22rem; overflow-y: auto; display: grid; gap: 0.3rem; margin: 0.4rem 0; padding-right: 0.25rem; }
 .ukm-build-option { display: grid; grid-template-columns: auto 3rem 1fr; gap: 0.5rem; align-items: center; padding: 0.25rem 0.4rem; border: 1px solid rgba(0, 0, 0, 0.15); border-radius: 3px; cursor: pointer; }
 .ukm-build-option:has(input:checked) { border-color: #a98f39; box-shadow: 0 0 0 1px #a98f39 inset; background: rgba(169, 143, 57, 0.08); }
@@ -826,3 +779,25 @@
 .ukm-sheet .ukm-sheet-header .title .capital .val { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* Realm stats: the seat and skills sit behind an info icon. */
 .ukm-sheet .ukm-stat-head .ukm-stat-info i { cursor: help; color: var(--ukm-muted); }
+
+/* Settlement tracks (stage 3) */
+.ukm-sheet .ukm-panorama { margin: 0.35rem 0 0.5rem; border: 1px solid var(--ukm-divider); border-radius: 4px; overflow: hidden; box-shadow: var(--ukm-shadow); line-height: 0; }
+.ukm-sheet .ukm-panorama svg { width: 100%; height: auto; aspect-ratio: 860 / 180; display: block; }
+.ukm-sheet .ukm-settlement-facts.row { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; align-items: baseline; margin-bottom: 0.4rem; }
+.ukm-sheet .ukm-settlement-bonuses { margin: 0 0 0.5rem; }
+.ukm-sheet .ukm-settlement-bonuses .ukm-facts-head { font: 600 var(--font-size-13, 13px) var(--serif, serif); color: var(--ukm-head); margin-right: 0.3rem; }
+.ukm-sheet .ukm-tracks { display: grid; gap: 0.35rem; }
+.ukm-sheet .ukm-track { display: grid; grid-template-columns: minmax(7rem, 0.6fr) minmax(0, 1.4fr) minmax(0, 1fr); gap: 0.75rem; padding: 0.45rem 0.6rem; background: var(--ukm-paper-bg); border-left: 3px solid var(--ukm-divider); border-radius: 3px; }
+.ukm-sheet .ukm-track.built { border-left-color: #a98f39; }
+.ukm-sheet .ukm-track.pinnacle { border-left-color: #c9a24a; background: rgba(201, 162, 74, 0.15); }
+.ukm-sheet .ukm-track.unbuilt { opacity: 0.85; }
+.ukm-sheet .ukm-track p { margin: 0 0 0.2rem; }
+.ukm-sheet .ukm-track-name { display: flex; flex-direction: column; }
+.ukm-sheet .ukm-track-name .hint { font-size: var(--font-size-11, 11px); }
+.ukm-sheet .ukm-track-stage { display: inline-block; min-width: 1.6rem; padding: 0 0.3rem; border: 1px solid var(--ukm-divider); border-radius: 3px; font-size: var(--font-size-11, 11px); text-align: center; color: #4a3b2e; }
+.ukm-sheet .ukm-track-desc { font-style: italic; color: #4a3b2e; }
+.ukm-sheet .ukm-track-gives { font-size: var(--font-size-12, 12px); }
+.ukm-sheet .ukm-track-next { position: relative; }
+.ukm-sheet .ukm-track-underway { color: #a98f39; }
+.ukm-sheet .ukm-track-gm { display: inline-flex; gap: 0.15rem; margin-left: 0.3rem; vertical-align: middle; }
+@media (max-width: 700px) { .ukm-sheet .ukm-track { grid-template-columns: 1fr; gap: 0.25rem; } }

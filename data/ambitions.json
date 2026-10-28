@@ -320,7 +320,8 @@
             "types": [
               "build-road",
               "establish-farmland",
-              "build-structure"
+              "build-structure",
+              "develop-settlement"
             ],
             "n": 3
           },
@@ -336,7 +337,8 @@
             "types": [
               "build-road",
               "establish-farmland",
-              "build-structure"
+              "build-structure",
+              "develop-settlement"
             ],
             "n": 8
           },

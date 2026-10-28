@@ -379,6 +379,50 @@
           }
         ]
       }
+    },
+    {
+      "id": "develop-settlement",
+      "seat": "viceroy",
+      "skill": [
+        "engineering"
+      ],
+      "target": "settlement",
+      "costWeeks": null,
+      "workDays": 7,
+      "name": "Develop a Settlement",
+      "hook": "Raise a settlement's next stage: better homes, a bigger church, a busier market.",
+      "kind": "project",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "completeProject": true
+          },
+          {
+            "refund": 0.5
+          }
+        ],
+        "success": [
+          {
+            "completeProject": true
+          }
+        ],
+        "failure": [
+          {
+            "refund": 0.5
+          },
+          {
+            "note": "The work didn't come together. Half the cost is recovered; it can be tried again."
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "note": "The work collapsed and the money is gone."
+          }
+        ]
+      }
     }
   ]
 }

@@ -1,7 +1,6 @@
 import { FLAG_SCOPE, MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
 import { describeEffect } from "../realm/effects.js";
-import { structureCatalog } from "../realm/projects.js";
-import { getAmbition, getCompanions, getProjects, getRankUpScene, getSeatAbilities } from "./data.js";
+import { getAmbition, getCompanions, getProjects, getRankUpScene, getSeatAbilities, getTrackData, getTracks } from "./data.js";
 import { isLeader } from "../realm/leader.js";
 import { KINGMAKER_SHEET, kingmakerSheetAvailable } from "./story-import.js";
 
@@ -62,26 +61,36 @@ const WHERE = {
 };
 
 function projectsPage() {
-  const rows = getProjects().map((p) => [
-    `<strong>${esc(p.name)}</strong><br>${esc(p.hook)}`,
-    esc(t(`UKM.Seat.${p.seat}`)),
-    esc(p.skill.map((s) => t(`UKM.Skill.${s}`)).join(", ")),
-    esc(WHERE[p.target] ?? ""),
-    p.costWeeks ? `${p.costWeeks} week${p.costWeeks === 1 ? "" : "s"} of base income` : "The structure's cost",
-    `${p.workDays} days`
-  ]);
-  const parts = [table(["Project", "Desk", "Skill", "Where", "Cost", "Work"], rows)];
-  const catalog = structureCatalog();
-  if (catalog.length) {
-    parts.push("<h2>Structures</h2><p>Only structures at or below the kingdom's level can be built.</p>");
-    parts.push(
-      table(
-        ["Structure", "Level", "Cost", "Skill"],
-        catalog.map((s) => [esc(s.name), s.level ?? "—", s.bp ? `${s.bp} BP` : "—", s.skill ? esc(t(`UKM.Skill.${s.skill}`)) : "—"])
-      )
-    );
+  const rows = getProjects()
+    .filter((p) => p.target !== "settlement")
+    .map((p) => [
+      `<strong>${esc(p.name)}</strong><br>${esc(p.hook)}`,
+      esc(t(`UKM.Seat.${p.seat}`)),
+      esc(p.skill.map((s) => t(`UKM.Skill.${s}`)).join(", ")),
+      esc(WHERE[p.target] ?? ""),
+      p.costWeeks ? `${p.costWeeks} week${p.costWeeks === 1 ? "" : "s"} of base income` : "—",
+      `${p.workDays} days`
+    ]);
+  return { name: "Project Reference", html: table(["Project", "Desk", "Skill", "Where", "Cost", "Work"], rows) };
+}
+
+/** Every settlement track, stage by stage, from data/tracks.json. */
+function tracksPage() {
+  const data = getTrackData();
+  const costs = data.costs ?? [];
+  const label = ["Starter", "+1", "+2", "+3"];
+  const parts = [
+    `<p>Each settlement grows along twelve tracks. A stage is built as a project on the track's desk, rolled with that stat's skills. Costs before discounts: ${costs
+      .map((c, i) => `${label[i]} ${c.bp} BP, ${c.days} days`)
+      .join("; ")}; a pinnacle ${data.pinnacleCost?.bp ?? 120} BP, ${data.pinnacleCost?.days ?? 28} days.</p>`
+  ];
+  for (const track of getTracks()) {
+    const rows = track.stages.map((st, i) => [label[i], `<strong>${esc(st.name)}</strong><br><em>${esc(st.description)}</em>`, esc(st.gives)]);
+    if (track.pinnacle) rows.push(["Pinnacle", `<strong>${esc(track.pinnacle.name)}</strong><br><em>${esc(track.pinnacle.description ?? "")}</em>`, esc(track.pinnacle.gives)]);
+    parts.push(`<h2>${esc(track.name)} <span style="font-weight:400">(${esc(t(`UKM.Seat.${track.seat}`))}${track.basic ? ", basic need" : ""})</span></h2>`);
+    parts.push(table(["Stage", "Name", "Gives"], rows));
   }
-  return { name: "Project Reference", html: parts.join("") };
+  return { name: "Settlement Tracks", html: parts.join("") };
 }
 
 function companionsPage() {
@@ -123,7 +132,7 @@ function ambitionsPage() {
   };
 }
 
-const GENERATED = { rankups: rankUpsPage, projects: projectsPage, companions: companionsPage, ambitions: ambitionsPage };
+const GENERATED = { rankups: rankUpsPage, projects: projectsPage, tracks: tracksPage, companions: companionsPage, ambitions: ambitionsPage };
 
 async function loadIndex() {
   const response = await fetch(`modules/${MODULE_ID}/handbook/index.json`);

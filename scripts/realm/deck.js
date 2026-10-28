@@ -111,8 +111,9 @@ function chooseHex(rule, kind = null) {
 function chooseSettlement(rule) {
   const list = realmSettlements().map((s) => {
     const state = settlementState(s);
-    const cemeteries = (s.buildings ?? []).filter((b) => b.slug === "cemetery" || b.slug === "cemetary").length;
-    return { key: settlementHex(s), name: s.name, capital: !!s.capital, founded: s.founded ?? 0, size: state.lots, consumption: state.consumption, cemeteries };
+    // A temple or better keeps a graveyard.
+    const cemeteries = (s.tracks?.faith ?? -1) >= 2 ? 1 : 0;
+    return { key: settlementHex(s), name: s.name, capital: !!s.capital, founded: s.founded ?? 0, size: state.stages, consumption: state.consumption, cemeteries };
   });
   if (!list.length) return null;
   const largest = () => list.slice().sort((a, b) => b.size - a.size)[0];

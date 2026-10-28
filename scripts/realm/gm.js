@@ -3,8 +3,8 @@ import { createCard, drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
 import { getStoryEvents } from "../content/data.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
-import { buildableStructures, setFortified } from "./projects.js";
-import { addBuilding, fitSize, growIfReady, refreshDerived, removeBuilding, settlements, syncKingdomSettlements } from "./settlements.js";
+import { setFortified } from "./projects.js";
+import { applyTrackStage, refreshDerived, settlements, syncKingdomSettlements } from "./settlements.js";
 import { getKingdom } from "../integrations/party.js";
 import { applyStartingPoint } from "./midcampaign.js";
 import { completeGmTask, dismissCard, recordOutcome, rollCard } from "./resolve.js";
@@ -45,25 +45,12 @@ const OPS = {
     await applyStartingPoint(data ?? {});
     return { notice: game.i18n.format("UKM.Start.Applied", { level: getKingdom()?.level ?? 1 }) };
   },
-  placeBuilding: async ({ settlementId, key }) => {
+  /** The GM sets a track's stage by hand (free, no roll, no "when built" effects): for joining mid-campaign or fixing. */
+  trackStage: async ({ settlementId, trackId, stage }) => {
     const settlement = settlements().find((s) => s.id === settlementId);
-    const structure = settlement ? buildableStructures(settlement).find((s) => s.key === key) : null;
-    if (!structure) return { ok: false, reason: "NoStructure" };
-    await updateRealm((realm) => {
-      addBuilding(realm, settlementId, structure, null);
-      const target = settlements(realm).find((s) => s.id === settlementId);
-      if (target) {
-        fitSize(target);
-        growIfReady(realm, target);
-      }
-      addLog(realm, { type: "placed", text: `${structure.name}, ${settlement.name}` });
-    });
-    await syncKingdomSettlements();
-    return { notice: game.i18n.format("UKM.Settlement.Placed", { name: structure.name, settlement: settlement.name }) };
-  },
-  removeBuilding: async ({ settlementId, index }) => {
-    await updateRealm((realm) => removeBuilding(realm, settlementId, Number(index)));
-    await syncKingdomSettlements();
+    if (!settlement) return { ok: false, reason: "Unknown" };
+    const value = Math.max(-1, Math.min(4, Number(stage)));
+    await updateRealm((realm) => applyTrackStage(realm, settlementId, trackId, value, null, { free: true }));
     return {};
   },
   settlement: async ({ settlementId, waterside, capital, remove }) => {

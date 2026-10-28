@@ -11,7 +11,20 @@ async function load(name) {
 }
 
 export async function preloadData() {
-  await Promise.all(["events", "matters", "rankups", "projects", "audiences", "ambitions", "companions", "quests", "stories"].map(load));
+  await Promise.all(["events", "matters", "rankups", "projects", "audiences", "ambitions", "companions", "quests", "stories", "tracks"].map(load));
+}
+
+/** Settlement tracks (Homes, Faith, Food...): stages, what each gives, costs. */
+export function getTrackData() {
+  return cache.tracks ?? { tracks: [], costs: [], needs: {} };
+}
+
+export function getTracks() {
+  return getTrackData().tracks ?? [];
+}
+
+export function getTrack(id) {
+  return getTracks().find((t) => t.id === id) ?? null;
 }
 
 export function getEvents() {
@@ -126,6 +139,9 @@ const KINGDOM_SKILLS = [
 
 export function getCardEvent(card) {
   const event = getEvent(card.eventId);
+  // A settlement-track project rolls with that track's skills.
+  const trackSkills = card.project?.track?.skills;
+  if (event && trackSkills?.length) return { ...event, skill: trackSkills };
   const structureSkill = card.project?.structure?.skill;
   if (event && KINGDOM_SKILLS.includes(structureSkill)) return { ...event, skill: [structureSkill] };
   if (!event?.tiers) return event;

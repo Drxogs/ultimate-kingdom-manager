@@ -2,12 +2,11 @@ import { canUseRoyal } from "./royal.js";
 import { MODULE_ID, SEATS } from "../constants.js";
 import { getProject } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
-import { isHexProject, projectQuote, projectTargets, signatureForSeat, startProject, buildableStructures } from "./projects.js";
+import { developmentQuote, isHexProject, projectQuote, projectTargets, signatureForSeat, startProject } from "./projects.js";
 import { canActForSeat } from "./resolve.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { isLeader } from "./leader.js";
-import { settlements } from "./settlements.js";
 
 const KEEP_DAYS = 60;
 
@@ -20,6 +19,7 @@ export async function proposeProject(request) {
   const user = game.users.get(request.userId) ?? game.user;
   const def = getProject(request.type);
   if (!def) return { ok: false, reason: "Unknown" };
+  if (def.id === "develop-settlement") return proposeDevelopment(def, request, user);
   const seatDef = def.signature ? signatureForSeat(def.seat) : def;
   if (!seatDef?.seat || !canActForSeat(user, seatDef.seat)) return { ok: false, reason: "NotYourSeat" };
   const targets = projectTargets(seatDef);
@@ -30,18 +30,16 @@ export async function proposeProject(request) {
         ? targets[0]
         : targets.find((t) => t.hexKey === (request.hexKey ?? null));
   if (!target) return { ok: false, reason: "NoTarget" };
-  const settlement = target.settlementId ? settlements().find((s) => s.id === target.settlementId) : null;
-  const structure = request.structure ? buildableStructures(settlement).find((s) => s.key === request.structure) : null;
-  const quote = projectQuote(seatDef, target, structure);
+  const quote = projectQuote(seatDef, target);
   const where = String(request.where ?? "").trim().slice(0, 80);
   const settlementName = String(request.settlementName ?? "").trim().slice(0, 60);
-  const label = structure ? `${structure.name}, ${target.settlement}` : settlementName || where || target.label;
+  const label = settlementName || where || target.label;
 
   await updateRealm((realm) => {
     realm.council ??= { proposals: [] };
     realm.council.proposals.push({
       id: newId(),
-      request: { type: request.type, hexKey: request.hexKey ?? null, structure: request.structure ?? null, camp: request.camp ?? null, where, settlementId: request.settlementId ?? null, settlementName, waterside: !!request.waterside },
+      request: { type: request.type, hexKey: request.hexKey ?? null, camp: request.camp ?? null, where, settlementId: request.settlementId ?? null, settlementName, waterside: !!request.waterside },
       name: label ? `${seatDef.name}: ${label}` : seatDef.name,
       seat: seatDef.seat,
       cost: quote.cost,
@@ -53,6 +51,33 @@ export async function proposeProject(request) {
       status: "open"
     });
     addLog(realm, { type: "proposal", seat: seatDef.seat, text: label ? `${seatDef.name}: ${label}` : seatDef.name });
+  });
+  return { ok: true };
+}
+
+/** A settlement track's next stage, put to the council. */
+async function proposeDevelopment(def, request, user) {
+  const q = developmentQuote(request.settlementId, request.track);
+  if (!q.settlement || !q.track) return { ok: false, reason: "NoTarget" };
+  if (!canActForSeat(user, q.track.seat)) return { ok: false, reason: "NotYourSeat" };
+  if (q.blocked) return { ok: false, reason: `Track${q.blocked}`, data: { level: q.level ?? "" } };
+  const name = game.i18n.format("UKM.Track.CardName", { track: q.track.name, stage: q.def.name, settlement: q.settlement.name });
+  await updateRealm((realm) => {
+    realm.council ??= { proposals: [] };
+    realm.council.proposals.push({
+      id: newId(),
+      request: { type: def.id, settlementId: q.settlement.id, track: q.track.id },
+      name,
+      seat: q.track.seat,
+      cost: q.cost,
+      days: q.days,
+      by: user.id,
+      byName: user.character?.name ?? user.name,
+      votes: { [user.id]: 1 },
+      created: game.time.worldTime,
+      status: "open"
+    });
+    addLog(realm, { type: "proposal", seat: q.track.seat, text: name });
   });
   return { ok: true };
 }

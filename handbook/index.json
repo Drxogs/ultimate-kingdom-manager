@@ -43,8 +43,13 @@
     {
       "book": "player",
       "key": "settlements",
-      "name": "Settlements and Buildings",
+      "name": "Settlements and Tracks",
       "file": "player-settlements.html"
+    },
+    {
+      "book": "player",
+      "key": "trackref",
+      "generated": "tracks"
     },
     {
       "book": "player",

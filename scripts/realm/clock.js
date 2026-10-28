@@ -15,6 +15,8 @@ import { resolveDue } from "./resolve.js";
 import { advanceRankUps } from "./ranks.js";
 import { isLeader } from "./leader.js";
 import { adoptMapSettlements, growSettlements, hasCapital, overcrowdedCount } from "./settlements.js";
+import { kingdomPerks } from "./tracks.js";
+import { applyEffects, EffectContext } from "./effects.js";
 import { monthlyStanding, setUnrest } from "./standing.js";
 
 const MAX_CATCH_UP_WEEKS = 26;
@@ -90,6 +92,7 @@ export async function tick() {
     await setSetting(SETTINGS.clock, { week, month });
     if (unrest) await addUnrest(unrest);
     if (newMonth && hasCapital()) await monthlyStanding();
+    if (newMonth && hasCapital()) await monthlyTrackPerks();
     await resolveDue();
     await advanceRankUps();
     await checkAmbitions();
@@ -146,6 +149,8 @@ function runWeek(realm) {
 
   const level = getKingdom()?.level ?? 1;
   for (const statKey of Object.keys(realm.stats)) addStatPoints(realm, statKey, routinePoints(realm, statKey, level), level);
+  // Academies, war colleges and the like add realm-stat points every week.
+  for (const [statKey, n] of Object.entries(kingdomPerks(realm.settlements ?? []).points)) addStatPoints(realm, statKey, n, level);
 
   realm.incomeAdjustments = realm.incomeAdjustments
     .map((a) => ({ ...a, weeks: a.weeks - 1 }))
@@ -192,4 +197,21 @@ function expireCards(realm) {
     }
     addLog(realm, { type: "card-expired", card: card.id, seat: card.seat, text: card.name, kind: card.kind });
   }
+}
+
+/** Each month: cathedrals, magistrates and the like calm the realm or wear down its Ruin. */
+export async function monthlyTrackPerks() {
+  const perks = kingdomPerks(getRealm().settlements ?? []).monthly;
+  const effects = [];
+  if (perks.unrest) effects.push({ unrest: perks.unrest });
+  const ruin = Object.fromEntries(Object.entries(perks.ruin).filter(([, n]) => n));
+  if (Object.keys(ruin).length) effects.push({ ruin });
+  if (!effects.length) return;
+  let ctx = null;
+  await updateRealm(async (realm) => {
+    ctx = new EffectContext({ realm, card: null, event: null });
+    await applyEffects(ctx, effects);
+    addLog(realm, { type: "track-monthly", text: ctx.lines.join("; ") });
+  });
+  if (ctx) await commitKingdomChanges(ctx);
 }

@@ -4,6 +4,20 @@ import { getSetting, SETTINGS } from "../settings.js";
 import { settlementHexes } from "./deck.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { isLeader } from "./leader.js";
+import {
+  eventsBonus,
+  foodNeed,
+  kingdomPerks,
+  legacySlugs,
+  missingNeeds,
+  NONE,
+  PINNACLE,
+  sizeFor,
+  stageDef,
+  trackBonuses,
+  trackStage,
+  tracksFromBuildings
+} from "./tracks.js";
 
 /** Settlement sizes, from the Kingmaker rules. Lots are what the urban grid can hold. */
 export const SETTLEMENT_INFO = {
@@ -174,79 +188,41 @@ function buildingInfo(building) {
   return { ...building, ...(catalogEntry(building.slug) ?? {}) };
 }
 
-/** Lots used, blocks touched, homes needed, and whether it's overcrowded. */
-export function settlementState(settlement) {
-  const info = SETTLEMENT_INFO[settlement.type] ?? SETTLEMENT_INFO.village;
-  const buildings = (settlement.buildings ?? []).map(buildingInfo);
-  const lots = buildings.reduce((sum, b) => sum + (b.infrastructure ? 0 : b.lots ?? 1), 0);
-  const blocks = lots ? Math.ceil(lots / 4) : 0;
-  const homes = buildings.filter((b) => b.residential).reduce((sum, b) => sum + (b.lots ?? 1), 0);
-  const overcrowded = homes < blocks;
-  const capacity = settlement.type === "metropolis" ? 36 * (settlement.grids ?? 2) : info.lots;
-  let reduction = 0;
-  const seen = new Set();
-  for (const b of buildings) {
-    if (!b.consumption || seen.has(b.slug) || (b.needsWater && !settlement.waterside)) continue;
-    seen.add(b.slug);
-    reduction += b.consumption;
-  }
+/**
+ * A settlement's size, food need and how built-up it is, from its tracks (stage 3 of the redesign).
+ * "stages" counts every stage standing, so a busier settlement counts as bigger for events.
+ */
+export function settlementState(settlement, realm = null) {
+  const type = sizeFor(settlement);
+  const info = SETTLEMENT_INFO[type] ?? SETTLEMENT_INFO.village;
+  const list = realm ? settlements(realm) : settlements();
+  const stages = Object.values(settlement.tracks ?? {}).reduce((sum, n) => sum + (Number.isInteger(n) && n >= 0 ? n + 1 : 0), 0) + (settlement.pinnacles?.length ?? 0) * 5;
   return {
     info,
-    buildings,
-    lots,
-    capacity,
-    blocks,
-    level: Math.max(1, Math.min(20, blocks)),
-    homes,
-    homesNeeded: blocks,
-    overcrowded,
-    consumption: Math.max(0, info.consumption - reduction),
-    reduction
+    type,
+    buildings: [],
+    stages,
+    lots: stages,
+    capacity: Infinity,
+    level: { village: 1, town: 3, city: 9, metropolis: 15 }[type],
+    overcrowded: false,
+    consumption: foodNeed(settlement, kingdomPerks(list).foodAll),
+    missing: missingNeeds(settlement)
   };
 }
 
-/** The next size up, if the kingdom's level and the settlement allow it. */
-export function canGrow(settlement, state = settlementState(settlement), level = getKingdom()?.level ?? 1) {
-  const info = state.info;
-  if (!info.next || state.overcrowded) return null;
-  if (settlement.type === "metropolis") return null;
-  const next = SETTLEMENT_INFO[info.next];
-  if (level < next.minLevel || state.lots < info.growAt) return null;
-  return info.next;
+/** Size comes from Homes now; nothing grows on its own. Kept for older callers. */
+export function canGrow() {
+  return null;
 }
 
-/** How many lots a new building could use, counting a growth step it would trigger. */
-export function roomFor(settlement, state = settlementState(settlement)) {
-  if (settlement.type === "metropolis") {
-    const extra = state.lots >= state.capacity - 18 && !state.overcrowded ? 36 : 0;
-    return state.capacity + extra - state.lots;
-  }
-  const next = canGrow(settlement, state);
-  const capacity = next ? SETTLEMENT_INFO[next].lots : state.capacity;
-  return capacity - state.lots;
+export function roomFor() {
+  return Infinity;
 }
 
-/** Item bonuses a settlement's buildings give each kingdom skill, capped by its size. */
-export function settlementBonuses(settlement, state = settlementState(settlement)) {
-  const bySlug = new Map();
-  for (const b of state.buildings) {
-    const entry = bySlug.get(b.slug) ?? {};
-    for (const bonus of b.bonuses ?? []) {
-      if (bonus.events) continue;
-      for (const skill of bonus.skills) entry[skill] = b.edifice ? Math.max(entry[skill] ?? 0, bonus.value) : (entry[skill] ?? 0) + bonus.value;
-    }
-    bySlug.set(b.slug, entry);
-  }
-  const out = {};
-  for (const entry of bySlug.values()) {
-    for (const [skill, value] of Object.entries(entry)) out[skill] = Math.max(out[skill] ?? 0, Math.min(value, state.info.maxItem));
-  }
-  return out;
-}
-
-function eventBonus(state) {
-  const best = state.buildings.flatMap((b) => (b.bonuses ?? []).filter((x) => x.events).map((x) => x.value));
-  return best.length ? Math.min(Math.max(...best), state.info.maxItem) : 0;
+/** Item bonuses a settlement gives each kingdom skill: each track's top stage, to that stage's skills. */
+export function settlementBonuses(settlement) {
+  return trackBonuses(settlement);
 }
 
 /** The settlement a card is about, if any. */
@@ -264,9 +240,8 @@ export function structureModifiers(realm, card, skill) {
   let best = 0;
   let from = null;
   for (const s of pool) {
-    const state = settlementState(s);
-    let value = settlementBonuses(s, state)[skill] ?? 0;
-    if (here && s === here) value = Math.max(value, eventBonus(state));
+    let value = settlementBonuses(s)[skill] ?? 0;
+    if (here && s === here) value = Math.max(value, eventsBonus(s));
     if (value > best) {
       best = value;
       from = s;
@@ -276,83 +251,51 @@ export function structureModifiers(realm, card, skill) {
   return [{ slug: `ukm-structures-${skill}`, label: game.i18n.format("UKM.Settlement.BonusLabel", { name: from.name }), modifier: best, type: "item" }];
 }
 
-/** Every building slug in the realm, for events that ask "does the kingdom have a ...". */
+/** Old building names the realm's tracks stand for, for events that ask "does the kingdom have a ...". */
 export function builtSlugs(realm) {
-  return settlements(realm).flatMap((s) => (s.buildings ?? []).map((b) => b.slug));
+  return legacySlugs(settlements(realm));
 }
 
 export function refreshDerived(realm) {
   if (settlements(realm).length || realm.settlementsStarted) realm.structures = builtSlugs(realm);
 }
 
-/** A settlement holding more than its size allows (placed by hand, or from before) grows to fit. */
+/** Keep a settlement's size in step with its Homes. */
 export function fitSize(settlement) {
-  let state = settlementState(settlement);
-  while (state.lots > state.capacity && SETTLEMENT_INFO[settlement.type]?.next) {
-    settlement.type = SETTLEMENT_INFO[settlement.type].next;
-    state = settlementState(settlement);
-  }
-  if (settlement.type === "metropolis") {
-    while (state.lots > state.capacity) {
-      settlement.grids = (settlement.grids ?? 2) + 1;
-      state = settlementState(settlement);
-    }
-  }
+  settlement.type = sizeFor(settlement);
   return settlement;
 }
 
+export function growIfReady() {
+  return [];
+}
+
+export async function growSettlements() {}
+
 /**
- * A settlement that meets the next size's requirements (kingdom level, lots built, enough homes)
- * becomes that size straight away. Returns the sizes it passed through.
+ * Run once when the GM's window starts. Settlements from before tracks (with buildings) get tracks
+ * that match their buildings and size; the buildings are kept aside, unused, as "legacyBuildings".
  */
-export function growIfReady(realm, settlement) {
-  const grown = [];
-  let next = canGrow(settlement);
-  while (next && next !== settlement.type) {
-    settlement.type = next;
-    grown.push(next);
-    addLog(realm, { type: "settlement-grew", text: `${settlement.name} (${game.i18n.localize(`UKM.Settlement.Type.${next}`)})` });
-    next = canGrow(settlement);
-  }
-  return grown;
-}
-
-/** Grow every settlement that's ready, and say so in chat. */
-export async function growSettlements() {
-  if (!isLeader()) return;
-  if (!settlements().some((s) => canGrow(s))) return;
-  const news = [];
-  await updateRealm((realm) => {
-    for (const s of settlements(realm)) {
-      for (const type of growIfReady(realm, s)) news.push(game.i18n.format("UKM.Settlement.Grew", { name: s.name, type: game.i18n.localize(`UKM.Settlement.Type.${type}`) }));
-    }
-  });
-  if (!news.length) return;
-  await syncKingdomSettlements();
-  await ChatMessage.create({
-    speaker: { alias: getKingdom()?.name || game.i18n.localize("UKM.Manager.Unnamed") },
-    content: `<div class="ukm-chat">${news.map((n) => `<p>${Handlebars.escapeExpression(n)}</p>`).join("")}</div>`
-  });
-}
-
-/** Run once when the GM's window starts: fix any settlement that's too small for what's in it. */
 export async function repairSettlements() {
   if (!isLeader()) return;
   const realm = getRealm();
-  const hallMissing = (s) => s.capital && !(s.buildings ?? []).some((b) => b.slug === FOUNDERS_HALL);
-  const needs = settlements(realm).some((s) => settlementState(s).lots > settlementState(s).capacity || canGrow(s) || hallMissing(s));
-  if (!needs && (realm.settlementsStarted || !settlements(realm).length)) return;
+  const stale = settlements(realm).some((s) => !s.tracks || s.type !== sizeFor(s));
+  if (!stale) return;
+  const level = getKingdom()?.level ?? 1;
   await updateRealm((r) => {
     for (const s of settlements(r)) {
-      // Capitals founded before v0.22 get their Founders' Hall too.
-      if (hallMissing(s)) s.buildings.push({ slug: FOUNDERS_HALL, name: catalogEntry(FOUNDERS_HALL).name, lots: 1, built: game.time.worldTime });
-      fitSize(s);
-      growIfReady(r, s);
+      if (!s.tracks) {
+        s.tracks = tracksFromBuildings(s, level);
+        if (s.buildings?.length) s.legacyBuildings = s.buildings;
+        s.buildings = [];
+        s.pinnacles ??= [];
+        addLog(r, { type: "settlement-tracks", text: s.name });
+      }
+      s.type = sizeFor(s);
     }
     if (settlements(r).length) r.settlementsStarted = true;
     refreshDerived(r);
   });
-  await syncKingdomSettlements();
 }
 
 /** Map hex of a settlement, matched by the name the GM gave it on the Kingmaker map. */
@@ -369,49 +312,75 @@ export function unknownMapSettlements(realm = getRealm()) {
 }
 
 export function newSettlement({ name, type = "village", capital = false, waterside = false, hexKey = null }) {
+  // A settlement drawn on the map as a town or city starts with Homes to match.
+  const homes = Math.max(0, SETTLEMENT_ORDER.indexOf(type));
   return {
     id: newId(),
     name: name.trim().slice(0, 60),
-    type: SETTLEMENT_ORDER.includes(type) ? type : "village",
+    type: SETTLEMENT_ORDER[homes] ?? "village",
     capital,
     waterside: !!waterside,
     hexKey,
     buildings: [],
+    tracks: homes ? { homes } : {},
+    pinnacles: [],
     founded: game.time.worldTime
   };
 }
 
-/** Put a finished building in a settlement, replacing what it upgrades, and grow the settlement if it needs to. */
+/**
+ * A building project started before tracks finished: count it as the track stage it matches.
+ * (New work is done with "Develop a settlement".)
+ */
 export function addBuilding(realm, settlementId, structure, ctx = null) {
   const settlement = settlements(realm).find((s) => s.id === settlementId);
   if (!settlement) return null;
-  const before = settlementState(settlement);
-  const grow = canGrow(settlement, before);
-  settlement.buildings ??= [];
-  if (structure.replaces) {
-    const index = settlement.buildings.findIndex((b) => b.slug === structure.replaces);
-    if (index >= 0) settlement.buildings.splice(index, 1);
+  const raised = tracksFromBuildings({ type: "village", buildings: [{ slug: structure.slug }] });
+  settlement.tracks ??= {};
+  for (const [trackId, stage] of Object.entries(raised)) {
+    if (trackId === "homes" && stage === 0 && trackStage(settlement, "homes") >= 0) continue;
+    if (stage > trackStage(settlement, trackId)) settlement.tracks[trackId] = stage;
   }
-  settlement.buildings.push({ slug: structure.slug, name: structure.name, lots: structure.lots ?? 1, built: game.time.worldTime });
-  let after = settlementState(settlement);
-  if (settlement.type === "metropolis" && after.lots > after.capacity) settlement.grids = (settlement.grids ?? 2) + 1;
-  if (grow && after.lots > before.capacity) settlement.type = grow;
-  for (const type of growIfReady(realm, settlement)) {
-    ctx?.note(game.i18n.format("UKM.Settlement.Grew", { name: settlement.name, type: game.i18n.localize(`UKM.Settlement.Type.${type}`) }));
+  fitSize(settlement);
+  ctx?.note(game.i18n.format("UKM.Track.FromBuilding", { name: structure.name, settlement: settlement.name }));
+  refreshDerived(realm);
+  return settlement;
+}
+
+/**
+ * A track reaches a new stage (or its pinnacle): the settlement grows, Homes may change its size,
+ * and the stage's "when built" effects go into the outcome. ctx is the effects context, if any.
+ */
+export function applyTrackStage(realm, settlementId, trackId, stage, ctx = null, { free = false } = {}) {
+  const settlement = settlements(realm).find((s) => s.id === settlementId);
+  if (!settlement) return null;
+  const before = sizeFor(settlement);
+  settlement.tracks ??= {};
+  settlement.pinnacles ??= [];
+  if (stage === PINNACLE) {
+    if (!settlement.pinnacles.includes(trackId)) settlement.pinnacles.push(trackId);
+  } else if (stage <= NONE) {
+    delete settlement.tracks[trackId];
+  } else {
+    settlement.tracks[trackId] = stage;
+    settlement.pinnacles = settlement.pinnacles.filter((p) => p !== trackId);
   }
-  after = settlementState(settlement);
-  const info = catalogEntry(structure.slug) ?? structure;
-  if (ctx) {
-    if (info.unrest) ctx.unrest -= info.unrest;
-    if (info.famous) ctx.fame += 1;
-    if (info.ruin?.choice) {
-      const lowest = RUINS.slice().sort((a, b) => (getKingdom()?.ruin?.[a]?.value ?? 0) - (getKingdom()?.ruin?.[b]?.value ?? 0))[0];
-      ctx.ruin[lowest] += info.ruin.choice;
-    } else if (info.ruin) {
-      for (const [ruin, amount] of Object.entries(info.ruin)) if (RUINS.includes(ruin)) ctx.ruin[ruin] += amount;
-    }
-    if (after.overcrowded && !before.overcrowded) ctx.note(game.i18n.format("UKM.Settlement.NowOvercrowded", { name: settlement.name }));
+  fitSize(settlement);
+  const def = stage === PINNACLE || stage >= 0 ? stageDef(trackId, stage) : null;
+  if (ctx && def && !free) {
+    if (def.onBuild?.unrest) ctx.unrest += def.onBuild.unrest;
+    if (def.onBuild?.fame) ctx.fame += def.onBuild.fame;
+    for (const [ruin, amount] of Object.entries(def.onBuild?.ruin ?? {})) if (RUINS.includes(ruin)) ctx.ruin[ruin] += amount;
+    ctx.note(game.i18n.format("UKM.Track.Built", { stage: def.name, settlement: settlement.name }));
+    if (def.description) ctx.note(`<em>${Handlebars.escapeExpression(def.description)}</em>`);
   }
+  const after = sizeFor(settlement);
+  if (after !== before) {
+    const text = game.i18n.format("UKM.Settlement.Grew", { name: settlement.name, type: game.i18n.localize(`UKM.Settlement.Type.${after}`) });
+    ctx?.note(text);
+    addLog(realm, { type: "settlement-grew", text: `${settlement.name} (${game.i18n.localize(`UKM.Settlement.Type.${after}`)})` });
+  }
+  addLog(realm, { type: "track-stage", text: `${settlement.name}: ${def?.name ?? trackId}` });
   refreshDerived(realm);
   return settlement;
 }
@@ -449,16 +418,10 @@ export async function foundCapital(request) {
     }
     record.capital = true;
     if (request.waterside !== undefined && !fromMap) record.waterside = !!request.waterside;
-    if (!record.buildings.some((b) => b.slug === FOUNDERS_HALL)) {
-      record.buildings.push({ slug: FOUNDERS_HALL, name: catalogEntry(FOUNDERS_HALL).name, lots: 1, built: game.time.worldTime });
-    }
-    if (!r.settlementsStarted) {
-      for (const slug of r.structures ?? []) {
-        if (record.buildings.some((b) => b.slug === slug)) continue;
-        const entry = catalogEntry(slug);
-        if (entry) record.buildings.push({ slug, name: entry.name, lots: entry.lots ?? 1, built: game.time.worldTime });
-      }
-    }
+    // The first village comes with its basic starters: huts, a campfire and a shrine (Realm Redesign).
+    record.tracks ??= {};
+    for (const trackId of ["homes", "food", "faith"]) if (trackStage(record, trackId) < 0) record.tracks[trackId] = 0;
+    record.pinnacles ??= [];
     r.settlementsStarted = true;
     fitSize(record);
     if (!fromMap) {

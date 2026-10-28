@@ -1,5 +1,5 @@
-import { COMMODITY_BP, FLAG_SCOPE, MODULE_ID, SEATS } from "../constants.js";
-import { getCompanion, getProject, getProjects, getSeatAbility } from "../content/data.js";
+import { COMMODITY_BP, FLAG_SCOPE, MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
+import { getCompanion, getProject, getProjects, getSeatAbility, getTrack } from "../content/data.js";
 import {
   getAllHexStates,
   getClaimedHexes,
@@ -17,7 +17,8 @@ import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { syncPins } from "./pins.js";
 import { secondsPerDay } from "./time.js";
 import { isLeader } from "./leader.js";
-import { addBuilding, hasCapital, newSettlement, parseStructureHtml, roomFor, settlementHex, settlements, settlementState, syncKingdomSettlements } from "./settlements.js";
+import { addBuilding, applyTrackStage, hasCapital, newSettlement, parseStructureHtml, roomFor, settlementHex, settlements, settlementState, syncKingdomSettlements } from "./settlements.js";
+import { discountHere, kingdomPerks, nextStep } from "./tracks.js";
 
 const NEVER = 3650;
 const CAMPS = ["quarry", "mine", "lumber"];
@@ -169,7 +170,8 @@ function onCooldown(def, realm) {
 }
 
 export function projectsForSeat(seat, realm = getRealm()) {
-  const list = getProjects().filter((p) => p.seat === seat && !onCooldown(p, realm));
+  // Settlements are developed from the Settlements tab, not from a desk's project list.
+  const list = getProjects().filter((p) => p.seat === seat && p.target !== "settlement" && !onCooldown(p, realm));
   const signature = signatureForSeat(seat);
   if (signature?.available) list.push(signature);
   return list;
@@ -277,6 +279,7 @@ export async function startProject(request, { canActForSeat }) {
     def = usable;
   }
   if (!def) return { ok: false, reason: "Unknown" };
+  if (def.id === "develop-settlement") return startDevelopment(def, request, user, { canActForSeat });
   if (!canActForSeat(user, def.seat)) return { ok: false, reason: "NotYourSeat" };
 
   const realm = getRealm();
@@ -308,6 +311,8 @@ export async function startProject(request, { canActForSeat }) {
   }
   const where = isHexProject(def) ? String(request.where ?? "").trim().slice(0, 80) : "";
   const quote = projectQuote(def, target, structure);
+  const off = projectDiscount(null, realm);
+  if (off && quote.cost) quote.cost = Math.max(1, Math.round(quote.cost * (1 - off / 100)));
   if (realm.treasury < quote.cost) return { ok: false, reason: "TooPoor", data: { cost: quote.cost } };
 
   const now = game.time.worldTime;
@@ -382,6 +387,71 @@ function mapTask(card) {
   }
 }
 
+/** Percent off projects: a settlement's workshops, and a Foundry anywhere in the kingdom. */
+export function projectDiscount(settlement = null, realm = getRealm()) {
+  const all = kingdomPerks(settlements(realm)).discountAll;
+  return Math.min(50, (settlement ? discountHere(settlement) : 0) + all);
+}
+
+/** Is a track already being worked on in this settlement? */
+export function trackUnderway(settlementId, trackId, realm = getRealm()) {
+  return realm.cards.some((c) => c.project?.track?.id === trackId && c.project.track.settlementId === settlementId && ["open", "assigned", "rolled", "escalated"].includes(c.status));
+}
+
+/** What building a track's next stage would cost here, or why it can't be built. */
+export function developmentQuote(settlementId, trackId, realm = getRealm()) {
+  const settlement = settlements(realm).find((s) => s.id === settlementId);
+  const track = getTrack(trackId);
+  if (!settlement || !track) return { blocked: "Unknown" };
+  const step = nextStep(settlement, track.id, { kingdomLevel: getKingdom()?.level ?? 1, others: settlements(realm), working: trackUnderway(settlement.id, track.id, realm) });
+  if (step.blocked) return { ...step, settlement, track };
+  const cost = Math.max(1, Math.round(step.bp * (1 - projectDiscount(settlement, realm) / 100)));
+  return { ...step, cost, settlement, track };
+}
+
+/**
+ * Develop a settlement: build a track's next stage. The track's seat runs it, with that stat's skills.
+ * request: { settlementId, track, userId }
+ */
+async function startDevelopment(def, request, user, { canActForSeat }) {
+  const realm = getRealm();
+  if (!hasCapital(realm)) return { ok: false, reason: "NoCapital" };
+  const step = developmentQuote(request.settlementId, request.track, realm);
+  const { settlement, track } = step;
+  if (!settlement || !track) return { ok: false, reason: "NoTarget" };
+  if (!canActForSeat(user, track.seat)) return { ok: false, reason: "NotYourSeat" };
+  if (step.blocked) return { ok: false, reason: `Track${step.blocked}`, data: { level: step.level ?? "" } };
+  const cost = step.cost;
+  if (realm.treasury < cost) return { ok: false, reason: "TooPoor", data: { cost } };
+  const now = game.time.worldTime;
+  const skills = REALM_STATS[track.stat]?.skills ?? def.skill;
+  await updateRealm((r) => {
+    r.treasury -= cost;
+    r.cards.push({
+      id: newId(),
+      eventId: `project:${def.id}`,
+      tier: null,
+      matter: false,
+      name: game.i18n.format("UKM.Track.CardName", { track: track.name, stage: step.def.name, settlement: settlement.name }),
+      kind: "project",
+      seat: track.seat,
+      stage: 0,
+      status: "open",
+      drawnAt: now,
+      deadline: now + NEVER * secondsPerDay(),
+      target: { hexKey: settlementHex(settlement), settlement: settlement.name, settlementId: settlement.id, hidden: false },
+      revealed: true,
+      assignee: null,
+      workUntil: null,
+      months: 1,
+      noteId: null,
+      project: { type: def.id, cost, days: step.days, track: { id: track.id, stage: step.stage, name: step.def.name, settlementId: settlement.id, skills }, by: user.id }
+    });
+    addLog(r, { type: "project-started", seat: track.seat, text: `${track.name}: ${step.def.name} (${settlement.name})` });
+  });
+  return { ok: true, cost, days: step.days };
+}
+
 /** Called from the effects engine when a project's check succeeds. */
 export function completeProject(ctx) {
   const card = ctx.card;
@@ -391,6 +461,10 @@ export function completeProject(ctx) {
   if (card.project.type === "fortify-hex" && card.target?.hexKey) {
     ctx.realm.fortified ??= [];
     ctx.realm.fortified.push(card.target.hexKey);
+  }
+  if (card.project.track) {
+    const t = card.project.track;
+    if (applyTrackStage(ctx.realm, t.settlementId, t.id, t.stage, ctx)) ctx.syncSettlements = true;
   }
   if (card.project.structure?.slug) {
     const settlementId = card.target?.settlementId;

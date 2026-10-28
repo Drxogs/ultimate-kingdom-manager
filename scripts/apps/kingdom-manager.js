@@ -1,12 +1,15 @@
 import { DEGREES, MODULE_ID, PERSONAL_SKILLS, REALM_STATS, SEATS } from "../constants.js";
 import { getCardEvent, getCompanion } from "../content/data.js";
 import { getImportedPage } from "../content/story-import.js";
-import { focusHex, getHexDefinitions, getZone, structureArt } from "../integrations/kingmaker.js";
+import { focusHex, getHexDefinitions, getZone } from "../integrations/kingmaker.js";
 import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnrest } from "../integrations/party.js";
 import { canRankUp, companionAttitude, isHired, rankBonus, rankCap, rawSeatCompanionId, routinePoints, seatCompanionId, statProgress, weeklyIncome } from "../realm/rules.js";
 import { getRealm, updateRealm } from "../realm/state.js";
 import { rankUpChoices, rankUpCost, rankUpProject } from "../realm/ranks.js";
-import { buildableStructures, isHexProject, projectQuote, projectsForSeat, projectTargets, structureCatalog } from "../realm/projects.js";
+import { isHexProject, projectDiscount, projectQuote, projectsForSeat, projectTargets, trackUnderway } from "../realm/projects.js";
+import { hasPinnacle, missingNeeds, nextStep, PINNACLE, sizeFor, stageDef, trackBonuses, trackStage } from "../realm/tracks.js";
+import { getTracks } from "../content/data.js";
+import { renderPanorama } from "./panorama.js";
 import { tapCostBP, tapLimit, tapMode } from "../realm/treasury.js";
 import { audienceResponses } from "../realm/audiences.js";
 import { proposals } from "../realm/council.js";
@@ -14,14 +17,10 @@ import { ambitionsView } from "../realm/ambitions.js";
 import { openHandbook } from "../content/handbook.js";
 import {
   canFoundCapital,
-  canGrow,
   hasCapital,
-  roomFor,
-  settlementBonuses,
   settlementHex,
   settlements,
   settlementState,
-  SETTLEMENT_INFO,
   unknownMapSettlements
 } from "../realm/settlements.js";
 import { getProject, getStoryEvents } from "../content/data.js";
@@ -133,78 +132,6 @@ function writeFold(name, open) {
   }
 }
 
-/**
- * Lay buildings out on the 3x3 urban grid: four-lot buildings take a whole block,
- * two-lot buildings a row of one, single lots fill the gaps. Art comes from the Kingmaker module.
- */
-function layoutGrid(buildings, openBlocks) {
-  const blocks = Array.from({ length: 9 }, (_, i) => ({ open: i < openBlocks, cells: [null, null, null, null], items: [] }));
-  const order = buildings
-    .map((b, index) => ({ ...b, index }))
-    .filter((b) => !b.infrastructure)
-    .sort((a, b) => (b.lots ?? 1) - (a.lots ?? 1) || a.index - b.index);
-  const seen = new Map();
-  const placed = new Set();
-  const place = (block, cells, b) => {
-    placed.add(b.index);
-    for (const c of cells) block.cells[c] = b.index;
-    const art = b.art?.length ? b.art : structureArtFor(b);
-    const n = seen.get(b.slug) ?? 0;
-    seen.set(b.slug, n + 1);
-    const col = (cells[0] % 2) + 1;
-    const row = Math.floor(cells[0] / 2) + 1;
-    const wide = cells.length >= 2;
-    const tall = cells.length === 4;
-    block.items.push({
-      name: b.name,
-      index: b.index,
-      residential: !!b.residential,
-      img: art.length ? art[n % art.length] : null,
-      style: `grid-column: ${col} / span ${wide ? 2 : 1}; grid-row: ${row} / span ${tall ? 2 : 1};`
-    });
-  };
-  for (const b of order) {
-    const lots = Math.max(1, b.lots ?? 1);
-    const open = blocks.filter((k) => k.open);
-    if (lots >= 3) {
-      const block = open.find((k) => k.cells.every((c) => c === null));
-      if (block) place(block, [0, 1, 2, 3], b);
-      continue;
-    }
-    if (lots === 2) {
-      let done = false;
-      for (const block of open) {
-        for (const pair of [[0, 1], [2, 3]]) {
-          if (!done && pair.every((c) => block.cells[c] === null)) {
-            place(block, pair, b);
-            done = true;
-          }
-        }
-        if (done) break;
-      }
-      continue;
-    }
-    for (const block of open) {
-      const free = block.cells.indexOf(null);
-      if (free >= 0) {
-        place(block, [free], b);
-        break;
-      }
-    }
-  }
-  blocks.unplaced = order.filter((b) => !placed.has(b.index)).map((b) => ({ name: b.name, index: b.index }));
-  for (const block of blocks) {
-    block.empty = block.open
-      ? block.cells.map((c, i) => (c === null ? `grid-column: ${(i % 2) + 1}; grid-row: ${Math.floor(i / 2) + 1};` : null)).filter(Boolean)
-      : [];
-  }
-  return blocks;
-}
-
-function structureArtFor(building) {
-  return structureArt(building.source, building.name);
-}
-
 export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   static #instance = null;
 
@@ -249,10 +176,9 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       startProject: KingdomManager.#startProject,
       openHandbook: () => openHandbook(),
       foundCapital: () => KingdomManager.foundCapitalDialog(),
-      buildHere: KingdomManager.#buildHere,
-      placeBuilding: KingdomManager.#placeBuilding,
+      developTrack: KingdomManager.#developTrack,
+      gmTrackStage: KingdomManager.#gmTrackStage,
       openMidCampaign: () => new MidCampaignApp().render(true),
-      removeBuilding: KingdomManager.#removeBuilding,
       makeCapital: KingdomManager.#makeCapital,
       toggleWaterside: KingdomManager.#toggleWaterside,
       deleteSettlement: KingdomManager.#deleteSettlement,
@@ -514,39 +440,59 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   #prepareSettlements(realm, level) {
     const label = (type) => game.i18n.localize(`UKM.Settlement.Type.${type}`);
     const skill = (s) => game.i18n.localize(`UKM.Skill.${s}`);
-    return settlements(realm)
+    const all = settlements(realm);
+    const hexes = new Map(getHexDefinitions().map((h) => [h.key, h]));
+    return all
       .slice()
       .sort((a, b) => Number(b.capital) - Number(a.capital) || a.name.localeCompare(b.name))
       .map((s) => {
-        const state = settlementState(s);
-        const grid = layoutGrid(state.buildings, { village: 1, town: 4, city: 9, metropolis: 9 }[s.type] ?? 1);
-        const next = canGrow(s, state, level);
-        const info = SETTLEMENT_INFO[s.type];
-        const nextInfo = info.next ? SETTLEMENT_INFO[info.next] : null;
+        const state = settlementState(s, realm);
+        const discount = projectDiscount(s, realm);
+        const hexKey = settlementHex(s);
+        const tracks = getTracks().map((track) => {
+          const current = hasPinnacle(s, track.id) ? PINNACLE : trackStage(s, track.id);
+          const now = current >= 0 ? stageDef(track.id, current) : null;
+          const underway = trackUnderway(s.id, track.id, realm);
+          const step = nextStep(s, track.id, { kingdomLevel: level, others: all, working: underway });
+          const bp = step.bp ? Math.max(1, Math.round(step.bp * (1 - discount / 100))) : null;
+          const blocked = step.blocked && step.blocked !== "Working" ? game.i18n.format(`UKM.Track.Block.${step.blocked}`, { level: step.level ?? "" }) : null;
+          return {
+            id: track.id,
+            name: track.name,
+            basic: !!track.basic,
+            seatLabel: game.i18n.localize(`UKM.Seat.${track.seat}`),
+            stageLabel: current === PINNACLE ? game.i18n.localize("UKM.Track.Pinnacle") : current === 0 ? game.i18n.localize("UKM.Track.Starter") : current > 0 ? `+${current}` : "",
+            pinnacle: current === PINNACLE,
+            now,
+            next: step.def && step.blocked !== "Done" ? step.def : null,
+            nextIsPinnacle: step.stage === PINNACLE,
+            cost: bp ? game.i18n.format(discount ? "UKM.Track.CostDiscount" : "UKM.Track.Cost", { bp, days: step.days, pct: discount }) : null,
+            canBuild: !step.blocked && hasCapital(realm) && canActForSeat(game.user, track.seat),
+            buildLabel: game.i18n.localize(current < 0 || step.stage === PINNACLE ? "UKM.Track.Build" : "UKM.Track.Upgrade"),
+            underway,
+            blocked,
+            canUp: current < (track.pinnacle ? PINNACLE : 3),
+            canDown: current > -1,
+            stage: current
+          };
+        });
+        const missing = missingNeeds(s).map(({ trackId, min }) => {
+          const def = stageDef(trackId, min);
+          return game.i18n.format("UKM.Track.MissingItem", { track: getTracks().find((t) => t.id === trackId)?.name ?? trackId, stage: def?.name ?? "" });
+        });
         return {
           id: s.id,
           name: s.name,
           capital: s.capital,
           waterside: s.waterside,
-          typeLabel: label(s.type),
-          level: state.level,
-          used: state.lots,
-          capacity: state.capacity,
-          homes: state.homes,
-          homesNeeded: state.homesNeeded,
-          overcrowded: state.overcrowded,
+          typeLabel: label(sizeFor(s)),
           consumption: state.consumption,
-          onMap: !!settlementHex(s),
-          hexKey: settlementHex(s),
-          bonuses: Object.entries(settlementBonuses(s, state)).map(([k, v]) => `${skill(k)} +${v}`),
-          infrastructure: state.buildings.filter((b) => b.infrastructure).map((b) => ({ name: b.name, index: state.buildings.indexOf(b) })),
-          grid,
-          unplaced: grid.unplaced,
-          growth: next
-            ? game.i18n.format("UKM.Settlement.GrowsNext", { type: label(next) })
-            : nextInfo
-              ? game.i18n.format("UKM.Settlement.GrowNeeds", { type: label(info.next), level: nextInfo.minLevel, lots: info.growAt })
-              : null
+          onMap: !!hexKey,
+          hexKey,
+          panorama: renderPanorama(s, { terrain: hexes.get(hexKey)?.terrain ?? null }),
+          bonuses: Object.entries(trackBonuses(s)).map(([k, v]) => `${skill(k)} +${v}`),
+          missing: missing.length ? game.i18n.format("UKM.Track.Missing", { size: label(sizeFor(s)), list: missing.join(", ") }) : null,
+          tracks
         };
       });
   }
@@ -647,93 +593,19 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     if (def) await KingdomManager.#projectDialog(def);
   }
 
-  static async #buildHere(event, target) {
-    const settlementId = target.closest("[data-settlement]")?.dataset.settlement;
-    const def = getProject("build-structure");
-    if (def && settlementId) await KingdomManager.#projectDialog(def, { settlementId });
-  }
-
-  static #buildList(structures, cost = null) {
-    const esc = Handlebars.escapeExpression;
-    return `<div class="ukm-build-list">${structures
-      .map((s, i) => {
-        const art = s.art?.length ? s.art : structureArt(s.source, s.name);
-        const pic = art.length ? `<img src="${art[0]}" alt="">` : `<span class="ukm-build-noart"></span>`;
-        const detail = [cost ? cost(s) : null, KingdomManager.#structureLine(s)].filter(Boolean).map(esc).join(" · ");
-        return `<label class="ukm-build-option"><input type="radio" name="structure" value="${s.key}" ${i === 0 ? "checked" : ""}>${pic}<span><strong>${esc(s.name)}${s.level ? ` (${s.level})` : ""}</strong><span class="hint">${detail}</span></span></label>`;
-      })
-      .join("")}</div>`;
-  }
-
-  static async #placeBuilding(event, target) {
-    const settlementId = target.closest("[data-settlement]")?.dataset.settlement;
-    const settlement = settlements().find((s) => s.id === settlementId);
-    if (!settlement || !game.user.isGM) return;
-    const structures = buildableStructures(settlement);
-    if (!structures.length) {
-      ui.notifications.warn(game.i18n.localize("UKM.Settlement.NoRoom").replace("{name}", settlement.name));
-      return;
-    }
-    const key = await UkmDialog.prompt({
-      window: { title: `${game.i18n.localize("UKM.Settlement.Place")}: ${settlement.name}` },
-      position: { width: 560 },
-      content: `<p class="hint">${game.i18n.localize("UKM.Settlement.PlaceHint")}</p>${KingdomManager.#buildList(structures)}`,
-      ok: { label: game.i18n.localize("UKM.Settlement.Place"), callback: (event, button) => button.form.querySelector("input[name=structure]:checked")?.value ?? null },
-      rejectClose: false
-    });
-    if (key) await sendRequest("gm", { op: "placeBuilding", settlementId, key });
-  }
-
-  static #structureLine(s) {
-    const skills = (s.bonuses ?? [])
-      .filter((b) => !b.events)
-      .map((b) => `+${b.value} ${b.skills.map((k) => game.i18n.localize(`UKM.Skill.${k}`)).join("/")}`);
-    const parts = [
-      s.infrastructure ? game.i18n.localize("UKM.Settlement.Infrastructure") : game.i18n.format("UKM.Settlement.LotsShort", { n: s.lots ?? 1 }),
-      ...(s.residential ? [game.i18n.localize("UKM.Settlement.Homes1")] : []),
-      ...skills,
-      ...(s.replacesName ? [game.i18n.format("UKM.Settlement.Upgrade", { name: s.replacesName })] : [])
-    ];
-    return parts.join(" · ");
-  }
-
-  static async #projectDialog(def, { settlementId = null } = {}) {
+  static async #projectDialog(def) {
     const esc = Handlebars.escapeExpression;
     const targets = projectTargets(def);
     if (!targets.length) {
-      ui.notifications.warn(game.i18n.localize(def.target === "settlement" ? "UKM.Settlement.Empty" : `UKM.Project.NoTargets.${def.target}`));
+      ui.notifications.warn(game.i18n.localize(`UKM.Project.NoTargets.${def.target}`));
       return;
     }
-    let picked = targets[0];
-    let structures = [];
-    if (def.target === "settlement") {
-      if (!settlementId && targets.length > 1) {
-        settlementId = await UkmDialog.wait({
-          window: { title: def.name },
-          content: `<p>${game.i18n.localize("UKM.Settlement.PickSettlement")}</p>`,
-          buttons: targets.map((t) => ({ action: t.settlementId, label: t.label })),
-          rejectClose: false
-        });
-        if (!settlementId) return;
-      }
-      picked = targets.find((t) => t.settlementId === settlementId) ?? targets[0];
-      const settlement = settlements().find((x) => x.id === picked.settlementId);
-      structures = buildableStructures(settlement);
-      if (!structures.length) {
-        ui.notifications.warn(game.i18n.localize(structureCatalog().length ? "UKM.Settlement.NoRoom" : "UKM.Project.NoStructures").replace("{name}", settlement?.name ?? ""));
-        return;
-      }
-    }
+    const picked = targets[0];
     const probe = { eventId: `project:${def.id}`, seat: def.seat, dcAdjust: 0 };
     const odds = estimateCheck(probe, { type: "advisor", skill: def.skill[0] });
     const quoteText = (q) => game.i18n.format("UKM.Project.Quote", { cost: q.cost, days: q.days });
     let body = "";
-    if (def.target === "settlement") {
-      const room = roomFor(settlements().find((x) => x.id === picked.settlementId));
-      body = `<p><strong>${esc(picked.label)}</strong> · ${game.i18n.format("UKM.Settlement.Room", { n: room })}</p>
-        <p>${game.i18n.localize("UKM.Settlement.WhatToBuild")}</p>
-        ${KingdomManager.#buildList(structures, (s) => quoteText(projectQuote(def, null, s)))}`;
-    } else {
+    {
       body = `<p>${quoteText(projectQuote(def, picked))}</p>`;
       if (def.id === "found-settlement") {
         body += `<div class="form-group"><label>${game.i18n.localize("UKM.Project.SettlementName")}</label><input type="text" name="settlementName" maxlength="60" required placeholder="${esc(game.i18n.localize("UKM.Settlement.NamePlaceholder"))}"></div>
@@ -822,18 +694,34 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     await sendRequest("foundCapital", choice);
   }
 
-  static async #removeBuilding(event, target) {
+  static async #developTrack(event, target) {
     const settlementId = target.closest("[data-settlement]")?.dataset.settlement;
-    const index = target.closest("[data-index]")?.dataset.index;
-    const settlement = settlements().find((s) => s.id === settlementId);
-    const building = settlement?.buildings?.[Number(index)];
-    if (!building || !game.user.isGM) return;
-    const ok = await UkmDialog.confirm({
-      window: { title: settlement.name },
-      content: `<p>${game.i18n.format("UKM.Settlement.RemoveConfirm", { name: Handlebars.escapeExpression(building.name), settlement: Handlebars.escapeExpression(settlement.name) })}</p>`,
-      rejectClose: false
-    });
-    if (ok) await sendRequest("gm", { op: "removeBuilding", settlementId, index: Number(index) });
+    const trackId = target.closest("[data-track]")?.dataset.track;
+    if (!settlementId || !trackId) return;
+    const request = { type: "develop-settlement", settlementId, track: trackId };
+    if (getSetting(SETTINGS.council)) {
+      const mode = await UkmDialog.wait({
+        window: { title: game.i18n.localize("UKM.Track.Build") },
+        content: `<p>${game.i18n.localize("UKM.Council.ProposeOrStart")}</p>`,
+        buttons: [
+          { action: "start", label: game.i18n.localize("UKM.Project.Start"), icon: "fa-solid fa-hammer", default: true },
+          { action: "propose", label: game.i18n.localize("UKM.Council.Propose"), icon: "fa-solid fa-landmark-dome" }
+        ],
+        rejectClose: false
+      });
+      if (!mode) return;
+      await sendRequest(mode === "propose" ? "proposeProject" : "startProject", request);
+      return;
+    }
+    await sendRequest("startProject", request);
+  }
+
+  static async #gmTrackStage(event, target) {
+    const settlementId = target.closest("[data-settlement]")?.dataset.settlement;
+    const row = target.closest("[data-track]");
+    if (!settlementId || !row || !game.user.isGM) return;
+    const stage = Number(row.dataset.stage) + Number(target.dataset.step);
+    await sendRequest("gm", { op: "trackStage", settlementId, trackId: row.dataset.track, stage });
   }
 
   static async #makeCapital(event, target) {

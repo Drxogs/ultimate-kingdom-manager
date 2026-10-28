@@ -130,7 +130,7 @@
       "ControlDC": "Control DC",
       "Treasury": "Treasury (BP)",
       "PerWeek": "per week",
-      "IncomeBreakdown": "Base {base} · Work sites {worksites} · Ranks {ranks} · Trade {trade}",
+      "IncomeBreakdown": "Base {base} · Work sites {worksites} · Ranks {ranks} · Trade {trade} · Settlements {tracks}",
       "InDebt": "Treasury in debt",
       "Unrest": "Unrest",
       "Fame": "Fame",
@@ -238,7 +238,10 @@
       "overcrowded": "Overcrowded settlements added {amount} Unrest.",
       "starting-point": "The realm was set for a level {name} kingdom.",
       "placed": "{name} was already standing.",
-      "unrest-trouble": "High Unrest added Ruin: {name}."
+      "unrest-trouble": "High Unrest added Ruin: {name}.",
+      "track-stage": "Built: {name}",
+      "settlement-tracks": "{name}'s buildings became tracks",
+      "track-monthly": "Settlements: {name}"
     },
     "Seat": {
       "ruler": "Ruler",
@@ -342,7 +345,16 @@
         "NoRoyalUse": "That royal power has already been used this month.",
         "NotWorking": "That project isn't underway.",
         "AlreadyDecreed": "This result has already been decreed.",
-        "NoFavour": "That favour has already been used."
+        "NoFavour": "That favour has already been used.",
+        "TrackUnknown": "That track doesn't exist.",
+        "TrackWorking": "That track is already being built there.",
+        "TrackDone": "That track is fully built.",
+        "TrackNeedsMetropolis": "Pinnacles need a metropolis.",
+        "TrackPinnacleTaken": "Another settlement already has that pinnacle.",
+        "TrackNeedsWater": "That needs a waterside settlement.",
+        "TrackNeedsLevel": "That needs kingdom level {level}.",
+        "TrackNeedsHomes": "Raise the settlement's Homes first.",
+        "TrackCapitalOnly": "That can only be built in the capital."
       }
     },
     "Effect": {
@@ -569,7 +581,8 @@
       "DecisionFundedTitle": "The crown funds a proposal",
       "DecisionFunded": "{ruler} funds <strong>{name}</strong> ({cost} BP). The council voted {yes} for, {no} against. Work starts on its desk.",
       "DecisionRejectedTitle": "The crown turns down a proposal",
-      "DecisionRejected": "{ruler} turns down <strong>{name}</strong>. The council voted {yes} for, {no} against."
+      "DecisionRejected": "{ruler} turns down <strong>{name}</strong>. The council voted {yes} for, {no} against.",
+      "ProposeOrStart": "Start it now from the treasury, or put it to the council?"
     },
     "Ambition": {
       "Heading": "Seat ambitions",
@@ -580,9 +593,9 @@
       "Goal": {
         "successes": "Handle {n} matters on this desk successfully",
         "rank": "Raise {stat} to rank {n}",
-        "structures": "Have {n} structures built through the realm",
+        "structures": "Build {n} settlement track stages (+1 and up) across the realm",
         "trade": "Hold {n} trade agreements",
-        "projects": "Finish {n} roads, farms or structures",
+        "projects": "Finish {n} roads, farms or settlement stages",
         "hexes": "Grow the realm to {n} hexes",
         "income": "Weekly income at {n}× the base",
         "fame": "Reach {n} Fame"
@@ -639,7 +652,7 @@
         "city": "City",
         "metropolis": "Metropolis"
       },
-      "BonusLabel": "Buildings in {name}",
+      "BonusLabel": "{name}",
       "Grew": "{name} has grown into a {type}.",
       "NowOvercrowded": "{name} is now overcrowded: it needs more homes (houses, tenements and other residential buildings), or it adds 1 Unrest a month.",
       "Founded": "{name} is founded.",
@@ -647,7 +660,7 @@
       "CapitalChatTitle": "{name} is the capital",
       "CapitalChat": "The realm has its heart. Settlers raise the first homes and the banners go up. From here the kingdom grows.",
       "FirstStepTitle": "First, found your capital",
-      "FirstStep": "Every kingdom starts with a capital. Pick a settlement already on the map or name a new one. Until the capital is founded the desks stay quiet and no projects can start. The capital comes with a free Founders' Hall: it counts as a home and cuts the capital's food need by 1.",
+      "FirstStep": "Every kingdom starts with a capital. Pick a settlement already on the map or name a new one. Until the capital is founded the desks stay quiet and no projects can start. The capital starts with Huts, a Campfire and a Shrine.",
       "FirstStepWait": "The GM founds the capital as part of setting up the kingdom.",
       "FoundCapital": "Found the capital",
       "Name": "Name",
@@ -782,6 +795,47 @@
       "FavourUsed": "Favour used",
       "FavourChat": "{ruler} calls in a favour.",
       "TheCrown": "The crown"
+    },
+    "Track": {
+      "Built": "{settlement} now has {stage}.",
+      "CardName": "{track}: {stage} in {settlement}",
+      "FromBuilding": "{name} in {settlement} counts toward its tracks.",
+      "Stage": "Stage",
+      "Track": "Track",
+      "Now": "Now",
+      "Next": "Next",
+      "None": "Not built",
+      "Starter": "Starter",
+      "Pinnacle": "Pinnacle",
+      "Build": "Build",
+      "Upgrade": "Upgrade",
+      "Cost": "{bp} BP · {days} days",
+      "CostDiscount": "{bp} BP (−{pct}%) · {days} days",
+      "Underway": "Under way",
+      "Complete": "Complete",
+      "GmUp": "Raise one stage (free, no roll)",
+      "GmDown": "Lower one stage (free)",
+      "Basic": "basic need",
+      "FoodNeed": "Food {n} a month",
+      "Missing": "Missing for a {size}: {list}",
+      "MissingNone": "Every need for its size is met.",
+      "MissingItem": "{track} {stage}",
+      "Size": "{size} · Homes {stage}",
+      "Bonuses": "Skill bonuses here",
+      "PinnacleHint": "One per kingdom. Needs a metropolis.",
+      "StartTitle": "{track} in {settlement}",
+      "StartBody": "Build {stage}: {cost}. The {seat} runs it with {stat} skills.",
+      "Block": {
+        "Done": "Fully built.",
+        "Working": "Already being built.",
+        "NeedsMetropolis": "Needs a metropolis.",
+        "PinnacleTaken": "Another settlement has this pinnacle.",
+        "NeedsWater": "Needs a waterside settlement.",
+        "NeedsLevel": "Needs kingdom level {level}.",
+        "NeedsHomes": "Raise Homes first.",
+        "CapitalOnly": "Only in the capital.",
+        "Unknown": "Unknown track."
+      }
     }
   }
 }
