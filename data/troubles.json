@@ -1,0 +1,820 @@
+{
+  "version": 1,
+  "chance": {
+    "need": 0.34,
+    "tenements": 0.25
+  },
+  "quietDays": 90,
+  "troubles": [
+    {
+      "id": "trouble-empty-bellies",
+      "name": "Empty Bellies",
+      "seat": "viceroy",
+      "skill": [
+        "agriculture",
+        "wilderness"
+      ],
+      "need": {
+        "track": "food",
+        "when": "missing"
+      },
+      "hook": "With no kitchen or campfire to share, hungry families beg to hunt the royal woods. Allow it and the game thins; refuse and tempers rise.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": -1
+          },
+          {
+            "food": 1
+          }
+        ],
+        "success": [
+          {
+            "food": 1
+          }
+        ],
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 2
+          },
+          {
+            "ruin": {
+              "strife": 1
+            }
+          }
+        ]
+      },
+      "mod": 0,
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement"
+      ]
+    },
+    {
+      "id": "trouble-bread-riot",
+      "name": "Bread Riot",
+      "seat": "viceroy",
+      "skill": [
+        "agriculture"
+      ],
+      "mod": 1,
+      "need": {
+        "track": "food",
+        "when": "short",
+        "minSize": "town"
+      },
+      "hook": "The kitchens can't keep up. A crowd storms the stores: talk them down, buy grain at a ruinous price, or send in the guard.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": -1
+          },
+          {
+            "favour": {
+              "name": "The Bakers' Thanks",
+              "text": "The bakers' guild remembers who kept the ovens lit.",
+              "effects": [
+                {
+                  "unrest": -1
+                }
+              ]
+            }
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "choose": {
+              "n": 1,
+              "from": [
+                [
+                  {
+                    "bp": -4
+                  }
+                ],
+                [
+                  {
+                    "unrest": 2
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "strife": 1
+            }
+          }
+        ]
+      },
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement"
+      ]
+    },
+    {
+      "id": "trouble-crisis-of-faith",
+      "name": "Crisis of Faith",
+      "seat": "counselor",
+      "skill": [
+        "folklore"
+      ],
+      "need": {
+        "track": "faith",
+        "when": "missing"
+      },
+      "hook": "With no shrine to tend, a wandering prophet tells the square the gods have abandoned the realm. Debate him, welcome him, or drive him off.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": -1
+          },
+          {
+            "fame": 1
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 2
+          },
+          {
+            "ruin": {
+              "corruption": 1
+            }
+          }
+        ]
+      },
+      "mod": 0,
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement"
+      ]
+    },
+    {
+      "id": "trouble-unquiet-dead",
+      "name": "Unquiet Dead",
+      "seat": "counselor",
+      "skill": [
+        "folklore",
+        "arts"
+      ],
+      "mod": 1,
+      "need": {
+        "track": "faith",
+        "when": "short",
+        "minSize": "town"
+      },
+      "hook": "With no priest to bless the graves, something walks the burial ground at night. The gravediggers won't go back.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": -1
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          }
+        ]
+      },
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement"
+      ]
+    },
+    {
+      "id": "trouble-sleeping-rough",
+      "name": "Sleeping Rough",
+      "seat": "viceroy",
+      "skill": [
+        "wilderness",
+        "exploration"
+      ],
+      "need": {
+        "track": "homes",
+        "when": "missing"
+      },
+      "hook": "Settlers sleep under carts and canvas. Find them roofs, or watch them drift back the way they came.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": -1
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 2
+          }
+        ]
+      },
+      "mod": 0,
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement"
+      ]
+    },
+    {
+      "id": "trouble-shanty-fire",
+      "name": "Shanty Fire",
+      "seat": "viceroy",
+      "skill": [
+        "exploration",
+        "agriculture"
+      ],
+      "mod": 1,
+      "tenements": true,
+      "hook": "Fire races through the crowded timber tenements. Bucket lines, firebreaks, or let the blocks burn and rebuild.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": -1
+          },
+          {
+            "fame": 1
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "unrest": 1
+          },
+          {
+            "bp": -2
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 2
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          },
+          {
+            "gm": "Fire guts part of the tenements: lower that settlement's Homes by one stage if the story calls for it."
+          }
+        ]
+      },
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement"
+      ]
+    },
+    {
+      "id": "trouble-pickpocket-ring",
+      "name": "Pickpocket Ring",
+      "seat": "emissary",
+      "skill": [
+        "intrigue"
+      ],
+      "tenements": true,
+      "need": {
+        "track": "watch",
+        "when": "missing",
+        "minSize": "town"
+      },
+      "hook": "Purses vanish on market day and the merchants threaten to take their stalls elsewhere.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "ruin": {
+              "crime": -1
+            }
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "bp": -2
+          }
+        ],
+        "criticalFailure": [
+          {
+            "bp": -4
+          },
+          {
+            "ruin": {
+              "crime": 1
+            }
+          }
+        ]
+      },
+      "mod": 0,
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement",
+        "crime"
+      ]
+    },
+    {
+      "id": "trouble-protection-racket",
+      "name": "Protection Racket",
+      "seat": "emissary",
+      "skill": [
+        "intrigue",
+        "politics"
+      ],
+      "mod": 1,
+      "need": {
+        "track": "watch",
+        "when": "missing",
+        "minSize": "town"
+      },
+      "hook": "Thugs 'protect' the shops on the main street, for a fee. The shopkeepers won't say who.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "ruin": {
+              "crime": -1
+            }
+          },
+          {
+            "favour": {
+              "name": "The Shopkeepers' Debt",
+              "text": "The main street owes the crown a quiet favour.",
+              "effects": [
+                {
+                  "bp": 5
+                }
+              ]
+            }
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "ruin": {
+              "crime": 1
+            }
+          }
+        ]
+      },
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement",
+        "crime"
+      ]
+    },
+    {
+      "id": "trouble-smugglers-cellar",
+      "name": "Smugglers' Cellar",
+      "seat": "treasurer",
+      "skill": [
+        "trade",
+        "boating"
+      ],
+      "need": {
+        "track": "watch",
+        "when": "missing",
+        "minSize": "town"
+      },
+      "hook": "Untaxed goods move through a cellar under a tavern. Raid it, or quietly take a cut.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "bp": 6
+          }
+        ],
+        "success": [
+          {
+            "bp": 3
+          }
+        ],
+        "failure": [
+          {
+            "ruin": {
+              "crime": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "ruin": {
+              "crime": 1
+            }
+          },
+          {
+            "ruin": {
+              "corruption": 1
+            }
+          }
+        ]
+      },
+      "mod": 0,
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement",
+        "crime"
+      ]
+    },
+    {
+      "id": "trouble-midnight-murder",
+      "name": "Midnight Murder",
+      "seat": "emissary",
+      "skill": [
+        "intrigue",
+        "statecraft"
+      ],
+      "mod": 2,
+      "need": {
+        "track": "watch",
+        "when": "short",
+        "minSize": "city"
+      },
+      "hook": "A respected citizen is found dead in an alley, and the city wants answers before it finds its own.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": -1
+          },
+          {
+            "fame": 1
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "unrest": 2
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "crime": 1
+            }
+          }
+        ]
+      },
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement",
+        "crime"
+      ]
+    },
+    {
+      "id": "trouble-raiders-at-dusk",
+      "name": "Raiders at Dusk",
+      "seat": "general",
+      "skill": [
+        "warfare"
+      ],
+      "mod": 1,
+      "need": {
+        "track": "walls",
+        "when": "missing",
+        "minSize": "city"
+      },
+      "hook": "Riders strike the outlying farms and vanish into the hills before the alarm is raised.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": -1
+          },
+          {
+            "favour": {
+              "name": "The Farmers' Gratitude",
+              "text": "The outlying farms will feed the crown's riders.",
+              "effects": [
+                {
+                  "food": 2
+                }
+              ]
+            }
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "food": -1
+          },
+          {
+            "unrest": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "food": -2
+          },
+          {
+            "ruin": {
+              "strife": 1
+            }
+          }
+        ]
+      },
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement"
+      ]
+    },
+    {
+      "id": "trouble-wolves-in-the-lanes",
+      "name": "Wolves in the Lanes",
+      "seat": "general",
+      "skill": [
+        "defense",
+        "warfare"
+      ],
+      "need": {
+        "track": "walls",
+        "when": "missing",
+        "minSize": "city"
+      },
+      "hook": "Something big and hungry is getting over the fences at night. Folk bar their doors at dusk.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": -1
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 2
+          }
+        ]
+      },
+      "mod": 0,
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement"
+      ]
+    },
+    {
+      "id": "trouble-low-street-fever",
+      "name": "Fever in the Low Streets",
+      "seat": "magister",
+      "skill": [
+        "engineering",
+        "magic"
+      ],
+      "mod": 1,
+      "need": {
+        "track": "publicworks",
+        "when": "missing",
+        "minSize": "city"
+      },
+      "hook": "Foul water brings fever to the poorest districts. Healers, drains, or a quarantine nobody will like.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": -1
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "unrest": 1
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 2
+          },
+          {
+            "ruin": {
+              "decay": 2
+            }
+          }
+        ]
+      },
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement"
+      ]
+    },
+    {
+      "id": "trouble-collapsed-well",
+      "name": "Collapsed Well",
+      "seat": "magister",
+      "skill": [
+        "engineering"
+      ],
+      "need": {
+        "track": "publicworks",
+        "when": "short",
+        "minSize": "city"
+      },
+      "hook": "The main well caves in, and the workmen swear something below dug it out.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": -1
+          },
+          {
+            "fame": 1
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "bp": -3
+          }
+        ],
+        "criticalFailure": [
+          {
+            "bp": -5
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          }
+        ]
+      },
+      "mod": 0,
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement"
+      ]
+    },
+    {
+      "id": "trouble-bribed-clerk",
+      "name": "Bribed Clerk",
+      "seat": "emissary",
+      "skill": [
+        "statecraft",
+        "politics"
+      ],
+      "need": {
+        "track": "governance",
+        "when": "missing",
+        "minSize": "metropolis"
+      },
+      "hook": "Permits for sale: a clerk's side business is making someone rich, and everyone knows but the crown.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "ruin": {
+              "corruption": -1
+            }
+          },
+          {
+            "bp": 4
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "ruin": {
+              "corruption": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "ruin": {
+              "corruption": 2
+            }
+          }
+        ]
+      },
+      "mod": 0,
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement"
+      ]
+    },
+    {
+      "id": "trouble-rival-claimant",
+      "name": "Rival Claimant",
+      "seat": "emissary",
+      "skill": [
+        "politics",
+        "statecraft"
+      ],
+      "mod": 2,
+      "need": {
+        "track": "governance",
+        "when": "short",
+        "minSize": "metropolis"
+      },
+      "hook": "A minor noble says the city should be his, and with no proper hall of government, some people agree.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": -2
+          },
+          {
+            "favour": {
+              "name": "A Noble's Oath",
+              "text": "The claimant swears fealty and owes the crown one service.",
+              "effects": [
+                {
+                  "unrest": -2
+                }
+              ]
+            }
+          }
+        ],
+        "success": [],
+        "failure": [
+          {
+            "unrest": 2
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "strife": 2
+            }
+          }
+        ]
+      },
+      "kind": "problem",
+      "deadlineDays": 30,
+      "traits": [
+        "trouble",
+        "settlement"
+      ]
+    }
+  ]
+}

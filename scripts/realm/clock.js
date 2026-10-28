@@ -3,6 +3,7 @@ import { getCardEvent } from "../content/data.js";
 import { getKingdom, isKingdomActive } from "../integrations/party.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
+import { drawTroubles } from "./troubles.js";
 import { drawAudience } from "./audiences.js";
 import { announceCouncil } from "./council.js";
 import { checkAmbitions } from "./ambitions.js";
@@ -14,7 +15,7 @@ import { syncPins } from "./pins.js";
 import { resolveDue } from "./resolve.js";
 import { advanceRankUps } from "./ranks.js";
 import { isLeader } from "./leader.js";
-import { adoptMapSettlements, growSettlements, hasCapital, overcrowdedCount } from "./settlements.js";
+import { adoptMapSettlements, growSettlements, hasCapital, overcrowdedCount, settlementHex } from "./settlements.js";
 import { kingdomPerks } from "./tracks.js";
 import { applyEffects, EffectContext } from "./effects.js";
 import { monthlyStanding, setUnrest } from "./standing.js";
@@ -71,6 +72,7 @@ export async function tick() {
       for (let i = 0; i < weeks; i++) unrest += runWeek(realm);
       expireCards(realm);
       if (newMonth && founded) drawn = drawMonthlyEvents(realm);
+      if (newMonth && founded) drawn.push(...drawTroubles(realm, { hexOf: settlementHex }));
       if (newMonth) {
         const crowded = overcrowdedCount(realm);
         if (crowded) {

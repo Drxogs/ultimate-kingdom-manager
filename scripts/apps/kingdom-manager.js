@@ -10,6 +10,8 @@ import { isHexProject, projectDiscount, projectQuote, projectsForSeat, projectTa
 import { hasPinnacle, missingNeeds, nextStep, PINNACLE, sizeFor, stageDef, trackBonuses, trackStage } from "../realm/tracks.js";
 import { getTracks } from "../content/data.js";
 import { renderPanorama } from "./panorama.js";
+import { hasTenements, inQuietStart, troubleOptions } from "../realm/troubles.js";
+import { getTroubleData } from "../content/data.js";
 import { tapCostBP, tapLimit, tapMode } from "../realm/treasury.js";
 import { audienceResponses } from "../realm/audiences.js";
 import { proposals } from "../realm/council.js";
@@ -177,6 +179,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       openHandbook: () => openHandbook(),
       foundCapital: () => KingdomManager.foundCapitalDialog(),
       developTrack: KingdomManager.#developTrack,
+      drawTrouble: KingdomManager.#drawTrouble,
       gmTrackStage: KingdomManager.#gmTrackStage,
       openMidCampaign: () => new MidCampaignApp().render(true),
       makeCapital: KingdomManager.#makeCapital,
@@ -442,6 +445,9 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const skill = (s) => game.i18n.localize(`UKM.Skill.${s}`);
     const all = settlements(realm);
     const hexes = new Map(getHexDefinitions().map((h) => [h.key, h]));
+    const quiet = inQuietStart(realm);
+    const capitalFounded = all.find((x) => x.capital)?.founded ?? 0;
+    const quietDays = quiet ? Math.max(1, Math.ceil(((getTroubleData().quietDays ?? 90) * 86400 - (game.time.worldTime - capitalFounded)) / 86400)) : 0;
     return all
       .slice()
       .sort((a, b) => Number(b.capital) - Number(a.capital) || a.name.localeCompare(b.name))
@@ -492,6 +498,10 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
           panorama: renderPanorama(s, { terrain: hexes.get(hexKey)?.terrain ?? null }),
           bonuses: Object.entries(trackBonuses(s)).map(([k, v]) => `${skill(k)} +${v}`),
           missing: missing.length ? game.i18n.format("UKM.Track.Missing", { size: label(sizeFor(s)), list: missing.join(", ") }) : null,
+          tenements: hasTenements(s),
+          canDrawTrouble: game.user.isGM && troubleOptions(s).length > 0,
+          troubleRisk: !quiet && missing.length > 0,
+          quietNote: quiet && (missing.length || hasTenements(s)) ? game.i18n.format("UKM.Trouble.Quiet", { days: quietDays }) : null,
           foldKey: `settlement-${s.id}`,
           foldOpen: readFold(`settlement-${s.id}`),
           tracksSummary: game.i18n.format("UKM.Track.Summary", { built: tracks.filter((t) => t.now).length, total: tracks.length, ready: tracks.filter((t) => t.canBuild).length }),
@@ -717,6 +727,11 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       return;
     }
     await sendRequest("startProject", request);
+  }
+
+  static async #drawTrouble(event, target) {
+    const settlementId = target.closest("[data-settlement]")?.dataset.settlement;
+    if (settlementId && game.user.isGM) await sendRequest("gm", { op: "drawTrouble", settlementId });
   }
 
   static async #gmTrackStage(event, target) {

@@ -49,7 +49,7 @@
                 <strong>{{name}}</strong>
                 <span class="ukm-tag {{kind}}">{{localize (concat "UKM.Card.Kind." kind)}}</span>
                 {{#if continuous}}<span class="ukm-tag">{{localize "UKM.Card.Continuous"}}</span>{{/if}}
-                {{#if matter}}<span class="ukm-tag">{{localize "UKM.Card.Matter"}}</span>{{/if}}
+                {{#if matter}}<span class="ukm-tag">{{localize "UKM.Card.Matter"}}</span>{{/if}}{{#if trouble}}<span class="ukm-tag problem">{{localize "UKM.Trouble.Tag"}}</span>{{/if}}
                 {{#if escalate}}<span class="ukm-tag" data-tooltip="{{localize "UKM.Card.EscalateHint"}}"><i class="fa-solid fa-dragon"></i></span>{{/if}}
                 {{#if stageLabel}}<span class="ukm-tag">{{stageLabel}}</span>{{/if}}
                 {{#if rerollTag}}<span class="ukm-tag ukm-reroll-tag" data-tooltip="{{localize "UKM.Fortune.What"}}"><i class="fa-solid fa-rotate"></i> {{localize "UKM.Fortune.Available" n=rerollTag}}</span>{{/if}}

@@ -80,7 +80,7 @@
       "AdvisorAttitude": "Attitude",
       "CapitalHeading": "The capital",
       "CapitalHint": "Found the capital here first: pick a settlement already on the map or name a new one. It comes with a free Founders' Hall (a home that also cuts the capital's food need by 1). Until there's a capital, no cards or projects appear.",
-      "CapitalDone": "{name} is the capital. Change its name above; its buildings are managed on the Settlements tab.",
+      "CapitalDone": "{name} is the capital. Change its name above; its tracks are managed on the Settlements tab. Renaming it here doesn't change the Kingmaker map: if the capital is drawn there, rename its label with the hex tool too.",
       "Kingdom": "The kingdom",
       "KingdomName": "Kingdom name",
       "KingdomNamePlaceholder": "The Kingdom of Monkeyton",
@@ -838,6 +838,16 @@
       },
       "Heading": "Tracks",
       "Summary": "{built} of {total} built · {ready} you can build now"
+    },
+    "Trouble": {
+      "DirtyStreets": "Dirty streets (Tenements)",
+      "None": "Nothing is missing here, so there's no trouble to draw.",
+      "Drawn": "Trouble drawn: {name}",
+      "Draw": "Draw a trouble card here now (ignores the odds and the easy start)",
+      "Possible": "Trouble may strike at the start of each month until this is fixed.",
+      "TenementsRisk": "Tenements: crime is likelier here, and crime checks here take −1.",
+      "Quiet": "Easy start: no trouble cards for another {days} days.",
+      "Tag": "Trouble"
     }
   }
 }

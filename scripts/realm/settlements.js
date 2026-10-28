@@ -4,6 +4,7 @@ import { getSetting, SETTINGS } from "../settings.js";
 import { settlementHexes } from "./deck.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { isLeader } from "./leader.js";
+import { hasTenements, isCrimeCard } from "./troubles.js";
 import {
   eventsBonus,
   foodNeed,
@@ -247,8 +248,10 @@ export function structureModifiers(realm, card, skill) {
       from = s;
     }
   }
-  if (!best) return [];
-  return [{ slug: `ukm-structures-${skill}`, label: game.i18n.format("UKM.Settlement.BonusLabel", { name: from.name }), modifier: best, type: "item" }];
+  const out = best ? [{ slug: `ukm-structures-${skill}`, label: game.i18n.format("UKM.Settlement.BonusLabel", { name: from.name }), modifier: best, type: "item" }] : [];
+  // Tenements: crime checks there take −1 (dirty streets).
+  if (here && hasTenements(here) && isCrimeCard(card)) out.push({ slug: "ukm-dirty-streets", label: game.i18n.localize("UKM.Trouble.DirtyStreets"), modifier: -1, type: "circumstance" });
+  return out;
 }
 
 /** Old building names the realm's tracks stand for, for events that ask "does the kingdom have a ...". */

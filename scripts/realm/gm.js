@@ -1,10 +1,11 @@
 import { drawAudience } from "./audiences.js";
 import { createCard, drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
+import { forceTrouble } from "./troubles.js";
 import { getStoryEvents } from "../content/data.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
 import { setFortified } from "./projects.js";
-import { applyTrackStage, refreshDerived, settlements, syncKingdomSettlements } from "./settlements.js";
+import { applyTrackStage, refreshDerived, settlementHex, settlements, syncKingdomSettlements } from "./settlements.js";
 import { getKingdom } from "../integrations/party.js";
 import { applyStartingPoint } from "./midcampaign.js";
 import { completeGmTask, dismissCard, recordOutcome, rollCard } from "./resolve.js";
@@ -87,6 +88,14 @@ const OPS = {
     await syncPins();
     const key = drawn.length === 0 ? "DrawnNone" : drawn.length === 1 ? "DrawnOne" : "Drawn";
     return { notice: game.i18n.format(`UKM.Manager.${key}`, { count: drawn.length }) };
+  },
+  drawTrouble: async ({ settlementId }) => {
+    let card = null;
+    await updateRealm((realm) => {
+      card = forceTrouble(realm, settlementId, { hexOf: settlementHex });
+    });
+    await syncPins();
+    return { notice: card ? game.i18n.format("UKM.Trouble.Drawn", { name: card.name }) : game.i18n.localize("UKM.Trouble.None") };
   },
   drawMatter: async () => {
     let card = null;

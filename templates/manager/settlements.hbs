@@ -22,6 +22,7 @@
         <span class="controls">
           {{#if hexKey}}<button type="button" class="ukm-icon" data-action="focusHex" data-hex="{{hexKey}}" data-tooltip="{{localize "UKM.Card.Focus"}}"><i class="fa-solid fa-map-location-dot"></i></button>{{/if}}
           {{#if @root.isGM}}
+            {{#if canDrawTrouble}}<button type="button" class="ukm-icon" data-action="drawTrouble" data-tooltip="{{localize "UKM.Trouble.Draw"}}"><i class="fa-solid fa-bolt"></i></button>{{/if}}
             {{#unless capital}}<button type="button" class="ukm-icon" data-action="makeCapital" data-tooltip="{{localize "UKM.Settlement.MakeCapital"}}"><i class="fa-solid fa-crown"></i></button>{{/unless}}
             <button type="button" class="ukm-icon {{#if waterside}}on{{/if}}" data-action="toggleWaterside" data-tooltip="{{localize "UKM.Settlement.ToggleWater"}}"><i class="fa-solid fa-water"></i></button>
             <button type="button" class="ukm-icon" data-action="deleteSettlement" data-tooltip="{{localize "UKM.Settlement.Delete"}}"><i class="fa-solid fa-trash"></i></button>
@@ -33,7 +34,9 @@
         <span><i class="fa-solid fa-wheat-awn"></i> {{localize "UKM.Track.FoodNeed" n=consumption}}</span>
         {{#if waterside}}<span><i class="fa-solid fa-water"></i> {{localize "UKM.Settlement.Waterside"}}</span>{{/if}}
         {{#unless onMap}}<span class="hint">{{localize "UKM.Settlement.NotOnMap"}}</span>{{/unless}}
-        {{#if missing}}<span class="ukm-urgent"><i class="fa-solid fa-triangle-exclamation"></i> {{missing}}</span>{{else}}<span class="hint">{{localize "UKM.Track.MissingNone"}}</span>{{/if}}
+        {{#if missing}}<span class="ukm-urgent" {{#if troubleRisk}}data-tooltip="{{localize "UKM.Trouble.Possible"}}"{{/if}}><i class="fa-solid fa-triangle-exclamation"></i> {{missing}}</span>{{else}}<span class="hint">{{localize "UKM.Track.MissingNone"}}</span>{{/if}}
+        {{#if tenements}}<span class="hint"><i class="fa-solid fa-mask"></i> {{localize "UKM.Trouble.TenementsRisk"}}</span>{{/if}}
+        {{#if quietNote}}<span class="hint"><i class="fa-solid fa-dove"></i> {{quietNote}}</span>{{/if}}
       </div>
       <details class="ukm-fold ukm-settlement-fold" data-fold="{{foldKey}}" {{#if foldOpen}}open{{/if}}>
       <summary class="ukm-track-summary">{{localize "UKM.Track.Heading"}} <span class="hint">{{tracksSummary}}</span></summary>

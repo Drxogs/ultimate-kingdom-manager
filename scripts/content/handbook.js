@@ -1,6 +1,6 @@
 import { FLAG_SCOPE, MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
 import { describeEffect } from "../realm/effects.js";
-import { getAmbition, getCompanions, getProjects, getRankUpScene, getSeatAbilities, getTrackData, getTracks } from "./data.js";
+import { getAmbition, getCompanions, getProjects, getRankUpScene, getSeatAbilities, getTrackData, getTracks, getTroubles } from "./data.js";
 import { isLeader } from "../realm/leader.js";
 import { KINGMAKER_SHEET, kingmakerSheetAvailable } from "./story-import.js";
 
@@ -90,6 +90,15 @@ function tracksPage() {
     parts.push(`<h2>${esc(track.name)} <span style="font-weight:400">(${esc(t(`UKM.Seat.${track.seat}`))}${track.basic ? ", basic need" : ""})</span></h2>`);
     parts.push(table(["Stage", "Name", "Gives"], rows));
   }
+  const size = { town: "town or bigger", city: "city or bigger", metropolis: "metropolis" };
+  const cause = (tr) => {
+    const bits = [];
+    if (tr.need) bits.push(`${tr.need.when === "missing" ? "No" : "Not enough"} ${getTracks().find((x) => x.id === tr.need.track)?.name ?? tr.need.track}${tr.need.minSize ? ` (${size[tr.need.minSize]})` : ""}`);
+    if (tr.tenements) bits.push("Tenements");
+    return bits.join(", or ");
+  };
+  parts.push("<h2>Trouble cards</h2><p>Drawn for a settlement missing what its size needs (or living in Tenements), at the start of a month, by chance. None in a kingdom's first three months.</p>");
+  parts.push(table(["Card", "Desk", "Comes with"], getTroubles().map((tr) => [`<strong>${esc(tr.name)}</strong><br>${esc(tr.hook)}`, esc(t(`UKM.Seat.${tr.seat}`)), esc(cause(tr))])));
   return { name: "Settlement Tracks", html: parts.join("") };
 }
 

@@ -11,7 +11,7 @@ async function load(name) {
 }
 
 export async function preloadData() {
-  await Promise.all(["events", "matters", "rankups", "projects", "audiences", "ambitions", "companions", "quests", "stories", "tracks"].map(load));
+  await Promise.all(["events", "matters", "rankups", "projects", "audiences", "ambitions", "companions", "quests", "stories", "tracks", "troubles"].map(load));
 }
 
 /** Settlement tracks (Homes, Faith, Food...): stages, what each gives, costs. */
@@ -25,6 +25,15 @@ export function getTracks() {
 
 export function getTrack(id) {
   return getTracks().find((t) => t.id === id) ?? null;
+}
+
+/** Trouble cards: what a settlement missing a need can draw. */
+export function getTroubleData() {
+  return cache.troubles ?? { troubles: [], chance: {}, quietDays: 90 };
+}
+
+export function getTroubles() {
+  return getTroubleData().troubles ?? [];
 }
 
 export function getEvents() {
@@ -120,6 +129,7 @@ export function getEvent(id) {
     getEvents().find((e) => e.id === id) ??
     getStoryEvents().find((e) => e.id === id) ??
     getMatters().find((e) => e.id === id) ??
+    getTroubles().find((e) => e.id === id) ??
     null
   );
 }
