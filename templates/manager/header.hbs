@@ -6,6 +6,7 @@
     <div class="title">
       <span class="name">{{kingdom.name}}</span>
       {{#if kingdom.capital}}<span class="capital"><span>{{localize "UKM.Manager.Capital"}}</span> {{kingdom.capital}}</span>{{/if}}
+      {{#if kingdom.ruler}}<span class="capital ruler"><span><i class="fa-solid fa-crown"></i> {{localize "UKM.Royal.Ruler"}}</span> {{kingdom.ruler}}</span>{{/if}}
     </div>
     <label class="size"><span>{{localize "UKM.Manager.Size"}}</span> {{kingdom.size}}</label>
     <label class="dc"><span>{{localize "UKM.Manager.ControlDC"}}</span> {{kingdom.controlDC}}</label>

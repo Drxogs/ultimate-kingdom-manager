@@ -3,7 +3,7 @@
   "projects": [
     {
       "id": "claim-hex",
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "exploration",
         "wilderness"

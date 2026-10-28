@@ -85,7 +85,7 @@
       "placement": {
         "type": "kingdom"
       },
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "intrigue"
       ],
@@ -178,7 +178,7 @@
         "type": "kingdom",
         "pin": "frontier"
       },
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "defense"
       ],
@@ -882,7 +882,7 @@
       "placement": {
         "type": "kingdom"
       },
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "exploration"
       ],
@@ -967,7 +967,7 @@
       "requires": {
         "relations": 1
       },
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "arts"
       ],
@@ -1389,7 +1389,7 @@
       "placement": {
         "type": "kingdom"
       },
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "statecraft"
       ],
@@ -1625,7 +1625,7 @@
         "type": "hex",
         "rule": "claimed-outside-influence"
       },
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "defense"
       ],
@@ -2060,7 +2060,7 @@
         "type": "settlement",
         "rule": "largest"
       },
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "defense"
       ],
@@ -2177,7 +2177,7 @@
       "placement": {
         "type": "kingdom"
       },
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "politics"
       ],
@@ -2460,7 +2460,7 @@
         "type": "settlement",
         "rule": "random"
       },
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "intrigue"
       ],
@@ -2699,7 +2699,7 @@
         "type": "settlement",
         "rule": "newest"
       },
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "trade"
       ],
@@ -2757,7 +2757,7 @@
         "type": "settlement",
         "rule": "random"
       },
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "industry"
       ],
@@ -2958,7 +2958,7 @@
       "placement": {
         "type": "kingdom"
       },
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "politics"
       ],
@@ -3012,7 +3012,7 @@
         "type": "hex",
         "rule": "influence-of-settlement-nearest-party"
       },
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "defense"
       ],
@@ -3081,7 +3081,7 @@
         "type": "settlement",
         "rule": "party-current-or-nearest"
       },
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "defense"
       ],

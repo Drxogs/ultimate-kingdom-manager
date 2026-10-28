@@ -1,19 +1,26 @@
 export const MODULE_ID = "ultimate-kingdom-manager-next";
 export const FLAG_SCOPE = MODULE_ID;
 
-export const SEATS = ["ruler", "counselor", "general", "emissary", "magister", "treasurer", "viceroy", "warden"];
+export const SEATS = ["emissary", "counselor", "general", "magister", "treasurer", "viceroy"];
 
-/** Each leadership seat owns one realm stat, fed by two kingdom skills. */
+/** Each of the six seats owns one realm stat, fed by two or three kingdom skills (Realm Redesign, 2026-10-27). */
 export const REALM_STATS = {
-  loyalty: { seat: "ruler", skills: ["politics", "intrigue"] },
+  relations: { seat: "emissary", skills: ["politics", "intrigue", "statecraft"] },
   culture: { seat: "counselor", skills: ["arts", "folklore"] },
   military: { seat: "general", skills: ["warfare", "defense"] },
-  relations: { seat: "emissary", skills: ["statecraft", "boating"] },
-  arcane: { seat: "magister", skills: ["magic", "scholarship"] },
-  economy: { seat: "treasurer", skills: ["trade", "industry"] },
-  community: { seat: "viceroy", skills: ["agriculture", "engineering"] },
-  stability: { seat: "warden", skills: ["wilderness", "exploration"] }
+  arcane: { seat: "magister", skills: ["magic", "scholarship", "engineering"] },
+  economy: { seat: "treasurer", skills: ["trade", "industry", "boating"] },
+  community: { seat: "viceroy", skills: ["agriculture", "wilderness", "exploration"] }
 };
+
+/**
+ * Old names that still turn up in adventure text and older saved bonuses ("+1 to Loyalty checks"):
+ * they now mean the realm stat that took over those skills.
+ */
+export const STAT_ALIASES = { loyalty: "relations", stability: "community" };
+
+/** Seats that no longer exist, and the seat their cards now go to. */
+export const SEAT_ALIASES = { ruler: "emissary", warden: "viceroy" };
 
 export const SKILL_TO_STAT = Object.fromEntries(
   Object.entries(REALM_STATS).flatMap(([stat, def]) => def.skills.map((skill) => [skill, stat]))
@@ -81,24 +88,17 @@ export const PERSONAL_SKILLS = {
   wilderness: ["survival", "nature"]
 };
 
-export const SKILL_ABILITY = {
-  agriculture: "stability",
-  arts: "culture",
-  boating: "economy",
-  defense: "stability",
-  engineering: "stability",
-  exploration: "economy",
-  folklore: "culture",
-  industry: "economy",
-  intrigue: "loyalty",
-  magic: "culture",
-  politics: "loyalty",
-  scholarship: "culture",
-  statecraft: "loyalty",
-  trade: "economy",
-  warfare: "loyalty",
-  wilderness: "stability"
-};
+/** Every kingdom skill. */
+export const KINGDOM_SKILLS = ["agriculture", "arts", "boating", "defense", "engineering", "exploration", "folklore", "industry", "intrigue", "magic", "politics", "scholarship", "statecraft", "trade", "warfare", "wilderness"];
+
+/**
+ * Whether a bonus aimed at `selector` reaches `skill`. A selector can name a skill, a realm stat
+ * (all its skills), an old stat name (see STAT_ALIASES), or "events" (every kingdom check).
+ */
+export function selectorReaches(selector, skill) {
+  const stat = Object.entries(REALM_STATS).find(([, def]) => def.skills.includes(skill))?.[0];
+  return [selector].flat().some((s) => s === "events" || s === skill || (stat && (s === stat || STAT_ALIASES[s] === stat)));
+}
 
 export const RUINS = ["corruption", "crime", "decay", "strife"];
 

@@ -40,6 +40,7 @@ export function defaultKingdomData() {
     img: null,
     level: 1,
     capital: null,
+    ruler: null,
     unrest: { value: 0 },
     resources: { fame: { value: 0, max: 3 } },
     abilities: { culture: ability(), economy: ability(), stability: ability(), loyalty: ability() },

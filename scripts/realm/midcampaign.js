@@ -1,9 +1,7 @@
-import { POINTS_PER_RANK, REALM_STATS, SKILL_ABILITY } from "../constants.js";
+import { POINTS_PER_RANK, REALM_STATS } from "../constants.js";
 import { getKingdom } from "../integrations/party.js";
 import { rankCap, seatFilled, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
-
-const ABILITY_LEVELS = [5, 10, 15, 20];
 
 /** Where each realm stat would sit for a kingdom of this level that's been run well from the start. */
 export function suggestedRanks(level, realm = getRealm()) {
@@ -22,22 +20,6 @@ export function suggestedRanks(level, realm = getRealm()) {
 
 export function suggestedTreasury(realm = getRealm()) {
   return Math.max(realm.treasury, Math.round(weeklyIncome(realm).base * 4));
-}
-
-/**
- * Skills the realm leans on: one from each filled seat first, then their second skills,
- * then the empty seats'.
- */
-function skillPriority() {
-  const filled = Object.values(REALM_STATS).filter((def) => seatFilled(def.seat).filled);
-  const empty = Object.values(REALM_STATS).filter((def) => !seatFilled(def.seat).filled);
-  return [...filled.map((d) => d.skills[0]), ...filled.map((d) => d.skills[1]), ...empty.flatMap((d) => d.skills)];
-}
-
-function maxRankAt(level) {
-  if (level >= 15) return 4;
-  if (level >= 7) return 3;
-  return 2;
 }
 
 /**

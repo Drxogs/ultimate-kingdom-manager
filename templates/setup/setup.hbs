@@ -24,6 +24,14 @@
       <label>{{localize "UKM.Setup.KingdomName"}}</label>
       <input type="text" name="kingdomName" value="{{kingdomName}}" placeholder="{{localize "UKM.Setup.KingdomNamePlaceholder"}}">
     </div>
+    <div class="form-group">
+      <label>{{localize "UKM.Setup.Ruler"}}</label>
+      <select name="ruler">
+        <option value="">{{localize "UKM.Setup.None"}}</option>
+        {{selectOptions rulerChoices selected=ruler}}
+      </select>
+      <p class="hint">{{localize "UKM.Setup.RulerHint"}}</p>
+    </div>
     <p class="hint">{{#if kingdomActive}}{{localize "UKM.Setup.KingdomHint"}}{{else}}{{localize "UKM.Setup.KingdomNew"}}{{/if}}</p>
   </section>
 
@@ -146,7 +154,8 @@
       </tbody>
     </table>
     <div class="ukm-add-advisor">
-      <input type="text" name="newAdvisor.name" placeholder="{{localize "UKM.Setup.AdvisorNewName"}}">
+      <input type="text" name="newAdvisor.name" list="ukm-advisor-actors" placeholder="{{localize "UKM.Setup.AdvisorNewName"}}">
+      <datalist id="ukm-advisor-actors">{{#each advisorActorNames}}<option value="{{this}}"></option>{{/each}}</datalist>
       <select name="newAdvisor.seat">{{selectOptions seatChoices localize=true}}</select>
       <button type="button" data-action="addAdvisor"><i class="fa-solid fa-user-plus"></i> {{localize "UKM.Setup.AdvisorAdd"}}</button>
     </div>

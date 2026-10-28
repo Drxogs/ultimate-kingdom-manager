@@ -54,6 +54,34 @@
     {{/each}}
   </ol>
 
+  <header class="ukm-major"><i class="fa-solid fa-crown"></i> {{localize "UKM.Royal.Heading"}}</header>
+  <section class="ukm-crown">
+    {{#if crown.ruler}}
+      <p>{{localize "UKM.Royal.RulerLine" ruler=crown.ruler}}</p>
+      <ul class="ukm-royal-powers">
+        {{#each crown.powers}}
+          <li data-power="{{power}}">
+            <strong>{{name}}</strong> <span class="ukm-tag {{#unless left}}spent{{/unless}}">{{#if left}}{{localize "UKM.Royal.Ready"}}{{else}}{{localize "UKM.Royal.Used"}}{{/if}}</span>
+            <span class="hint">{{hint}}</span>
+            {{#if button}}<button type="button" class="ukm-rank-up" data-action="royalCourt"><i class="fa-solid fa-crown"></i> {{localize "UKM.Royal.HoldCourt"}}</button>{{/if}}
+          </li>
+        {{/each}}
+      </ul>
+      {{#if crown.favours.length}}
+        <p class="ukm-favours-title"><strong>{{localize "UKM.Royal.Favours"}}</strong></p>
+        <ul class="ukm-favours">
+          {{#each crown.favours}}
+            <li data-favour="{{id}}"><i class="fa-solid fa-scroll"></i> <strong>{{name}}</strong> <span class="hint">{{preview}}{{#if from}} · {{from}}{{/if}}</span>
+              {{#if @root.crown.canUse}}<button type="button" class="ukm-rank-up" data-action="useFavour"><i class="fa-solid fa-hand-sparkles"></i> {{localize "UKM.Royal.UseFavour"}}</button>{{/if}}
+            </li>
+          {{/each}}
+        </ul>
+      {{/if}}
+    {{else}}
+      <p class="hint">{{localize "UKM.Royal.NoRuler"}}</p>
+    {{/if}}
+  </section>
+
   <header class="ukm-major">{{localize "UKM.Fortune.Heading"}}{{#if fortunes.length}} <span class="ukm-tag">{{fortunes.length}}</span>{{/if}}</header>
   {{#if fortunes.length}}
     <ul class="ukm-fortunes">

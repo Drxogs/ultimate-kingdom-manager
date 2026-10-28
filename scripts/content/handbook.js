@@ -87,7 +87,7 @@ function projectsPage() {
 function companionsPage() {
   const parts = [
     "<p>Each seat can be held by a player character, advised by someone who suits it, or given to a hired advisor. An advisor in a seat always gives that desk's advisor rolls a status bonus (+1, +2 from level 8, +3 from level 16).</p>" +
-      "<p>Every seat except the Ruler's has a special ability. It appears under that desk's Start project button while a friendly advisor holds the seat. Only the advisor can do it; it takes a week and then can't be used again for 30 days.</p>"
+      "<p>Every seat has a special ability. It appears under that desk's Start project button while a friendly advisor holds the seat. Only the advisor can do it; it takes a week and then can't be used again for 30 days.</p>"
   ];
   parts.push("<p>Advisors are companions and people of the Stolen Lands you meet along the way. Once the party knows someone, the GM can seat them as the advisor of a seat that suits them.</p>");
   const abilities = getSeatAbilities();

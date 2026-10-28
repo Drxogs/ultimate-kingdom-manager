@@ -102,6 +102,8 @@
                 {{#if canHandle}}<button type="button" data-action="handlePersonally"><i class="fa-solid fa-user"></i> {{localize "UKM.Card.HandlePersonally"}}</button>{{/if}}
                 {{#if canEscalate}}<button type="button" data-action="escalate" data-tooltip="{{localize "UKM.Card.EscalateHint"}}"><i class="fa-solid fa-dragon"></i></button>{{/if}}
                 {{#if rerolls}}<button type="button" class="ukm-reroll" data-action="useFortune" data-tooltip="{{localize "UKM.Fortune.UseHint"}}"><i class="fa-solid fa-rotate"></i> {{localize "UKM.Fortune.Use" n=rerolls}}</button>{{/if}}
+                {{#if canDecree}}<button type="button" class="ukm-reroll ukm-royal-btn" data-action="royalDecree" data-tooltip="{{localize "UKM.Royal.DecreeHint"}}"><i class="fa-solid fa-crown"></i> {{localize "UKM.Royal.DecreeName"}}</button>{{/if}}
+                {{#if canCharge}}<button type="button" class="ukm-royal-btn" data-action="royalCharge" data-tooltip="{{localize "UKM.Royal.ChargeHint"}}"><i class="fa-solid fa-crown"></i> {{localize "UKM.Royal.ChargeName"}}</button>{{/if}}
                 {{#if fameReroll}}<button type="button" class="ukm-reroll" data-action="useFame" data-tooltip="{{localize "UKM.Fortune.UseFameHint"}}"><i class="fa-solid fa-star"></i> {{localize "UKM.Fortune.UseFame"}}</button>{{/if}}
                 {{#if canAccept}}<button type="button" data-action="accept"><i class="fa-solid fa-check"></i> {{localize "UKM.Card.Accept"}}</button>{{/if}}
                 {{#if canUnassign}}<button type="button" data-action="unassign" data-tooltip="{{localize "UKM.Card.Unassign"}}"><i class="fa-solid fa-rotate-left"></i></button>{{/if}}

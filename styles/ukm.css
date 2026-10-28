@@ -807,3 +807,12 @@
 .ukm-chat.ukm-check .degree-success strong { color: #3e7c2c; }
 .ukm-chat.ukm-check .degree-failure strong { color: #8a3b1e; }
 .ukm-chat.ukm-check .degree-criticalFailure strong { color: #7a1f1f; }
+
+/* The crown: the ruler's powers and favours (Realm tab). */
+.ukm-sheet .ukm-crown { margin: 0 0 0.6rem; }
+.ukm-sheet .ukm-royal-powers, .ukm-sheet .ukm-favours { list-style: none; margin: 0.2rem 0; padding: 0; display: grid; gap: 0.3rem; }
+.ukm-sheet .ukm-royal-powers li, .ukm-sheet .ukm-favours li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+.ukm-sheet .ukm-royal-powers .hint { flex-basis: 100%; }
+.ukm-sheet .ukm-royal-powers .ukm-tag.spent { opacity: 0.55; }
+.ukm-sheet .ukm-royal-btn i, .ukm-chat.ukm-royal h3 i { color: #a98f39; }
+.ukm-sheet .ukm-sheet-header .ruler i { color: #e3c05a; }

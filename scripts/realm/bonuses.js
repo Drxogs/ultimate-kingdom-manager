@@ -1,14 +1,12 @@
-import { SKILL_ABILITY } from "../constants.js";
+import { KINGDOM_SKILLS, selectorReaches } from "../constants.js";
 import { getKingdom } from "../integrations/party.js";
 import { getRealm } from "./state.js";
 
-const ALL_SKILLS = Object.keys(SKILL_ABILITY);
+const ALL_SKILLS = KINGDOM_SKILLS;
 
 /** The kingdom skills a modifier's selector reaches: an attribute, a skill, or every event check. */
 export function skillsFor(selector) {
-  const wanted = [selector].flat();
-  if (wanted.includes("events")) return ALL_SKILLS;
-  return ALL_SKILLS.filter((skill) => wanted.includes(skill) || wanted.includes(SKILL_ABILITY[skill]));
+  return ALL_SKILLS.filter((skill) => selectorReaches(selector, skill));
 }
 
 /** The best status bonus a skill already gets: from the kingdom sheet or a timed bonus. */

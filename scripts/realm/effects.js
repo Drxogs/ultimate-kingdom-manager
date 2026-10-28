@@ -8,6 +8,7 @@ import { secondsPerDay } from "./time.js";
 import { completeProject, refundProject } from "./projects.js";
 import { syncKingdomSettlements } from "./settlements.js";
 import { announceAnarchy, guardWithFame } from "./standing.js";
+import { grantFavour } from "./royal.js";
 import { UkmDialog } from "../apps/dialog.js";
 import { postFlatCheck, queueFlatCheck } from "./flat.js";
 
@@ -56,6 +57,8 @@ export function describeEffect(effect) {
         days: value.days ?? 30,
         selector: [value.selector].flat().map((s) => (game.i18n.has?.(`UKM.Effect.Selector.${s}`) ? game.i18n.localize(`UKM.Effect.Selector.${s}`) : game.i18n.localize(`UKM.Skill.${s}`))).join(" & ")
       });
+    case "favour":
+      return loc("Favour", { name: value?.name ?? "" });
     case "reroll":
       return value?.uses > 1 ? loc("RerollMany", { uses: value.uses, days: value.days ?? 30 }) : loc("Reroll");
     case "tradeAgreement":
@@ -357,6 +360,12 @@ export async function applyEffects(ctx, effects = []) {
           label: ctx.card?.name ?? "",
           expires: now + (value.days ?? 30) * day
         });
+        ctx.note(describeEffect(effect));
+        break;
+      }
+      case "favour": {
+        // A one-use favour the ruler keeps until they spend it (Realm tab, The Crown).
+        grantFavour(realm, value ?? {}, ctx.card?.name ?? "");
         ctx.note(describeEffect(effect));
         break;
       }

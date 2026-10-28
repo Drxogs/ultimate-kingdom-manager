@@ -66,7 +66,7 @@
       "ToolsNotice": "Kingdom Building, Camping & Weather is active. Its camping and weather work fine alongside this module; just don't use its kingdom sheet, since Ultimate Kingdom Manager runs the kingdom.",
       "NotSuited": "{name} (doesn’t suit this seat)",
       "Advisors": "Advisors",
-      "AdvisorsHint": "Companions and NPCs who can advise a seat. Tick Known once the party has met them; only known advisors are offered in the seat lists above. Add your own NPCs at the bottom.",
+      "AdvisorsHint": "Companions and NPCs who can advise a seat. Tick Known once the party has met them; only known advisors are offered in the seat lists above. Add any other NPC at the bottom: start typing and the NPCs in this world are suggested (Jaethal, Nok-Nok, Jhod Kavken and Bokken, for example).",
       "AdvisorName": "Advisor",
       "AdvisorSeats": "Suits",
       "AdvisorKnown": "Known",
@@ -74,7 +74,7 @@
       "AdvisorNpc": "adventure NPC",
       "AdvisorCustom": "your NPC",
       "AdvisorRemove": "Remove this advisor",
-      "AdvisorNewName": "Name of an NPC",
+      "AdvisorNewName": "Any NPC's name",
       "AdvisorAdd": "Add advisor",
       "AdvisorNeedsName": "Give the NPC a name and a seat.",
       "AdvisorAttitude": "Attitude",
@@ -85,7 +85,9 @@
       "KingdomName": "Kingdom name",
       "KingdomNamePlaceholder": "The Kingdom of Monkeyton",
       "KingdomNew": "Saving Setup founds the kingdom: its name, its seats and its level (always the party's).",
-      "KingdomHint": "The kingdom's numbers (Unrest, Ruin, Fame, level) are kept by the Kingdom Manager, not the PF2e kingdom sheet."
+      "KingdomHint": "The kingdom's numbers (Unrest, Ruin, Fame, level) are kept by the Kingdom Manager, not the PF2e kingdom sheet.",
+      "Ruler": "Ruler",
+      "RulerHint": "One player character wears the crown. The ruler isn't a seat: they also hold whatever seat they sit in, and they get the royal powers (Realm tab, The crown)."
     },
     "Import": {
       "Title": "Import Story Content",
@@ -324,7 +326,7 @@
         "NothingOwed": "Nothing is owed.",
         "NotEnoughGold": "That character doesn't have that much gold.",
         "AdvisorOnly": "Only the advisor can do this one.",
-        "NotRuler": "Only the Ruler or the GM can do that.",
+        "NotRuler": "Only the ruler's player (or the GM) can do that.",
         "DeskBusy": "The {desk} desk is tied up with {card}.",
         "NoCapital": "Found the capital first.",
         "HasCapital": "The realm already has a capital.",
@@ -334,7 +336,12 @@
         "AlreadyRerolled": "That check has already been rerolled.",
         "NoReroll": "No reroll fits that check.",
         "NoFame": "The realm has no Fame to spend.",
-        "AlreadyRolled": "That flat check has already been rolled."
+        "AlreadyRolled": "That flat check has already been rolled.",
+        "NoRuler": "There's no ruler yet. Name one in Setup.",
+        "NoRoyalUse": "That royal power has already been used this month.",
+        "NotWorking": "That project isn't underway.",
+        "AlreadyDecreed": "This result has already been decreed.",
+        "NoFavour": "That favour has already been used."
       }
     },
     "Effect": {
@@ -418,7 +425,8 @@
       },
       "RerollMany": "{uses} rerolls on these checks, kept for {days} days",
       "FlatPending": "Flat check DC {dc}: roll it from the chat card",
-      "FlatWhy": "Fate decides the rest: roll a flat check, DC {dc}."
+      "FlatWhy": "Fate decides the rest: roll a flat check, DC {dc}.",
+      "Favour": "The ruler gains a favour: {name}"
     },
     "Difficulty": {
       "veryEasy": "Very easy",
@@ -744,6 +752,30 @@
       "Level": "Kingdom level",
       "Unrest": "Unrest",
       "Line": "{skill} check, DC {dc}"
+    },
+    "Royal": {
+      "Heading": "The crown",
+      "Ruler": "Ruler",
+      "RulerLine": "{ruler} rules the realm.",
+      "NoRuler": "No ruler yet. The GM names one player character king or queen in Setup.",
+      "Ready": "ready",
+      "Used": "used this month",
+      "DecreeName": "Royal Decree",
+      "DecreeHint": "Once a month: roll a waiting result again and keep the better of the two. Use it from the card.",
+      "DecreeBetter": "{ruler} decrees it so: {card} is rolled again, and the better result stands.",
+      "DecreeKept": "{ruler} decrees it so: {card} is rolled again, but the first result was better and stands.",
+      "CourtName": "Royal Court",
+      "CourtHint": "Once a month: hold court in the capital and hear the people out. Unrest −1.",
+      "CourtChat": "{ruler} holds court and hears the people out. Unrest −1.",
+      "HoldCourt": "Hold court",
+      "ChargeName": "Royal Charge",
+      "ChargeHint": "Once a month: urge a project on, and it finishes a week sooner. Use it from the project's card.",
+      "ChargeChat": "{ruler} urges the work on: {project} will finish a week sooner.",
+      "Favours": "Favours held",
+      "Favour": "Royal favour",
+      "UseFavour": "Use",
+      "FavourUsed": "Favour used",
+      "FavourChat": "{ruler} calls in a favour."
     }
   }
 }

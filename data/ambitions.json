@@ -1,69 +1,6 @@
 {
   "version": 1,
   "ambitions": {
-    "ruler": {
-      "title": "Beloved Sovereign",
-      "tiers": [
-        {
-          "goal": {
-            "type": "successes",
-            "n": 3
-          },
-          "reward": [
-            {
-              "fame": 1
-            }
-          ]
-        },
-        {
-          "goal": {
-            "type": "rank",
-            "stat": "loyalty",
-            "n": 3
-          },
-          "reward": [
-            {
-              "modifier": {
-                "type": "status",
-                "value": 1,
-                "selector": [
-                  "loyalty"
-                ],
-                "days": 180
-              }
-            },
-            {
-              "income": {
-                "perWeek": 1,
-                "weeks": 26
-              }
-            }
-          ]
-        },
-        {
-          "goal": {
-            "type": "rank",
-            "stat": "loyalty",
-            "n": 6
-          },
-          "reward": [
-            {
-              "fame": 1
-            },
-            {
-              "modifier": {
-                "type": "status",
-                "value": 2,
-                "selector": [
-                  "loyalty"
-                ],
-                "days": 365
-              }
-            }
-          ]
-        }
-      ]
-    },
     "counselor": {
       "title": "Patron of the Arts",
       "tiers": [
@@ -437,67 +374,6 @@
                 "value": 2,
                 "selector": [
                   "economy"
-                ],
-                "days": 365
-              }
-            }
-          ]
-        }
-      ]
-    },
-    "warden": {
-      "title": "Master of the Wilds",
-      "tiers": [
-        {
-          "goal": {
-            "type": "hexes",
-            "n": 10
-          },
-          "reward": [
-            {
-              "fame": 1
-            }
-          ]
-        },
-        {
-          "goal": {
-            "type": "hexes",
-            "n": 25
-          },
-          "reward": [
-            {
-              "modifier": {
-                "type": "status",
-                "value": 1,
-                "selector": [
-                  "stability"
-                ],
-                "days": 180
-              }
-            },
-            {
-              "income": {
-                "perWeek": 1,
-                "weeks": 26
-              }
-            }
-          ]
-        },
-        {
-          "goal": {
-            "type": "hexes",
-            "n": 50
-          },
-          "reward": [
-            {
-              "fame": 1
-            },
-            {
-              "modifier": {
-                "type": "status",
-                "value": 2,
-                "selector": [
-                  "stability"
                 ],
                 "days": 365
               }

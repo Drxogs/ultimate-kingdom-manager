@@ -3,7 +3,7 @@
   "audiences": [
     {
       "id": "widow-land",
-      "seat": "ruler",
+      "seat": "emissary",
       "petitioner": "A farmer's widow",
       "request": "My husband's brother says the farm is his now. I've worked that land twenty years. Who does it belong to?",
       "responses": [
@@ -70,7 +70,7 @@
     },
     {
       "id": "tax-relief",
-      "seat": "ruler",
+      "seat": "emissary",
       "petitioner": "Village elders",
       "request": "The harvest was poor. We ask to be spared this season's levy.",
       "responses": [
@@ -128,7 +128,7 @@
     },
     {
       "id": "old-noble",
-      "seat": "ruler",
+      "seat": "emissary",
       "petitioner": "An old Brevic noble",
       "request": "My family held a title here before your kingdom. I'd like it back, and a seat at your table.",
       "responses": [
@@ -1360,7 +1360,7 @@
     },
     {
       "id": "hunting-rights",
-      "seat": "warden",
+      "seat": "viceroy",
       "petitioner": "Village hunters",
       "request": "The crown's woods are full of deer and our children are hungry. Let us hunt.",
       "responses": [
@@ -1422,7 +1422,7 @@
     },
     {
       "id": "guide-pay",
-      "seat": "warden",
+      "seat": "viceroy",
       "petitioner": "A frontier guide",
       "request": "I've led three expeditions for the realm and never been paid.",
       "responses": [
@@ -1489,7 +1489,7 @@
     },
     {
       "id": "fey-ring",
-      "seat": "warden",
+      "seat": "viceroy",
       "petitioner": "A nervous woodcutter",
       "request": "There's a fairy ring where we cut timber. Do we cut around it or through it?",
       "responses": [

@@ -2553,7 +2553,7 @@
     },
     {
       "id": "petitioners-line",
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "politics"
       ],
@@ -2660,7 +2660,7 @@
     },
     {
       "id": "whisper-campaign",
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "intrigue"
       ],
@@ -2767,7 +2767,7 @@
     },
     {
       "id": "local-election",
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "politics"
       ],
@@ -2898,7 +2898,7 @@
     },
     {
       "id": "bribed-official",
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "intrigue"
       ],
@@ -3005,7 +3005,7 @@
     },
     {
       "id": "royal-progress",
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "politics"
       ],
@@ -3094,7 +3094,7 @@
     },
     {
       "id": "informants",
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "intrigue"
       ],
@@ -3225,7 +3225,7 @@
     },
     {
       "id": "succession-gossip",
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "politics",
         "intrigue"
@@ -3333,7 +3333,7 @@
     },
     {
       "id": "amnesty",
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "politics"
       ],
@@ -6007,7 +6007,7 @@
     },
     {
       "id": "trail-markers",
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "exploration"
       ],
@@ -6138,7 +6138,7 @@
     },
     {
       "id": "lost-hunters",
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "wilderness"
       ],
@@ -6245,7 +6245,7 @@
     },
     {
       "id": "poachers",
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "wilderness"
       ],
@@ -6352,7 +6352,7 @@
     },
     {
       "id": "wild-harvest",
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "wilderness"
       ],
@@ -6447,7 +6447,7 @@
     },
     {
       "id": "strange-tracks",
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "exploration",
         "wilderness"
@@ -6555,7 +6555,7 @@
     },
     {
       "id": "ruins-found",
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "exploration"
       ],
@@ -6686,7 +6686,7 @@
     },
     {
       "id": "forest-fire",
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "wilderness"
       ],
@@ -6793,7 +6793,7 @@
     },
     {
       "id": "frontier-scouts",
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "exploration"
       ],
@@ -6924,7 +6924,7 @@
     },
     {
       "id": "land-grant",
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "politics"
       ],
@@ -7055,7 +7055,7 @@
     },
     {
       "id": "unpopular-law",
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "politics",
         "intrigue"
@@ -7163,7 +7163,7 @@
     },
     {
       "id": "stolen-seal",
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "intrigue"
       ],
@@ -7270,7 +7270,7 @@
     },
     {
       "id": "oath-day",
-      "seat": "ruler",
+      "seat": "emissary",
       "skill": [
         "politics"
       ],
@@ -9972,7 +9972,7 @@
     },
     {
       "id": "hermit",
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "wilderness"
       ],
@@ -10103,7 +10103,7 @@
     },
     {
       "id": "bridge-trolls",
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "exploration"
       ],
@@ -10210,7 +10210,7 @@
     },
     {
       "id": "mapping-caves",
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "exploration"
       ],
@@ -10341,7 +10341,7 @@
     },
     {
       "id": "wild-animals",
-      "seat": "warden",
+      "seat": "viceroy",
       "skill": [
         "wilderness"
       ],

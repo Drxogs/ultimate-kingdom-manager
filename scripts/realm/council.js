@@ -1,3 +1,4 @@
+import { canUseRoyal } from "./royal.js";
 import { MODULE_ID, SEATS } from "../constants.js";
 import { getProject } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
@@ -68,8 +69,9 @@ export async function voteProposal({ proposalId, vote, userId }) {
   return { ok: true };
 }
 
+/** The ruler (or the GM) decides which proposals the crown funds. */
 function canDecide(user) {
-  return user.isGM || canActForSeat(user, "ruler");
+  return canUseRoyal(user);
 }
 
 /** The Ruler funds a proposal: it starts as if its seat had started it. */

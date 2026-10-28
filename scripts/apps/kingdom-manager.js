@@ -48,6 +48,7 @@ import { SetupWizard } from "./setup-wizard.js";
 import { StoryImportApp } from "./story-import-app.js";
 import { MidCampaignApp } from "./midcampaign-app.js";
 import { UkmDialog } from "./dialog.js";
+import { canUseRoyal, favourPreview, favours, ROYAL_POWERS, rulerName, usesLeft } from "../realm/royal.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -235,6 +236,10 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       accept: KingdomManager.#accept,
       useFortune: KingdomManager.#useFortune,
       useFame: KingdomManager.#useFame,
+      royalDecree: KingdomManager.#royalDecree,
+      royalCharge: KingdomManager.#royalCharge,
+      royalCourt: KingdomManager.#royalCourt,
+      useFavour: KingdomManager.#useFavour,
       escalate: KingdomManager.#escalate,
       rollNow: KingdomManager.#rollNow,
       recordOutcome: KingdomManager.#recordOutcome,
@@ -306,6 +311,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       name: kingdom?.name || game.i18n.localize("UKM.Manager.Unnamed"),
       img: kingdom?.img || game.actors.party?.img || "icons/svg/castle.svg",
       capital: kingdom?.capital || "",
+      ruler: rulerName(realm),
       famePips: Array.from({ length: fame.max ?? 3 }, (_, i) => i < (fame.value ?? 0)),
       level,
       size: kingdom?.size ?? 0,
@@ -339,6 +345,19 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         atCap: stat.rank >= rankCap(level)
       };
     });
+    const royal = canUseRoyal(game.user, realm);
+    context.crown = {
+      ruler: rulerName(realm),
+      canUse: royal && !!rulerName(realm),
+      powers: ROYAL_POWERS.map((power) => ({
+        power,
+        name: game.i18n.localize(`UKM.Royal.${power === "decree" ? "Decree" : power === "court" ? "Court" : "Charge"}Name`),
+        hint: game.i18n.localize(`UKM.Royal.${power === "decree" ? "Decree" : power === "court" ? "Court" : "Charge"}Hint`),
+        left: usesLeft(power, realm),
+        button: power === "court" && royal && !!rulerName(realm) && usesLeft(power, realm) > 0
+      })),
+      favours: favours(realm).map((f) => ({ ...f, preview: favourPreview(f) }))
+    };
     context.hasCapital = hasCapital(realm);
     context.canFoundCapital = !context.hasCapital && canFoundCapital(game.user);
     context.settlements = this.#prepareSettlements(realm, level);
@@ -436,6 +455,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             canAccept: card.status === "rolled" && canAct,
             rerolls: card.status === "rolled" && card.pendingRoll && !card.pendingRoll.fortuneUsed && canCallBack(game.user, card) ? fortuneUses(realm, card.pendingRoll.skill) : 0,
             fameReroll: card.status === "rolled" && card.pendingRoll && !card.pendingRoll.fortuneUsed && canCallBack(game.user, card) && getFame().value > 0,
+            canDecree: card.status === "rolled" && !!card.pendingRoll && !card.pendingRoll.decreeUsed && canUseRoyal(game.user, realm) && !!rulerName(realm) && usesLeft("decree", realm) > 0,
+            canCharge: card.kind === "project" && card.status === "assigned" && !!card.workUntil && canUseRoyal(game.user, realm) && !!rulerName(realm) && usesLeft("charge", realm) > 0,
             rerollTag: ["open", "assigned"].includes(card.status) ? Math.max(0, ...stage.skills.map((sk) => fortuneUses(realm, sk))) : 0,
             workDays: card.workUntil ? Math.max(0, daysUntil(card.workUntil, now)) : null,
             assigneeName: card.assignee?.name ?? null,
@@ -840,7 +861,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
 
 
   #prepareCouncil(realm) {
-    const isRuler = game.user.isGM || canActForSeat(game.user, "ruler");
+    const isRuler = canUseRoyal(game.user, realm);
     const all = proposals(realm);
     const view = (p) => {
       const yes = Object.values(p.votes).filter((v) => v > 0).length;
@@ -1019,6 +1040,25 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #useFame(event, target) {
     const card = findCard(target);
     if (card) await sendRequest("useFame", { cardId: card.id });
+  }
+
+  static async #royalDecree(event, target) {
+    const card = findCard(target);
+    if (card) await sendRequest("royalDecree", { cardId: card.id });
+  }
+
+  static async #royalCharge(event, target) {
+    const card = findCard(target);
+    if (card) await sendRequest("royalCharge", { cardId: card.id });
+  }
+
+  static async #royalCourt() {
+    await sendRequest("royalCourt", {});
+  }
+
+  static async #useFavour(event, target) {
+    const favourId = target.closest("[data-favour]")?.dataset.favour;
+    if (favourId) await sendRequest("useFavour", { favourId });
   }
 
   static async #useFortune(event, target) {

@@ -165,8 +165,12 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
         known: known(c.id),
         attitude: draft?.advisors?.[c.id]?.attitude ?? attitudes[c.id] ?? "friendly"
       })),
-      seatChoices: Object.fromEntries(SEATS.filter((x) => x !== "ruler").map((x) => [x, `UKM.Seat.${x}`])),
+      seatChoices: Object.fromEntries(SEATS.map((x) => [x, `UKM.Seat.${x}`])),
+      // Any NPC in the world can be added as an advisor: their names are offered as you type.
+      advisorActorNames: [...new Set(game.actors.filter((a) => a.type === "npc" || (a.type === "character" && !pcIds.has(a.uuid))).map((a) => a.name))].sort((a, b) => a.localeCompare(b)),
       kingdomName: this.#draft?.kingdomName ?? kingdom?.name ?? "",
+      ruler: this.#draft?.ruler ?? getRealm().kingdom?.ruler ?? "",
+      rulerChoices: actorChoices,
       capital: (getRealm().settlements ?? []).find((s) => s.capital)?.name ?? null,
       buttons: [{ type: "submit", icon: "fa-solid fa-check", label: "UKM.Setup.Save" }]
     };
@@ -200,7 +204,9 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     if (kingdom) {
       // Saving Setup is what starts the kingdom: its name, its seats, and its level from the party.
       const name = String(data.kingdomName ?? "").trim() || kingdom.name || game.i18n.localize("UKM.Manager.Unnamed");
-      await kingdom.update({ ...leadership, name, active: true });
+      // The ruler is a title for one player character, never an NPC (Realm Redesign).
+      const ruler = getPlayerCharacters().some((a) => a.uuid === data.ruler) ? data.ruler : null;
+      await kingdom.update({ ...leadership, name, ruler, active: true });
       await syncKingdomLevel();
       const picks = Object.values(data.founding ?? {}).filter(Boolean);
       if (picks.length === FOUNDING_PICKS && new Set(picks).size === FOUNDING_PICKS) await applyFounding(picks);

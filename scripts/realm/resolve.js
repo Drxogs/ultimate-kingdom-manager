@@ -1,4 +1,4 @@
-import { DEGREE_POINTS, DEGREES, HIRED_PENALTY, LEVEL_DC, MODULE_ID, SEATS, SKILL_ABILITY, SKILL_TO_STAT } from "../constants.js";
+import { DEGREE_POINTS, DEGREES, HIRED_PENALTY, LEVEL_DC, MODULE_ID, SEATS, selectorReaches, SKILL_TO_STAT } from "../constants.js";
 import { getCardEvent, getCompanion, getEvent, getStory } from "../content/data.js";
 import { getControlDC, getFame, getKingdom, getPartyLevel, getPlayerCharacters, getUnrest } from "../integrations/party.js";
 import { unrestPenalty } from "./kingdom.js";
@@ -196,10 +196,9 @@ export async function escalateCard({ cardId, userId }) {
 
 function timedModifiers(realm, skill, eventId) {
   const now = game.time.worldTime;
-  const ability = SKILL_ABILITY[skill];
   return realm.timedModifiers
     .filter((m) => m.expires > now)
-    .filter((m) => [m.selector].flat().some((s) => s === "events" || s === ability || s === skill))
+    .filter((m) => selectorReaches(m.selector, skill))
     .map((m) => ({ slug: `ukm-${m.id}`, label: m.label, modifier: m.value, type: m.type }));
 }
 
@@ -335,6 +334,38 @@ export async function useFame({ cardId, userId }) {
     done = true;
   });
   if (!done) return { ok: false, reason: "NoReroll" };
+  await handRollToPlayer(card);
+  return { ok: true };
+}
+
+/**
+ * Royal Decree: once a month the ruler can have a waiting result rolled again and keep the better
+ * of the two. Works on any check, once per check.
+ */
+export async function useRoyalDecree({ cardId, userId }) {
+  const user = game.users.get(userId) ?? game.user;
+  const { canUseRoyal, spendUse, rulerName } = await import("./royal.js");
+  if (!canUseRoyal(user)) return { ok: false, reason: "NotRuler" };
+  const card = getRealm().cards.find((c) => c.id === cardId);
+  if (!card || card.status !== "rolled" || !card.pendingRoll) return { ok: false, reason: "NotRolled" };
+  if (card.pendingRoll.decreeUsed) return { ok: false, reason: "AlreadyDecreed" };
+  let outcome = null;
+  await updateRealm(async (realm) => {
+    const target = realm.cards.find((c) => c.id === cardId);
+    if (!target?.pendingRoll || !spendUse(realm, "decree")) return;
+    const check = await rollCheck(target, realm, { reroll: true });
+    if (!check) return;
+    const before = target.pendingRoll;
+    const keep = check.degree > before.degree ? { ...check, rolledAt: game.time.worldTime } : before;
+    target.pendingRoll = { ...keep, decreeUsed: true, fortuneUsed: before.fortuneUsed };
+    outcome = keep === before ? "kept" : "better";
+    addLog(realm, { type: "royal", text: `${game.i18n.localize("UKM.Royal.DecreeName")}: ${target.name}` });
+  });
+  if (!outcome) return { ok: false, reason: "NoRoyalUse" };
+  await ChatMessage.create({
+    speaker: { alias: getKingdom()?.name || game.i18n.localize("UKM.Manager.Unnamed") },
+    content: `<div class="ukm-chat ukm-royal"><h3><i class="fa-solid fa-crown"></i> ${game.i18n.localize("UKM.Royal.DecreeName")}</h3><p>${game.i18n.format(`UKM.Royal.Decree${outcome === "better" ? "Better" : "Kept"}`, { ruler: Handlebars.escapeExpression(rulerName() ?? ""), card: Handlebars.escapeExpression(card.name) })}</p></div>`
+  });
   await handRollToPlayer(card);
   return { ok: true };
 }
