@@ -142,7 +142,7 @@ export async function chooseRankUp({ projectId, option, userId }) {
     target.status = "done";
     target.choice = option;
     target.doneAt = game.time.worldTime;
-    ctx = new EffectContext({ realm, card: null, event: null });
+    ctx = new EffectContext({ realm, card: null, event: null, source: game.i18n.format("UKM.Bonus.RankUpSource", { stat: statLabel(target.stat), rank: target.rank }) });
     await applyEffects(ctx, [...getRankUpAlways(target.stat), ...picked.effects]);
     for (const task of ctx.gmTasks) realm.gmTasks.push(task);
     realm.projects = realm.projects.filter((p) => p.status !== "done" || game.time.worldTime - (p.doneAt ?? 0) < 180 * secondsPerDay());

@@ -130,7 +130,7 @@
       "ControlDC": "Control DC",
       "Treasury": "Treasury (BP)",
       "PerWeek": "per week",
-      "IncomeBreakdown": "Base {base} · Work sites {worksites} · Ranks {ranks} · Trade {trade} · Settlements {tracks}",
+      "IncomeBreakdown": "Base {base} · Work sites {worksites} · Ranks {ranks} · Trade {trade} · Settlements {tracks} · Food −{food} (need {need}, farms cover {farms})",
       "InDebt": "Treasury in debt",
       "Unrest": "Unrest",
       "Fame": "Fame",
@@ -207,7 +207,8 @@
       "HelpingChat": "{name} is lent to the {seat}'s desk for {days} days. Until it's done, these desks take no other work: {desks}. {name}'s player makes the roll.",
       "DeskBusy": "Desk tied up: someone is lent to {card}.",
       "LentFrom": "lent from {desks}",
-      "NoDesk": "no desk"
+      "NoDesk": "no desk",
+      "ContinuousUntil": "Ongoing: it comes back every month until {ends}."
     },
     "Log": {
       "income": "Treasury collected {amount} BP.",
@@ -303,7 +304,8 @@
       "RollFailed": "Couldn't roll {name}. Check that the kingdom and skill are set up.",
       "Ignored": "Nobody heard them out, and they went home angry.",
       "Windfall": "A windfall: +{bp} BP to the treasury.",
-      "AnarchyWorse": "The realm is in anarchy: the result is one step worse."
+      "AnarchyWorse": "The realm is in anarchy: the result is one step worse.",
+      "ContinuesUntil": "This matter isn't over: it comes back next month until {ends}."
     },
     "Request": {
       "Assigned": "On it. Expect a result in {days} days.",
@@ -363,7 +365,7 @@
     "Effect": {
       "Unrest": "Unrest {amount}",
       "Fame": "Fame {amount}",
-      "IncomeHalved": "Next month's income halved (at least 4 dice lost)",
+      "IncomeHalved": "Next month's income halved (at least {bp} BP lost)",
       "BpDice": "{amount} resource dice over the next month",
       "Bp": "{amount} BP",
       "Commodity": "{amount} {kind}",
@@ -442,7 +444,9 @@
       "RerollMany": "{uses} rerolls on these checks, kept for {days} days",
       "FlatPending": "Flat check DC {dc}: roll it from the chat card",
       "FlatWhy": "Fate decides the rest: roll a flat check, DC {dc}.",
-      "Favour": "The ruler gains a favour: {name}"
+      "Favour": "The ruler gains a favour: {name}",
+      "BpOverMonth": "{amount} BP, paid over the next month",
+      "BpDiceRoll": "{amount} × {per} BP, paid over the next month"
     },
     "Difficulty": {
       "veryEasy": "Very easy",
@@ -646,7 +650,9 @@
       "Partial": "Only adds +{gain} right now: these checks already get a +{existing} status bonus, and status bonuses don't stack.",
       "Converted": "The status bonus wouldn't have added anything here, so it became two rerolls on the same checks instead.",
       "WillConvert": "Its status bonus would add nothing here (these checks already have one, and status bonuses don't stack), so it becomes two rerolls on the same checks instead.",
-      "RankLabel": "{stat} rank"
+      "RankLabel": "{stat} rank",
+      "Reward": "Reward",
+      "RankUpSource": "{stat} rank {rank}"
     },
     "Settlement": {
       "Type": {
@@ -655,7 +661,7 @@
         "city": "City",
         "metropolis": "Metropolis"
       },
-      "BonusLabel": "{name}",
+      "BonusLabel": "Tracks in {name}",
       "Grew": "{name} has grown into a {type}.",
       "NowOvercrowded": "{name} is now overcrowded: it needs more homes (houses, tenements and other residential buildings), or it adds 1 Unrest a month.",
       "Founded": "{name} is founded.",
@@ -856,7 +862,8 @@
     "Chat": {
       "Project": "Project",
       "Audience": "Audience",
-      "Story": "Story event"
+      "Story": "Story event",
+      "Event": "Kingdom event"
     },
     "Legacy": {
       "Title": "Bring over the v0.22 kingdom",
@@ -872,6 +879,17 @@
       "Threshold": "Threshold",
       "Penalty": "Penalty (−)",
       "Save": "Save"
+    },
+    "Ends": {
+      "criticalSuccess": "a critical success",
+      "success": "a success",
+      "failure": "a failure",
+      "criticalFailure": "a critical failure",
+      "failurePlural": "failures",
+      "successPlural": "successes",
+      "Twice": "two {result} in a row",
+      "AtStage": "{result} at stage {stage}",
+      "Or": " or "
     }
   }
 }

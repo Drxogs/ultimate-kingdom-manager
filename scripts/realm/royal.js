@@ -139,7 +139,7 @@ export async function useFavour({ favourId, userId }) {
     used = list.find((f) => f.id === favourId);
     if (!used) return;
     realm.royal.favours = list.filter((f) => f.id !== favourId);
-    ctx = new EffectContext({ realm, card: null, event: null });
+    ctx = new EffectContext({ realm, card: null, event: null, source: used.name });
     await applyEffects(ctx, used.effects ?? []);
     for (const task of ctx.gmTasks) realm.gmTasks.push(task);
     addLog(realm, { type: "royal", text: `${loc("FavourUsed")}: ${used.name}` });

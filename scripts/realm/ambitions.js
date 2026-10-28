@@ -86,7 +86,7 @@ export async function checkAmbitions() {
       r.ambitions ??= {};
       if ((r.ambitions[item.seat] ?? 0) !== item.tierIndex) return;
       r.ambitions[item.seat] = item.tierIndex + 1;
-      ctx = new EffectContext({ realm: r, card: null, event: null });
+      ctx = new EffectContext({ realm: r, card: null, event: null, source: item.ambition.title });
       const reward = convertWasted(item.tier.reward, r);
       await applyEffects(ctx, reward.effects);
       if (reward.converted) ctx.note(game.i18n.localize("UKM.Bonus.Converted"));

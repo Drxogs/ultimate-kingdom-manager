@@ -812,7 +812,9 @@
 .ukm-chat.ukm-chat-project { --ukm-chat-accent: #a7791f; }
 .ukm-chat.ukm-chat-matter { --ukm-chat-accent: #3d6680; }
 .ukm-chat.ukm-chat-audience { --ukm-chat-accent: #6b4a86; }
-.ukm-chat.ukm-chat-story { --ukm-chat-accent: #2f6b4f; }
+.ukm-chat.ukm-chat-story { --ukm-chat-accent: #2b6f7a; }
+.ukm-chat.ukm-chat-event-problem { --ukm-chat-accent: #b0561e; }
+.ukm-chat.ukm-chat-event-opportunity { --ukm-chat-accent: #3f7a3a; }
 
 /* GM: set the kingdom's numbers by hand */
 .ukm-sheet .ukm-sheet-header .ukm-adjust-btn { align-self: flex-start; margin: 0.2rem 0.4rem 0 0; color: #e8dcc4; opacity: 0.7; }

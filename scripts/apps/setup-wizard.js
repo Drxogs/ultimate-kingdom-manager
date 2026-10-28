@@ -62,6 +62,17 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     return context;
   }
 
+  /** Ticking an advisor as known (or not) updates the seat lists straight away, keeping the rest of the form. */
+  _onRender(context, options) {
+    super._onRender?.(context, options);
+    for (const box of this.element.querySelectorAll('input[name^="advisors."][name$=".known"]')) {
+      box.addEventListener("change", () => {
+        this.#draft = foundry.utils.expandObject(new foundry.applications.ux.FormDataExtended(this.element).object);
+        this.render();
+      });
+    }
+  }
+
   async _prepareContext() {
     const kingdom = getKingdom();
     const sources = inspectSources();

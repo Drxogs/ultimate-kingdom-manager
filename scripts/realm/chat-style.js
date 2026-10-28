@@ -2,14 +2,16 @@ import { getStoryEvents } from "../content/data.js";
 
 /*
  * Special cards look different in chat: a coloured edge and a small line with an icon above the title,
- * so trouble, projects, desk matters, audiences and story events stand out from the book's events.
+ * so each kind of card can be told apart at a glance.
  */
 const STYLES = {
   trouble: { icon: "fa-triangle-exclamation", label: "UKM.Trouble.Tag" },
   project: { icon: "fa-hammer", label: "UKM.Chat.Project" },
   matter: { icon: "fa-scroll", label: "UKM.Card.Matter" },
   audience: { icon: "fa-comments", label: "UKM.Chat.Audience" },
-  story: { icon: "fa-book-open", label: "UKM.Chat.Story" }
+  story: { icon: "fa-book-open", label: "UKM.Chat.Story" },
+  "event-problem": { icon: "fa-dragon", label: "UKM.Chat.Event" },
+  "event-opportunity": { icon: "fa-sun", label: "UKM.Chat.Event" }
 };
 
 export function cardStyleKey(card) {
@@ -19,6 +21,8 @@ export function cardStyleKey(card) {
   if (card.kind === "audience") return "audience";
   if (card.matter) return "matter";
   if (getStoryEvents().some((e) => e.id === card.eventId)) return "story";
+  // The adventure's kingdom events.
+  if (card.kind === "problem" || card.kind === "opportunity") return `event-${card.kind}`;
   return null;
 }
 

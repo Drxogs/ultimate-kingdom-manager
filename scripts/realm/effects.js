@@ -40,7 +40,11 @@ export function describeEffect(effect) {
     case "fame":
       return loc("Fame", { amount: formatAmount(value) });
     case "bpDice":
-      return value === "halfOrMinus4" ? loc("IncomeHalved") : loc("BpDice", { amount: formatAmount(value) });
+      if (value === "halfOrMinus4") return loc("IncomeHalved", { bp: Math.round(4 * resourceDieValue()) });
+      // Shown in BP: a "resource die" is PF2e's income die, worth its average here.
+      return typeof value === "number"
+        ? loc("BpOverMonth", { amount: formatAmount(Math.round(value * resourceDieValue())) })
+        : loc("BpDiceRoll", { amount: formatAmount(value), per: Math.round(resourceDieValue() * 10) / 10 });
     case "bp":
       return loc("Bp", { amount: formatAmount(value) });
     case "luxuries":
@@ -126,8 +130,10 @@ function describeRuin(value) {
  * each written once at the end.
  */
 export class EffectContext {
-  constructor({ realm, card, event }) {
+  constructor({ realm, card, event, source = "" }) {
     this.realm = realm;
+    // What a lasting bonus is named after when there's no card (a rank-up, an ambition, a favour).
+    this.source = source;
     this.card = card;
     this.event = event;
     this.unrest = 0;
@@ -325,11 +331,11 @@ export async function applyEffects(ctx, effects = []) {
           const monthly = weeklyIncome(realm).total * 4;
           const loss = Math.max(4 * resourceDieValue(), monthly / 2);
           spreadIncome(realm, -loss);
-          ctx.note(loc("IncomeHalved"));
+          ctx.note(loc("IncomeHalved", { bp: Math.round(4 * resourceDieValue()) }));
         } else {
           const dice = await rollAmount(value);
           spreadIncome(realm, dice * resourceDieValue());
-          ctx.note(loc("BpDice", { amount: formatAmount(dice) }));
+          ctx.note(loc("BpOverMonth", { amount: formatAmount(Math.round(dice * resourceDieValue())) }));
         }
         break;
       }
@@ -365,7 +371,7 @@ export async function applyEffects(ctx, effects = []) {
           type: value.type,
           value: value.value,
           selector: value.selector,
-          label: ctx.card?.name ?? "",
+          label: ctx.card?.name || ctx.source || game.i18n.localize("UKM.Bonus.Reward"),
           expires: now + (value.days ?? 30) * day
         });
         ctx.note(describeEffect(effect));
@@ -383,7 +389,7 @@ export async function applyEffects(ctx, effects = []) {
           skills: value.skills ?? [],
           projects: value.projects ?? [],
           uses: value.uses ?? 1,
-          label: ctx.card?.name ?? "",
+          label: ctx.card?.name || ctx.source || game.i18n.localize("UKM.Bonus.Reward"),
           expires: now + (value.days ?? 30) * day
         });
         ctx.note(describeEffect(effect));

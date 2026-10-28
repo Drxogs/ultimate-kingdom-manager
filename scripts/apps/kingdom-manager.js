@@ -3,6 +3,7 @@ import { getCardEvent, getCompanion } from "../content/data.js";
 import { getImportedPage } from "../content/story-import.js";
 import { focusHex, getHexDefinitions, getZone } from "../integrations/kingmaker.js";
 import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnrest } from "../integrations/party.js";
+import { weeklyFoodShortfall } from "../realm/rules.js";
 import { canRankUp, companionAttitude, isHired, rankBonus, rankCap, rawSeatCompanionId, routinePoints, seatCompanionId, statProgress, weeklyIncome } from "../realm/rules.js";
 import { getRealm, updateRealm } from "../realm/state.js";
 import { rankUpChoices, rankUpCost, rankUpProject } from "../realm/ranks.js";
@@ -257,7 +258,11 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       }))
     };
     context.treasury = realm.treasury;
-    context.income = income;
+    // Food: what the settlements need each week against the farms; the treasury pays half a BP per missing food.
+    const foodNeed = kingdom?.consumption?.value ?? 0;
+    const shortfall = weeklyFoodShortfall(realm);
+    const foodCost = Math.round(shortfall * 0.5);
+    context.income = { ...income, foodNeed, farms: Math.max(0, foodNeed - shortfall), foodCost, net: Math.round((income.total - foodCost) * 10) / 10 };
     context.debt = realm.debt;
     context.canRepay = realm.debt.amount > 0 && getPlayerCharacters().some((a) => game.user.isGM || a.isOwner);
     context.stats = Object.entries(REALM_STATS).map(([key, def]) => {
@@ -409,6 +414,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             skill: stage.skills.map((s) => game.i18n.localize(`UKM.Skill.${s}`)).join(" / "),
             mod: cardLevelMod(card, realm) + (card.dcAdjust ?? 0),
             continuous: event?.traits?.includes("continuous"),
+            continuousHint: event?.continuous ? game.i18n.format("UKM.Card.ContinuousUntil", { ends: endsText(event) || "…" }) : null,
             escalate: !!event?.escalate,
             daysLeft: days,
             urgent: days <= 7,

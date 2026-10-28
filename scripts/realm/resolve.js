@@ -200,7 +200,7 @@ function timedModifiers(realm, skill, eventId) {
   return realm.timedModifiers
     .filter((m) => m.expires > now)
     .filter((m) => selectorReaches(m.selector, skill))
-    .map((m) => ({ slug: `ukm-${m.id}`, label: m.label, modifier: m.value, type: m.type }));
+    .map((m) => ({ slug: `ukm-${m.id}`, label: m.label || game.i18n.localize("UKM.Bonus.Reward"), modifier: m.value, type: m.type }));
 }
 
 function companionModifiers(realm, card) {
@@ -440,6 +440,20 @@ async function rollCheck(card, realm, { reroll = false } = {}) {
   return { degree: roll.degreeOfSuccess, skill, stat, personal: false, total: roll.total, dc };
 }
 
+/** "a critical success or two failures in a row": what ends an ongoing event, in words. */
+export function endsText(event) {
+  const rules = event?.continuous?.endOn ?? [];
+  const degree = (d) => game.i18n.localize(`UKM.Ends.${d}`);
+  const parts = rules.map((rule) => {
+    const [scope, result] = rule.split(":");
+    if (!result) return degree(scope);
+    if (result === "twiceInARow") return game.i18n.format("UKM.Ends.Twice", { result: degree(`${scope}Plural`) });
+    if (scope.startsWith("stage")) return game.i18n.format("UKM.Ends.AtStage", { result: degree(result), stage: scope.slice(5) });
+    return rule;
+  });
+  return parts.length ? parts.join(game.i18n.localize("UKM.Ends.Or")) : "";
+}
+
 function endsOn(event, card, degreeName) {
   const rules = event?.continuous?.endOn ?? [];
   return rules.some((rule) => {
@@ -508,7 +522,8 @@ async function postSummary(card, degreeName, ctx, check) {
   const kingdom = getKingdom();
   const lines = ctx.lines.map((l) => `<li>${l}</li>`).join("");
   const by = check?.personal ? loc("HandledBy", { name: check.name }) : card.assignee?.name ? loc("AdvisedBy", { name: card.assignee.name }) : "";
-  const status = card.status === "open" ? `<p class="hint">${loc("Continues")}</p>` : "";
+  const ends = endsText(cardStage(card).event);
+  const status = card.status === "open" ? `<p class="hint">${ends ? loc("ContinuesUntil", { ends }) : loc("Continues")}</p>` : "";
   const result = card.kind === "audience" ? loc("Ignored") : game.i18n.localize(`UKM.Degree.${degreeName}`);
   const advisor = card.assignee?.name ?? getCompanion(seatCompanionId(card.seat))?.name ?? game.i18n.localize("UKM.Ability.TheAdvisor");
   const story = card.kind === "audience" ? null : getStory(card.eventId, degreeName, card.tier)?.replaceAll("{advisor}", advisor);
@@ -633,9 +648,7 @@ export async function recordOutcome(cardId, degreeName) {
     card = realm.cards.find((c) => c.id === cardId);
     if (!card || !["open", "assigned", "escalated", "rolled"].includes(card.status)) return;
     card.pendingRoll = null;
-    const wasEscalated = card.status === "escalated";
     ctx = await settleCard(realm, card, degreeName);
-    if (wasEscalated && card.status === "open") card.deadline = game.time.worldTime + (card.pausedDays ?? 30) * secondsPerDay();
   });
   if (ctx) await finish(card, degreeName, ctx, null);
 }

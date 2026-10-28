@@ -10,8 +10,8 @@
     </div>
     <label class="size"><span>{{localize "UKM.Manager.Size"}}</span> {{kingdom.size}}</label>
     <label class="dc"><span>{{localize "UKM.Manager.ControlDC"}}</span> {{kingdom.controlDC}}</label>
-    <label class="bp" data-tooltip="{{localize "UKM.Manager.IncomeBreakdown" base=income.base worksites=income.worksites ranks=income.ranks trade=income.trade tracks=income.tracks}}">
-      <span>BP</span> {{treasury}} <small>{{ukmSigned income.total}}/{{localize "UKM.Manager.Week"}}</small>
+    <label class="bp" data-tooltip="{{localize "UKM.Manager.IncomeBreakdown" base=income.base worksites=income.worksites ranks=income.ranks trade=income.trade tracks=income.tracks need=income.foodNeed farms=income.farms food=income.foodCost}}">
+      <span>BP</span> {{treasury}} <small>{{ukmSigned income.net}}/{{localize "UKM.Manager.Week"}}</small>
     </label>
     <label class="unrest"><span>{{localize "UKM.Manager.Unrest"}}</span> {{kingdom.unrest}}</label>
     <label class="fame">
