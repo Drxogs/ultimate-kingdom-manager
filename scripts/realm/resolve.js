@@ -1,6 +1,7 @@
 import { DEGREE_POINTS, DEGREES, HIRED_PENALTY, LEVEL_DC, MODULE_ID, SEATS, SKILL_ABILITY, SKILL_TO_STAT } from "../constants.js";
 import { getCardEvent, getCompanion, getEvent, getStory } from "../content/data.js";
-import { getControlDC, getFame, getKingdom, getPartyLevel, getPlayerCharacters } from "../integrations/party.js";
+import { getControlDC, getFame, getKingdom, getPartyLevel, getPlayerCharacters, getUnrest } from "../integrations/party.js";
+import { unrestPenalty } from "./kingdom.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { createCard } from "./deck.js";
 import { applyEffects, commitKingdomChanges, describeEffect, EffectContext, postFlatChecks } from "./effects.js";
@@ -278,7 +279,7 @@ export function estimateCheck(card, choice, realm = getRealm()) {
     const statistic = fromUuidSync(choice.actorUuid)?.skills?.[choice.personalSkill];
     if (!statistic) return null;
     base = statistic.mod;
-    extras.push(...structureModifiers(realm, card, skill));
+    extras.push(...structureModifiers(realm, card, skill), ...unrestModifiers());
     dc = (LEVEL_DC[Math.clamp(kingdom?.level ?? 1, 0, 20)] ?? 14) + mod;
     personal = true;
   } else {
@@ -362,6 +363,15 @@ export async function useFortune({ cardId, userId }) {
   return { ok: true };
 }
 
+/**
+ * A character handling a card personally is still working in a restless realm: Unrest's penalty
+ * applies to their check too (kingdom checks get it from kingdom.js).
+ */
+function unrestModifiers() {
+  const penalty = unrestPenalty(getUnrest());
+  return penalty ? [{ slug: "ukm-unrest", label: game.i18n.localize("UKM.Check.Unrest"), modifier: penalty, type: "status" }] : [];
+}
+
 function toModifiers(list) {
   return list.map((m) => new game.pf2e.Modifier(m));
 }
@@ -381,7 +391,7 @@ async function rollCheck(card, realm, { reroll = false } = {}) {
     const statistic = actor?.skills?.[card.assignee.personalSkill];
     if (!statistic) return null;
     const dc = (LEVEL_DC[Math.clamp(kingdom?.level ?? 1, 0, 20)] ?? 14) + mod;
-    modifiers.push(...structureModifiers(realm, card, skill));
+    modifiers.push(...structureModifiers(realm, card, skill), ...unrestModifiers());
     const roll = await statistic.roll({ ...options, dc: { value: dc }, modifiers: toModifiers(modifiers) });
     if (!roll) return null;
     return { degree: roll.degreeOfSuccess, skill, stat, personal: true, total: roll.total, dc };
