@@ -65,32 +65,17 @@
         {
           "name": "Tenements",
           "description": "Crooked timber blocks lean over dirty streets. There's a roof for every newcomer, if not much else.",
-          "gives": "The settlement becomes a town. +1 Community skills here. While it's the top stage, crime cards are more likely here and crime checks here take −1 (dirty streets).",
-          "skills": [
-            "agriculture",
-            "wilderness",
-            "exploration"
-          ]
+          "gives": "The settlement becomes a town. While it's the top stage, crime cards are more likely here and crime checks here take −1 (dirty streets)."
         },
         {
           "name": "Neighborhoods",
           "description": "Orderly lanes of whitewashed houses, each with a garden and a neighbour who keeps an eye out.",
-          "gives": "The settlement becomes a city. +2 Community skills here.",
-          "skills": [
-            "agriculture",
-            "wilderness",
-            "exploration"
-          ]
+          "gives": "The settlement becomes a city."
         },
         {
           "name": "Boroughs",
           "description": "Sprawling districts, each with its own market square, temple bells and fierce local pride.",
-          "gives": "The settlement becomes a metropolis. +3 Community skills here.",
-          "skills": [
-            "agriculture",
-            "wilderness",
-            "exploration"
-          ]
+          "gives": "The settlement becomes a metropolis."
         }
       ]
     },
@@ -109,30 +94,34 @@
         {
           "name": "Public House",
           "description": "A smoky, sticky-floored room with one cook, one barrel and one opinion: take it or leave it.",
-          "gives": "Food need −1 here. +1 Exploration here (rumours of the wilds).",
+          "gives": "+1 Agriculture, Wilderness, Exploration here. Food need −1 here.",
           "food": 1,
           "skills": [
+            "agriculture",
+            "wilderness",
             "exploration"
           ]
         },
         {
           "name": "Tavern",
           "description": "Warm, loud and honest. A proper kitchen, rooms upstairs, and a board of notices for anyone hiring blades.",
-          "gives": "Food need −2 here. +2 Exploration, Agriculture here.",
+          "gives": "+2 Agriculture, Wilderness, Exploration here. Food need −2 here.",
           "food": 2,
           "skills": [
-            "exploration",
-            "agriculture"
+            "agriculture",
+            "wilderness",
+            "exploration"
           ]
         },
         {
           "name": "Inn",
           "description": "Polished oak, roast pheasant, feather beds. Travellers plan their routes to sleep here, and spend freely.",
-          "gives": "Food need −3 here. +3 Exploration, Agriculture here. +1 BP a week.",
+          "gives": "+3 Agriculture, Wilderness, Exploration here. Food need −3 here. +1 BP a week.",
           "food": 3,
           "skills": [
-            "exploration",
-            "agriculture"
+            "agriculture",
+            "wilderness",
+            "exploration"
           ],
           "income": 1
         }
@@ -170,19 +159,17 @@
         {
           "name": "Temple",
           "description": "A stone temple with healers in the side halls and pilgrims at the steps.",
-          "gives": "+2 Folklore, Arts here. +2 vs Plague here.",
+          "gives": "+2 Folklore here. +2 vs Plague here.",
           "skills": [
-            "folklore",
-            "arts"
+            "folklore"
           ]
         },
         {
           "name": "Cathedral",
           "description": "Spires that catch the dawn, windows of coloured glass, choirs heard across the river.",
-          "gives": "+3 Folklore, Arts here. −1 Corruption a month. Fame +1 when built.",
+          "gives": "+3 Folklore here. −1 Corruption a month. Fame +1 when built.",
           "skills": [
-            "folklore",
-            "arts"
+            "folklore"
           ],
           "monthly": {
             "ruin": {
@@ -226,19 +213,17 @@
         {
           "name": "Theater",
           "description": "Painted scenery, a paid company and plays the nobles pretend not to enjoy.",
-          "gives": "+2 Arts, Folklore here.",
+          "gives": "+2 Arts here.",
           "skills": [
-            "arts",
-            "folklore"
+            "arts"
           ]
         },
         {
           "name": "Opera House",
           "description": "Gilded boxes and a stage the size of a field; singers come from Restov to be heard here.",
-          "gives": "+3 Arts, Folklore here. Fame +1 when built.",
+          "gives": "+3 Arts here. Fame +1 when built.",
           "skills": [
-            "arts",
-            "folklore"
+            "arts"
           ],
           "onBuild": {
             "fame": 1
@@ -267,9 +252,10 @@
         {
           "name": "Market",
           "description": "Stalls in the square on market day: cheese, cloth, gossip and the odd stolen goat.",
-          "gives": "+1 Trade here. +0.5 BP a week.",
+          "gives": "+1 Trade, Boating here. +0.5 BP a week.",
           "skills": [
-            "trade"
+            "trade",
+            "boating"
           ],
           "income": 0.5
         },
@@ -317,7 +303,7 @@
         {
           "name": "Worksite",
           "description": "Sawpits, a lime kiln and a crew who'll build you anything if you feed them.",
-          "gives": "+1 Industry here. +0.5 BP a week per work site in its hex area.",
+          "gives": "+1 Industry here. +0.5 BP a week.",
           "skills": [
             "industry"
           ],
@@ -326,20 +312,18 @@
         {
           "name": "Workshops",
           "description": "A street of craftsmen: cobblers, coopers, weavers, each with an apprentice and a grudge.",
-          "gives": "+2 Industry, Trade here. Cuts project costs here by 10%.",
+          "gives": "+2 Industry here. Cuts project costs here by 10%.",
           "skills": [
-            "industry",
-            "trade"
+            "industry"
           ],
           "discount": 10
         },
         {
           "name": "Smithies",
           "description": "Hammers ring dawn to dusk; the furnaces glow all night.",
-          "gives": "+3 Industry, Trade here. Cuts project costs here by 20%.",
+          "gives": "+3 Industry here. Cuts project costs here by 20%.",
           "skills": [
-            "industry",
-            "trade"
+            "industry"
           ],
           "discount": 20
         }
@@ -441,10 +425,9 @@
         {
           "name": "Magistrate's Court",
           "description": "Robed judges, a courtroom gallery and justice that is seen to be done.",
-          "gives": "+3 Intrigue, Politics here. −1 Crime a month.",
+          "gives": "+3 Intrigue here. −1 Crime a month.",
           "skills": [
-            "intrigue",
-            "politics"
+            "intrigue"
           ],
           "monthly": {
             "ruin": {
@@ -493,10 +476,9 @@
         {
           "name": "Citadel",
           "description": "Walls within walls, a keep on the hill and granaries for a year-long siege.",
-          "gives": "+3 Defense, Warfare here. +3 vs dangerous events. −1 Strife a month.",
+          "gives": "+3 Defense here. +3 vs dangerous events. −1 Strife a month.",
           "skills": [
-            "defense",
-            "warfare"
+            "defense"
           ],
           "eventsHere": 3,
           "monthly": {
@@ -536,19 +518,17 @@
         {
           "name": "Garrison",
           "description": "A walled compound of professional soldiers, stables and an armoury.",
-          "gives": "+2 Warfare, Defense here. +2 vs Bandits and Monsters here.",
+          "gives": "+2 Warfare here. +2 vs Bandits and Monsters here.",
           "skills": [
-            "warfare",
-            "defense"
+            "warfare"
           ]
         },
         {
           "name": "War College",
           "description": "Officers study maps of old battles; the realm's generals are made here.",
-          "gives": "+3 Warfare, Defense here. +1 Military realm-stat point a week.",
+          "gives": "+3 Warfare here. +1 Military realm-stat point a week.",
           "skills": [
-            "warfare",
-            "defense"
+            "warfare"
           ],
           "points": {
             "military": 1
@@ -580,19 +560,19 @@
         {
           "name": "Library",
           "description": "Shelves of salvaged books and a librarian who guards them like a dragon.",
-          "gives": "+1 Scholarship, Magic here.",
+          "gives": "+1 Magic, Scholarship here.",
           "skills": [
-            "scholarship",
-            "magic"
+            "magic",
+            "scholarship"
           ]
         },
         {
           "name": "Academy",
           "description": "Lecture halls, students arguing in the yard, a tower for star-watching.",
-          "gives": "+2 Scholarship, Magic here. +1 Arcane realm-stat point a week.",
+          "gives": "+2 Magic, Scholarship here. +1 Arcane realm-stat point a week.",
           "skills": [
-            "scholarship",
-            "magic"
+            "magic",
+            "scholarship"
           ],
           "points": {
             "arcane": 1
@@ -660,10 +640,9 @@
         {
           "name": "Sewers and Lamps",
           "description": "Tunnels beneath, glowing lamps above; the city is clean and bright at night.",
-          "gives": "+3 Engineering, Magic here. −1 Decay a month. Food need −1.",
+          "gives": "+3 Engineering here. −1 Decay a month. Food need −1.",
           "skills": [
-            "engineering",
-            "magic"
+            "engineering"
           ],
           "monthly": {
             "ruin": {

@@ -821,7 +821,7 @@
       "MissingNone": "Every need for its size is met.",
       "MissingItem": "{track} {stage}",
       "Size": "{size} · Homes {stage}",
-      "Bonuses": "Skill bonuses here (the best one counts)",
+      "Bonuses": "Skill bonuses here",
       "PinnacleHint": "One per kingdom. Needs a metropolis.",
       "StartTitle": "{track} in {settlement}",
       "StartBody": "Build {stage}: {cost}. The {seat} runs it with {stat} skills.",
