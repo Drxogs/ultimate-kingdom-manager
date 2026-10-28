@@ -96,6 +96,7 @@ export async function rejectProposal({ proposalId, userId }) {
 }
 
 async function settle(proposalId, status) {
+  const proposal = proposals().find((x) => x.id === proposalId);
   await updateRealm((realm) => {
     const p = realm.council?.proposals?.find((x) => x.id === proposalId);
     if (!p) return;
@@ -104,6 +105,23 @@ async function settle(proposalId, status) {
     const cutoff = game.time.worldTime - KEEP_DAYS * secondsPerDay();
     realm.council.proposals = realm.council.proposals.filter((x) => x.status === "open" || (x.settled ?? 0) > cutoff);
     addLog(realm, { type: `proposal-${status}`, seat: p.seat, text: p.name });
+  });
+  if (!proposal || status === "withdrawn") return;
+  // The crown's decision is announced to the table.
+  const { rulerName } = await import("./royal.js");
+  const esc = Handlebars.escapeExpression;
+  const yes = Object.values(proposal.votes ?? {}).filter((v) => v > 0).length;
+  const no = Object.values(proposal.votes ?? {}).filter((v) => v < 0).length;
+  const key = status === "funded" ? "DecisionFunded" : "DecisionRejected";
+  await ChatMessage.create({
+    speaker: { alias: getKingdom()?.name || game.i18n.localize("UKM.Manager.Unnamed") },
+    content: `<div class="ukm-chat ukm-royal"><h3><i class="fa-solid fa-crown"></i> ${esc(game.i18n.localize(`UKM.Council.${key}Title`))}</h3><p>${game.i18n.format(`UKM.Council.${key}`, {
+      ruler: esc(rulerName() ?? game.i18n.localize("UKM.Royal.TheCrown")),
+      name: esc(proposal.name),
+      cost: proposal.cost,
+      yes,
+      no
+    })}</p></div>`
   });
 }
 

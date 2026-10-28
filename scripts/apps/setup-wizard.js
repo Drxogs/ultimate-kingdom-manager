@@ -203,11 +203,17 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     const kingdom = getKingdom();
     if (kingdom) {
       // Saving Setup is what starts the kingdom: its name, its seats, and its level from the party.
-      const name = String(data.kingdomName ?? "").trim() || kingdom.name || game.i18n.localize("UKM.Manager.Unnamed");
+      const name = String(data.kingdomName ?? "").trim().slice(0, 40) || kingdom.name || game.i18n.localize("UKM.Manager.Unnamed");
       // The ruler is a title for one player character, never an NPC (Realm Redesign).
       const ruler = getPlayerCharacters().some((a) => a.uuid === data.ruler) ? data.ruler : null;
       await kingdom.update({ ...leadership, name, ruler, active: true });
       await syncKingdomLevel();
+      const capital = (getRealm().settlements ?? []).find((x) => x.capital);
+      if (capital && data.capitalName !== undefined && String(data.capitalName).trim() && String(data.capitalName).trim() !== capital.name) {
+        const { renameSettlement } = await import("../realm/settlements.js");
+        const renamed = await renameSettlement(capital.id, data.capitalName);
+        if (!renamed.ok) ui.notifications.warn(game.i18n.localize(`UKM.Request.Reason.${renamed.reason}`));
+      }
       const picks = Object.values(data.founding ?? {}).filter(Boolean);
       if (picks.length === FOUNDING_PICKS && new Set(picks).size === FOUNDING_PICKS) await applyFounding(picks);
       else if (picks.length) ui.notifications.warn(game.i18n.localize("UKM.Setup.FoundingIncomplete"));

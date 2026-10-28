@@ -511,3 +511,26 @@ export async function syncKingdomSettlements() {}
 export function overcrowdedCount(realm) {
   return settlements(realm).filter((s) => settlementState(s).overcrowded).length;
 }
+
+export const NAME_LIMIT = 40;
+
+/** The GM renames a settlement (the capital from Setup). Cards that name it follow along. */
+export async function renameSettlement(settlementId, newName) {
+  const name = String(newName ?? "").trim().slice(0, NAME_LIMIT);
+  if (!name) return { ok: false, reason: "NoName" };
+  const realm = getRealm();
+  const target = (realm.settlements ?? []).find((s) => s.id === settlementId);
+  if (!target) return { ok: false, reason: "Unknown" };
+  if (target.name === name) return { ok: true };
+  if (realm.settlements.some((s) => s.id !== settlementId && s.name.toLowerCase() === name.toLowerCase())) return { ok: false, reason: "NameTaken" };
+  const old = target.name;
+  await updateRealm((r) => {
+    const s = r.settlements.find((x) => x.id === settlementId);
+    if (!s) return;
+    s.name = name;
+    for (const card of r.cards ?? []) if (card.target?.settlement === old) card.target.settlement = name;
+    addLog(r, { type: "settlement-renamed", text: `${old} → ${name}` });
+  });
+  if (target.capital) await getKingdom()?.update({ capital: name });
+  return { ok: true };
+}

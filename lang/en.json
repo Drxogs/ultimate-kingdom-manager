@@ -80,14 +80,15 @@
       "AdvisorAttitude": "Attitude",
       "CapitalHeading": "The capital",
       "CapitalHint": "Found the capital here first: pick a settlement already on the map or name a new one. It comes with a free Founders' Hall (a home that also cuts the capital's food need by 1). Until there's a capital, no cards or projects appear.",
-      "CapitalDone": "{name} is the capital. Its buildings are managed on the Settlements tab.",
+      "CapitalDone": "{name} is the capital. Change its name above; its buildings are managed on the Settlements tab.",
       "Kingdom": "The kingdom",
       "KingdomName": "Kingdom name",
       "KingdomNamePlaceholder": "The Kingdom of Monkeyton",
       "KingdomNew": "Saving Setup founds the kingdom: its name, its seats and its level (always the party's).",
       "KingdomHint": "The kingdom's numbers (Unrest, Ruin, Fame, level) are kept by the Kingdom Manager, not the PF2e kingdom sheet.",
       "Ruler": "Ruler",
-      "RulerHint": "One player character wears the crown. The ruler isn't a seat: they also hold whatever seat they sit in, and they get the royal powers (Realm tab, The crown)."
+      "RulerHint": "One player character wears the crown. The ruler isn't a seat: they also hold whatever seat they sit in, and they get the royal powers (Realm tab, The crown).",
+      "CapitalName": "Capital's name"
     },
     "Import": {
       "Title": "Import Story Content",
@@ -564,7 +565,11 @@
       "MeetsTitle": "The council meets",
       "MeetsWaiting": "{count} proposals are waiting, and the treasury holds {bp} BP.",
       "MeetsEmpty": "Nothing is waiting on the council this month. The treasury holds {bp} BP.",
-      "Proposed": "Proposed to the council."
+      "Proposed": "Proposed to the council.",
+      "DecisionFundedTitle": "The crown funds a proposal",
+      "DecisionFunded": "{ruler} funds <strong>{name}</strong> ({cost} BP). The council voted {yes} for, {no} against. Work starts on its desk.",
+      "DecisionRejectedTitle": "The crown turns down a proposal",
+      "DecisionRejected": "{ruler} turns down <strong>{name}</strong>. The council voted {yes} for, {no} against."
     },
     "Ambition": {
       "Heading": "Seat ambitions",
@@ -775,7 +780,8 @@
       "Favour": "Royal favour",
       "UseFavour": "Use",
       "FavourUsed": "Favour used",
-      "FavourChat": "{ruler} calls in a favour."
+      "FavourChat": "{ruler} calls in a favour.",
+      "TheCrown": "The crown"
     }
   }
 }

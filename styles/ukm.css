@@ -88,7 +88,7 @@
 
 .ukm-import .ukm-summary { columns: 2; }
 
-.ukm-chat h3 { margin: 0 0 0.2rem; }
+.ukm-chat h3 { margin: 0 0 0.2rem; font-size: 1.5em; } /* a quarter smaller than Foundry's 28px chat heading */
 .ukm-chat ul { margin: 0.3rem 0 0; padding-left: 1.1rem; }
 .ukm-scene .ukm-scene-text { font-style: italic; }
 .ukm-scene .ukm-scene-options { margin: 0.5rem 0; padding-left: 1.1rem; display: grid; gap: 0.4rem; }
@@ -202,7 +202,7 @@
 }
 
 .ukm-sheet .ukm-sheet-header label > span:first-child,
-.ukm-sheet .ukm-sheet-header .capital > span {
+.ukm-sheet .ukm-sheet-header .capital > span:first-child {
   color: var(--ukm-sheet-gold);
   font-size: 0.8em;
   text-transform: uppercase;
@@ -816,3 +816,13 @@
 .ukm-sheet .ukm-royal-powers .ukm-tag.spent { opacity: 0.55; }
 .ukm-sheet .ukm-royal-btn i, .ukm-chat.ukm-royal h3 i { color: #a98f39; }
 .ukm-sheet .ukm-sheet-header .ruler i { color: #e3c05a; }
+
+/* Long kingdom, capital and ruler names trim with "…" (full name on hover) instead of breaking the header. */
+.ukm-sheet .ukm-sheet-header .details { min-width: 0; }
+.ukm-sheet .ukm-sheet-header .title { min-width: 0; overflow: hidden; }
+.ukm-sheet .ukm-sheet-header .title .name { flex: 0 1 auto; min-width: 0; max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ukm-sheet .ukm-sheet-header .title .capital { flex: 0 1 auto; min-width: 0; max-width: 28%; }
+.ukm-sheet .ukm-sheet-header .title .capital > span:first-child { flex-shrink: 0; }
+.ukm-sheet .ukm-sheet-header .title .capital .val { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Realm stats: the seat and skills sit behind an info icon. */
+.ukm-sheet .ukm-stat-head .ukm-stat-info i { cursor: help; color: var(--ukm-muted); }

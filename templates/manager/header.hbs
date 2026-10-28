@@ -4,9 +4,9 @@
   </div>
   <div class="details">
     <div class="title">
-      <span class="name">{{kingdom.name}}</span>
-      {{#if kingdom.capital}}<span class="capital"><span>{{localize "UKM.Manager.Capital"}}</span> {{kingdom.capital}}</span>{{/if}}
-      {{#if kingdom.ruler}}<span class="capital ruler"><span><i class="fa-solid fa-crown"></i> {{localize "UKM.Royal.Ruler"}}</span> {{kingdom.ruler}}</span>{{/if}}
+      <span class="name" data-tooltip="{{kingdom.name}}">{{kingdom.name}}</span>
+      {{#if kingdom.capital}}<span class="capital" data-tooltip="{{kingdom.capital}}"><span>{{localize "UKM.Manager.Capital"}}</span> <span class="val">{{kingdom.capital}}</span></span>{{/if}}
+      {{#if kingdom.ruler}}<span class="capital ruler" data-tooltip="{{kingdom.ruler}}"><span><i class="fa-solid fa-crown"></i> {{localize "UKM.Royal.Ruler"}}</span> <span class="val">{{kingdom.ruler}}</span></span>{{/if}}
     </div>
     <label class="size"><span>{{localize "UKM.Manager.Size"}}</span> {{kingdom.size}}</label>
     <label class="dc"><span>{{localize "UKM.Manager.ControlDC"}}</span> {{kingdom.controlDC}}</label>

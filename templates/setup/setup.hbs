@@ -22,7 +22,7 @@
     <h3>{{localize "UKM.Setup.Kingdom"}}</h3>
     <div class="form-group">
       <label>{{localize "UKM.Setup.KingdomName"}}</label>
-      <input type="text" name="kingdomName" value="{{kingdomName}}" placeholder="{{localize "UKM.Setup.KingdomNamePlaceholder"}}">
+      <input type="text" name="kingdomName" value="{{kingdomName}}" maxlength="40" placeholder="{{localize "UKM.Setup.KingdomNamePlaceholder"}}">
     </div>
     <div class="form-group">
       <label>{{localize "UKM.Setup.Ruler"}}</label>
@@ -48,7 +48,11 @@
   <section>
     <h3>{{localize "UKM.Setup.CapitalHeading"}}</h3>
     {{#if capital}}
-      <p>{{localize "UKM.Setup.CapitalDone" name=capital}}</p>
+      <div class="form-group">
+        <label>{{localize "UKM.Setup.CapitalName"}}</label>
+        <input type="text" name="capitalName" value="{{capital}}" maxlength="40">
+      </div>
+      <p class="hint">{{localize "UKM.Setup.CapitalDone" name=capital}}</p>
     {{else}}
       <p class="hint">{{localize "UKM.Setup.CapitalHint"}}</p>
       <p><button type="button" data-action="foundCapital"><i class="fa-solid fa-flag"></i> {{localize "UKM.Settlement.FoundCapital"}}</button></p>

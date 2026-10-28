@@ -30,7 +30,7 @@
       <li class="ukm-stat {{#if ready}}ready{{/if}}" data-stat="{{key}}">
         <div class="ukm-stat-head">
           <strong>{{label}}</strong>
-          <span class="hint">{{seat}} · {{skills}}</span>
+          <span class="hint ukm-stat-info"><i class="fa-solid fa-circle-info" data-tooltip="{{seat}} · {{skills}}" aria-label="{{seat}} · {{skills}}"></i></span>
         </div>
         <div class="ukm-stat-rank">
           <span>{{localize "UKM.Manager.Rank"}} {{rank}}</span>
