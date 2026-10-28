@@ -1,6 +1,6 @@
 import { drawAudience } from "./audiences.js";
 import { createCard, drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
-import { forceTrouble } from "./troubles.js";
+import { forceTrouble, troubleOptions } from "./troubles.js";
 import { getStoryEvents } from "../content/data.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
@@ -95,7 +95,9 @@ const OPS = {
       card = forceTrouble(realm, settlementId, { hexOf: settlementHex });
     });
     await syncPins();
-    return { notice: card ? game.i18n.format("UKM.Trouble.Drawn", { name: card.name }) : game.i18n.localize("UKM.Trouble.None") };
+    if (card) return { notice: game.i18n.format("UKM.Trouble.Drawn", { name: card.name }) };
+    const settlement = settlements().find((s) => s.id === settlementId);
+    return { notice: game.i18n.localize(settlement && troubleOptions(settlement).length ? "UKM.Trouble.AllOut" : "UKM.Trouble.None") };
   },
   drawMatter: async () => {
     let card = null;

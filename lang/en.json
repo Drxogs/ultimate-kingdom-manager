@@ -847,7 +847,8 @@
       "Possible": "Trouble may strike at the start of each month until this is fixed.",
       "TenementsRisk": "Tenements: crime is likelier here, and crime checks here take −1.",
       "Quiet": "Easy start: no trouble cards for another {days} days.",
-      "Tag": "Trouble"
+      "Tag": "Trouble",
+      "AllOut": "Every trouble card this settlement can draw is already on a desk. Resolve one to draw it again."
     }
   }
 }

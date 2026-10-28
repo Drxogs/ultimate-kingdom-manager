@@ -2261,6 +2261,102 @@
       "success": "{advisor} threw a feast for the realm's guests and neighbors at the treasury's expense, and it was a fine night that left everyone in good humor.",
       "failure": "{advisor} threw a feast for the realm's guests and neighbors at the treasury's expense, but it was extravagant and dull.",
       "criticalFailure": "{advisor} threw a feast for the realm's guests and neighbors at the treasury's expense, and it went too far. The scandal followed."
+    },
+    "trouble-empty-bellies": {
+      "criticalSuccess": "With no kitchen fire to share, hungry families begged to hunt the royal woods. The crown let them in under a warden's eye, the pots filled, and folk talked for weeks about the ruler who fed them.",
+      "success": "With no kitchen fire to share, hungry families begged to hunt the royal woods. A careful hunt was allowed, and nobody went to bed hungry that month.",
+      "failure": "With no kitchen fire to share, hungry families begged to hunt the royal woods. The answer came too late and too stingy, and the grumbling has started.",
+      "criticalFailure": "With no kitchen fire to share, hungry families begged to hunt the royal woods. They were turned away, went in anyway, and the wardens' clubs left bruises and bitter talk."
+    },
+    "trouble-bread-riot": {
+      "criticalSuccess": "The kitchens couldn't keep up and a crowd stormed the stores. Someone climbed a cart, spoke plainly, and handed out bread with their own hands. The bakers will remember it.",
+      "success": "The kitchens couldn't keep up and a crowd stormed the stores. It was talked down before anything burned, though the stores are thinner for it.",
+      "failure": "The kitchens couldn't keep up and a crowd stormed the stores. It ended only when the crown paid a ruinous price for grain, or let the crowd's anger stand.",
+      "criticalFailure": "The kitchens couldn't keep up and a crowd stormed the stores. The guard waded in, windows broke, and the town still talks about the day the crown sent spears against bread."
+    },
+    "trouble-crisis-of-faith": {
+      "criticalSuccess": "With no shrine to tend, a wandering prophet told the square the gods had left the realm. He was answered so well that he ended up blessing the crown, and the crowd cheered.",
+      "success": "With no shrine to tend, a wandering prophet told the square the gods had left the realm. He was heard out and sent on his way, and the talk died down.",
+      "failure": "With no shrine to tend, a wandering prophet told the square the gods had left the realm. Nobody answered him well, and some folk have started to believe him.",
+      "criticalFailure": "With no shrine to tend, a wandering prophet told the square the gods had left the realm. He was driven out with stones, and now he's a martyr in the stories people whisper."
+    },
+    "trouble-unquiet-dead": {
+      "criticalSuccess": "With no priest to bless the graves, something walked the burial ground at night. It was laid to rest properly, with rites the whole town turned out to see.",
+      "success": "With no priest to bless the graves, something walked the burial ground at night. It was put down before anyone else was hurt, and the gravediggers went back to work.",
+      "failure": "With no priest to bless the graves, something walked the burial ground at night. It's quiet now, but nobody believes it's gone, and doors are barred at dusk.",
+      "criticalFailure": "With no priest to bless the graves, something walked the burial ground at night. It took a gravedigger before it was stopped, and the graveyard is falling to weeds."
+    },
+    "trouble-sleeping-rough": {
+      "criticalSuccess": "Settlers were sleeping under carts and canvas. Neighbours raised roofs together in a single week, and the new families feel like they belong.",
+      "success": "Settlers were sleeping under carts and canvas. Shelter was found for most of them before the weather turned.",
+      "failure": "Settlers were sleeping under carts and canvas. Too little was done, and a few families have already packed up and left.",
+      "criticalFailure": "Settlers were sleeping under carts and canvas. The cold came early, and the families who left are telling everyone the realm can't house its own."
+    },
+    "trouble-shanty-fire": {
+      "criticalSuccess": "Fire raced through the crowded tenements. Bucket lines and firebreaks held it to one block, and the tale of the night everyone pulled together spread far.",
+      "success": "Fire raced through the crowded tenements. It was put out before it spread, with scorched walls but no lives lost.",
+      "failure": "Fire raced through the crowded tenements. It burned for hours, and rebuilding the blocks costs coin the treasury can feel.",
+      "criticalFailure": "Fire raced through the crowded tenements and took a whole quarter. Families are sleeping in the square, and the ash smells of anger."
+    },
+    "trouble-pickpocket-ring": {
+      "criticalSuccess": "Purses were vanishing on market day. The ring was rolled up in a single sweep, and the market feels safer than it has in months.",
+      "success": "Purses were vanishing on market day. A few arrests scattered the ring, and the merchants stayed.",
+      "failure": "Purses were vanishing on market day. The thieves were never caught, and some stalls packed up for safer towns.",
+      "criticalFailure": "Purses were vanishing on market day. The ring grew bolder, and now they have friends in the guardhouse."
+    },
+    "trouble-protection-racket": {
+      "criticalSuccess": "Thugs were 'protecting' the shops on the main street. They were run out, and the grateful shopkeepers quietly pledged the crown a favour.",
+      "success": "Thugs were 'protecting' the shops on the main street. The racket was broken up, though nobody would testify.",
+      "failure": "Thugs were 'protecting' the shops on the main street. They're still collecting, and folk are angry the crown can't stop them.",
+      "criticalFailure": "Thugs were 'protecting' the shops on the main street. A raid went wrong, and the gang now runs the street openly."
+    },
+    "trouble-smugglers-cellar": {
+      "criticalSuccess": "Untaxed goods were moving through a cellar under a tavern. The cellar was raided, and the seized cargo sold for a handsome sum.",
+      "success": "Untaxed goods were moving through a cellar under a tavern. The smugglers were persuaded to pay their dues.",
+      "failure": "Untaxed goods were moving through a cellar under a tavern. The smugglers moved on before anyone came, and the trade goes on somewhere else.",
+      "criticalFailure": "Untaxed goods were moving through a cellar under a tavern. Someone in the crown's service took a cut and looked away, and now everyone knows it."
+    },
+    "trouble-midnight-murder": {
+      "criticalSuccess": "A respected citizen was found dead in an alley. The killer was found and brought to justice before the week was out, and the city sleeps easier.",
+      "success": "A respected citizen was found dead in an alley. The killer was caught at last, though the city was on edge until then.",
+      "failure": "A respected citizen was found dead in an alley. The trail went cold, and neighbours eye each other with suspicion.",
+      "criticalFailure": "A respected citizen was found dead in an alley. The wrong man was hanged, and the real killer is still out there."
+    },
+    "trouble-raiders-at-dusk": {
+      "criticalSuccess": "Riders struck the outlying farms at dusk and vanished. They were ambushed on their next raid, and the farmers swore to feed the crown's riders for it.",
+      "success": "Riders struck the outlying farms at dusk and vanished. Patrols drove them off for good.",
+      "failure": "Riders struck the outlying farms at dusk and vanished. They took grain and cattle before the patrols found their trail.",
+      "criticalFailure": "Riders struck the outlying farms at dusk and vanished. They came back again and again, and the farms burned while the realm argued."
+    },
+    "trouble-wolves-in-the-lanes": {
+      "criticalSuccess": "Something big and hungry was getting over the fences at night. It was tracked and killed, and its pelt hangs in the square.",
+      "success": "Something big and hungry was getting over the fences at night. It was driven back into the hills.",
+      "failure": "Something big and hungry was getting over the fences at night. It still prowls, and folk bar their doors at dusk.",
+      "criticalFailure": "Something big and hungry was getting over the fences at night. It took a child before anyone stopped it, and the city blames the crown."
+    },
+    "trouble-low-street-fever": {
+      "criticalSuccess": "Foul water brought fever to the poorest streets. Healers and new drains stopped it in a fortnight.",
+      "success": "Foul water brought fever to the poorest streets. It burned itself out without spreading further.",
+      "failure": "Foul water brought fever to the poorest streets. It lingered, and the low streets are filthier than ever.",
+      "criticalFailure": "Foul water brought fever to the poorest streets, and then to every street. The graveyard is full."
+    },
+    "trouble-collapsed-well": {
+      "criticalSuccess": "The main well caved in, and something below had dug it out. The workmen who went down came back with a tale, and the well is better than before.",
+      "success": "The main well caved in. It was shored up and dug out again.",
+      "failure": "The main well caved in. Rebuilding it cost more than anyone hoped.",
+      "criticalFailure": "The main well caved in, and digging it out brought down half the square. The repairs are slow and costly."
+    },
+    "trouble-bribed-clerk": {
+      "criticalSuccess": "A clerk was selling permits on the side. The scheme was exposed, the money recovered, and the halls of government feel cleaner.",
+      "success": "A clerk was selling permits on the side. He was dismissed quietly.",
+      "failure": "A clerk was selling permits on the side. He was moved, not stopped, and the trade in favours goes on.",
+      "criticalFailure": "A clerk was selling permits on the side, and when it came out, half the office was in on it."
+    },
+    "trouble-rival-claimant": {
+      "criticalSuccess": "A minor noble claimed the city should be his. He was answered so well in public that he knelt and swore an oath to the crown.",
+      "success": "A minor noble claimed the city should be his. His claim was heard and dismissed, and he went home.",
+      "failure": "A minor noble claimed the city should be his. He was sent away, but his supporters are still talking.",
+      "criticalFailure": "A minor noble claimed the city should be his, and the city split down the middle. There were fights in the streets before it calmed."
     }
   }
 }
