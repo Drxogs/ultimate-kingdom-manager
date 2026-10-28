@@ -180,6 +180,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       foundCapital: () => KingdomManager.foundCapitalDialog(),
       developTrack: KingdomManager.#developTrack,
       drawTrouble: KingdomManager.#drawTrouble,
+      adjustNumbers: KingdomManager.#adjustNumbers,
       gmTrackStage: KingdomManager.#gmTrackStage,
       openMidCampaign: () => new MidCampaignApp().render(true),
       makeCapital: KingdomManager.#makeCapital,
@@ -251,6 +252,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         key,
         label: game.i18n.localize(`UKM.Ruin.${key}`),
         ...r,
+        penalty: Math.abs(r.penalty ?? 0),
         percent: Math.round((r.value / Math.max(r.max, 1)) * 100)
       }))
     };
@@ -727,6 +729,30 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       return;
     }
     await sendRequest("startProject", request);
+  }
+
+  /** GM: set the kingdom's numbers by hand (the PF2e kingdom sheet isn't used any more). */
+  static async #adjustNumbers() {
+    if (!game.user.isGM) return;
+    const realm = getRealm();
+    const fame = getFame();
+    const ruins = getRuin();
+    const num = (name, value, min = 0, max = 999) => `<input type="number" name="${name}" value="${value}" min="${min}" max="${max}" step="1">`;
+    const rows = Object.entries(ruins)
+      .map(([key, r]) => `<tr><td>${game.i18n.localize(`UKM.Ruin.${key}`)}</td><td>${num(`${key}.value`, r.value, 0, 99)}</td><td>${num(`${key}.max`, r.max, 1, 99)}</td><td>${num(`${key}.penalty`, Math.abs(r.penalty ?? 0), 0, 20)}</td></tr>`)
+      .join("");
+    const content = `<p class="hint">${game.i18n.localize("UKM.Adjust.Hint")}</p>
+      <div class="form-group"><label>BP</label>${num("treasury", realm.treasury, -9999, 99999)}</div>
+      <div class="form-group"><label>${game.i18n.localize("UKM.Manager.Unrest")}</label>${num("unrest", getUnrest(), 0, 99)}</div>
+      <div class="form-group"><label>${game.i18n.localize("UKM.Manager.Fame")}</label>${num("fame", fame.value, 0, fame.max ?? 3)}</div>
+      <table class="ukm-adjust"><thead><tr><th></th><th>${game.i18n.localize("UKM.Adjust.Ruin")}</th><th>${game.i18n.localize("UKM.Adjust.Threshold")}</th><th>${game.i18n.localize("UKM.Adjust.Penalty")}</th></tr></thead><tbody>${rows}</tbody></table>`;
+    const data = await UkmDialog.prompt({
+      window: { title: game.i18n.localize("UKM.Adjust.Title") },
+      content,
+      ok: { label: game.i18n.localize("UKM.Adjust.Save"), callback: (event, button) => foundry.utils.expandObject(new foundry.applications.ux.FormDataExtended(button.form).object) },
+      rejectClose: false
+    });
+    if (data) await sendRequest("gm", { op: "adjust", data });
   }
 
   static async #drawTrouble(event, target) {

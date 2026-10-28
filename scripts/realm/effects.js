@@ -1,4 +1,4 @@
-import { COMMODITY_BP, RUINS, RUIN_ABILITY } from "../constants.js";
+import { COMMODITY_BP, REALM_STATS, RUINS, RUIN_ABILITY, STAT_ALIASES } from "../constants.js";
 import { getEvent } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
 import { resourceDieValue, weeklyIncome } from "./rules.js";
@@ -55,7 +55,7 @@ export function describeEffect(effect) {
       return loc("Modifier", {
         value: formatAmount(value.value),
         days: value.days ?? 30,
-        selector: [value.selector].flat().map((s) => (game.i18n.has?.(`UKM.Effect.Selector.${s}`) ? game.i18n.localize(`UKM.Effect.Selector.${s}`) : game.i18n.localize(`UKM.Skill.${s}`))).join(" & ")
+        selector: [value.selector].flat().map(selectorLabel).join(" & ")
       });
     case "favour":
       return loc("Favour", { name: value?.name ?? "" });
@@ -99,6 +99,14 @@ export function describeEffect(effect) {
     default:
       return loc("Manual");
   }
+}
+
+/** "Community" for a stat (old names like Stability included), "Agriculture" for a skill, "event" for all checks. */
+function selectorLabel(s) {
+  const stat = REALM_STATS[s] ? s : STAT_ALIASES[s];
+  if (stat) return game.i18n.localize(`UKM.Stat.${stat}`);
+  if (s === "events") return game.i18n.localize("UKM.Effect.Selector.events");
+  return game.i18n.localize(`UKM.Skill.${s}`);
 }
 
 function describeRuin(value) {

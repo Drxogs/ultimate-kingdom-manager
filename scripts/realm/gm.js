@@ -1,6 +1,7 @@
 import { drawAudience } from "./audiences.js";
 import { createCard, drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
 import { forceTrouble, troubleOptions } from "./troubles.js";
+import { importLegacyKingdom } from "./legacy.js";
 import { getStoryEvents } from "../content/data.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
@@ -88,6 +89,31 @@ const OPS = {
     await syncPins();
     const key = drawn.length === 0 ? "DrawnNone" : drawn.length === 1 ? "DrawnOne" : "Drawn";
     return { notice: game.i18n.format(`UKM.Manager.${key}`, { count: drawn.length }) };
+  },
+  adjust: async ({ data }) => {
+    const n = (v, fallback) => (Number.isFinite(Number(v)) ? Math.round(Number(v)) : fallback);
+    const { RUIN_ABILITY } = await import("../constants.js");
+    await updateRealm((realm) => {
+      const k = realm.kingdom;
+      realm.treasury = n(data.treasury, realm.treasury);
+      k.unrest.value = Math.max(0, n(data.unrest, k.unrest.value));
+      k.resources.fame.value = Math.max(0, Math.min(k.resources.fame.max ?? 3, n(data.fame, k.resources.fame.value)));
+      for (const [ruin, ability] of Object.entries(RUIN_ABILITY)) {
+        const given = data[ruin];
+        const a = k.abilities?.[ability];
+        if (!given || !a) continue;
+        a.ruin.max = Math.max(1, n(given.max, a.ruin.max));
+        a.ruin.value = Math.max(0, n(given.value, a.ruin.value));
+        a.penalty = -Math.abs(n(given.penalty, a.penalty));
+      }
+      addLog(realm, { type: "gm-adjust" });
+    });
+    return {};
+  },
+  importLegacy: async () => {
+    const result = await importLegacyKingdom();
+    await syncPins();
+    return result.ok ? {} : result;
   },
   drawTrouble: async ({ settlementId }) => {
     let card = null;

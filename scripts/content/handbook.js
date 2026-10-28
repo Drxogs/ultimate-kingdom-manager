@@ -46,7 +46,6 @@ function rankUpsPage() {
       )
     );
   }
-  parts.push("<p>A Stability rank-up also lowers Unrest by 1, whatever is chosen.</p>");
   return { name: "Rank-Up Choices", html: parts.join("") };
 }
 

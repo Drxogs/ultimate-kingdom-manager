@@ -28,6 +28,7 @@
       {{/each}}
     </div>
   </div>
+  {{#if isGM}}<a class="ukm-adjust-btn" data-action="adjustNumbers" data-tooltip="{{localize "UKM.Adjust.Title"}}"><i class="fa-solid fa-pen-to-square"></i></a>{{/if}}
   <div class="level-badge">
     <label>{{localize "UKM.Manager.Level"}}</label>
     <span>{{kingdom.level}}</span>

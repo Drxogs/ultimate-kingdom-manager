@@ -5,6 +5,8 @@ import { getKingdom, getPlayerCharacters, syncKingdomLevel } from "../integratio
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { applyFounding, foundingPicks, resetFounding } from "../realm/ranks.js";
 import { getRealm } from "../realm/state.js";
+import { legacyAvailable } from "../realm/legacy.js";
+import { sendRequest } from "../realm/requests.js";
 import { StoryImportApp } from "./story-import-app.js";
 import { MidCampaignApp } from "./midcampaign-app.js";
 import { isKnownAdvisor } from "../realm/rules.js";
@@ -40,6 +42,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       openImport: SetupWizard.#openImport,
       toggleActors: SetupWizard.#toggleActors,
       resetFounding: SetupWizard.#resetFounding,
+      importLegacy: SetupWizard.#importLegacy,
       addAdvisor: SetupWizard.#addAdvisor,
       foundCapital: SetupWizard.#foundCapital,
       removeAdvisor: SetupWizard.#removeAdvisor,
@@ -129,6 +132,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
 
     return {
       sources,
+      legacy: legacyAvailable(),
       founding: {
         picked: picked.map((s) => game.i18n.localize(`UKM.Stat.${s}`)).join(", "),
         done: picked.length > 0,
@@ -231,6 +235,19 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
   static #toggleActors() {
     this.#draft = foundry.utils.expandObject(new foundry.applications.ux.FormDataExtended(this.element).object);
     this.#showAllActors = !this.#showAllActors;
+    this.render();
+  }
+
+  /** Test build: copy a v0.22 kingdom in this world into this module's data. */
+  static async #importLegacy() {
+    const ok = await UkmDialog.confirm({
+      window: { title: game.i18n.localize("UKM.Legacy.Title") },
+      content: `<p>${game.i18n.localize("UKM.Legacy.Confirm")}</p>`,
+      rejectClose: false
+    });
+    if (!ok) return;
+    const result = await sendRequest("gm", { op: "importLegacy" });
+    if (result?.ok !== false) ui.notifications.info(game.i18n.localize("UKM.Legacy.Done"));
     this.render();
   }
 

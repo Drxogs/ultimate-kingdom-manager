@@ -1,3 +1,7 @@
+<h2>In the header</h2>
+<ul>
+<li><strong>Pencil</strong>: set the kingdom's numbers by hand: BP, Unrest, Fame, and each Ruin's value, threshold and penalty. For results the module can't apply, house rulings or mistakes. Nothing else happens when you save.</li>
+</ul>
 <h2>On cards</h2>
 <ul>
 <li><strong>Roll now</strong> (d20): skip the rest of the work time.</li>
@@ -13,9 +17,15 @@
 <li><strong>Finish now</strong> (on a rank-up in progress).</li>
 <li><strong>GM tasks</strong> list.</li>
 </ul>
+<h2>On the Settlements tab</h2>
+<ul>
+<li><strong>− and +</strong> on a track's row: lower or raise it one stage for free, with no roll, Unrest or Fame.</li>
+<li><strong>Lightning bolt</strong>: draw one of that settlement's trouble cards now, ignoring the odds and the easy start.</li>
+<li><strong>Crown</strong>, <strong>waves</strong>, <strong>bin</strong>: make it the capital, mark it waterside, or remove it from the realm.</li>
+</ul>
 <h2>Approvals</h2>
 <ul>
 <li>With Tap the Treasury set to "GM approval", you get a yes/no prompt whenever a player tries it.</li>
 </ul>
 <h2>Things you can do from the console</h2>
-<p><code>game.modules.get("ultimate-kingdom-manager-next").api</code> has <code>open()</code>, <code>setup()</code>, <code>importStory()</code>, <code>handbook()</code>, <code>realm()</code> (read the kingdom's data) and <code>tick()</code> (run the clock now).</p>
+<p><code>game.modules.get("ultimate-kingdom-manager").api</code> (or <code>"ultimate-kingdom-manager-next"</code> for the test build) has <code>open()</code>, <code>setup()</code>, <code>importStory()</code>, <code>handbook()</code>, <code>realm()</code> (read the kingdom's data) and <code>tick()</code> (run the clock now).</p>

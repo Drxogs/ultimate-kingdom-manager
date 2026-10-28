@@ -241,7 +241,9 @@
       "unrest-trouble": "High Unrest added Ruin: {name}.",
       "track-stage": "Built: {name}",
       "settlement-tracks": "{name}'s buildings became tracks",
-      "track-monthly": "Settlements: {name}"
+      "track-monthly": "Settlements: {name}",
+      "kingdom-imported": "Kingdom brought over from v0.22: {name}",
+      "gm-adjust": "The GM set the kingdom's numbers by hand"
     },
     "Seat": {
       "ruler": "Ruler",
@@ -354,7 +356,8 @@
         "TrackNeedsWater": "That needs a waterside settlement.",
         "TrackNeedsLevel": "That needs kingdom level {level}.",
         "TrackNeedsHomes": "Raise the settlement's Homes first.",
-        "TrackCapitalOnly": "That can only be built in the capital."
+        "TrackCapitalOnly": "That can only be built in the capital.",
+        "NoLegacy": "There's no v0.22 kingdom in this world."
       }
     },
     "Effect": {
@@ -816,7 +819,7 @@
       "GmUp": "Raise one stage (free, no roll)",
       "GmDown": "Lower one stage (free)",
       "Basic": "basic need",
-      "FoodNeed": "Food {n} a month",
+      "FoodNeed": "Food need {n}",
       "Missing": "Missing for a {size}: {list}",
       "MissingNone": "Every need for its size is met.",
       "MissingItem": "{track} {stage}",
@@ -854,6 +857,21 @@
       "Project": "Project",
       "Audience": "Audience",
       "Story": "Story event"
+    },
+    "Legacy": {
+      "Title": "Bring over the v0.22 kingdom",
+      "Button": "Bring over the v0.22 kingdom",
+      "Hint": "This world has a kingdom from the regular Ultimate Kingdom Manager (v0.22). You can copy it into this test build to try the redesign on it. The v0.22 data isn't changed.",
+      "Confirm": "Copy the v0.22 kingdom into this test build? It replaces everything this build has saved in this world (cards, treasury, stats, settlements, seats). The v0.22 data stays as it is, so switching back still works.",
+      "Done": "The v0.22 kingdom has been brought over. Old seats and buildings were converted."
+    },
+    "Adjust": {
+      "Title": "Set the kingdom's numbers",
+      "Hint": "For results the module can't apply, house rulings or mistakes. Nothing else happens: no Fame is spent and no penalties are added on top.",
+      "Ruin": "Ruin",
+      "Threshold": "Threshold",
+      "Penalty": "Penalty (−)",
+      "Save": "Save"
     }
   }
 }

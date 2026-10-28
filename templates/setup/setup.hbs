@@ -16,6 +16,10 @@
         {{#if sources.adventureImported}}<a data-action="openImport">{{#if storyImported}}{{localize "UKM.Setup.Reimport"}}{{else}}{{localize "UKM.Setup.Import"}}{{/if}}</a>{{/if}}
       </li>
     </ul>
+    {{#if legacy}}
+      <p class="hint">{{localize "UKM.Legacy.Hint"}}</p>
+      <p><button type="button" data-action="importLegacy"><i class="fa-solid fa-file-import"></i> {{localize "UKM.Legacy.Button"}}</button></p>
+    {{/if}}
   </section>
 
   <section>
