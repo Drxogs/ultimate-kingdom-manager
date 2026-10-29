@@ -43,6 +43,7 @@ import {
   fortuneUses,
   outcomePreview,
   recordOutcome,
+  isResting,
   rollCard,
   seatsOf
 } from "../realm/resolve.js";
@@ -383,15 +384,17 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
           const showPlace = game.user.isGM || !card.target?.hidden || card.revealed;
           const days = daysUntil(card.deadline, now);
           const stage = cardStage(card);
-          const open = card.status === "open";
+          const resting = isResting(card, now);
+          const open = card.status === "open" && !resting;
           return {
             ...card,
             stageLabel: stage.stage?.label ?? null,
-            isOpen: open,
+            isOpen: card.status === "open",
+            restingUntil: resting ? formatDate(card.restUntil) : null,
             isAssigned: card.status === "assigned",
             isEscalated: card.status === "escalated",
             isRolled: card.status === "rolled",
-            rolledResult: card.pendingRoll ? game.i18n.localize(`UKM.Degree.${DEGREES[card.pendingRoll.personal && card.pendingRoll.degree === 2 ? 3 : card.pendingRoll.degree]}`) : null,
+            rolledResult: card.pendingRoll ? game.i18n.localize(`UKM.Degree.${DEGREES[card.pendingRoll.degree]}`) : null,
             canAccept: card.status === "rolled" && canAct,
             rerolls: card.status === "rolled" && card.pendingRoll && !card.pendingRoll.fortuneUsed && canCallBack(game.user, card) ? fortuneUses(realm, card.pendingRoll.skill) : 0,
             fameReroll: card.status === "rolled" && card.pendingRoll && !card.pendingRoll.fortuneUsed && canCallBack(game.user, card) && getFame().value > 0,
@@ -421,7 +424,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             continuousHint: event?.continuous ? game.i18n.format("UKM.Card.ContinuousUntil", { ends: endsText(event) || "…" }) : null,
             escalate: !!event?.escalate,
             daysLeft: days,
-            urgent: days <= 7,
+            urgent: days <= 7 && !resting,
             place: showPlace
               ? card.target?.settlement || (zone ? `${zone.label} (${game.i18n.localize("UKM.Manager.Level")} ${zone.level})` : null)
               : game.i18n.localize("UKM.Manager.Unknown"),

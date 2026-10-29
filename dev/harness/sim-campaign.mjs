@@ -335,7 +335,7 @@ function bestOptions(card) {
 }
 
 async function handleCards() {
-  for (const card of getRealm().cards.filter((c) => c.status === "open")) {
+  for (const card of getRealm().cards.filter((c) => c.status === "open" && !RS.isResting(c))) {
     if (card.kind === "audience") {
       const { responses } = A.audienceResponses(card);
       const pick = responses[Math.floor(rand() * responses.length)];
@@ -417,7 +417,7 @@ async function spend() {
   // Sensible players keep hands free for what lands on the desks: no more than two stages at once,
   // and none while a card is waiting for someone.
   const building = getRealm().cards.filter((c) => c.project?.track && ACTIVE.includes(c.status)).length;
-  const waiting = getRealm().cards.some((c) => c.status === "open" && c.kind !== "project" && c.kind !== "audience");
+  const waiting = getRealm().cards.some((c) => c.status === "open" && !RS.isResting(c) && c.kind !== "project" && c.kind !== "audience");
   const maxBuilds = Number(process.env.MAXBUILDS ?? 2);
   if (waiting || building >= maxBuilds) return;
   const all = getRealm().settlements;

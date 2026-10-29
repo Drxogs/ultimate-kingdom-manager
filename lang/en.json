@@ -212,7 +212,8 @@
       "DeskBusy": "Desk tied up: someone is lent to {card}.",
       "LentFrom": "lent from {desks}",
       "NoDesk": "no desk",
-      "ContinuousUntil": "Ongoing: it comes back every month until {ends}."
+      "ContinuousUntil": "Ongoing: after each try it rests until next month, and it keeps coming back until {ends}.",
+      "Resting": "Back on {date}. An ongoing card can be tried once a month."
     },
     "Log": {
       "income": "Treasury collected {amount} BP.",
@@ -362,7 +363,8 @@
         "TrackNeedsWater": "That needs a waterside settlement.",
         "TrackNeedsLevel": "That needs kingdom level {level}.",
         "TrackNeedsHomes": "Raise the settlement's Homes first.",
-        "TrackCapitalOnly": "That can only be built in the capital."
+        "TrackCapitalOnly": "That can only be built in the capital.",
+        "Resting": "That ongoing card is resting until next month."
       }
     },
     "Effect": {

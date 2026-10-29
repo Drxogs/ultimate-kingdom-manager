@@ -67,6 +67,7 @@
                   <span class="{{#if urgent}}ukm-urgent{{/if}}"><i class="fa-solid fa-hourglass-half"></i> {{localize "UKM.Card.DaysLeft" days=daysLeft}}</span>
                 {{/if}}
               </div>
+              {{#if restingUntil}}<p class="hint ukm-resting"><i class="fa-solid fa-moon"></i> {{localize "UKM.Card.Resting" date=restingUntil}}</p>{{/if}}
               {{#if isAssigned}}
                 <p class="ukm-working">
                   <i class="fa-solid {{#if assigneePersonal}}fa-user{{else}}fa-user-tie{{/if}}"></i>

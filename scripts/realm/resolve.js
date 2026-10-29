@@ -112,6 +112,7 @@ export async function assignCard(request) {
   const card = realm.cards.find((c) => c.id === request.cardId);
   if (!card || card.status !== "open") return { ok: false, reason: "NotOpen" };
   if (!canActForSeat(user, card.seat)) return { ok: false, reason: "NotYourSeat" };
+  if (isResting(card)) return { ok: false, reason: "Resting" };
 
   const { skills } = cardStage(card);
   const skill = skills.includes(request.skill) ? request.skill : skills[0];
@@ -184,6 +185,7 @@ export async function escalateCard({ cardId, userId }) {
   const user = game.users.get(userId) ?? game.user;
   const card = getRealm().cards.find((c) => c.id === cardId);
   if (!card || !["open", "assigned"].includes(card.status) || !canActForSeat(user, card.seat)) return { ok: false, reason: "NotOpen" };
+  if (isResting(card)) return { ok: false, reason: "Resting" };
   await updateRealm((r) => {
     const target = r.cards.find((c) => c.id === cardId);
     target.status = "escalated";
@@ -473,13 +475,23 @@ function closeCard(realm, card, degreeName) {
   realm.consumptionAdjustments = realm.consumptionAdjustments.filter((c) => c.until !== card.id);
 }
 
+/** An ongoing card rests this long after each roll, so it comes back about once a month. */
+export const ONGOING_REST_DAYS = 21;
+
 function reopenCard(card, degreeName, days) {
+  const now = game.time.worldTime;
   card.status = "open";
   card.lastOutcome = degreeName;
   card.assignee = null;
   card.workUntil = null;
   card.months = (card.months ?? 1) + 1;
-  card.deadline = game.time.worldTime + days * secondsPerDay();
+  card.restUntil = now + ONGOING_REST_DAYS * secondsPerDay();
+  card.deadline = now + Math.max(days, ONGOING_REST_DAYS + 14) * secondsPerDay();
+}
+
+/** Whether an ongoing card is resting until its next month. */
+export function isResting(card, now = game.time.worldTime) {
+  return card.status === "open" && (card.restUntil ?? 0) > now;
 }
 
 /**
