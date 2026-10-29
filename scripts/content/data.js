@@ -11,7 +11,7 @@ async function load(name) {
 }
 
 export async function preloadData() {
-  await Promise.all(["events", "matters", "rankups", "projects", "audiences", "ambitions", "companions", "quests", "stories", "tracks", "troubles"].map(load));
+  await Promise.all(["events", "matters", "rankups", "projects", "audiences", "ambitions", "companions", "quests", "stories", "tracks", "troubles", "services"].map(load));
 }
 
 /** Settlement tracks (Homes, Faith, Food...): stages, what each gives, costs. */
@@ -34,6 +34,11 @@ export function getTroubleData() {
 
 export function getTroubles() {
   return getTroubleData().troubles ?? [];
+}
+
+/** Crown services: what the realm can do for the party, bought with BP. */
+export function getServices() {
+  return cache.services?.services ?? [];
 }
 
 export function getEvents() {

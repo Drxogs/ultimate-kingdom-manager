@@ -86,6 +86,22 @@
     {{/if}}
   </section>
 
+  <header class="ukm-major"><i class="fa-solid fa-hand-holding-heart"></i> {{localize "UKM.Service.Heading"}}</header>
+  <section class="ukm-services">
+    <p class="hint">{{localize "UKM.Service.Intro"}}</p>
+    <ul class="ukm-service-list">
+      {{#each services}}
+        <li class="ukm-service {{#if blocked}}blocked{{/if}}" data-service="{{id}}">
+          <strong>{{name}}</strong> <span class="ukm-tag">{{cost}} BP</span>
+          <span class="hint">{{hook}}</span>
+          {{#if pending}}<span class="hint"><i class="fa-solid fa-hourglass-half"></i> {{localize "UKM.Service.Pending"}}</span>
+          {{else if canAsk}}<button type="button" class="ukm-rank-up" data-action="requestService"><i class="fa-solid fa-hand-holding-heart"></i> {{#if buyNow}}{{localize "UKM.Service.Buy"}}{{else}}{{localize "UKM.Service.Ask"}}{{/if}}</button>
+          {{else}}<span class="hint" data-tooltip="{{needs}}">{{blocked}}</span>{{/if}}
+        </li>
+      {{/each}}
+    </ul>
+  </section>
+
   <header class="ukm-major"><i class="fa-solid fa-map"></i> {{localize "UKM.Land.Heading"}}</header>
   {{#if land.available}}
     <ul class="ukm-land">

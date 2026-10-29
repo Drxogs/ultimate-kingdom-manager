@@ -34,6 +34,10 @@
       "PinsShown": {
         "Name": "Show new map pins to players",
         "Hint": "Off: a card's pin on the Stolen Lands map is GM-only until you show it with the eye button. On: pins of new cards are shown to players straight away (secret events stay hidden), and the eye hides them. Lots of pins can make the map's own notes harder to click."
+      },
+      "RaiseDead": {
+        "Name": "Crown services can raise the dead",
+        "Hint": "Off: death stays final as far as the realm is concerned. On: from kingdom level 12, a realm with a Cathedral can pay to raise a fallen character, once a month."
       }
     },
     "Setup": {
@@ -249,7 +253,8 @@
       "settlement-tracks": "{name}'s buildings became tracks",
       "track-monthly": "Settlements: {name}",
       "kingdom-imported": "Kingdom read from the PF2e kingdom sheet: {name}",
-      "gm-adjust": "The GM set the kingdom's numbers by hand"
+      "gm-adjust": "The GM set the kingdom's numbers by hand",
+      "service": "Crown service: {name} ({amount} BP)"
     },
     "Seat": {
       "ruler": "Ruler",
@@ -366,7 +371,13 @@
         "TrackCapitalOnly": "That can only be built in the capital.",
         "Resting": "That ongoing card is resting until next month.",
         "NotAnarchy": "Only a realm in anarchy can do that.",
-        "NoHeir": "No one else can take the crown."
+        "NoHeir": "No one else can take the crown.",
+        "ServiceOff": "That service is turned off in Setup.",
+        "ServiceLevel": "That service needs kingdom level {level}.",
+        "ServiceTrack": "That service needs {stage} in a settlement.",
+        "ServiceCooldown": "That service can be used again in {days} days.",
+        "ServiceTooCostly": "The treasury can't pay for that.",
+        "ServiceTarget": "Pick who or where it's for."
       }
     },
     "Effect": {
@@ -944,6 +955,31 @@
       "expert": "expert",
       "master": "master",
       "legendary": "legendary"
+    },
+    "Service": {
+      "Heading": "Crown services",
+      "Intro": "What the realm can do for the party, paid in BP. Anyone can ask; the ruler approves.",
+      "Ask": "Ask",
+      "Buy": "Pay",
+      "Pending": "waiting for the ruler",
+      "Needs": "Needs {stage} · kingdom level {level}",
+      "Paid": "The treasury pays {cost} BP.",
+      "AskedBy": "Asked for by {name}.",
+      "Warmer": "{name} is now {attitude}.",
+      "Unspecified": "(not given)",
+      "Who": "Who?",
+      "From": "From",
+      "To": "To",
+      "Companion": "In whose honour?",
+      "Asked": "Your request is on the Council tab for the ruler.",
+      "Block": {
+        "Off": "Turned off in Setup.",
+        "Level": "From kingdom level {level}.",
+        "Track": "Needs {stage} in a settlement.",
+        "Cooldown": "Again in {days} days.",
+        "TooCostly": "Not enough BP.",
+        "NoTarget": "No one to honour right now."
+      }
     }
   }
 }

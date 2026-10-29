@@ -105,6 +105,13 @@ export async function fundProposal({ proposalId, userId }) {
   if (!canDecide(user)) return { ok: false, reason: "NotRuler" };
   const p = proposals().find((x) => x.id === proposalId && x.status === "open");
   if (!p) return { ok: false, reason: "Unknown" };
+  if (p.request?.type === "service") {
+    const { performService } = await import("./services.js");
+    const done = await performService({ serviceId: p.request.serviceId, details: p.request.details, byName: p.byName });
+    if (!done.ok) return done;
+    await settle(proposalId, "funded");
+    return done;
+  }
   const result = await startProject({ ...p.request, userId: p.by }, { canActForSeat: () => true });
   if (!result.ok) return result;
   await settle(proposalId, "funded");

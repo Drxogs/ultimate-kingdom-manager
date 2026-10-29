@@ -20,7 +20,8 @@ export const SETTINGS = {
   customAdvisors: "customAdvisors",
   toolsNotice: "toolsNotice",
   council: "council",
-  pinsShown: "pinsShown"
+  pinsShown: "pinsShown",
+  raiseDead: "raiseDead"
 };
 
 export function registerSettings() {
@@ -75,6 +76,14 @@ export function registerSettings() {
   world(SETTINGS.pinsShown, {
     name: "UKM.Settings.PinsShown.Name",
     hint: "UKM.Settings.PinsShown.Hint",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  world(SETTINGS.raiseDead, {
+    name: "UKM.Settings.RaiseDead.Name",
+    hint: "UKM.Settings.RaiseDead.Hint",
     config: true,
     type: Boolean,
     default: false

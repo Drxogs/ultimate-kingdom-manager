@@ -153,6 +153,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       storyImported: getSetting(SETTINGS.storyImported),
       tapTreasury: draft?.tapTreasury ?? getSetting(SETTINGS.tapTreasury),
       pinsShown: draft?.pinsShown ?? getSetting(SETTINGS.pinsShown),
+      raiseDead: draft?.raiseDead ?? getSetting(SETTINGS.raiseDead),
       showAllActors: this.#showAllActors,
       tapChoices: {
         approval: "UKM.Settings.TapTreasury.Approval",
@@ -193,6 +194,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     const data = foundry.utils.expandObject(formData.object);
     await setSetting(SETTINGS.tapTreasury, data.tapTreasury);
     await setSetting(SETTINGS.pinsShown, !!data.pinsShown);
+    await setSetting(SETTINGS.raiseDead, !!data.raiseDead);
     if (data.advisors) {
       const attitudes = {};
       const known = {};

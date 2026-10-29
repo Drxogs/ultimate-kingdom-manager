@@ -53,6 +53,8 @@ import { SetupWizard } from "./setup-wizard.js";
 import { StoryImportApp } from "./story-import-app.js";
 import { MidCampaignApp } from "./midcampaign-app.js";
 import { UkmDialog } from "./dialog.js";
+import { feastTargets, servicesView } from "../realm/services.js";
+import { getServices } from "../content/data.js";
 import { canAbdicate, canUseRoyal, favourPreview, favours, heirs, ROYAL_POWERS, rulerName, usesLeft } from "../realm/royal.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -173,6 +175,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       royalCharge: KingdomManager.#royalCharge,
       royalCourt: KingdomManager.#royalCourt,
       abdicate: KingdomManager.#abdicate,
+      requestService: KingdomManager.#requestService,
       useFavour: KingdomManager.#useFavour,
       escalate: KingdomManager.#escalate,
       rollNow: KingdomManager.#rollNow,
@@ -302,6 +305,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       canAbdicate: canAbdicate(game.user, realm),
       abdicateHint: game.i18n.format("UKM.Royal.AbdicateHint", { ruler: rulerName(realm) ?? "" })
     };
+    context.services = servicesView(realm);
     context.hasCapital = hasCapital(realm);
     context.canFoundCapital = !context.hasCapital && canFoundCapital(game.user);
     context.settlements = this.#prepareSettlements(realm, level);
@@ -1034,6 +1038,33 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #royalCharge(event, target) {
     const card = findCard(target);
     if (card) await sendRequest("royalCharge", { cardId: card.id });
+  }
+
+  static async #requestService(event, target) {
+    const esc = Handlebars.escapeExpression;
+    const service = getServices().find((s) => s.id === target.closest("[data-service]")?.dataset.service);
+    if (!service) return;
+    const L = (k) => game.i18n.localize(`UKM.Service.${k}`);
+    const select = (name, label, options) => `<div class="form-group"><label>${esc(label)}</label><select name="${name}">${options.map((o) => `<option value="${esc(o.value)}">${esc(o.label)}</option>`).join("")}</select></div>`;
+    const settlementOptions = (getRealm().settlements ?? []).map((s) => ({ value: s.id, label: s.name }));
+    let fields = "";
+    if (service.detail === "character") fields += select("actorUuid", L("Who"), getPlayerCharacters().map((a) => ({ value: a.uuid, label: a.name })));
+    if (service.detail === "route") fields += select("from", L("From"), settlementOptions) + select("to", L("To"), settlementOptions.slice().reverse());
+    if (service.detail === "companion") fields += select("companionId", L("Companion"), feastTargets(service).map((c) => ({ value: c.id, label: c.name })));
+    if (service.notePrompt) fields += `<div class="form-group"><label>${esc(service.notePrompt)}</label><input type="text" name="note" maxlength="120"></div>`;
+    const view = servicesView().find((s) => s.id === service.id);
+    const details = await UkmDialog.prompt({
+      window: { title: service.name },
+      content: `<p>${esc(service.hook)}</p><p class="hint">${view?.cost ?? 0} BP</p>${fields}`,
+      ok: {
+        label: view?.buyNow ? L("Buy") : L("Ask"),
+        callback: (ev, button) => Object.fromEntries([...button.form.elements].filter((el) => el.name).map((el) => [el.name, el.value]))
+      },
+      rejectClose: false
+    });
+    if (!details) return;
+    const result = await sendRequest("requestService", { serviceId: service.id, details });
+    if (result?.ok && result.pending) ui.notifications.info(L("Asked"));
   }
 
   static async #abdicate() {

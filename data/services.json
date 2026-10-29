@@ -1,0 +1,110 @@
+{
+  "services": [
+    {
+      "id": "cleanse-affliction",
+      "name": "Cleanse Affliction",
+      "hook": "The realm's priests lay hands on the sick and the cursed.",
+      "track": "faith",
+      "stage": 2,
+      "minLevel": 3,
+      "costWeeks": 0.5,
+      "detail": "character",
+      "notePrompt": "Which disease, poison or curse?",
+      "chat": "The priests of {settlement} pray over {target}.",
+      "task": "{target}: counteract {note} as a rank {rank} spell with +{mod}."
+    },
+    {
+      "id": "restoration",
+      "name": "Restoration",
+      "hook": "Long rites in the temple put back what a curse or a wound took.",
+      "track": "faith",
+      "stage": 2,
+      "minLevel": 3,
+      "costWeeks": 0.5,
+      "detail": "character",
+      "notePrompt": "Which condition?",
+      "chat": "{target} spends a day in the temple of {settlement}.",
+      "task": "{target}: Restoration at rank {rank} ({note})."
+    },
+    {
+      "id": "regenerate",
+      "name": "Regeneration",
+      "hook": "A cathedral's choir sings a lost limb back.",
+      "track": "faith",
+      "stage": 3,
+      "minLevel": 13,
+      "costWeeks": 2,
+      "cooldownDays": 30,
+      "detail": "character",
+      "notePrompt": "What was lost?",
+      "chat": "The choir of {settlement} sings for {target} through the night.",
+      "task": "{target}: Regenerate at rank {rank}; restore {note}."
+    },
+    {
+      "id": "raise-the-fallen",
+      "name": "Raise the Fallen",
+      "hook": "The whole realm holds vigil while the high priests call a hero back.",
+      "track": "faith",
+      "stage": 3,
+      "minLevel": 12,
+      "costWeeks": 5,
+      "cooldownDays": 30,
+      "setting": "raiseDead",
+      "detail": "character",
+      "notePrompt": "How did they fall? (for the chat)",
+      "chat": "Bells ring across the realm. In the cathedral of {settlement}, the high priests hold vigil over {target}, and the people pray with them.",
+      "task": "{target}: Raise Dead at rank {rank}, as the spell; the realm has paid. The usual drawbacks apply."
+    },
+    {
+      "id": "teleport",
+      "name": "Royal Teleport",
+      "hook": "The academy's mages send the party across the realm in a heartbeat.",
+      "track": "learning",
+      "stage": 2,
+      "minLevel": 11,
+      "costWeeks": 0.5,
+      "detail": "route",
+      "chat": "The mages of {settlement} open the way: the party steps out in {to}.",
+      "task": "Move the party from {from} to {to}."
+    },
+    {
+      "id": "archive-research",
+      "name": "Royal Archives",
+      "hook": "Scholars comb the realm's library for everything known about one thing.",
+      "track": "learning",
+      "stage": 1,
+      "minLevel": 1,
+      "costWeeks": 1,
+      "cooldownDays": 30,
+      "detail": "subject",
+      "notePrompt": "What should they research?",
+      "chat": "The scholars of {settlement} set to work on {note}.",
+      "task": "For the next 30 days the party gets +2 circumstance to research and Recall Knowledge about {note}. Share anything the archives would turn up."
+    },
+    {
+      "id": "patrol-roads",
+      "name": "Patrol the Roads",
+      "hook": "The watch rides out ahead of the party.",
+      "track": "watch",
+      "stage": 2,
+      "minLevel": 5,
+      "costWeeks": 0.5,
+      "detail": "none",
+      "chat": "Patrols from {settlement} ride the realm's roads ahead of the party.",
+      "task": "For the next 7 days, no random encounters while the party travels through claimed hexes."
+    },
+    {
+      "id": "royal-feast",
+      "name": "Royal Feast",
+      "hook": "A feast in someone's honour, with the whole court watching.",
+      "track": "governance",
+      "stage": 1,
+      "minLevel": 1,
+      "costWeeks": 1,
+      "targetCooldownDays": 90,
+      "detail": "companion",
+      "chat": "The court of {settlement} feasts in {target}'s honour.",
+      "task": ""
+    }
+  ]
+}

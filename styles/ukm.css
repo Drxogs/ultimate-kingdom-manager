@@ -826,3 +826,9 @@ table.ukm-adjust input { width: 4.5rem; }
 .ukm-sheet .ukm-land { list-style: none; margin: 0.2rem 0 0.3rem; padding: 0; }
 .ukm-sheet .ukm-land li { margin: 0.15rem 0; }
 .ukm-sheet .ukm-land i { width: 1.2rem; text-align: center; color: #6b5a48; }
+
+/* Crown services */
+.ukm-sheet .ukm-service-list { list-style: none; margin: 0.2rem 0; padding: 0; display: grid; gap: 0.3rem; }
+.ukm-sheet .ukm-service { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+.ukm-sheet .ukm-service > .hint:first-of-type { flex-basis: 100%; }
+.ukm-sheet .ukm-service.blocked strong { opacity: 0.6; }
