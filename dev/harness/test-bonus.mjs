@@ -1,0 +1,15 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const { preloadData } = await import(`${R}/content/data.js`);
+await preloadData();
+env.settings.set("seatAssignments", {});
+const B = await import(`${R}/realm/bonuses.js`); const RK = await import(`${R}/realm/ranks.js`); const AM = await import(`${R}/realm/ambitions.js`);
+const { getRealm, updateRealm } = await import(`${R}/realm/state.js`);
+await updateRealm((r) => { r.timedModifiers = [{ id: "t1", type: "status", value: 1, label: "Old bonus", selector: ["politics", "intrigue", "statecraft", "warfare"], expires: game.time.worldTime + 1e7 }]; });
+console.log(B.statusGain({ type: "status", value: 1, selector: ["relations"] }), B.statusNote([{ modifier: { type: "status", value: 2, selector: ["relations"] } }]));
+const ch = RK.rankUpChoices({ stat: "relations", rank: 4 }); console.log(ch.options.map((o) => [o.label, o.warning]));
+const ch2 = RK.rankUpChoices({ stat: "relations", rank: 1 }); console.log(ch2.options.map((o) => [o.label, o.lines, o.warning]));
+await updateRealm((r) => { r.ambitions = { emissary: 1 }; r.stats.relations.rank = 3; });
+console.log(AM.ambitionsView()[0].reward);
+await AM.checkAmbitions();
+console.log(env.messages.at(-1)?.content?.replace(/<[^>]+>/g, " "), getRealm().fortunes, getRealm().timedModifiers.length);

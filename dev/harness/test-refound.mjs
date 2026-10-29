@@ -1,0 +1,14 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const cat = ["town-hall:2","houses:1","shrine:1","tenement:1","mill:1","tavern-popular:1","inn:1","cemetery:1","brewery:1"].map((x) => { const [slug, lots] = x.split(":"); return { slug, name: slug, lots: Number(lots), bonuses: [], residential: slug === "houses" || slug === "inn" || slug === "tenement" }; });
+env.settings.set("structureCatalog", cat);
+const { getRealm, updateRealm } = await import(`${R}/realm/state.js`);
+const S = await import(`${R}/realm/settlements.js`);
+await updateRealm((r) => { r.structures = cat.map((c) => c.slug); r.settlements = [{ id: "m", name: "Monkeyton", type: "village", capital: true, buildings: cat.map((c) => ({ slug: c.slug, name: c.slug, lots: c.lots })) }]; });
+await S.repairSettlements();
+console.log("repaired", getRealm().settlements.map((s) => [s.type, S.settlementState(s).lots, S.settlementState(s).capacity]));
+const G = await import(`${R}/realm/gm.js`);
+await G.gmAction({ op: "settlement", settlementId: "m", remove: true, userId: "gm" });
+console.log("after remove", getRealm().structures, getRealm().settlementsStarted);
+await S.foundCapital({ name: "Monkeyton", userId: "gm" });
+console.log("refounded", getRealm().settlements.map((s) => [s.name, s.type, s.buildings.length]));

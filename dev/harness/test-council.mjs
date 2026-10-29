@@ -1,0 +1,28 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const { preloadData } = await import(`${R}/content/data.js`);
+await preloadData();
+env.settings.set("seatAssignments", { warden: { companion: "amiri" } });
+env.settings.set("levelGravity", 1); env.settings.set("costGradient", {});
+env.settings.set("clock", {}); env.settings.set("audiences", true); env.settings.set("council", true); env.settings.set("deskMatters", true);
+const { getRealm, updateRealm } = await import(`${R}/realm/state.js`);
+const A = await import(`${R}/realm/audiences.js`);
+const C = await import(`${R}/realm/council.js`);
+await updateRealm((r) => { r.settlements = [{ id: "cap", name: "Tatzleford", type: "village", capital: true, buildings: [] }]; r.treasury = 20; A.drawAudience(r); });
+const card = getRealm().cards.at(-1);
+console.log(card.name, card.seat, A.audienceResponses(card).responses.map((x) => [x.label, x.lines]));
+console.log(await A.answerAudience({ cardId: card.id, response: A.audienceResponses(card).responses[0].id, userId: "gm" }));
+console.log(getRealm().cards.at(-1).status, getRealm().stats, env.kingdom.unrest);
+console.log(await C.proposeProject({ type: "claim-hex", hexKey: "1003", userId: "gm" }));
+const p = C.proposals()[0];
+console.log(p.name, p.cost, p.votes);
+console.log(await C.voteProposal({ proposalId: p.id, vote: -1, userId: "gm" }), C.proposals()[0].votes);
+console.log(await C.fundProposal({ proposalId: p.id, userId: "gm" }), getRealm().treasury, getRealm().cards.at(-1).name, C.proposals()[0].status);
+await C.announceCouncil();
+// audience expiry
+await updateRealm((r) => { A.drawAudience(r); });
+env.advance(15);
+const { tick } = await import(`${R}/realm/clock.js`);
+await tick(); env.advance(1); await tick();
+console.log("expired audience", getRealm().cards.filter((c) => c.kind === "audience").map((c) => [c.status, c.outcome]), env.kingdom.unrest);
+console.log(env.messages.slice(-3).map((m) => m.content.replace(/<[^>]+>/g, " ").slice(0, 140)).join("\n"));

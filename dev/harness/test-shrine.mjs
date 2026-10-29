@@ -1,0 +1,17 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const { preloadData, getEvents } = await import(`${R}/content/data.js`);
+await preloadData();
+env.settings.set("structureCatalog", [{ slug: "shrine", name: "Shrine", level: 1, bp: 8, lots: 1, bonuses: [{ value: 1, skills: ["folklore"] }], skill: "folklore" }]);
+env.settings.set("seatAssignments", {});
+const { getRealm, updateRealm } = await import(`${R}/realm/state.js`);
+const deck = await import(`${R}/realm/deck.js`);
+const RS = await import(`${R}/realm/resolve.js`);
+await updateRealm((r) => { r.settlements = [{ id: "cap", name: "Monkeyton", type: "village", capital: true, buildings: [{ slug: "shrine", name: "Shrine", lots: 1 }] }]; });
+let card;
+await updateRealm((r) => { for (let i = 0; i < 80 && !card; i++) { const c = deck.drawWeeklyMatter(r); if (c && RS.cardStage(c).skills.includes("folklore")) card = c; } });
+console.log("card", card?.name, RS.cardStage(card).skills, card.target);
+await RS.assignCard({ cardId: card.id, type: "advisor", skill: "folklore", userId: "gm" });
+console.log("odds", RS.estimateCheck(card, { type: "advisor", skill: "folklore" }));
+await RS.rollCard(card.id);
+console.log("check card", env.messages.filter((m) => /ukm-check/.test(m.content)).at(-1)?.content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " "));

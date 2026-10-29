@@ -1,0 +1,25 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const { preloadData } = await import(`${R}/content/data.js`);
+await preloadData();
+const ok = (c, m) => console.log(c ? "ok  " : "FAIL", m);
+const { getRealm, updateRealm } = await import(`${R}/realm/state.js`);
+const E = await import(`${R}/realm/effects.js`);
+const F = await import(`${R}/realm/flat.js`);
+const k = game.actors.party.campaign;
+k.unrest = { value: 3 };
+let ctx;
+await updateRealm(async (r) => {
+  ctx = new E.EffectContext({ realm: r, card: { id: "c1", name: "Too Close To Home", target: { hexKey: "1.2" } }, event: null });
+  await E.applyEffects(ctx, [{ flat: { dc: 11, failure: [{ unrest: 1 }, { gm: "Lose a hex" }] } }]);
+});
+await E.commitKingdomChanges(ctx);
+const pend = getRealm().pendingFlats ?? [];
+ok(pend.length === 1 && pend[0].dc === 11, "outcome flat check waits instead of auto-rolling");
+ok(env.messages.some((m) => m.content.includes("data-ukm-flat")), "chat card with a roll button posted");
+let r = await F.resolveFlat({ id: pend[0].id, total: 4 });
+ok(r.ok && r.passed === false, "low roll fails");
+ok((getRealm().pendingFlats ?? []).length === 0, "pending cleared");
+ok(getRealm().gmTasks.some((t) => t.text === "Lose a hex" && t.hexKey === "1.2"), "failure branch applied with GM task on the hex");
+r = await F.resolveFlat({ id: pend[0].id, total: 15 });
+ok(!r.ok, "can't roll the same check twice");

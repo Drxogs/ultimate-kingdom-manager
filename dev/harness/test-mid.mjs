@@ -1,0 +1,15 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const { preloadData } = await import(`${R}/content/data.js`);
+await preloadData();
+env.settings.set("seatAssignments", { general: { companion: "amiri" }, treasurer: { companion: "jubilost" } });
+const k = game.actors.party.campaign;
+k.level = 9;
+const { getRealm, updateRealm } = await import(`${R}/realm/state.js`);
+await updateRealm((r) => { r.founding = { stats: ["relations", "economy"] }; });
+const M = await import(`${R}/realm/midcampaign.js`);
+console.log("suggested", M.suggestedRanks(9), "treasury", M.suggestedTreasury());
+await M.applyStartingPoint({ ranks: M.suggestedRanks(9), treasury: 60 });
+console.log(JSON.stringify(getRealm().stats), getRealm().treasury);
+const { canRankUp } = await import(`${R}/realm/rules.js`);
+console.log("can rank loyalty", canRankUp(getRealm().stats.relations, 9));

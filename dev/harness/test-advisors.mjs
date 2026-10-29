@@ -1,0 +1,18 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const { preloadData, getCompanions, companionForName } = await import(`${R}/content/data.js`);
+await preloadData();
+const ok = (c, m) => console.log(c ? "ok  " : "FAIL", m);
+const ids = getCompanions().map((c) => c.id);
+ok(!ids.includes("kalikke") && !ids.includes("regongar") && !ids.includes("kanerah"), "missing companions removed");
+ok(["oleg", "svetlana", "kesten", "akiros"].every((i) => ids.includes(i)) && !["jaethal", "nok-nok", "jhod", "bokken"].some((i) => ids.includes(i)), "built-in roster: two per seat");
+ok(companionForName("Oleg")?.id === "oleg" && companionForName("Oleg Leveton (trading post)")?.id === "oleg", "actor names match short and long");
+const rules = await import(`${R}/realm/rules.js`);
+ok(rules.isKnownAdvisor("oleg") && !rules.isKnownAdvisor("octavia"), "Oleg known at start, Octavia not");
+env.settings.set("knownAdvisors", { octavia: true, oleg: false });
+ok(rules.isKnownAdvisor("octavia") && !rules.isKnownAdvisor("oleg"), "GM's Known ticks win");
+env.settings.set("customAdvisors", [{ id: "custom-abc", name: "Mayor Tuck", seats: ["counselor"] }]);
+ok(getCompanions().some((c) => c.id === "custom-abc" && c.custom), "GM-made advisor listed");
+ok(rules.isKnownAdvisor("custom-abc"), "GM-made advisor is known");
+env.settings.set("seatAssignments", { counselor: { companion: "custom-abc" } });
+ok(rules.seatCompanionId("counselor") === "custom-abc", "GM-made advisor can advise their seat");

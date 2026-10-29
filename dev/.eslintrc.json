@@ -1,0 +1,3 @@
+{ "root": true, "parserOptions": { "ecmaVersion": 2024, "sourceType": "module" }, "env": { "browser": true, "es2024": true },
+  "globals": { "game": "readonly", "foundry": "readonly", "Hooks": "readonly", "ui": "readonly", "CONFIG": "readonly", "CONST": "readonly", "Handlebars": "readonly", "ChatMessage": "readonly", "Roll": "readonly", "fromUuidSync": "readonly", "fromUuid": "readonly", "Folder": "readonly", "JournalEntry": "readonly", "Actor": "readonly", "socketlib": "readonly", "canvas": "readonly", "kingmaker": "readonly", "Dialog": "readonly", "TextEditor": "readonly", "renderTemplate": "readonly", "loadTemplates": "readonly" },
+  "rules": { "no-undef": "error" } }

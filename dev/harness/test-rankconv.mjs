@@ -1,0 +1,10 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const { preloadData } = await import(`${R}/content/data.js`);
+await preloadData();
+const { updateRealm } = await import(`${R}/realm/state.js`);
+const k = game.actors.party.campaign;
+await updateRealm((r) => { r.timedModifiers = [{ id: "x", selector: "relations", value: 3, type: "status", expires: 1e12, label: "test" }]; });
+const { rankUpChoices } = await import(`${R}/realm/ranks.js`);
+const c = rankUpChoices({ stat: "relations", rank: 5 });
+for (const o of c.options) console.log(o.label, "|", o.lines.join("; "), "|", o.warning);

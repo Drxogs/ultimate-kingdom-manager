@@ -1,0 +1,22 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const { preloadData } = await import(`${R}/content/data.js`);
+await preloadData();
+const ok = (c, m) => console.log(c ? "ok  " : "FAIL", m);
+const { getRealm, updateRealm } = await import(`${R}/realm/state.js`);
+const S = await import(`${R}/realm/settlements.js`);
+const { getKingdom } = await import(`${R}/integrations/party.js`);
+await updateRealm((r) => { r.settlements = [{ id: "cap", name: "Monkeyton", type: "village", capital: true, buildings: [] }, { id: "v2", name: "Tatzlford", type: "village", buildings: [] }]; r.cards = [{ id: "c", seat: "viceroy", target: { settlement: "Monkeyton" } }]; r.kingdom.capital = "Monkeyton"; });
+let r = await S.renameSettlement("cap", "Tatzlford");
+ok(!r.ok && r.reason === "NameTaken", "can't take another settlement's name");
+r = await S.renameSettlement("cap", "  New Monkeyton of the Very Long Name That Goes On And On  ");
+const cap = getRealm().settlements.find((s) => s.id === "cap");
+ok(r.ok && cap.name.length <= 40 && getKingdom().capital === cap.name, `capital renamed and trimmed (${cap.name})`);
+ok(getRealm().cards[0].target.settlement === cap.name, "cards follow the new name");
+// council decision goes to chat
+const C = await import(`${R}/realm/council.js`);
+await getKingdom().update({ ruler: "Actor.wes" });
+await updateRealm((realm) => { realm.council = { proposals: [{ id: "p1", status: "open", name: "Claim a Hex", seat: "viceroy", cost: 2, by: "gm", votes: { a: 1, b: 1, c: -1 }, request: {} }] }; });
+await C.rejectProposal({ proposalId: "p1", userId: "gm" });
+const msg = env.messages.at(-1)?.content ?? "";
+ok(/turns down/.test(msg) && /Claim a Hex/.test(msg) && /2 for, 1 against/.test(msg) && /Wes/.test(msg), "decision announced in chat");

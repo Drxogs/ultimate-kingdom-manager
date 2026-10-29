@@ -1,0 +1,16 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+foundry.applications.api.DialogV2 = { confirm: async () => true, wait: async () => null, prompt: async () => null };
+const k = game.actors.party.campaign;
+k.resources = { fame: { value: 1, max: 3 } };
+k.unrest = { value: 12 };
+k.abilities = { culture: { ruin: { value: 9, max: 10 }, penalty: 0 }, economy: { ruin: { value: 0, max: 10 }, penalty: 0 }, loyalty: { ruin: { value: 0, max: 10 }, penalty: 0 }, stability: { ruin: { value: 0, max: 10 }, penalty: 0 } };
+const S = await import(`${R}/realm/standing.js`);
+await S.monthlyStanding();
+console.log("fame", k.resources.fame.value, "ruin", JSON.stringify(k.abilities), env.messages.slice(-2).map((m) => m.content.replace(/<[^>]+>/g, " ").trim()));
+k.resources.fame.value = 2;
+await S.setUnrest(21);
+console.log("unrest", k.unrest.value, "fame", k.resources.fame.value);
+k.resources.fame.value = 0;
+await S.setUnrest(21);
+console.log("unrest", k.unrest.value, S.inAnarchy(), env.messages.at(-1).content.replace(/<[^>]+>/g, " ").trim());

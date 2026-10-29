@@ -1,0 +1,15 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const ok = (c, m) => console.log(c ? "ok  " : "FAIL", m);
+env.settings.set("seatAssignments", { warden: { companion: "amiri", supervisor: "Actor.wes" }, ruler: { supervisor: null, companion: null } });
+const { getRealm, updateRealm, migrateSixSeats } = await import(`${R}/realm/state.js`);
+await updateRealm((r) => { r.cards = [{ id: "a", seat: "ruler" }, { id: "b", seat: "warden" }]; r.stats.loyalty = { points: 30, rank: 1 }; r.stats.stability = { points: 5, rank: 0 }; r.ambitions = { ruler: 2, general: 1 }; r.founding = { stats: ["loyalty", "economy"] }; });
+await migrateSixSeats();
+const r = getRealm();
+ok(r.cards.map((c) => c.seat).join() === "emissary,viceroy", "cards move to Emissary and Viceroy");
+ok(r.stats.relations.points === 30 && r.stats.relations.rank === 1 && !r.stats.loyalty, "Loyalty's points go to Relations");
+ok(!r.ambitions.ruler && r.ambitions.general === 1, "retired ambitions dropped");
+ok(r.founding.stats.join() === "relations,economy", "founding focus renamed");
+ok(env.settings.get("seatAssignments").viceroy?.companion === "amiri" && !env.settings.get("seatAssignments").warden, "Warden's advisor moves to Viceroy");
+ok(r.kingdom.leadership.emissary?.uuid === "Actor.wes" && !r.kingdom.leadership.ruler, "Ruler's holder moves to Emissary");
+ok(getRealm().kingdom.ruler === "Actor.wes", "old Ruler becomes the ruler");

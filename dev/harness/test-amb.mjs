@@ -1,0 +1,12 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const { preloadData } = await import(`${R}/content/data.js`);
+await preloadData();
+env.settings.set("seatAssignments", {}); env.settings.set("levelGravity", 1);
+const { getRealm, updateRealm } = await import(`${R}/realm/state.js`);
+const AM = await import(`${R}/realm/ambitions.js`);
+await updateRealm((r) => { r.seatRecord = { emissary: 3 }; });
+console.log(AM.ambitionsView().map((a) => [a.title, a.goal, a.value, a.target, a.reward]).slice(0, 3));
+await AM.checkAmbitions();
+console.log(getRealm().ambitions, env.kingdom.resources.fame, env.messages.at(-1).content.replace(/<[^>]+>/g, " "));
+console.log(AM.ambitionsView()[0]);

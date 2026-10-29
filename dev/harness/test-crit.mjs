@@ -1,0 +1,12 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const { preloadData } = await import(`${R}/content/data.js`);
+await preloadData();
+const { getRealm, updateRealm } = await import(`${R}/realm/state.js`);
+const deck = await import(`${R}/realm/deck.js`);
+const RS = await import(`${R}/realm/resolve.js`);
+let card;
+await updateRealm((r) => { r.treasury = 0; r.settlements = [{ id: "c", name: "Cap", type: "village", capital: true, buildings: [] }]; for (let i = 0; i < 80; i++) { const c = deck.drawWeeklyMatter(r); if (c && ["ruler","counselor","general"].includes(c.seat)) { card = c; break; } } });
+const ar = await RS.assignCard({ cardId: card.id, type: "advisor", userId: "gm" }); if (!ar.ok) console.log("assign", card.seat, card.kind, ar);
+__setDegree(3); await RS.rollCard(card.id); await RS.acceptRoll(card.id);
+console.log("treasury", getRealm().treasury, env.messages.at(-1).content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " "));
