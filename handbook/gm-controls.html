@@ -1,31 +1,25 @@
 <h2>In the header</h2>
 <ul>
-<li><strong>Pencil</strong>: set the kingdom's numbers by hand: BP, Unrest, Fame, and each Ruin's value, threshold and penalty. For results the module can't apply, house rulings or mistakes. Nothing else happens when you save.</li>
+<li><strong>Pencil</strong>: set the kingdom's numbers by hand: BP, Unrest, Fame, and each Ruin's value, threshold and penalty. Use it for rulings, results the module can't apply, or mistakes.</li>
 </ul>
 <h2>On cards</h2>
 <ul>
-<li><strong>Roll now</strong> (d20): skip the rest of the work time.</li>
-<li><strong>Record outcome</strong> (gavel): set the result yourself, for cards the party played out at the table, or to override.</li>
-<li><strong>Dismiss</strong> (×): remove a card with no effect.</li>
-<li><strong>Show to players</strong> (eye): reveal the card's pin and notice on the map; click again to hide.</li>
+<li><strong>Roll now</strong>: skip the rest of the work time.</li>
+<li><strong>Record outcome</strong>: set the result yourself, for a card the party played out at the table or to overrule a roll.</li>
+<li><strong>Dismiss</strong>: remove a card with no effect.</li>
+<li><strong>Show to players</strong> (eye): show or hide the card's pin on the map.</li>
 </ul>
 <h2>On the Realm tab</h2>
 <ul>
-<li><strong>Setup</strong>, <strong>Re-import</strong> story text.</li>
-<li><strong>Draw events now</strong>, <strong>Draw audience</strong>, <strong>Draw desk matter</strong>: draw immediately, for testing or to fill a quiet month.</li>
-<li><strong>Story events</strong>: put one of the adventure's story-driven events (the Chapter 5 outbreaks) on its desk when the story reaches it.</li>
-<li><strong>Finish now</strong> (on a rank-up in progress).</li>
-<li><strong>GM tasks</strong> list.</li>
+<li><strong>Setup</strong> and <strong>Re-import</strong> the story text.</li>
+<li><strong>Draw events now</strong>, <strong>Draw audience</strong>, <strong>Draw desk matter</strong>: to fill a quiet month, or to test.</li>
+<li><strong>Story events</strong>: put one of the adventure's story-driven events (such as the Chapter 5 outbreaks) on its desk when the story gets there.</li>
+<li><strong>Finish now</strong> on a rank-up in progress.</li>
+<li>The <strong>GM tasks</strong> list.</li>
 </ul>
 <h2>On the Settlements tab</h2>
-<ul>
-<li><strong>− and +</strong> on a track's row: lower or raise it one stage for free, with no roll, Unrest or Fame.</li>
-<li><strong>Lightning bolt</strong>: draw one of that settlement's trouble cards now, ignoring the odds and the easy start.</li>
-<li><strong>Crown</strong>, <strong>waves</strong>, <strong>bin</strong>: make it the capital, mark it waterside, or remove it from the realm.</li>
-</ul>
+<p>Raise or lower tracks, draw trouble, and manage settlements. See <strong>Settlements (GM)</strong>.</p>
 <h2>Approvals</h2>
-<ul>
-<li>With Tap the Treasury set to "GM approval", you get a yes/no prompt whenever a player tries it.</li>
-</ul>
-<h2>Things you can do from the console</h2>
-<p><code>game.modules.get("ultimate-kingdom-manager").api</code> (or <code>"ultimate-kingdom-manager-next"</code> for the test build) has <code>open()</code>, <code>setup()</code>, <code>importStory()</code>, <code>handbook()</code>, <code>realm()</code> (read the kingdom's data) and <code>tick()</code> (run the clock now).</p>
+<p>If Tap the Treasury needs your approval, you'll be asked whenever a player tries it.</p>
+<h2>From the console</h2>
+<p><code>game.modules.get("ultimate-kingdom-manager").api</code> has <code>open()</code>, <code>setup()</code>, <code>importStory()</code>, <code>handbook()</code>, <code>realm()</code> (the kingdom's data) and <code>tick()</code> (run the clock now).</p>

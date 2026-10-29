@@ -5,7 +5,6 @@ import { getKingdom, getPlayerCharacters, syncKingdomLevel } from "../integratio
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { applyFounding, foundingPicks, resetFounding } from "../realm/ranks.js";
 import { getRealm } from "../realm/state.js";
-import { legacyAvailable } from "../realm/legacy.js";
 import { sendRequest } from "../realm/requests.js";
 import { StoryImportApp } from "./story-import-app.js";
 import { MidCampaignApp } from "./midcampaign-app.js";
@@ -42,7 +41,6 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       openImport: SetupWizard.#openImport,
       toggleActors: SetupWizard.#toggleActors,
       resetFounding: SetupWizard.#resetFounding,
-      importLegacy: SetupWizard.#importLegacy,
       addAdvisor: SetupWizard.#addAdvisor,
       foundCapital: SetupWizard.#foundCapital,
       removeAdvisor: SetupWizard.#removeAdvisor,
@@ -143,7 +141,6 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
 
     return {
       sources,
-      legacy: legacyAvailable(),
       founding: {
         picked: picked.map((s) => game.i18n.localize(`UKM.Stat.${s}`)).join(", "),
         done: picked.length > 0,
@@ -155,6 +152,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       suggestStart: (kingdom?.level ?? 1) >= 3 && !getRealm().startingPoint && Object.values(getRealm().stats).every((s) => s.rank === 0),
       storyImported: getSetting(SETTINGS.storyImported),
       tapTreasury: draft?.tapTreasury ?? getSetting(SETTINGS.tapTreasury),
+      pinsShown: draft?.pinsShown ?? getSetting(SETTINGS.pinsShown),
       showAllActors: this.#showAllActors,
       tapChoices: {
         approval: "UKM.Settings.TapTreasury.Approval",
@@ -194,6 +192,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #onSubmit(event, form, formData) {
     const data = foundry.utils.expandObject(formData.object);
     await setSetting(SETTINGS.tapTreasury, data.tapTreasury);
+    await setSetting(SETTINGS.pinsShown, !!data.pinsShown);
     if (data.advisors) {
       const attitudes = {};
       const known = {};
@@ -246,19 +245,6 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
   static #toggleActors() {
     this.#draft = foundry.utils.expandObject(new foundry.applications.ux.FormDataExtended(this.element).object);
     this.#showAllActors = !this.#showAllActors;
-    this.render();
-  }
-
-  /** Test build: copy a v0.22 kingdom in this world into this module's data. */
-  static async #importLegacy() {
-    const ok = await UkmDialog.confirm({
-      window: { title: game.i18n.localize("UKM.Legacy.Title") },
-      content: `<p>${game.i18n.localize("UKM.Legacy.Confirm")}</p>`,
-      rejectClose: false
-    });
-    if (!ok) return;
-    const result = await sendRequest("gm", { op: "importLegacy" });
-    if (result?.ok !== false) ui.notifications.info(game.i18n.localize("UKM.Legacy.Done"));
     this.render();
   }
 

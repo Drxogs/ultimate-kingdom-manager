@@ -182,7 +182,8 @@ export function createCard(event, { now = game.time.worldTime, tier = null } = {
     drawnAt: now,
     deadline: now + (version.deadlineDays ?? CARD_DEADLINE_DAYS) * secondsPerDay(),
     target,
-    revealed: false,
+    // Shown to players from the start if the GM chose that in Setup (never for secret placements).
+    revealed: !!getSetting(SETTINGS.pinsShown) && !event.placement?.hidden,
     assignee: null,
     workUntil: null,
     months: 1,

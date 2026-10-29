@@ -1,6 +1,6 @@
 import { FLAG_SCOPE } from "../constants.js";
 import { getCardEvent } from "../content/data.js";
-import { getImportedPage } from "../content/story-import.js";
+import { getImportedPage, KINGMAKER_SHEET, kingmakerSheetAvailable } from "../content/story-import.js";
 import { getHexCenter, getRegionScene } from "../integrations/kingmaker.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { getRealm, updateRealm } from "./state.js";
@@ -59,14 +59,19 @@ function iconFor(card) {
 
 /** A journal everyone can read, holding one short page per card the GM has revealed. */
 async function noticesJournal() {
+  // The Kingmaker journal sheet, like the handbooks and the imported story, when the module has it.
+  const sheetClass = kingmakerSheetAvailable() ? KINGMAKER_SHEET : null;
   const existing = game.journal.find((j) => j.getFlag(FLAG_SCOPE, "notices"));
-  if (existing) return existing;
+  if (existing) {
+    if (sheetClass && existing.getFlag("core", "sheetClass") !== sheetClass) await existing.setFlag("core", "sheetClass", sheetClass);
+    return existing;
+  }
   const folder = game.folders.find((f) => f.type === "JournalEntry" && f.getFlag(FLAG_SCOPE, "handbook"));
   return JournalEntry.create({
     name: NOTICES_NAME,
     folder: folder?.id ?? null,
     ownership: { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER },
-    flags: { [FLAG_SCOPE]: { notices: true } }
+    flags: { [FLAG_SCOPE]: { notices: true }, ...(sheetClass ? { core: { sheetClass } } : {}) }
   });
 }
 
@@ -87,7 +92,7 @@ async function syncNotices(realm) {
   const revealed = realm.cards.filter((c) => c.revealed && ACTIVE.includes(c.status) && c.target?.hexKey);
   const journal = game.journal.find((j) => j.getFlag(FLAG_SCOPE, "notices"));
   if (!revealed.length && !journal) return new Map();
-  const book = journal ?? (await noticesJournal());
+  const book = await noticesJournal();
   const pages = new Map(book.pages.contents.map((p) => [p.getFlag(FLAG_SCOPE, "card"), p]));
   const keep = new Set(revealed.map((c) => c.id));
   const stale = [...pages.entries()].filter(([id]) => !keep.has(id)).map(([, p]) => p.id);

@@ -1,31 +1,24 @@
-<p>Everything runs on Foundry's world time. Advance it however you normally do (SmallTime, the PF2e world clock, a macro). The module catches up on whatever time passed, up to six months at once. Dates are shown on PF2e's world clock (for example 19 Calistril 4727 AR).</p>
+<p>The kingdom runs on Foundry's world time. Advance it however you normally do (SmallTime, the PF2e world clock, or a macro), and the module catches up on whatever time has passed, up to six months at once. Dates follow PF2e's world clock.</p>
 <h2>Every week</h2>
 <ul>
-<li>Income is paid into the treasury.</li>
-<li>Food: farms against consumption. The treasury covers any shortfall; if it can't, +1 Unrest.</li>
-<li>Each filled seat grows its realm stat a little.</li>
-<li>One <strong>desk matter</strong> lands on the quietest desk (can be turned off).</li>
-<li>Temporary bonuses and income changes count down.</li>
+<li>Income is paid into the treasury, and food is bought for whatever the farms don't cover.</li>
+<li>Each filled seat's stat grows a little.</li>
+<li>A <strong>desk matter</strong> lands on the quietest desk.</li>
 </ul>
 <h2>Every month</h2>
 <ul>
-<li>1 to 3 major events from the adventure's kingdom event table, by kingdom size, placed near the party's level.</li>
-<li><strong>Trouble cards</strong>: each settlement missing something its size needs may draw one (about one in three for each missing track; one in four for Tenements). None in the first three months after the capital is founded.</li>
-<li>One <strong>audience</strong> for a seat (can be turned off).</li>
-<li>A <strong>council</strong> reminder in chat (can be turned off).</li>
-<li>Fame +1 (up to 3). At Unrest 10 or more, 1d10 Ruin spread over the four kinds and a flat check to keep a hex.</li>
-<li>Settlement perks that work monthly (a Monastery's −1 Unrest, a Magistrate's Court's −1 Crime...).</li>
-<li>The ruler's powers are ready again.</li>
+<li>One to three <strong>major events</strong> from the adventure's table, more as the kingdom grows, placed near the party's level.</li>
+<li><strong>Trouble</strong> for settlements missing what they need (none in the kingdom's first three months).</li>
+<li>An <strong>audience</strong> for one seat, and a <strong>council</strong> reminder in chat.</li>
+<li>Fame +1. At 10 or more Unrest: Ruin, and a flat check to keep a hex.</li>
+<li>The ruler's powers come back.</li>
 </ul>
 <h2>Whenever time moves</h2>
 <ul>
-<li>Work that's done gets rolled. Results wait a day for rerolls, then apply.</li>
-<li>Problems past their deadline apply their failure result.</li>
-<li>Finished rank-ups move to their choice.</li>
-<li>Follow-up events arrive when they're due.</li>
-<li>Ambition steps that have been reached pay out.</li>
+<li>Finished work is rolled. Results wait a day so players can reroll, then apply.</li>
+<li>Problems past their deadline apply their failure.</li>
+<li>Rank-ups that are done move on to their choice.</li>
 </ul>
-<p>All of this runs on the GM's client. If no GM is logged in, nothing happens until one is. If you have the world open in more than one window, only the first one runs the kingdom; the others pass your clicks to it.</p>
-<p><strong>During combat</strong> the kingdom waits: nothing rolls, draws or pops up until the combat ends, then it catches up.</p>
-<h2>A quick way to move a week</h2>
-<p>A script macro with <code>game.time.advance(7 * 86400)</code> jumps ahead one week.</p>
+<p>Desk matters, audiences and the council reminder can each be turned off in the settings.</p>
+<p>Everything runs in the GM's game: with no GM logged in, nothing happens until one is. During combat the kingdom waits, then catches up.</p>
+<p><strong>A quick way to move time</strong>: a script macro with <code>game.time.advance(7 * 86400)</code> jumps a week; use <code>30 * 86400</code> for a month.</p>

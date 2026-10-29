@@ -19,7 +19,8 @@ export const SETTINGS = {
   knownAdvisors: "knownAdvisors",
   customAdvisors: "customAdvisors",
   toolsNotice: "toolsNotice",
-  council: "council"
+  council: "council",
+  pinsShown: "pinsShown"
 };
 
 export function registerSettings() {
@@ -69,6 +70,14 @@ export function registerSettings() {
       disabled: "UKM.Settings.TapTreasury.Disabled"
     },
     default: "approval"
+  });
+
+  world(SETTINGS.pinsShown, {
+    name: "UKM.Settings.PinsShown.Name",
+    hint: "UKM.Settings.PinsShown.Hint",
+    config: true,
+    type: Boolean,
+    default: false
   });
 
   world(SETTINGS.pinResolved, {

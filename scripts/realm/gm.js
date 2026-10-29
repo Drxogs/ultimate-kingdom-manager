@@ -1,7 +1,6 @@
 import { drawAudience } from "./audiences.js";
 import { createCard, drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
 import { forceTrouble, troubleOptions } from "./troubles.js";
-import { importLegacyKingdom } from "./legacy.js";
 import { getStoryEvents } from "../content/data.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
@@ -109,11 +108,6 @@ const OPS = {
       addLog(realm, { type: "gm-adjust" });
     });
     return {};
-  },
-  importLegacy: async () => {
-    const result = await importLegacyKingdom();
-    await syncPins();
-    return result.ok ? {} : result;
   },
   drawTrouble: async ({ settlementId }) => {
     let card = null;

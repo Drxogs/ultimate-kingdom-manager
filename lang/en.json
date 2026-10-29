@@ -30,6 +30,10 @@
       "Council": {
         "Name": "Council",
         "Hint": "Projects can be proposed to the council for votes, and a reminder posts at the start of each month."
+      },
+      "PinsShown": {
+        "Name": "Show new map pins to players",
+        "Hint": "Off: a card's pin on the Stolen Lands map is GM-only until you show it with the eye button. On: pins of new cards are shown to players straight away (secret events stay hidden), and the eye hides them. Lots of pins can make the map's own notes harder to click."
       }
     },
     "Setup": {
@@ -243,7 +247,7 @@
       "track-stage": "Built: {name}",
       "settlement-tracks": "{name}'s buildings became tracks",
       "track-monthly": "Settlements: {name}",
-      "kingdom-imported": "Kingdom brought over from v0.22: {name}",
+      "kingdom-imported": "Kingdom read from the PF2e kingdom sheet: {name}",
       "gm-adjust": "The GM set the kingdom's numbers by hand"
     },
     "Seat": {
@@ -358,8 +362,7 @@
         "TrackNeedsWater": "That needs a waterside settlement.",
         "TrackNeedsLevel": "That needs kingdom level {level}.",
         "TrackNeedsHomes": "Raise the settlement's Homes first.",
-        "TrackCapitalOnly": "That can only be built in the capital.",
-        "NoLegacy": "There's no v0.22 kingdom in this world."
+        "TrackCapitalOnly": "That can only be built in the capital."
       }
     },
     "Effect": {
@@ -864,13 +867,6 @@
       "Audience": "Audience",
       "Story": "Story event",
       "Event": "Kingdom event"
-    },
-    "Legacy": {
-      "Title": "Bring over the v0.22 kingdom",
-      "Button": "Bring over the v0.22 kingdom",
-      "Hint": "This world has a kingdom from the regular Ultimate Kingdom Manager (v0.22). You can copy it into this test build to try the redesign on it. The v0.22 data isn't changed.",
-      "Confirm": "Copy the v0.22 kingdom into this test build? It replaces everything this build has saved in this world (cards, treasury, stats, settlements, seats). The v0.22 data stays as it is, so switching back still works.",
-      "Done": "The v0.22 kingdom has been brought over. Old seats and buildings were converted."
     },
     "Adjust": {
       "Title": "Set the kingdom's numbers",

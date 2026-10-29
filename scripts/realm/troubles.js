@@ -1,5 +1,6 @@
 import { CARD_DEADLINE_DAYS, MODULE_ID } from "../constants.js";
 import { getEvent, getTroubleData, getTroubles } from "../content/data.js";
+import { getSetting, SETTINGS } from "../settings.js";
 import { addLog, newId } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { missingNeeds, sizeFor, SIZES, trackStage } from "./tracks.js";
@@ -66,7 +67,7 @@ export function troubleCard(trouble, settlement, { now = game.time.worldTime, he
     drawnAt: now,
     deadline: now + (trouble.deadlineDays ?? CARD_DEADLINE_DAYS) * secondsPerDay(),
     target: { hexKey, settlement: settlement.name, settlementId: settlement.id, hidden: false },
-    revealed: false,
+    revealed: !!getSetting(SETTINGS.pinsShown),
     assignee: null,
     workUntil: null,
     months: 1,

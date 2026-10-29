@@ -12,7 +12,7 @@ import { buildStructureCatalog, isFortified, structureCatalog } from "./realm/pr
 import { ensureHandbook, openHandbook } from "./content/handbook.js";
 import { isLeader, leaderSettled, startLeader } from "./realm/leader.js";
 import { adoptMapSettlements, repairSettlements } from "./realm/settlements.js";
-import { importPf2eKingdom } from "./realm/legacy.js";
+import { importPf2eKingdom } from "./realm/pf2e-kingdom.js";
 import { cardsOnHex } from "./realm/pins.js";
 import { daysUntil } from "./realm/time.js";
 import { KingdomManager } from "./apps/kingdom-manager.js";
