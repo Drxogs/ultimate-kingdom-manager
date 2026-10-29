@@ -423,6 +423,47 @@
           }
         ]
       }
+    },
+    {
+      "id": "quell-unrest",
+      "seat": "counselor",
+      "skill": [
+        "folklore",
+        "arts",
+        "politics"
+      ],
+      "target": "none",
+      "costWeeks": 0.5,
+      "workDays": 7,
+      "name": "Quell Unrest",
+      "hook": "Festivals, fair hearings and a few promises kept: give the people a reason to settle down.",
+      "kind": "project",
+      "cooldownDays": 30,
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": "-2d4"
+          }
+        ],
+        "success": [
+          {
+            "unrest": "-1d4"
+          }
+        ],
+        "failure": [
+          {
+            "note": "The crowds listen politely and go home unconvinced."
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "note": "The festival turns into a protest."
+          }
+        ]
+      }
     }
   ]
 }

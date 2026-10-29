@@ -89,6 +89,48 @@ const CLASSES = {
     abilities: { dex: 4, cha: 2, int: 1, con: 1, wis: 1, str: 0 },
     trained: { thievery: "dex", stealth: "dex", deception: "cha", diplomacy: "cha", acrobatics: "dex", society: "int", intimidation: "cha", "mercantile-lore": "int", athletics: "str" },
     order: ["thievery", "stealth", "deception", "diplomacy", "acrobatics", "society", "thievery", "stealth", "deception", "diplomacy", "intimidation", "thievery"]
+  },
+  investigator: {
+    name: "Quinn (investigator)", increases: "every",
+    abilities: { int: 4, dex: 2, wis: 2, cha: 1, con: 1, str: 0 },
+    trained: { society: "int", arcana: "int", crafting: "int", diplomacy: "cha", deception: "cha", medicine: "wis", occultism: "int", thievery: "dex", nature: "wis", "mercantile-lore": "int", "engineering-lore": "int" },
+    order: ["society", "diplomacy", "arcana", "crafting", "occultism", "medicine", "society", "deception", "nature", "arcana", "diplomacy", "crafting"]
+  },
+  bard: {
+    name: "Lem (bard)", increases: "odd",
+    abilities: { cha: 4, dex: 2, int: 1, wis: 1, con: 1, str: 0 },
+    trained: { performance: "cha", occultism: "int", diplomacy: "cha", deception: "cha", intimidation: "cha", society: "int", arcana: "int", "farming-lore": "int" },
+    order: ["performance", "diplomacy", "occultism", "deception", "performance", "intimidation", "diplomacy", "society"]
+  },
+  ranger: {
+    name: "Harsk (ranger)", increases: "odd",
+    abilities: { dex: 4, wis: 2, con: 2, str: 1, int: 1, cha: 0 },
+    trained: { survival: "wis", nature: "wis", athletics: "str", stealth: "dex", crafting: "int", "sailing-lore": "int" },
+    order: ["survival", "nature", "athletics", "stealth", "survival", "nature", "crafting"]
+  },
+  swashbuckler: {
+    name: "Jirelle (swashbuckler)", increases: "odd",
+    abilities: { dex: 4, cha: 2, con: 1, str: 1, wis: 1, int: 0 },
+    trained: { acrobatics: "dex", diplomacy: "cha", deception: "cha", intimidation: "cha", athletics: "str", performance: "cha", "sailing-lore": "int" },
+    order: ["acrobatics", "diplomacy", "deception", "intimidation", "performance", "athletics", "diplomacy"]
+  },
+  barbarian: {
+    name: "Amiri-like (barbarian)", increases: "odd",
+    abilities: { str: 4, con: 2, dex: 1, wis: 1, int: -1, cha: 0 },
+    trained: { athletics: "str", intimidation: "cha", survival: "wis" },
+    order: ["athletics", "intimidation", "athletics", "survival", "athletics"]
+  },
+  champion: {
+    name: "Seelah (champion)", increases: "odd",
+    abilities: { str: 4, cha: 2, con: 2, wis: 1, int: 0, dex: 0 },
+    trained: { religion: "wis", athletics: "str", diplomacy: "cha" },
+    order: ["athletics", "religion", "diplomacy", "athletics", "religion"]
+  },
+  monk: {
+    name: "Sajan (monk)", increases: "odd",
+    abilities: { dex: 4, wis: 2, con: 2, str: 1, int: 0, cha: 0 },
+    trained: { acrobatics: "dex", athletics: "str", stealth: "dex" },
+    order: ["acrobatics", "athletics", "acrobatics", "stealth"]
   }
 };
 const ALL_SKILLS = ["acrobatics", "arcana", "athletics", "crafting", "deception", "diplomacy", "intimidation", "medicine", "nature", "occultism", "performance", "religion", "society", "stealth", "survival", "thievery", "farming-lore", "sailing-lore", "engineering-lore", "mercantile-lore", "warfare-lore"];
@@ -135,7 +177,13 @@ function makePc(key) {
   pc.refresh();
   return pc;
 }
-const party = Object.keys(CLASSES).map(makePc);
+const PARTIES = {
+  average: ["fighter", "wizard", "cleric", "rogue"],
+  skilled6: ["rogue", "investigator", "bard", "ranger", "swashbuckler", "wizard"],
+  poor: ["barbarian", "fighter", "champion", "monk"]
+};
+const PARTY = process.env.PARTY ?? "average";
+const party = PARTIES[PARTY].map(makePc);
 const byUuid = new Map(party.map((p) => [p.uuid, p]));
 globalThis.fromUuidSync = (u) => byUuid.get(u) ?? (u?.startsWith?.("Actor.") ? { name: u.slice(6), type: "npc", testUserPermission: () => false } : null);
 env.party.members = party;
@@ -177,14 +225,30 @@ env.hexes; // (setup's small region is replaced)
 // ---------- the module ----------
 const { preloadData, getMatters } = await import(`${R}/content/data.js`);
 await preloadData();
-for (const [k, v] of Object.entries({ seatAssignments: { treasurer: { companion: "jubilost", supervisor: "Actor.rogue" }, viceroy: { companion: "svetlana", supervisor: "Actor.cleric" } }, knownAdvisors: { jubilost: true, svetlana: true }, companionAttitudes: { jubilost: "friendly", svetlana: "friendly" }, levelGravity: 1, costGradient: {}, clock: {}, audiences: true, council: false, deskMatters: true, pinResolved: "remove", tapTreasury: "disabled", pinsShown: false })) env.settings.set(k, v);
+// Seats go to whoever is best at them (judged at level 5); seats left over go to companions.
+const { SEATS: ALL_SEATS, REALM_STATS: STATS, PERSONAL_SKILLS: PS } = await import(`${R}/constants.js`);
+const seatScore = (pc, seat) => {
+  const stat = Object.values(STATS).find((d) => d.seat === seat);
+  pc.level = 5; pc.refresh();
+  const v = Math.max(...stat.skills.flatMap((k) => (PS[k] ?? []).map((ps) => (pc.skills[ps]?.rank !== "U" ? pc.skills[ps]?.mod ?? -9 : -9))));
+  pc.level = 1; pc.refresh();
+  return v;
+};
+const seatOf = {};
+const pairs = party.flatMap((pc) => ALL_SEATS.map((seat) => ({ pc, seat, score: seatScore(pc, seat) }))).sort((a, b) => b.score - a.score);
+for (const { pc, seat } of pairs) if (!Object.values(seatOf).includes(seat) && !seatOf[pc.id]) seatOf[pc.id] = seat;
+const COMPANION = { treasurer: "jubilost", viceroy: "svetlana", counselor: "linzi", magister: "octavia", emissary: "valerie", general: "amiri" };
+const assignments = {};
+for (const seat of ALL_SEATS) if (!Object.values(seatOf).includes(seat)) assignments[seat] = { companion: COMPANION[seat], supervisor: party[0].uuid };
+realLog("PARTY", PARTY, JSON.stringify(seatOf), "companions", Object.keys(assignments).join(","));
+for (const [k, v] of Object.entries({ seatAssignments: assignments, knownAdvisors: Object.fromEntries(Object.values(COMPANION).map((c) => [c, true])), companionAttitudes: Object.fromEntries(Object.values(COMPANION).map((c) => [c, "friendly"])), levelGravity: 1, costGradient: {}, clock: {}, audiences: true, council: false, deskMatters: true, pinResolved: "remove", tapTreasury: "disabled", pinsShown: false })) env.settings.set(k, v);
 const realmKey = "ultimate-kingdom-manager-next.realm";
 env.flags[realmKey] = {
   kingdom: {
-    active: true, name: "Simland", img: null, level: 1, capital: null, ruler: "Actor.rogue",
+    active: true, name: "Simland", img: null, level: 1, capital: null, ruler: party[0].uuid,
     unrest: { value: 0 }, resources: { fame: { value: 0, max: 3 } },
     abilities: { culture: { ruin: { value: 0, max: 10 }, penalty: 0 }, economy: { ruin: { value: 0, max: 10 }, penalty: 0 }, stability: { ruin: { value: 0, max: 10 }, penalty: 0 }, loyalty: { ruin: { value: 0, max: 10 }, penalty: 0 } },
-    leadership: Object.fromEntries(party.map((p) => [CLASSES[p.id].seat, { uuid: p.uuid }])),
+    leadership: Object.fromEntries(party.map((p) => [seatOf[p.id], { uuid: p.uuid }])),
     size: 1
   },
   seatsVersion: 6
@@ -374,6 +438,8 @@ async function spend() {
     const r = await P.startProject({ type: "develop-settlement", settlementId: w.s.id, track: w.track.id, userId: "gm" }, { canActForSeat: RS.canActForSeat });
     if (r?.ok) { stats.bpOnTracks += before - getRealm().treasury; stats.projectsStarted["develop-settlement"] = (stats.projectsStarted["develop-settlement"] ?? 0) + 1; }
   }
+  // Quell Unrest when it's climbing.
+  if (getKingdom().unrest.value >= 2 && !working("quell-unrest")) await tryProject("quell-unrest");
   // The ruler holds court when the people grumble.
   if (getKingdom().unrest.value > 0 && RY.usesLeft("court") > 0) await RY.royalCourt({ userId: "gm" });
   for (const f of RY.favours()) if (getKingdom().unrest.value > 1 || rand() < 0.2) await RY.useFavour({ favourId: f.id, userId: "gm" });

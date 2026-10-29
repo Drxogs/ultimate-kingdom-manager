@@ -134,7 +134,7 @@
       "ControlDC": "Control DC",
       "Treasury": "Treasury (BP)",
       "PerWeek": "per week",
-      "IncomeBreakdown": "Base {base} · Work sites {worksites} · Ranks {ranks} · Trade {trade} · Settlements {tracks} · Food −{food} (need {need}, farms cover {farms})",
+      "IncomeBreakdown": "Base {base} · Work sites {worksites} · Economy rank {ranks} · Trade {trade} · Settlements {tracks} · Upkeep −{upkeep} · Food −{food} (need {need}, farms cover {farms})",
       "InDebt": "Treasury in debt",
       "Unrest": "Unrest",
       "Fame": "Fame",

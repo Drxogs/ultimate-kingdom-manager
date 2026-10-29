@@ -3,7 +3,10 @@ import { companionForName, getCompanion, getCompanions } from "../content/data.j
 import { getSetting, SETTINGS } from "../settings.js";
 import { getKingdom, getResourceDie } from "../integrations/party.js";
 import { summarizeRealm, isKingmakerActive } from "../integrations/kingmaker.js";
-import { kingdomPerks } from "./tracks.js";
+import { kingdomPerks, sizeFor } from "./tracks.js";
+
+/** Weekly BP each settlement costs, by size. */
+export const SETTLEMENT_UPKEEP = { village: 0, town: 1, city: 3, metropolis: 6 };
 
 export function rankCap(kingdomLevel) {
   return Math.ceil(Math.clamp(kingdomLevel, 1, 20) / 2);
@@ -58,11 +61,8 @@ export function weeklyIncome(realm) {
     }
   }
 
-  const economyRank = realm.stats.economy?.rank ?? 0;
-  const ranks = Object.keys(REALM_STATS).reduce(
-    (sum, key) => sum + Math.min(realm.stats[key]?.rank ?? 0, economyRank),
-    0
-  );
+  // A well-run economy pays: 1 BP a week per Economy rank.
+  const ranks = realm.stats.economy?.rank ?? 0;
 
   const trade = realm.tradeAgreements.reduce((sum, t) => sum + (t.weekly ?? 0), 0);
   // Markets, inns and the like in the settlements' tracks.
@@ -70,9 +70,12 @@ export function weeklyIncome(realm) {
   const adjustments = realm.incomeAdjustments.reduce((sum, a) => sum + a.perWeek, 0);
   const debtFactor = realm.debt.amount > 0 ? 0.75 : 1;
 
+  // Bigger settlements cost more to keep: streets, guards, granaries.
+  const upkeep = (realm.settlements ?? []).reduce((sum, s) => sum + (SETTLEMENT_UPKEEP[sizeFor(s)] ?? 0), 0);
+
   const gross = (base + worksites + ranks + trade + tracks) * debtFactor;
-  const total = Math.max(0, Math.round(gross + adjustments));
-  return { base, worksites, ranks, trade, tracks, adjustments, debtFactor, total };
+  const total = Math.max(0, Math.round(gross - upkeep + adjustments));
+  return { base, worksites, ranks, trade, tracks, upkeep, adjustments, debtFactor, total };
 }
 
 /** Food upkeep for one week, in BP owed after farms. */
