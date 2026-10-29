@@ -37,6 +37,7 @@ import {
   cardStage,
   completeGmTask,
   dismissCard,
+  endsText,
   estimateCheck,
   fortuneUses,
   outcomePreview,

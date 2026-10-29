@@ -2125,10 +2125,10 @@
       "criticalFailure": "A notorious criminal was making fools of the watch, and after the latest chase they struck again, more boldly than ever."
     },
     "squatters": {
-      "criticalSuccess": "Families with nowhere to go had camped on an empty lot. They were given homes, and they've turned out to be good neighbors.",
-      "success": "Families with nowhere to go had camped on an empty lot. They were found somewhere better to live, and the lot is clear.",
-      "failure": "Families with nowhere to go had camped on an empty lot. Nobody found them anywhere better, and they're still there.",
-      "criticalFailure": "Families with nowhere to go had camped on an empty lot, and the camp has grown, and so has the trouble."
+      "criticalSuccess": "Families with nowhere to go had camped in the town square. They were given homes, and they've turned out to be good neighbors.",
+      "success": "Families with nowhere to go had camped in the town square. They were found somewhere better to live, and the square is clear.",
+      "failure": "Families with nowhere to go had camped in the town square. Nobody found them anywhere better, and they're still there.",
+      "criticalFailure": "Families with nowhere to go had camped in the town square, and the camp has grown, and so has the trouble."
     },
     "undead-uprising": {
       "criticalSuccess": "The dead were not staying in their graves. Priests and soldiers laid them to rest for good, and the graveyards are quiet again.",

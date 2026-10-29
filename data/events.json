@@ -323,7 +323,7 @@
       "setup": [
         {
           "gmChoose": "build-or-demolish",
-          "hint": "Pick a structure near kingdom level, ideally one that lowers Unrest (build) or one now obsolete (demolish)."
+          "hint": "Pick a settlement track stage the townsfolk want built (one that isn't yet), or one they want torn down."
         }
       ],
       "continuous": {
@@ -819,7 +819,7 @@
             }
           },
           {
-            "gm": "The den's residential lot becomes rubble, and the den moves to another lot."
+            "gm": "The den's street is wrecked: one of that settlement's tracks other than Homes (players' choice) loses a stage (use − on the Settlements tab), and the den moves elsewhere in town."
           }
         ]
       }
@@ -1363,7 +1363,7 @@
               "skill": "defense",
               "failure": [
                 {
-                  "gm": "The targeted structure becomes rubble."
+                  "gm": "The targeted settlement track loses a stage (use − on the Settlements tab)."
                 },
                 {
                   "ruin": {
@@ -1588,7 +1588,7 @@
             }
           },
           {
-            "gm": "Place rubble in three lots of the players' choice."
+            "gm": "One of that settlement's tracks (players' choice) loses a stage (use − on the Settlements tab)."
           },
           {
             "bpDice": -4
@@ -1601,7 +1601,7 @@
             }
           },
           {
-            "gm": "Rubble one lot in as many adjacent blocks as the Decay rolled."
+            "gm": "As many of that settlement's tracks as the Decay rolled (players' choice) each lose a stage (use − on the Settlements tab)."
           },
           {
             "bpDice": -6
@@ -1670,7 +1670,7 @@
         ],
         "criticalFailure": [
           {
-            "gm": "As failure, then it reaches the nearest settlement: if it can get past walls or water, one structure (players' choice) becomes rubble; otherwise one wall is destroyed."
+            "gm": "As failure, then it reaches the nearest settlement: if that settlement has Walls, its Walls lose a stage; otherwise one of its tracks (players' choice) loses a stage (use − on the Settlements tab)."
           },
           {
             "ifSettlementBreached": [
@@ -2568,7 +2568,7 @@
       ],
       "whileActive": [
         {
-          "gm": "One empty lot is occupied and can't be built on."
+          "gm": "Squatters camp in the settlement: its Homes can't be raised until this ends."
         }
       ],
       "continuous": {
@@ -2577,7 +2577,7 @@
         ],
         "orComplete": "residential-structure-on-lot"
       },
-      "hook": "Families with nowhere to go have camped on an empty lot.",
+      "hook": "Families with nowhere to go have camped in the town square.",
       "outcomes": {
         "criticalSuccess": [],
         "success": [
@@ -2679,7 +2679,7 @@
             }
           },
           {
-            "gm": "One non-cemetery lot (players' choice) becomes rubble."
+            "gm": "One of that settlement's tracks other than Faith (players' choice) loses a stage (use − on the Settlements tab)."
           }
         ]
       }
@@ -2782,7 +2782,7 @@
         ],
         "criticalFailure": [
           {
-            "gm": "One structure (players' choice) becomes rubble."
+            "gm": "One of that settlement's tracks (players' choice) loses a stage (use − on the Settlements tab)."
           },
           {
             "unrest": "1d4"
