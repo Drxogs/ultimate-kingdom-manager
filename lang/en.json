@@ -192,7 +192,7 @@
       "Dismiss": "Dismiss",
       "ChooseSkill": "Which approach should be taken?",
       "NoPersonalSkill": "None of your characters has a skill that fits this event.",
-      "PersonalHint": "A character takes this on in person, rolling their own skill against a level-based DC. A success counts as a critical success, and a critical success earns Fame. Anyone in the party can do it. Someone who doesn't hold this desk is lent to it: their own desk and this one take no other work until it's done, and their player makes the roll.",
+      "PersonalHint": "A character takes this on in person, rolling their own skill against the same DC an advisor would face. A critical success earns Fame, and their player can reroll with a hero point. Anyone in the party can do it. Someone who doesn't hold this desk is lent to it: their own desk and this one take no other work until it's done, and their player makes the roll.",
       "Who": "Character and skill",
       "EscalateConfirm": "Take this to the table? The deadline pauses until the GM records how the party fared.",
       "RecordPrompt": "How did it go?",

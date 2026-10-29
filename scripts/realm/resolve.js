@@ -587,7 +587,7 @@ async function handRollToPlayer(card) {
 }
 
 function finalDegree(roll) {
-  let degree = roll.personal && roll.degree === 2 ? 3 : roll.degree;
+  let degree = roll.degree;
   if (roll.anarchy) degree = Math.max(0, degree - 1);
   return degree;
 }
