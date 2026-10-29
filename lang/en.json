@@ -890,6 +890,45 @@
       "Twice": "two {result} in a row",
       "AtStage": "{result} at stage {stage}",
       "Or": " or "
+    },
+    "Land": {
+      "Heading": "The land",
+      "Hexes": "{n} hexes claimed",
+      "Roads": "{n} with roads",
+      "Settlements": "{n} settlements on the map",
+      "FoodLine": "Farmland in {farms} hexes feeds {farms} a week; the settlements need {need}.",
+      "CampLine": "{n} {camp} ({worked} on their commodity)",
+      "CampBp": "+{bp} BP a week",
+      "NoCamps": "No work sites yet (Treasurer: Establish a Work Site).",
+      "Commodities": "Commodities:",
+      "Idle": "not worked yet:",
+      "NoCommodities": "No commodities in claimed hexes.",
+      "Hint": "Read from the Kingmaker map whenever it changes. Mark farms, roads, camps and settlements with the Kingmaker hex tools; the kingdom counts them here.",
+      "NoMap": "The Kingmaker module isn't active, so there's no map to read.",
+      "Camp": {
+        "lumber": "lumber camps",
+        "quarry": "quarries",
+        "mine": "mines"
+      },
+      "Commodity": {
+        "lumber": "Lumber",
+        "stone": "Stone",
+        "ore": "Ore",
+        "luxuries": "Luxuries",
+        "food": "Food"
+      },
+      "Feature": {
+        "landmark": "Landmarks",
+        "refuge": "Refuges",
+        "ruin": "Ruins",
+        "structure": "Structures",
+        "bridge": "Bridges",
+        "ford": "Fords",
+        "waterfall": "Waterfalls",
+        "lair": "Lairs",
+        "resource": "Resources"
+      },
+      "FoodShort": "The treasury buys the other {short} (−{bp} BP a week)."
     }
   }
 }

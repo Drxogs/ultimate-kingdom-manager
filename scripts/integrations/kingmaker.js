@@ -83,6 +83,30 @@ export function hasFeature(hexState, type) {
   return (hexState.features ?? []).some((f) => f.type === type);
 }
 
+/** Which commodity each kind of work site works. */
+export const CAMP_COMMODITY = { lumber: "lumber", quarry: "stone", mine: "ore" };
+
+/**
+ * Everything the map holds in the realm's claimed hexes, for the Realm tab: farms, roads, camps,
+ * commodities (worked or not) and any other hex features, counted.
+ */
+export function landSummary() {
+  const claimed = getClaimedHexes();
+  const camps = {};
+  const commodities = {};
+  const idle = {};
+  const features = {};
+  for (const h of claimed) {
+    if (h.camp) camps[h.camp] = (camps[h.camp] ?? 0) + 1;
+    if (h.commodity) {
+      commodities[h.commodity] = (commodities[h.commodity] ?? 0) + 1;
+      if (!h.camp || CAMP_COMMODITY[h.camp] !== h.commodity) idle[h.commodity] = (idle[h.commodity] ?? 0) + 1;
+    }
+    for (const f of h.features ?? []) if (f?.type) features[f.type] = (features[f.type] ?? 0) + 1;
+  }
+  return { hexes: claimed.length, camps, commodities, idle, features };
+}
+
 export function summarizeRealm() {
   const claimed = getClaimedHexes();
   const count = (type) => claimed.filter((h) => hasFeature(h, type)).length;

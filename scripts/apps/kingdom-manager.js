@@ -1,6 +1,7 @@
 import { DEGREES, MODULE_ID, PERSONAL_SKILLS, REALM_STATS, SEATS } from "../constants.js";
 import { getCardEvent, getCompanion } from "../content/data.js";
 import { getImportedPage } from "../content/story-import.js";
+import { CAMP_COMMODITY, isKingmakerActive, landSummary } from "../integrations/kingmaker.js";
 import { focusHex, getHexDefinitions, getZone } from "../integrations/kingmaker.js";
 import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnrest } from "../integrations/party.js";
 import { weeklyFoodShortfall } from "../realm/rules.js";
@@ -264,6 +265,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const shortfall = weeklyFoodShortfall(realm);
     const foodCost = Math.round(shortfall * 0.5);
     context.income = { ...income, foodNeed, farms: Math.max(0, foodNeed - shortfall), foodCost, net: Math.round((income.total - foodCost) * 10) / 10 };
+    context.land = this.#prepareLand(context.income);
     context.debt = realm.debt;
     context.canRepay = realm.debt.amount > 0 && getPlayerCharacters().some((a) => game.user.isGM || a.isOwner);
     context.stats = Object.entries(REALM_STATS).map(([key, def]) => {
@@ -447,6 +449,42 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         empty: !cards.length
       };
     });
+  }
+
+  /** The Realm tab's "The land": what the Kingmaker map holds in claimed hexes and what it gives. */
+  #prepareLand(income) {
+    if (!isKingmakerActive()) return { available: false };
+    const land = landSummary();
+    const label = (group, key) => {
+      const k = `UKM.Land.${group}.${key}`;
+      return game.i18n.has(k) ? game.i18n.localize(k) : key.charAt(0).toUpperCase() + key.slice(1);
+    };
+    const SETTLEMENTS = ["village", "town", "city", "metropolis"];
+    const farms = land.features.farmland ?? 0;
+    const camps = Object.entries(land.camps).map(([camp, n]) => {
+      const worked = land.commodities[CAMP_COMMODITY[camp]] ? Math.min(n, land.commodities[CAMP_COMMODITY[camp]] - (land.idle[CAMP_COMMODITY[camp]] ?? 0)) : 0;
+      return game.i18n.format("UKM.Land.CampLine", { n, camp: label("Camp", camp), worked });
+    });
+    const idle = Object.entries(land.idle).map(([c, n]) => `${label("Commodity", c)} ×${n}`);
+    const commodities = Object.entries(land.commodities).map(([c, n]) => `${label("Commodity", c)} ×${n}`);
+    const other = Object.entries(land.features)
+      .filter(([type]) => type !== "farmland" && type !== "road" && !SETTLEMENTS.includes(type))
+      .map(([type, n]) => `${label("Feature", type)} ×${n}`);
+    return {
+      available: true,
+      hexes: land.hexes,
+      farms,
+      foodLine:
+        game.i18n.format("UKM.Land.FoodLine", { farms, need: income.foodNeed }) +
+        (income.foodCost ? ` ${game.i18n.format("UKM.Land.FoodShort", { short: income.foodNeed - income.farms, bp: income.foodCost })}` : ""),
+      roads: land.features.road ?? 0,
+      settlements: SETTLEMENTS.reduce((sum, t) => sum + (land.features[t] ?? 0), 0),
+      camps,
+      worksiteBp: income.worksites,
+      commodities,
+      idle,
+      other
+    };
   }
 
   #prepareSettlements(realm, level) {

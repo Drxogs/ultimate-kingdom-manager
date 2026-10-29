@@ -821,3 +821,8 @@
 .ukm-sheet .ukm-sheet-header .ukm-adjust-btn:hover { opacity: 1; text-shadow: 0 0 4px #000; }
 table.ukm-adjust { width: 100%; }
 table.ukm-adjust input { width: 4.5rem; }
+
+/* Realm tab: the land */
+.ukm-sheet .ukm-land { list-style: none; margin: 0.2rem 0 0.3rem; padding: 0; }
+.ukm-sheet .ukm-land li { margin: 0.15rem 0; }
+.ukm-sheet .ukm-land i { width: 1.2rem; text-align: center; color: #6b5a48; }
