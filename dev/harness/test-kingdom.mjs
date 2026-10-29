@@ -14,10 +14,11 @@ ok(k.size === 3 && k.nationType === "territory", `size from claimed hexes (${k.s
 ok(getControlDC() === 18, `Control DC level 3 territory = 18 (${getControlDC()})`);
 
 // Rank bonus table (Rules v1).
-ok([0, 1, 2, 3, 5, 6, 8, 9, 10].map(K.rankCheckBonus).join() === "0,3,3,6,6,9,9,11,11", "rank bonus table");
+ok([0, 1, 2, 3, 4, 7, 8, 10].map((r) => K.rankCheckBonus(r, 1)).join() === "5,5,7,7,9,9,11,11", "advisor bonus by rank at level 1");
+ok([1, 5, 10, 17].map((l) => K.rankCheckBonus(0, l)).join() === "5,6,7,8", "advisor attribute grows with level");
 await updateRealm((r) => { r.stats.relations.rank = 3; });
 const pol = getKingdom().skills.politics;
-ok(pol.mod === 3 + 6 - 1, `politics = level 3 + rank 6 + unrest -1 (${pol.mod})`);
+ok(pol.mod === 3 + 7 - 1, `politics = level 3 + expert 4 + attribute 3 + unrest -1 (${pol.mod})`);
 
 // Unrest penalty steps.
 ok([0, 1, 4, 5, 9, 10, 14, 15, 30].map(K.unrestPenalty).join() === "0,-1,-1,-2,-2,-3,-3,-4,-4", "unrest penalty steps");
@@ -26,7 +27,7 @@ ok([0, 1, 4, 5, 9, 10, 14, 15, 30].map(K.unrestPenalty).join() === "0,-1,-1,-2,-
 await getKingdom().update({ "abilities.economy.ruin.value": 0, "abilities.economy.penalty": -1 });
 const after = getRealm().kingdom.abilities.economy;
 ok(after.penalty === -1 && after.ruin.max === 12, `crime penalty -1, threshold 10 -> 12 (${after.ruin.max})`);
-ok(getKingdom().skills.trade.mod === getKingdom().skills.politics.mod - 6 - 1, "crime hurts Trade, not Politics");
+ok(getKingdom().skills.trade.mod === getKingdom().skills.politics.mod - 2 - 1, "crime hurts Trade, not Politics");
 ok(getRuin().crime.penalty === -1, "getRuin reads it back");
 
 // Effects path: +15 Crime rolls over at the new threshold.

@@ -34,7 +34,7 @@
         </div>
         <div class="ukm-stat-rank">
           <span>{{localize "UKM.Manager.Rank"}} {{rank}}</span>
-          {{#if bonus}}<span class="ukm-tag">{{ukmSigned bonus}}</span>{{/if}}
+          <span class="ukm-tag" data-tooltip="{{localize "UKM.Bonus.AdvisorTip" prof=proficiency}}">{{ukmSigned bonus}} · {{proficiency}}</span>
           <button type="button" class="ukm-icon" data-action="previewRankUp" data-tooltip="{{localize "UKM.Rank.Preview"}}"><i class="fa-solid fa-eye"></i></button>
         </div>
         <div class="ukm-bar"><span style="width: {{progress.percent}}%"></span></div>

@@ -462,7 +462,7 @@
     },
     "Rank": {
       "Raised": "{stat} rises to rank {rank}",
-      "RaisedDetail": "+{bonus} to {skills} checks.",
+      "RaisedDetail": "Advisors now roll {skills} as {prof}: +{bonus}, plus the kingdom's level.",
       "ProjectName": "{stat} rank-up",
       "Begin": "Begin rank-up ({cost} BP)",
       "BeginConfirm": "Spend {cost} BP and two weeks of the seat's advisor's time? The advisor can't take cards until it's done ({days} days).",
@@ -653,9 +653,10 @@
       "Partial": "Only adds +{gain} right now: these checks already get a +{existing} status bonus, and status bonuses don't stack.",
       "Converted": "The status bonus wouldn't have added anything here, so it became two rerolls on the same checks instead.",
       "WillConvert": "Its status bonus would add nothing here (these checks already have one, and status bonuses don't stack), so it becomes two rerolls on the same checks instead.",
-      "RankLabel": "{stat} rank",
+      "RankLabel": "{stat} ({prof})",
       "Reward": "Reward",
-      "RankUpSource": "{stat} rank {rank}"
+      "RankUpSource": "{stat} rank {rank}",
+      "AdvisorTip": "An advisor rolls like a character of the kingdom's level who is {prof} in these skills: level + proficiency + a good attribute. Settlement tracks add item bonuses, a companion a status bonus."
     },
     "Settlement": {
       "Type": {
@@ -925,6 +926,12 @@
         "resource": "Resources"
       },
       "FoodShort": "The treasury buys the other {short} (−{bp} BP a week)."
+    },
+    "Proficiency": {
+      "trained": "trained",
+      "expert": "expert",
+      "master": "master",
+      "legendary": "legendary"
     }
   }
 }

@@ -5,7 +5,7 @@ import { CAMP_COMMODITY, isKingmakerActive, landSummary } from "../integrations/
 import { focusHex, getHexDefinitions, getZone } from "../integrations/kingmaker.js";
 import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnrest } from "../integrations/party.js";
 import { weeklyFoodShortfall } from "../realm/rules.js";
-import { canRankUp, companionAttitude, isHired, rankBonus, rankCap, rawSeatCompanionId, routinePoints, seatCompanionId, statProgress, weeklyIncome } from "../realm/rules.js";
+import { advisorProficiency, canRankUp, companionAttitude, isHired, rankBonus, rankCap, rawSeatCompanionId, routinePoints, seatCompanionId, statProgress, weeklyIncome } from "../realm/rules.js";
 import { getRealm, updateRealm } from "../realm/state.js";
 import { rankUpChoices, rankUpCost, rankUpProject } from "../realm/ranks.js";
 import { isHexProject, projectDiscount, projectQuote, projectsForSeat, projectTargets, trackUnderway } from "../realm/projects.js";
@@ -277,7 +277,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         skills: def.skills.map((s) => game.i18n.localize(`UKM.Skill.${s}`)).join(", "),
         rank: stat.rank,
         points: stat.points,
-        bonus: rankBonus(stat.rank),
+        bonus: rankBonus(stat.rank, level),
+        proficiency: game.i18n.localize(`UKM.Proficiency.${advisorProficiency(stat.rank).key}`),
         progress: statProgress(stat),
         ...this.#rankUpView(realm, key, def, stat, level),
         routine: Math.round(routinePoints(realm, key, level) * 100) / 100,

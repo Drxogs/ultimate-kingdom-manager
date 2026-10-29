@@ -12,13 +12,33 @@ export function rankCap(kingdomLevel) {
   return Math.ceil(Math.clamp(kingdomLevel, 1, 20) / 2);
 }
 
-/** What a stat's rank adds to its skills' checks (Rules v1: one number in place of training). */
-export function rankBonus(rank) {
-  if (rank >= 9) return 11;
-  if (rank >= 6) return 9;
-  if (rank >= 3) return 6;
-  if (rank >= 1) return 3;
-  return 0;
+/*
+ * An advisor rolls like a player character of the kingdom's level: level + proficiency + attribute,
+ * plus item bonuses (the settlement's tracks) and status bonuses (a companion). The stat's rank sets
+ * the proficiency, in step with when characters reach each one.
+ */
+export const ADVISOR_PROFICIENCY = [
+  { from: 8, key: "legendary", value: 8 },
+  { from: 4, key: "master", value: 6 },
+  { from: 2, key: "expert", value: 4 },
+  { from: 0, key: "trained", value: 2 }
+];
+
+export function advisorProficiency(rank) {
+  return ADVISOR_PROFICIENCY.find((p) => rank >= p.from);
+}
+
+/** The advisor's attribute: a good one, like a character's second-best, growing with level. */
+export function advisorAttribute(level) {
+  if (level >= 17) return 6;
+  if (level >= 10) return 5;
+  if (level >= 5) return 4;
+  return 3;
+}
+
+/** What a stat's rank (with the advisor's attribute) adds to its skills' checks, at a kingdom level. */
+export function rankBonus(rank, level = 1) {
+  return advisorProficiency(rank).value + advisorAttribute(level);
 }
 
 /** Whether a stat has banked enough points for its next rank, and the cap allows it. */

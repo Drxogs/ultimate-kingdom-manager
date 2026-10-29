@@ -2,7 +2,7 @@ import { FOUNDING_PICKS, MODULE_ID, POINTS_PER_RANK, REALM_STATS } from "../cons
 import { getRankUpAlways, getRankUpScene } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
 import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
-import { canRankUp, rankBonus, weeklyIncome } from "./rules.js";
+import { advisorProficiency, canRankUp, rankBonus, weeklyIncome } from "./rules.js";
 import { busyWith, canActForSeat } from "./resolve.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
@@ -156,7 +156,8 @@ export async function chooseRankUp({ projectId, option, userId }) {
   await ChatMessage.create({
     speaker: speaker(),
     content: `<div class="ukm-chat"><h3>${game.i18n.format("UKM.Rank.Raised", { stat: statLabel(project.stat), rank: project.rank })}</h3><p><strong>${picked.label}.</strong> ${picked.text}</p>${lines ? `<ul>${lines}</ul>` : ""}<p class="hint">${game.i18n.format("UKM.Rank.RaisedDetail", {
-      bonus: rankBonus(project.rank),
+      bonus: rankBonus(project.rank, getKingdom()?.level ?? 1),
+      prof: game.i18n.localize(`UKM.Proficiency.${advisorProficiency(project.rank).key}`),
       skills: def.skills.map((s) => game.i18n.localize(`UKM.Skill.${s}`)).join(" & ")
     })}</p></div>`
   });

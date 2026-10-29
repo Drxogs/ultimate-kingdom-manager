@@ -3,7 +3,7 @@ import { chatClass, chatKicker } from "./chat-style.js";
 import { isKingmakerActive, summarizeRealm } from "../integrations/kingmaker.js";
 import { defaultKingdomData, getRealm, realmInFlight, updateRealm } from "./state.js";
 import { settlementState } from "./settlements.js";
-import { rankBonus } from "./rules.js";
+import { advisorProficiency, rankBonus } from "./rules.js";
 
 /*
  * The kingdom's numbers, kept in our own realm data instead of the PF2e kingdom sheet.
@@ -34,7 +34,7 @@ const SIZES = [
 ];
 
 /** One number for a stat's rank, in place of PF2e's training (the table lives in rules.js). */
-export const rankCheckBonus = (rank) => rankBonus(rank);
+export const rankCheckBonus = (rank, level) => rankBonus(rank, level);
 
 /** PF2e's Unrest penalty to every kingdom check. */
 export function unrestPenalty(unrest) {
@@ -189,7 +189,7 @@ export class Kingdom {
     const statLabel = stat ? game.i18n.localize(`UKM.Stat.${stat}`) : "";
     const mods = [
       { slug: "ukm-level", label: game.i18n.localize("UKM.Check.Level"), modifier: this.level, type: "untyped" },
-      { slug: `ukm-rank-${stat}`, label: game.i18n.format("UKM.Bonus.RankLabel", { stat: statLabel }), modifier: rankCheckBonus(rank), type: "untyped" }
+      { slug: `ukm-rank-${stat}`, label: game.i18n.format("UKM.Bonus.RankLabel", { stat: statLabel, prof: game.i18n.localize(`UKM.Proficiency.${advisorProficiency(rank).key}`) }), modifier: rankCheckBonus(rank, this.level), type: "untyped" }
     ];
     const unrest = unrestPenalty(this.unrest.value ?? 0);
     if (unrest) mods.push({ slug: "ukm-unrest", label: game.i18n.localize("UKM.Check.Unrest"), modifier: unrest, type: "status" });

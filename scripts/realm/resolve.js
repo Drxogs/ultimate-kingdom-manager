@@ -1,4 +1,4 @@
-import { DEGREE_POINTS, DEGREES, HIRED_PENALTY, LEVEL_DC, MODULE_ID, SEATS, selectorReaches, SKILL_TO_STAT } from "../constants.js";
+import { DEGREE_POINTS, DEGREES, HIRED_PENALTY, MODULE_ID, SEATS, selectorReaches, SKILL_TO_STAT } from "../constants.js";
 import { getCardEvent, getCompanion, getEvent, getStory } from "../content/data.js";
 import { getControlDC, getFame, getKingdom, getPartyLevel, getPlayerCharacters, getUnrest } from "../integrations/party.js";
 import { unrestPenalty } from "./kingdom.js";
@@ -280,7 +280,7 @@ export function estimateCheck(card, choice, realm = getRealm()) {
     if (!statistic) return null;
     base = statistic.mod;
     extras.push(...structureModifiers(realm, card, skill), ...unrestModifiers());
-    dc = (LEVEL_DC[Math.clamp(kingdom?.level ?? 1, 0, 20)] ?? 14) + mod;
+    dc = getControlDC() + mod;
     personal = true;
   } else {
     const statistic = kingdom?.skills?.[skill];
@@ -422,7 +422,7 @@ async function rollCheck(card, realm, { reroll = false } = {}) {
     const actor = fromUuidSync(card.assignee.actorUuid);
     const statistic = actor?.skills?.[card.assignee.personalSkill];
     if (!statistic) return null;
-    const dc = (LEVEL_DC[Math.clamp(kingdom?.level ?? 1, 0, 20)] ?? 14) + mod;
+    const dc = getControlDC() + mod;
     modifiers.push(...structureModifiers(realm, card, skill), ...unrestModifiers());
     // A character's own skill roll goes through PF2e, which doesn't know our card.
     const { card: _card, ...pcOptions } = options;
