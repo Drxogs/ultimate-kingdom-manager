@@ -477,6 +477,8 @@ for (let level = 1; level <= MAX_LEVEL; level++) {
   for (const pc of party) { pc.level = level; if (level > 1) pc.raise(); pc.refresh(); }
   env.party.level = level;
   await syncKingdomLevel();
+  // Stress test: throw the realm into anarchy at the start of a level.
+  if (Number(process.env.FORCEUNREST) === level) await getKingdom().update({ "unrest.value": 30 });
   for (let i = 0; i < DAYS_PER_LEVEL; i++) {
     day++;
     if (process.env.TRACE && day % 10 === 0) realLog("day", day, Date.now() - T0);
