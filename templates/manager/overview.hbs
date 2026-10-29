@@ -67,6 +67,10 @@
           </li>
         {{/each}}
       </ul>
+      {{#if crown.canAbdicate}}
+        <p class="ukm-abdicate"><span class="ukm-urgent"><i class="fa-solid fa-chess-king"></i> {{localize "UKM.Royal.AbdicateTitle"}}</span> <span class="hint">{{crown.abdicateHint}}</span>
+          <button type="button" class="ukm-rank-up" data-action="abdicate"><i class="fa-solid fa-chess-king"></i> {{localize "UKM.Royal.Abdicate"}}</button></p>
+      {{/if}}
       {{#if crown.favours.length}}
         <p class="ukm-favours-title"><strong>{{localize "UKM.Royal.Favours"}}</strong></p>
         <ul class="ukm-favours">

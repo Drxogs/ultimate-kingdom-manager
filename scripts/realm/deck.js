@@ -154,6 +154,15 @@ function requirementsMet(event, realm) {
   return true;
 }
 
+/** At most this many ongoing problems at once; further draws pick something else. */
+export const MAX_ONGOING_PROBLEMS = 2;
+
+const isOngoingProblem = (event) => event?.kind === "problem" && !!event.continuous;
+
+export function ongoingProblems(realm) {
+  return realm.cards.filter((c) => ["open", "assigned", "rolled", "escalated"].includes(c.status) && isOngoingProblem(getEvents().find((e) => e.id === c.eventId))).length;
+}
+
 function isAlreadyActive(event, realm) {
   return realm.cards.some((c) => c.eventId === event.id && ["open", "assigned"].includes(c.status));
 }
@@ -200,9 +209,10 @@ export function drawMonthlyEvents(realm) {
   for (let i = 0; i < count; i++) {
     const excluded = new Set();
     let card = null;
+    const crowded = ongoingProblems(realm) >= MAX_ONGOING_PROBLEMS;
     while (!card) {
       const pool = getEvents().filter(
-        (e) => !excluded.has(e.id) && requirementsMet(e, realm) && !isAlreadyActive(e, realm)
+        (e) => !excluded.has(e.id) && requirementsMet(e, realm) && !isAlreadyActive(e, realm) && !(crowded && isOngoingProblem(e))
       );
       const event = pickWeighted(pool, (e) => e.weight ?? 1);
       if (!event) break;

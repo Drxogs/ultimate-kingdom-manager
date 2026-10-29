@@ -364,7 +364,9 @@
         "TrackNeedsLevel": "That needs kingdom level {level}.",
         "TrackNeedsHomes": "Raise the settlement's Homes first.",
         "TrackCapitalOnly": "That can only be built in the capital.",
-        "Resting": "That ongoing card is resting until next month."
+        "Resting": "That ongoing card is resting until next month.",
+        "NotAnarchy": "Only a realm in anarchy can do that.",
+        "NoHeir": "No one else can take the crown."
       }
     },
     "Effect": {
@@ -451,7 +453,8 @@
       "FlatWhy": "Fate decides the rest: roll a flat check, DC {dc}.",
       "Favour": "The ruler gains a favour: {name}",
       "BpOverMonth": "{amount} BP, paid over the next month",
-      "BpDiceRoll": "{amount} × {per} BP, paid over the next month"
+      "BpDiceRoll": "{amount} × {per} BP, paid over the next month",
+      "AnarchyHarder": "In anarchy this works ×{n}."
     },
     "Difficulty": {
       "veryEasy": "Very easy",
@@ -798,8 +801,8 @@
       "DecreeBetter": "{ruler} decrees it so: {card} is rolled again, and the better result stands.",
       "DecreeKept": "{ruler} decrees it so: {card} is rolled again, but the first result was better and stands.",
       "CourtName": "Royal Court",
-      "CourtHint": "Once a month: hold court in the capital and hear the people out. Unrest −1.",
-      "CourtChat": "{ruler} holds court and hears the people out. Unrest −1.",
+      "CourtHint": "Once a month: hold court in the capital and hear the people out. Unrest −1, or −2 in anarchy.",
+      "CourtChat": "{ruler} holds court and hears the people out. Unrest −{n}.",
       "HoldCourt": "Hold court",
       "ChargeName": "Royal Charge",
       "ChargeHint": "Once a month: urge a project on, and it finishes a week sooner. Use it from the project's card.",
@@ -809,7 +812,14 @@
       "UseFavour": "Use",
       "FavourUsed": "Favour used",
       "FavourChat": "{ruler} calls in a favour.",
-      "TheCrown": "The crown"
+      "TheCrown": "The crown",
+      "Abdicate": "Step down",
+      "AbdicateHint": "The last resort in anarchy: {ruler} gives up the crown to another character. Unrest falls to 0. The realm loses all Fame, the crown's favours and this month's royal powers, and {ruler} can never be crowned again.",
+      "AbdicateTitle": "The crown passes",
+      "AbdicateAsk": "Who takes the crown?",
+      "AbdicateConfirm": "Give up the crown",
+      "AbdicateChat": "{old} steps down, and {heir} is crowned. The people take it as a fresh start: Unrest {unrest} → 0. Fame, favours and this month's royal powers are gone with the old reign.",
+      "AbdicateLog": "{old} stepped down for {heir}"
     },
     "Track": {
       "Built": "{settlement} now has {stage}.",

@@ -1,6 +1,6 @@
 import { MODULE_ID } from "../constants.js";
 import { acceptRequest, assignCard, canActForSeat, escalateCard, unassignCard, useFame, useFortune, useRoyalDecree } from "./resolve.js";
-import { royalCharge, royalCourt, useFavour } from "./royal.js";
+import { abdicate, royalCharge, royalCourt, useFavour } from "./royal.js";
 import { startProject } from "./projects.js";
 import { repayDebt, tapTreasury } from "./treasury.js";
 import { answerAudience } from "./audiences.js";
@@ -39,7 +39,8 @@ const HANDLERS = {
   royalDecree: useRoyalDecree,
   royalCourt,
   royalCharge,
-  useFavour
+  useFavour,
+  abdicate
 };
 
 const pending = new Map();

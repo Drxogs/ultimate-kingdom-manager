@@ -1,8 +1,8 @@
 import { MODULE_ID } from "../constants.js";
-import { getKingdom, getUnrest } from "../integrations/party.js";
+import { getKingdom, getPlayerCharacters, getUnrest } from "../integrations/party.js";
 import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
-import { setUnrest } from "./standing.js";
+import { announceAnarchy, inAnarchy, setUnrest } from "./standing.js";
 import { monthKey, secondsPerDay } from "./time.js";
 import { kingdomPerks } from "./tracks.js";
 
@@ -89,7 +89,12 @@ function who(userId) {
   return game.users.get(userId) ?? game.user;
 }
 
-/** Royal Court: the ruler holds court in the capital and the realm calms down (−1 Unrest). */
+/** Royal Court calms the realm by 1, or by 2 while it's in anarchy. */
+export function courtCalm() {
+  return inAnarchy() ? 2 : 1;
+}
+
+/** Royal Court: the ruler holds court in the capital and the realm calms down. */
 export async function royalCourt({ userId }) {
   const user = who(userId);
   if (!canUseRoyal(user)) return { ok: false, reason: "NotRuler" };
@@ -100,8 +105,9 @@ export async function royalCourt({ userId }) {
     if (spent) addLog(realm, { type: "royal", text: loc("CourtName") });
   });
   if (!spent) return { ok: false, reason: "NoRoyalUse" };
-  await setUnrest(getUnrest() - 1);
-  await announce(loc("CourtName"), loc("CourtChat", { ruler: rulerName() ?? "" }));
+  const calm = courtCalm();
+  await setUnrest(getUnrest() - calm);
+  await announce(loc("CourtName"), loc("CourtChat", { ruler: rulerName() ?? "", n: calm }));
   return { ok: true };
 }
 
@@ -155,4 +161,45 @@ export async function useFavour({ favourId, userId }) {
 export function favourPreview(favour) {
   const effects = (favour.effects ?? []).map((e) => describeEffect(e)).filter(Boolean).join("; ");
   return [favour.text, effects].filter(Boolean).join(" ");
+}
+
+/*
+ * The last resort: in anarchy the ruler can give up the crown to another player character.
+ * The people take it as a fresh start, and Unrest falls to 0. It costs all Fame, the crown's
+ * favours and this month's royal powers, and a ruler who stepped down can never be crowned again.
+ */
+
+/** The characters who could take the crown if the ruler stepped down now. */
+export function heirs(realm = getRealm()) {
+  const former = new Set(realm.kingdom?.formerRulers ?? []);
+  const ruler = rulerUuid(realm);
+  return getPlayerCharacters().filter((a) => a.uuid !== ruler && !former.has(a.uuid));
+}
+
+export function canAbdicate(user = game.user, realm = getRealm()) {
+  return !!rulerUuid(realm) && inAnarchy() && canUseRoyal(user, realm) && heirs(realm).length > 0;
+}
+
+export async function abdicate({ heirUuid, userId }) {
+  const user = who(userId);
+  if (!rulerUuid()) return { ok: false, reason: "NoRuler" };
+  if (!canUseRoyal(user)) return { ok: false, reason: "NotRuler" };
+  if (!inAnarchy()) return { ok: false, reason: "NotAnarchy" };
+  const heir = heirs().find((a) => a.uuid === heirUuid);
+  if (!heir) return { ok: false, reason: "NoHeir" };
+  const old = rulerName() ?? "";
+  const unrest = getUnrest();
+  await updateRealm((realm) => {
+    realm.kingdom.formerRulers = [...(realm.kingdom.formerRulers ?? []), realm.kingdom.ruler];
+    realm.royal ??= { month: null, used: {}, favours: [] };
+    realm.royal.month = monthKey();
+    realm.royal.used = Object.fromEntries(ROYAL_POWERS.map((p) => [p, usesPerMonth(realm)]));
+    realm.royal.favours = [];
+    addLog(realm, { type: "royal", text: loc("AbdicateLog", { old, heir: heir.name }) });
+  });
+  await getKingdom().update({ ruler: heir.uuid, "unrest.value": 0, "resources.fame.value": 0 });
+  await announceAnarchy();
+  await announce(loc("AbdicateTitle"), loc("AbdicateChat", { old, heir: heir.name, unrest }));
+  Hooks.callAll(`${MODULE_ID}.refresh`);
+  return { ok: true };
 }

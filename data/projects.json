@@ -442,12 +442,14 @@
       "outcomes": {
         "criticalSuccess": [
           {
-            "unrest": "-2d4"
+            "unrest": "-2d4",
+            "anarchyTimes": 2
           }
         ],
         "success": [
           {
-            "unrest": "-1d4"
+            "unrest": "-1d4",
+            "anarchyTimes": 2
           }
         ],
         "failure": [

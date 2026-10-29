@@ -7,7 +7,7 @@ import { getRealm, newId } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { completeProject, refundProject } from "./projects.js";
 import { syncKingdomSettlements } from "./settlements.js";
-import { announceAnarchy, guardWithFame } from "./standing.js";
+import { announceAnarchy, guardWithFame, inAnarchy } from "./standing.js";
 import { grantFavour } from "./royal.js";
 import { UkmDialog } from "../apps/dialog.js";
 import { postFlatCheck, queueFlatCheck } from "./flat.js";
@@ -311,7 +311,12 @@ export async function applyEffects(ctx, effects = []) {
     const [key, value] = Object.entries(effect)[0] ?? [];
     switch (key) {
       case "unrest": {
-        const amount = await rollAmount(value);
+        let amount = await rollAmount(value);
+        // Some calming effects work harder while the realm is in anarchy.
+        if (amount < 0 && effect.anarchyTimes && inAnarchy()) {
+          amount *= effect.anarchyTimes;
+          ctx.note(loc("AnarchyHarder", { n: effect.anarchyTimes }));
+        }
         ctx.unrest += amount;
         ctx.note(loc("Unrest", { amount: formatAmount(amount) }));
         break;

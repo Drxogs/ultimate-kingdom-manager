@@ -53,7 +53,7 @@ import { SetupWizard } from "./setup-wizard.js";
 import { StoryImportApp } from "./story-import-app.js";
 import { MidCampaignApp } from "./midcampaign-app.js";
 import { UkmDialog } from "./dialog.js";
-import { canUseRoyal, favourPreview, favours, ROYAL_POWERS, rulerName, usesLeft } from "../realm/royal.js";
+import { canAbdicate, canUseRoyal, favourPreview, favours, heirs, ROYAL_POWERS, rulerName, usesLeft } from "../realm/royal.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -172,6 +172,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       royalDecree: KingdomManager.#royalDecree,
       royalCharge: KingdomManager.#royalCharge,
       royalCourt: KingdomManager.#royalCourt,
+      abdicate: KingdomManager.#abdicate,
       useFavour: KingdomManager.#useFavour,
       escalate: KingdomManager.#escalate,
       rollNow: KingdomManager.#rollNow,
@@ -297,7 +298,9 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         left: usesLeft(power, realm),
         button: power === "court" && royal && !!rulerName(realm) && usesLeft(power, realm) > 0
       })),
-      favours: favours(realm).map((f) => ({ ...f, preview: favourPreview(f) }))
+      favours: favours(realm).map((f) => ({ ...f, preview: favourPreview(f) })),
+      canAbdicate: canAbdicate(game.user, realm),
+      abdicateHint: game.i18n.format("UKM.Royal.AbdicateHint", { ruler: rulerName(realm) ?? "" })
     };
     context.hasCapital = hasCapital(realm);
     context.canFoundCapital = !context.hasCapital && canFoundCapital(game.user);
@@ -1031,6 +1034,18 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #royalCharge(event, target) {
     const card = findCard(target);
     if (card) await sendRequest("royalCharge", { cardId: card.id });
+  }
+
+  static async #abdicate() {
+    const esc = Handlebars.escapeExpression;
+    const options = heirs().map((a) => `<option value="${a.uuid}">${esc(a.name)}</option>`).join("");
+    const heirUuid = await UkmDialog.prompt({
+      window: { title: game.i18n.localize("UKM.Royal.AbdicateTitle") },
+      content: `<p>${esc(game.i18n.format("UKM.Royal.AbdicateHint", { ruler: rulerName() ?? "" }))}</p><div class="form-group"><label>${game.i18n.localize("UKM.Royal.AbdicateAsk")}</label><select name="heir">${options}</select></div>`,
+      ok: { label: game.i18n.localize("UKM.Royal.AbdicateConfirm"), callback: (event, button) => button.form.elements.heir.value },
+      rejectClose: false
+    });
+    if (heirUuid) await sendRequest("abdicate", { heirUuid });
   }
 
   static async #royalCourt() {

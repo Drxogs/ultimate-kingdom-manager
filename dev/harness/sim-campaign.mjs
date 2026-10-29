@@ -441,6 +441,12 @@ async function spend() {
   // Quell Unrest when it's climbing.
   if (getKingdom().unrest.value >= 2 && !working("quell-unrest")) await tryProject("quell-unrest");
   // The ruler holds court when the people grumble.
+  if (process.env.NOABDICATE !== "1" && RY.canAbdicate()) {
+    const u = getKingdom().unrest.value;
+    const heir = RY.heirs()[0];
+    await RY.abdicate({ heirUuid: heir.uuid, userId: "gm" });
+    console.log("ABDICATE", JSON.stringify({ level: getKingdom().level, unrest: u, heir: heir.name }));
+  }
   if (getKingdom().unrest.value > 0 && RY.usesLeft("court") > 0) await RY.royalCourt({ userId: "gm" });
   for (const f of RY.favours()) if (getKingdom().unrest.value > 1 || rand() < 0.2) await RY.useFavour({ favourId: f.id, userId: "gm" });
 }
