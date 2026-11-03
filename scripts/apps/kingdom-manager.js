@@ -27,7 +27,7 @@ import {
   settlementState,
   unknownMapSettlements
 } from "../realm/settlements.js";
-import { getProject, getStoryEvents, storyChapter } from "../content/data.js";
+import { getEvents, getProject, getStoryEvents, storyChapter } from "../content/data.js";
 import { adventurePage, openAdventurePage } from "../content/adventure-links.js";
 import { sendRequest } from "../realm/requests.js";
 import {
@@ -166,6 +166,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       drawEvents: KingdomManager.#drawEvents,
       drawMatter: KingdomManager.#drawMatter,
       storyEvent: KingdomManager.#storyEvent,
+      deckEvent: KingdomManager.#deckEvent,
       openSetup: KingdomManager.#openSetup,
       delegate: KingdomManager.#delegate,
       handlePersonally: KingdomManager.#handlePersonally,
@@ -1239,6 +1240,26 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       break;
     }
     if (eventId) await sendRequest("gm", { op: "storyEvent", eventId });
+  }
+
+  /** Put any event from the monthly deck on its desk: for testing, or when the story uses one. */
+  static async #deckEvent() {
+    const esc = Handlebars.escapeExpression;
+    const L = (k) => game.i18n.localize(`UKM.Manager.${k}`);
+    const events = getEvents().slice().sort((a, b) => a.name.localeCompare(b.name));
+    const kinds = { problem: L("PickEventProblem"), opportunity: L("PickEventOpportunity") };
+    const options = events.map((e) => `<option value="${esc(e.id)}">${esc(e.name)} (${esc(kinds[e.kind] ?? e.kind)})</option>`).join("");
+    const eventId = await UkmDialog.wait({
+      window: { title: L("PickEvent") },
+      position: { width: 460 },
+      content: `<p class="hint">${esc(L("PickEventHint"))}</p><div class="form-group"><select name="eventId">${options}</select></div>`,
+      buttons: [
+        { action: "ok", label: L("PickEventGo"), default: true, callback: (event, button) => button.form.elements.eventId.value },
+        { action: "cancel", label: game.i18n.localize("Cancel") }
+      ],
+      rejectClose: false
+    });
+    if (eventId && eventId !== "cancel") await sendRequest("gm", { op: "deckEvent", eventId });
   }
 
   static async #drawMatter() {

@@ -2,7 +2,7 @@ import { resourceDieValue } from "./rules.js";
 import { drawAudience } from "./audiences.js";
 import { createCard, drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
 import { forceTrouble, troubleOptions } from "./troubles.js";
-import { getStoryEvents } from "../content/data.js";
+import { getEvents, getStoryEvents } from "../content/data.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
 import { setFortified } from "./projects.js";
@@ -150,6 +150,18 @@ const OPS = {
   },
   storyEvent: async ({ eventId }) => {
     const event = getStoryEvents().find((e) => e.id === eventId);
+    if (!event) return { ok: false, reason: "Unknown" };
+    let card = null;
+    await updateRealm((realm) => {
+      card = createCard(event);
+      realm.cards.push(card);
+      addLog(realm, { type: "event-drawn", card: card.id, seat: card.seat, text: card.name });
+    });
+    await syncPins();
+    return { notice: drawnNotice(card) };
+  },
+  deckEvent: async ({ eventId }) => {
+    const event = getEvents().find((e) => e.id === eventId);
     if (!event) return { ok: false, reason: "Unknown" };
     let card = null;
     await updateRealm((realm) => {

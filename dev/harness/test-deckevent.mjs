@@ -1,0 +1,15 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const { preloadData } = await import(`${R}/content/data.js`);
+await preloadData();
+env.settings.set("seatAssignments", {});
+const ok = (c, m) => console.log(c ? "ok  " : "FAIL", m);
+const { getRealm, updateRealm } = await import(`${R}/realm/state.js`);
+const { gmAction } = await import(`${R}/realm/gm.js`);
+await updateRealm((r) => { r.settlements = [{ id: "cap", name: "Capital", type: "town", capital: true, key: "1001", tracks: {}, buildings: [] }]; });
+const res = await gmAction({ op: "deckEvent", userId: "gm", eventId: "plague" });
+const card = getRealm().cards.find((c) => c.eventId === "plague");
+ok(!!card && card.status === "open", `GM put Plague on a desk (${JSON.stringify(res)})`);
+ok(card?.target?.settlement === "Capital", "it lands in a settlement");
+const bad = await gmAction({ op: "deckEvent", userId: "gm", eventId: "nope" });
+ok(bad?.ok === false, "an unknown event is refused");
