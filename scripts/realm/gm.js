@@ -6,7 +6,7 @@ import { getEvents, getStoryEvents } from "../content/data.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
 import { setFortified } from "./projects.js";
-import { applyTrackStage, refreshDerived, settlementHex, settlements } from "./settlements.js";
+import { applyTrackStage, settlementHex, settlements } from "./settlements.js";
 import { getKingdom } from "../integrations/party.js";
 import { applyStartingPoint } from "./midcampaign.js";
 import { completeGmTask, dismissCard, endCard, recordOutcome, rollCard } from "./resolve.js";
@@ -71,7 +71,6 @@ const OPS = {
       if (remove) {
         realm.settlements = settlements(realm).filter((s) => s.id !== settlementId);
         realm.settlementsStarted = true;
-        refreshDerived(realm);
       }
     });
     const kingdom = getKingdom();

@@ -411,7 +411,8 @@
         "ServiceTrack": "That service needs {stage} in a settlement.",
         "ServiceCooldown": "That service can be used again in {days} days.",
         "ServiceTooCostly": "The treasury can't pay for that.",
-        "ServiceTarget": "Pick who or where it's for."
+        "ServiceTarget": "Pick who or where it's for.",
+        "TrackEvent": "{event} is stopping that until it ends."
       }
     },
     "Effect": {
@@ -879,7 +880,8 @@
         "NeedsLevel": "Needs kingdom level {level}.",
         "NeedsHomes": "Raise Homes first.",
         "CapitalOnly": "Only in the capital.",
-        "Unknown": "Unknown track."
+        "Unknown": "Unknown track.",
+        "Event": "{event} is stopping this until it ends."
       },
       "Heading": "Tracks",
       "Summary": "{built} of {total} built · {ready} you can build now"

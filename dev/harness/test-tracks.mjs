@@ -97,8 +97,6 @@ const { monthlyTrackPerks } = await import(`${R}/realm/clock.js`);
 await monthlyTrackPerks();
 ok(getKingdom().abilities.economy.ruin.value === 2, `monthly: Crime −1 (${getKingdom().abilities.economy.ruin.value})`);
 
-const slugs = T.legacySlugs([{ tracks: { publicworks: 3, faith: 2 } }]);
-ok(slugs.includes("sewer-system") && slugs.includes("cemetery"), "legacy slugs for events");
 
 // Panorama renders for every size.
 for (const homes of [-1, 0, 1, 2, 3]) {

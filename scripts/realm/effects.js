@@ -10,7 +10,7 @@ import { announceAnarchy, guardWithFame, inAnarchy } from "./standing.js";
 import { grantFavour } from "./royal.js";
 import { UkmDialog } from "../apps/dialog.js";
 import { getSetting, SETTINGS } from "../settings.js";
-import { applyTrackStage, cardSettlement, settlements } from "./settlements.js";
+import { applyTrackStage, cardSettlement, eventSpecials, settlements, trackCondition } from "./settlements.js";
 import { nextStep, PINNACLE, stageCost } from "./tracks.js";
 
 /** Whether reward dice are rolled by the players from chat (the default) or straight away. */
@@ -268,10 +268,7 @@ async function applyRuin(ctx, value) {
 }
 
 function testCondition(ctx, condition = {}) {
-  const built = new Set(ctx.realm.structures ?? []);
-  if (condition.structure) return built.has(condition.structure);
-  if (condition.noStructure) return !built.has(condition.noStructure);
-  return null;
+  return trackCondition(ctx.realm, ctx.card, condition);
 }
 
 async function askGM(ctx, question) {
@@ -386,7 +383,9 @@ export async function applyEffects(ctx, effects = []) {
           spreadIncome(realm, -loss);
           ctx.note(loc("IncomeHalved", { bp: Math.round(4 * resourceDieValue()) }));
         } else {
-          const dice = await rollAmount(value);
+          let dice = await rollAmount(value);
+          // A temple's graveyard (Local Disaster) halves the loss.
+          if (dice < 0 && ctx.card && eventSpecials(realm, ctx.card).halveBpLoss) dice = Math.ceil(dice / 2);
           spreadIncome(realm, dice * resourceDieValue());
           ctx.note(loc("BpOverMonth", { amount: formatAmount(Math.round(dice * resourceDieValue())) }));
         }
