@@ -85,6 +85,7 @@
 .ukm-setup .ukm-seats td,
 .ukm-setup .ukm-seats th { padding: 0.2rem 0.3rem; }
 .ukm-setup .ukm-seats select { width: 100%; }
+.ukm-setup .ukm-seats select:disabled { opacity: 0.35; cursor: not-allowed; background: transparent; border-style: dashed; }
 
 .ukm-import .ukm-summary { columns: 2; }
 

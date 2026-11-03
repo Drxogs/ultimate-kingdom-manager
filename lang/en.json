@@ -54,11 +54,12 @@
       "Reimport": "Re-import",
       "Table": "Your table",
       "Seats": "Leadership seats",
-      "SeatsHint": "Each seat has a player character who holds it and an advisor who works the cards you delegate. Handle personally sends a character instead. Pick a companion as each seat's advisor once the party has met them; until then a hired advisor steps in (−2 on rolls, 1 BP a week). A seat no character holds needs a player to look after it.",
+      "SeatsHint": "Each seat has a player character who holds it and an advisor who works the cards you delegate. Handle personally sends a character instead. Pick a companion as each seat's advisor once the party has met them; until then a hired advisor steps in (−2 on rolls, 1 BP a week). A seat no character holds needs a player as its supervisor.",
       "Seat": "Seat",
       "Holder": "Held by",
       "Companion": "Advisor",
-      "Supervisor": "Looked after by (no holder)",
+      "Supervisor": "Supervisor",
+      "SupervisorHint": "The supervisor is the player who runs a seat no character holds. They press the buttons on that desk, and when they delegate, the advisor rolls with the advisor's own skills. A seat a character holds is run by that character's player, so its Supervisor box is locked.",
       "None": "—",
       "Save": "Save",
       "Saved": "Kingdom setup saved.",
@@ -957,7 +958,7 @@
       "Event": "Kingdom event"
     },
     "Adjust": {
-      "Title": "Set the kingdom's numbers",
+      "Title": "Edit realm stats",
       "Hint": "For results the module can't apply, house rulings or mistakes. Nothing else happens: no Fame is spent and no penalties are added on top.",
       "Ruin": "Ruin",
       "Threshold": "Threshold",
