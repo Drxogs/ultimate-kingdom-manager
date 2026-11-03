@@ -446,7 +446,7 @@ async function spend() {
   // Quell Unrest when it's climbing.
   if (getKingdom().unrest.value >= 2 && !working("quell-unrest")) await tryProject("quell-unrest");
   // The ruler holds court when the people grumble.
-  if (process.env.NOABDICATE !== "1" && RY.canAbdicate()) {
+  if (process.env.NOABDICATE !== "1" && RY.canAbdicate() && getKingdom().unrest.value >= Number(process.env.ABDICATE_AT ?? 0)) {
     const u = getKingdom().unrest.value;
     const heir = RY.heirs()[0];
     await RY.abdicate({ heirUuid: heir.uuid, userId: "gm" });

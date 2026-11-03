@@ -1,4 +1,5 @@
 import { MODULE_ID } from "../constants.js";
+import { getStoryEvents } from "../content/data.js";
 import { getKingdom, getPlayerCharacters, getUnrest } from "../integrations/party.js";
 import { applyEffects, commitKingdomChanges, describeEffects, EffectContext } from "./effects.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
@@ -165,15 +166,46 @@ export function favourPreview(favour) {
 
 /*
  * The last resort: in anarchy the ruler can give up the crown to another player character.
- * The people take it as a fresh start, and Unrest falls to 0. It costs all Fame, the crown's
- * favours and this month's royal powers, and a ruler who stepped down can never be crowned again.
+ * The people take it as a fresh start: Unrest falls to 0 and every problem on the desks is
+ * dropped, except the adventure's story events. It costs all Fame, the crown's favours and this
+ * month's royal powers, and a ruler who stepped down can't be crowned again for a year.
  */
+
+/** How long a ruler who stepped down waits before they can be crowned again. */
+export const RECROWN_DAYS = 365;
+
+function stepDowns(realm) {
+  // Older saves kept only the uuid; those count as long ago.
+  return (realm.kingdom?.formerRulers ?? []).map((f) => (typeof f === "string" ? { uuid: f, at: null } : f));
+}
 
 /** The characters who could take the crown if the ruler stepped down now. */
 export function heirs(realm = getRealm()) {
-  const former = new Set(realm.kingdom?.formerRulers ?? []);
+  const since = game.time.worldTime - RECROWN_DAYS * secondsPerDay();
+  const barred = new Set(stepDowns(realm).filter((f) => f.at != null && f.at > since).map((f) => f.uuid));
   const ruler = rulerUuid(realm);
-  return getPlayerCharacters().filter((a) => a.uuid !== ruler && !former.has(a.uuid));
+  return getPlayerCharacters().filter((a) => a.uuid !== ruler && !barred.has(a.uuid));
+}
+
+const LIVE = ["open", "assigned", "rolled", "escalated"];
+
+/** Drop every problem on the desks except the adventure's story events. Returns how many. */
+export function clearProblems(realm) {
+  const story = new Set(getStoryEvents().map((e) => e.id));
+  let cleared = 0;
+  for (const card of realm.cards ?? []) {
+    if (card.kind !== "problem" || story.has(card.eventId) || !LIVE.includes(card.status)) continue;
+    card.status = "resolved";
+    card.outcome = "dismissed";
+    card.resolvedAt = game.time.worldTime;
+    card.assignee = null;
+    card.pendingEffects = false;
+    realm.consumptionAdjustments = (realm.consumptionAdjustments ?? []).filter((c) => c.until !== card.id);
+    cleared++;
+  }
+  // Follow-ups still waiting to land (a plague's spread) go with them.
+  realm.scheduled = (realm.scheduled ?? []).filter((entry) => story.has(entry.eventId));
+  return cleared;
 }
 
 export function canAbdicate(user = game.user, realm = getRealm()) {
@@ -189,8 +221,10 @@ export async function abdicate({ heirUuid, userId }) {
   if (!heir) return { ok: false, reason: "NoHeir" };
   const old = rulerName() ?? "";
   const unrest = getUnrest();
+  let cleared = 0;
   await updateRealm((realm) => {
-    realm.kingdom.formerRulers = [...(realm.kingdom.formerRulers ?? []), realm.kingdom.ruler];
+    realm.kingdom.formerRulers = [...stepDowns(realm).filter((f) => f.uuid !== realm.kingdom.ruler), { uuid: realm.kingdom.ruler, at: game.time.worldTime }];
+    cleared = clearProblems(realm);
     realm.royal ??= { month: null, used: {}, favours: [] };
     realm.royal.month = monthKey();
     realm.royal.used = Object.fromEntries(ROYAL_POWERS.map((p) => [p, usesPerMonth(realm)]));
@@ -199,7 +233,7 @@ export async function abdicate({ heirUuid, userId }) {
   });
   await getKingdom().update({ ruler: heir.uuid, "unrest.value": 0, "resources.fame.value": 0 });
   await announceAnarchy();
-  await announce(loc("AbdicateTitle"), loc("AbdicateChat", { old, heir: heir.name, unrest }));
+  await announce(loc("AbdicateTitle"), loc("AbdicateChat", { old, heir: heir.name, unrest, cleared }));
   Hooks.callAll(`${MODULE_ID}.refresh`);
   return { ok: true };
 }

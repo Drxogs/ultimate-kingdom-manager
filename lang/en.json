@@ -884,11 +884,11 @@
       "FavourChat": "{ruler} calls in a favour.",
       "TheCrown": "The crown",
       "Abdicate": "Step down",
-      "AbdicateHint": "The last resort in anarchy: {ruler} gives up the crown to another character. Unrest falls to 0. The realm loses all Fame, the crown's favours and this month's royal powers, and {ruler} can never be crowned again.",
+      "AbdicateHint": "The last resort in anarchy: {ruler} gives up the crown to another character. Unrest falls to 0 and every problem on the desks is dropped, except the adventure's story events. The realm loses all Fame, the crown's favours and this month's royal powers, and {ruler} can't be crowned again for a year.",
       "AbdicateTitle": "The crown passes",
       "AbdicateAsk": "Who takes the crown?",
       "AbdicateConfirm": "Give up the crown",
-      "AbdicateChat": "{old} steps down, and {heir} is crowned. The people take it as a fresh start: Unrest {unrest} → 0. Fame, favours and this month's royal powers are gone with the old reign.",
+      "AbdicateChat": "{old} steps down, and {heir} is crowned. The people take it as a fresh start: Unrest {unrest} → 0, and {cleared} problems are put aside. Fame, favours and this month's royal powers are gone with the old reign.",
       "AbdicateLog": "{old} stepped down for {heir}"
     },
     "Track": {
