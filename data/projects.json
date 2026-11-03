@@ -225,51 +225,6 @@
       }
     },
     {
-      "id": "build-structure",
-      "seat": "viceroy",
-      "skill": [
-        "industry",
-        "engineering"
-      ],
-      "target": "settlement",
-      "costWeeks": null,
-      "workDays": 14,
-      "name": "Build a Structure",
-      "hook": "Raise a new building in one of the realm's settlements.",
-      "kind": "project",
-      "outcomes": {
-        "criticalSuccess": [
-          {
-            "completeProject": true
-          },
-          {
-            "refund": 0.5
-          }
-        ],
-        "success": [
-          {
-            "completeProject": true
-          }
-        ],
-        "failure": [
-          {
-            "refund": 0.5
-          },
-          {
-            "note": "The work didn't come together. Half the cost is recovered; it can be tried again."
-          }
-        ],
-        "criticalFailure": [
-          {
-            "unrest": 1
-          },
-          {
-            "note": "The work collapsed and the money is gone."
-          }
-        ]
-      }
-    },
-    {
       "id": "fortify-hex",
       "seat": "general",
       "skill": [

@@ -6,7 +6,7 @@ import { getEvents, getStoryEvents } from "../content/data.js";
 import { setRevealed, syncPins } from "./pins.js";
 import { finishRankUpNow } from "./ranks.js";
 import { setFortified } from "./projects.js";
-import { applyTrackStage, refreshDerived, settlementHex, settlements, syncKingdomSettlements } from "./settlements.js";
+import { applyTrackStage, refreshDerived, settlementHex, settlements } from "./settlements.js";
 import { getKingdom } from "../integrations/party.js";
 import { applyStartingPoint } from "./midcampaign.js";
 import { completeGmTask, dismissCard, endCard, recordOutcome, rollCard } from "./resolve.js";
@@ -76,7 +76,6 @@ const OPS = {
     });
     const kingdom = getKingdom();
     if (remove && kingdom) await kingdom.update({ [`settlements.-=${settlementId}`]: null });
-    await syncKingdomSettlements();
     if (capitalName && kingdom) await kingdom.update({ capital: capitalName });
     return {};
   },

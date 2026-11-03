@@ -1,4 +1,4 @@
-import { COMMODITY_BP, FLAG_SCOPE, MODULE_ID, REALM_STATS } from "../constants.js";
+import { MODULE_ID, REALM_STATS } from "../constants.js";
 import { getProject, getProjects, getSeatAbility, getTrack } from "../content/data.js";
 import {
   getAllHexStates,
@@ -6,25 +6,22 @@ import {
   getHexDefinitions,
   getZone,
   hasFeature,
-  isKingmakerActive,
-  structureArt
+  isKingmakerActive
 } from "../integrations/kingmaker.js";
 import { getKingdom, getPartyLevel } from "../integrations/party.js";
-import { getSetting, setSetting, SETTINGS } from "../settings.js";
+import { getSetting, SETTINGS } from "../settings.js";
 import { neighbors } from "./deck.js";
 import { attitudeAtLeast, seatCompanionId, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { syncPins } from "./pins.js";
 import { secondsPerDay } from "./time.js";
-import { isLeader } from "./leader.js";
-import { addBuilding, applyTrackStage, hasCapital, newSettlement, parseStructureHtml, roomFor, settlementHex, settlements, settlementState } from "./settlements.js";
+import { applyTrackStage, hasCapital, newSettlement, settlementHex, settlements } from "./settlements.js";
 import { discountHere, kingdomPerks, nextStep } from "./tracks.js";
 
 const NEVER = 3650;
 const CAMPS = ["quarry", "mine", "lumber"];
 const CAMP_FOR_COMMODITY = { stone: "quarry", ore: "mine", lumber: "lumber" };
 const SETTLEMENT_TYPES = ["village", "town", "city", "metropolis"];
-const SLUG_FIXES = { cemetary: "cemetery" };
 
 function definitions() {
   return new Map(getHexDefinitions().map((h) => [h.key, h]));
@@ -64,15 +61,6 @@ export function projectTargets(def, realm = getRealm()) {
   if (isHexProject(def)) {
     if (!isKingmakerActive()) return [PARTY_PICKS];
     return possibleHexes(def, realm).length ? [PARTY_PICKS] : [];
-  }
-  if (def.target === "settlement") {
-    return settlements(realm).map((s) => ({
-      hexKey: settlementHex(s),
-      settlementId: s.id,
-      settlement: s.name,
-      label: `${s.name} (${game.i18n.localize(`UKM.Settlement.Type.${s.type}`)})`,
-      factor: 1
-    }));
   }
   if (!isKingmakerActive()) return def.target === "none" ? [PARTY_PICKS] : [];
   return possibleHexes(def, realm);
@@ -141,14 +129,9 @@ function baseCost(def) {
 }
 
 /** BP cost and working days for a project at a target. */
-export function projectQuote(def, target, structure = null) {
+export function projectQuote(def, target) {
   const factor = target?.factor ?? 1;
   if (def.target === "none") return { cost: def.costBP || (def.costWeeks ? baseCost(def) : 0), days: def.workDays ?? 7 };
-  if (def.target === "settlement") {
-    const bp = structure?.cost ?? structure?.bp ?? Math.max(4, (structure?.level ?? 1) * 6);
-    const days = def.workDays + Math.max(0, (structure?.level ?? 1) - 4);
-    return { cost: bp, days };
-  }
   return { cost: Math.max(1, Math.round(baseCost(def) * factor)), days: Math.max(3, Math.round(def.workDays * factor)) };
 }
 
@@ -177,98 +160,12 @@ export function projectsForSeat(seat, realm = getRealm()) {
   return list;
 }
 
-/* ---------- Structures ---------- */
-
-/** Turn "6 RP, 2 Lumber, 1 Stone" into BP at the realm's conversion rates. */
-export function costToBP(text) {
-  if (!text) return null;
-  let bp = 0;
-  let found = false;
-  for (const [, amount, kind] of text.matchAll(/(\d+)\s*(RP|Lumber|Stone|Ore|Luxur\w*)/gi)) {
-    const n = Number(amount);
-    const key = kind.toLowerCase();
-    found = true;
-    if (key === "rp") bp += n;
-    else if (key.startsWith("luxur")) bp += n * COMMODITY_BP.luxuries;
-    else bp += n * (COMMODITY_BP[key] ?? 2);
-  }
-  return found ? bp : null;
-}
-
-function slugify(text) {
-  return String(text ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-}
-
-function parseStructure(page) {
-  const parsed = parseStructureHtml(page.text?.content);
-  return { ...parsed, bp: costToBP(parsed.costText) };
-}
-
-/** "tavern, dive" or "wooden wall" → the catalog slug it names. */
-function resolveUpgrade(name, catalog) {
-  if (!name) return null;
-  const first = name.split(/\s+or\s+/i)[0].trim().toLowerCase();
-  const slug = slugify(first);
-  const reversed = slugify(first.split(/\s+/).reverse().join(" "));
-  return (catalog.find((c) => c.name.toLowerCase() === first) ?? catalog.find((c) => c.slug === slug) ?? catalog.find((c) => c.slug === reversed))?.slug ?? null;
-}
-
-/** Structure names, levels and costs, read once from the imported story journals. */
-export async function buildStructureCatalog() {
-  if (!isLeader()) return [];
-  const journal = game.journal.find((j) => j.getFlag(FLAG_SCOPE, "category") === "structures");
-  if (!journal) return [];
-  const catalog = journal.pages.contents
-    .map((page) => {
-      const raw = page.getFlag(FLAG_SCOPE, "structure");
-      if (!raw) return null;
-      const slug = SLUG_FIXES[raw] ?? raw;
-      const source = page.getFlag(FLAG_SCOPE, "source") ?? null;
-      return { slug, name: page.name, source, art: structureArt(source, page.name), ...parseStructure(page) };
-    })
-    .filter(Boolean)
-    .sort((a, b) => (a.level ?? 99) - (b.level ?? 99) || a.name.localeCompare(b.name));
-  for (const entry of catalog) entry.upgradeFrom = resolveUpgrade(entry.upgradeFrom, catalog);
-  await setSetting(SETTINGS.structureCatalog, catalog);
-  return catalog;
-}
-
-export function structureCatalog() {
-  return getSetting(SETTINGS.structureCatalog) ?? [];
-}
-
-/**
- * What can go up in a settlement now: within the kingdom's level, with room on the urban grid,
- * edifices and infrastructure only once. An upgrade replaces what it upgrades and costs the difference.
- */
-export function buildableStructures(settlement = null) {
-  const level = getKingdom()?.level ?? 1;
-  const all = structureCatalog().filter((s) => s.bp && s.slug !== "rubble" && (!s.level || s.level <= level));
-  if (!settlement) return all;
-  const state = settlementState(settlement);
-  const room = roomFor(settlement, state);
-  const have = new Map();
-  for (const b of settlement.buildings ?? []) have.set(b.slug, (have.get(b.slug) ?? 0) + 1);
-  const out = [];
-  for (const s of all.filter((x) => !x.capitalOnly || settlement.capital)) {
-    const lots = s.infrastructure ? 0 : s.lots ?? 1;
-    const once = s.edifice || s.infrastructure;
-    if (!(once && have.has(s.slug)) && lots <= room) out.push({ ...s, key: s.slug, replaces: null, replacesName: null, cost: s.bp, needed: lots });
-    const base = s.upgradeFrom && have.has(s.upgradeFrom) ? structureCatalog().find((c) => c.slug === s.upgradeFrom) : null;
-    if (!base) continue;
-    const needed = lots - (base.infrastructure ? 0 : base.lots ?? 1);
-    if (needed > room) continue;
-    out.push({ ...s, key: `${s.slug}>${base.slug}`, replaces: base.slug, replacesName: base.name, cost: Math.max(1, s.bp - (base.bp ?? 0)), needed });
-  }
-  return out.sort((a, b) => a.name.localeCompare(b.name) || (a.replaces ? 1 : 0) - (b.replaces ? 1 : 0));
-}
-
 /* ---------- Starting and finishing ---------- */
 
 /**
  * Pay for a project and put it on its seat's desk, ready to hand to the
  * advisor or a PC like any other card.
- * request: { type, hexKey, structure, camp, userId }
+ * request: { type, hexKey, camp, where, settlementName, waterside, userId }
  */
 export async function startProject(request, { canActForSeat }) {
   const user = game.users.get(request.userId) ?? game.user;
@@ -285,19 +182,8 @@ export async function startProject(request, { canActForSeat }) {
   const realm = getRealm();
   if (!hasCapital(realm) && !def.signature) return { ok: false, reason: "NoCapital" };
   const targets = projectTargets(def, realm);
-  const target =
-    def.target === "settlement"
-      ? targets.find((t) => t.settlementId === request.settlementId) ?? (targets.length === 1 ? targets[0] : null)
-      : isHexProject(def)
-        ? targets[0]
-        : targets.find((t) => t.hexKey === (request.hexKey ?? null));
+  const target = isHexProject(def) ? targets[0] : targets.find((t) => t.hexKey === (request.hexKey ?? null));
   if (!target) return { ok: false, reason: "NoTarget" };
-  let structure = null;
-  if (def.target === "settlement") {
-    const settlement = settlements(realm).find((s) => s.id === target.settlementId);
-    structure = buildableStructures(settlement).find((s) => s.key === request.structure);
-    if (!structure) return { ok: false, reason: "NoStructure" };
-  }
   let founding = null;
   if (def.id === "found-settlement") {
     const name = String(request.settlementName ?? "").trim().slice(0, 60);
@@ -310,13 +196,13 @@ export async function startProject(request, { canActForSeat }) {
     camp = CAMPS.includes(request.camp) ? request.camp : CAMP_FOR_COMMODITY[target.commodity] ?? "lumber";
   }
   const where = isHexProject(def) ? String(request.where ?? "").trim().slice(0, 80) : "";
-  const quote = projectQuote(def, target, structure);
+  const quote = projectQuote(def, target);
   const off = projectDiscount(null, realm);
   if (off && quote.cost) quote.cost = Math.max(1, Math.round(quote.cost * (1 - off / 100)));
   if (realm.treasury < quote.cost) return { ok: false, reason: "TooPoor", data: { cost: quote.cost } };
 
   const now = game.time.worldTime;
-  const label = structure ? `${structure.name}, ${target.settlement}` : founding ? founding.name : where || target.label;
+  const label = founding ? founding.name : where || target.label;
   const name = label ? `${def.name}: ${label}` : def.name;
   await updateRealm((r) => {
     r.treasury -= quote.cost;
@@ -345,7 +231,6 @@ export async function startProject(request, { canActForSeat }) {
         camp,
         where,
         commodity: target.commodity ?? null,
-        structure: structure ? { slug: structure.slug, name: structure.name, level: structure.level, skill: structure.skill, lots: structure.lots ?? 1, replaces: structure.replaces ?? null } : null,
         founding,
         by: user.id
       }
@@ -464,16 +349,7 @@ export function completeProject(ctx) {
   }
   if (card.project.track) {
     const t = card.project.track;
-    if (applyTrackStage(ctx.realm, t.settlementId, t.id, t.stage, ctx)) ctx.syncSettlements = true;
-  }
-  if (card.project.structure?.slug) {
-    const settlementId = card.target?.settlementId;
-    if (settlementId && addBuilding(ctx.realm, settlementId, card.project.structure, ctx)) {
-      ctx.syncSettlements = true;
-    } else {
-      ctx.realm.structures ??= [];
-      ctx.realm.structures.push(card.project.structure.slug);
-    }
+    applyTrackStage(ctx.realm, t.settlementId, t.id, t.stage, ctx);
   }
   if (card.project.founding) {
     ctx.realm.settlements ??= [];
@@ -481,7 +357,6 @@ export function completeProject(ctx) {
       ctx.realm.settlements.push(newSettlement(card.project.founding));
       ctx.realm.settlementsStarted = true;
       ctx.note(game.i18n.format("UKM.Settlement.Founded", { name: card.project.founding.name }));
-      ctx.syncSettlements = true;
     }
   }
   ctx.realm.projectRecord ??= {};

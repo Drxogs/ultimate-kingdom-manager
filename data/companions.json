@@ -10,11 +10,6 @@
       "joins": {
         "influence": 0
       },
-      "unlocks": {
-        "structures": [
-          "gladiatorial-arena"
-        ]
-      },
       "eventBonus": [
         {
           "event": "monster-activity",

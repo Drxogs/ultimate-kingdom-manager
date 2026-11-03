@@ -19,9 +19,6 @@ export const REALM_STATS = {
  */
 export const STAT_ALIASES = { loyalty: "relations", stability: "community" };
 
-/** Seats that no longer exist, and the seat their cards now go to. */
-export const SEAT_ALIASES = { ruler: "emissary", warden: "viceroy" };
-
 export const SKILL_TO_STAT = Object.fromEntries(
   Object.entries(REALM_STATS).flatMap(([stat, def]) => def.skills.map((skill) => [skill, stat]))
 );

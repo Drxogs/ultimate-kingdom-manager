@@ -1,4 +1,4 @@
-import { MODULE_ID, RUINS, SKILL_TO_STAT } from "../constants.js";
+import { MODULE_ID, RUINS } from "../constants.js";
 import { getKingdom } from "../integrations/party.js";
 import { settlementHexes } from "./deck.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
@@ -15,136 +15,18 @@ import {
   sizeFor,
   stageDef,
   trackBonuses,
-  trackStage,
-  tracksFromBuildings
+  trackStage
 } from "./tracks.js";
 
-/** Settlement sizes, from the Kingmaker rules. Lots are what the urban grid can hold. */
+/** Settlement sizes, from the Kingmaker rules. */
 export const SETTLEMENT_INFO = {
-  village: { minLevel: 1, lots: 4, consumption: 1, maxItem: 1, growAt: 4, next: "town" },
-  town: { minLevel: 3, lots: 16, consumption: 2, maxItem: 1, growAt: 8, next: "city" },
-  city: { minLevel: 9, lots: 36, consumption: 4, maxItem: 2, growAt: 18, next: "metropolis" },
-  metropolis: { minLevel: 15, lots: 72, consumption: 6, maxItem: 3, growAt: null, next: null }
+  village: { minLevel: 1, consumption: 1 },
+  town: { minLevel: 3, consumption: 2 },
+  city: { minLevel: 9, consumption: 4 },
+  metropolis: { minLevel: 15, consumption: 6 }
 };
 
 export const SETTLEMENT_ORDER = ["village", "town", "city", "metropolis"];
-
-const QUELL_SKILLS = ["arts", "folklore", "intrigue", "magic", "politics", "warfare"];
-
-/** Which kingdom skills each tabletop activity is rolled with. */
-const ACTIVITIES = [
-  [/creative solution/i, ["scholarship"]],
-  [/supernatural solution|prognostication/i, ["magic"]],
-  [/celebrate holiday/i, ["folklore"]],
-  [/create a masterpiece|craft luxuries/i, ["arts"]],
-  [/provide care/i, ["defense"]],
-  [/demolish/i, ["engineering"]],
-  [/build structure/i, ["engineering", "industry"]],
-  [/establish work site/i, ["industry", "engineering"]],
-  [/harvest crops/i, ["agriculture"]],
-  [/gather livestock/i, ["wilderness"]],
-  [/go fishing/i, ["boating"]],
-  [/hire adventurers/i, ["exploration"]],
-  [/trade commodities/i, ["industry"]],
-  [/purchase commodities|establish trade agreement|capital investment|collect taxes|tap treasury/i, ["trade"]],
-  [/clandestine business|infiltration/i, ["intrigue"]],
-  [/improve lifestyle|new leadership/i, ["politics"]],
-  [/send diplomatic envoy|request foreign aid/i, ["statecraft"]],
-  [/pledge of fealty/i, ["statecraft"], true],
-  [/(garrison|recover|recruit|deploy|outfit|train) army/i, ["warfare"]],
-  [/repair reputation \(corruption\)/i, ["arts"]],
-  [/repair reputation \(crime\)/i, ["trade"]],
-  [/repair reputation \(decay\)/i, ["engineering"]],
-  [/repair reputation \(strife\)/i, ["intrigue"]],
-  [/quell unrest/i, QUELL_SKILLS, true],
-  [/rest and relax/i, ["arts", "boating", "exploration", "scholarship", "trade", "wilderness"], true]
-];
-
-function skillWord(word) {
-  const slug = word?.toLowerCase();
-  return slug && SKILL_TO_STAT[slug] ? slug : null;
-}
-
-/** "+1 item bonus to Quell Unrest using Magic" → [{ value: 1, skills: ["magic"] }] */
-export function parseItemBonus(text) {
-  if (!text) return [];
-  const out = [];
-  for (const segment of text.split(/(?=\+\d)/)) {
-    const value = Number(segment.match(/^\+(\d+)/)?.[1]);
-    if (!value) continue;
-    if (/resolve events/i.test(segment)) {
-      out.push({ value, skills: [], events: true });
-      continue;
-    }
-    const skills = new Set();
-    for (const [pattern, list, narrows] of ACTIVITIES) {
-      const match = segment.match(pattern);
-      if (!match) continue;
-      let picked = null;
-      if (narrows) {
-        const after = segment.slice(match.index + match[0].length, match.index + match[0].length + 24);
-        const before = segment.slice(Math.max(0, match.index - 30), match.index);
-        picked = skillWord(after.match(/^\s*using\s+(\w+)/i)?.[1]) ?? skillWord(before.match(/(\w+)\s+checks\s+made\s+to\s+$/i)?.[1]);
-      }
-      for (const skill of picked ? [picked] : list) skills.add(skill);
-    }
-    if (skills.size) out.push({ value, skills: [...skills] });
-  }
-  return out;
-}
-
-function textOf(node) {
-  return (node?.textContent ?? "").replace(/\s+/g, " ").trim();
-}
-
-/** Read one structure page of the imported Structures journal. */
-export function parseStructureHtml(html) {
-  const div = document.createElement("div");
-  div.innerHTML = (html ?? "").replace(/@UUID\[[^\]]*\]\{([^}]*)\}/g, "$1");
-  const fields = {};
-  for (const p of div.querySelectorAll("p")) {
-    const labels = [...p.querySelectorAll("strong")];
-    if (!labels.length) continue;
-    const text = textOf(p);
-    labels.forEach((label, i) => {
-      const name = textOf(label);
-      const start = text.indexOf(name) + name.length;
-      const end = labels[i + 1] ? text.indexOf(textOf(labels[i + 1]), start) : text.length;
-      fields[name.toLowerCase()] = text.slice(start, end).replace(/;\s*$/, "").trim();
-    });
-  }
-  const header = textOf(div.querySelector("header")) || textOf(div);
-  const traits = [...div.querySelectorAll("ul li")].slice(0, 8).map((li) => textOf(li).toLowerCase());
-  const found = header.match(/(?:Structure|Building)\s+(\d+)/i)?.[1];
-  const lots = Number(fields.lots);
-  const ruinText = fields.ruin ?? "";
-  let ruin = null;
-  if (/choice/i.test(ruinText)) ruin = { choice: Number(ruinText.match(/\d+/)?.[0] ?? 1) };
-  else {
-    const named = RUINS.find((r) => new RegExp(r, "i").test(ruinText));
-    if (named) ruin = { [named]: Number(ruinText.match(/\d+/)?.[0] ?? 1) };
-  }
-  const effects = fields.effects ?? fields.effect ?? "";
-  const consumption = /(reduce|reduces)[^.]*Consumption by (\d+)/i.exec(effects);
-  return {
-    level: found === undefined ? null : Number(found),
-    costText: fields.cost ?? null,
-    skill: (fields.construction ?? "").match(/^([A-Za-z]+)/)?.[1]?.toLowerCase() ?? null,
-    lots: Number.isFinite(lots) ? lots : 0,
-    infrastructure: traits.includes("infrastructure"),
-    residential: traits.includes("residential"),
-    edifice: traits.includes("edifice"),
-    famous: traits.includes("famous") || traits.includes("infamous"),
-    bonuses: parseItemBonus(fields["item bonus"]),
-    bonusText: fields["item bonus"] ?? "",
-    ruin,
-    upgradeFrom: fields["upgrade from"] ?? null,
-    unrest: Number(/reduce Unrest by (\d+)/i.exec(effects)?.[1] ?? 0),
-    consumption: consumption ? Number(consumption[2]) : 0,
-    needsWater: !!consumption && /water/i.test(effects),
-    capitalOnly: /only be built in your capital/i.test(effects)
-  };
-}
 
 /* ---------- Settlements in the realm ---------- */
 
@@ -172,19 +54,11 @@ export function settlementState(settlement, realm = null) {
   return {
     info,
     type,
-    buildings: [],
     stages,
-    lots: stages,
-    capacity: Infinity,
-    level: { village: 1, town: 3, city: 9, metropolis: 15 }[type],
-    overcrowded: false,
+    level: info.minLevel,
     consumption: foodNeed(settlement, kingdomPerks(list).foodAll),
     missing: missingNeeds(settlement)
   };
-}
-
-export function roomFor() {
-  return Infinity;
 }
 
 /** Item bonuses a settlement gives each kingdom skill: each track's top stage, to that stage's skills. */
@@ -200,7 +74,7 @@ export function cardSettlement(card, realm = getRealm()) {
   return name ? list.find((s) => s.name.toLowerCase() === name) ?? null : null;
 }
 
-/** Item bonus from buildings on a kingdom check: the card's settlement, or the best one in the realm. */
+/** Item bonus from settlement tracks on a kingdom check: the card's settlement, or the best one in the realm. */
 export function structureModifiers(realm, card, skill) {
   const here = cardSettlement(card, realm);
   const pool = here ? [here] : settlements(realm);
@@ -235,32 +109,6 @@ export function fitSize(settlement) {
   return settlement;
 }
 
-/**
- * Run once when the GM's window starts. Settlements from before tracks (with buildings) get tracks
- * that match their buildings and size; the buildings are kept aside, unused, as "legacyBuildings".
- */
-export async function repairSettlements() {
-  if (!isLeader()) return;
-  const realm = getRealm();
-  const stale = settlements(realm).some((s) => !s.tracks || s.type !== sizeFor(s));
-  if (!stale) return;
-  const level = getKingdom()?.level ?? 1;
-  await updateRealm((r) => {
-    for (const s of settlements(r)) {
-      if (!s.tracks) {
-        s.tracks = tracksFromBuildings(s, level);
-        if (s.buildings?.length) s.legacyBuildings = s.buildings;
-        s.buildings = [];
-        s.pinnacles ??= [];
-        addLog(r, { type: "settlement-tracks", text: s.name });
-      }
-      s.type = sizeFor(s);
-    }
-    if (settlements(r).length) r.settlementsStarted = true;
-    refreshDerived(r);
-  });
-}
-
 /** Map hex of a settlement, matched by the name the GM gave it on the Kingmaker map. */
 export function settlementHex(settlement) {
   if (settlement.hexKey) return settlement.hexKey;
@@ -285,30 +133,10 @@ export function newSettlement({ name, type = "village", capital = false, watersi
     capital,
     waterside: !!waterside,
     hexKey,
-    buildings: [],
     tracks: homes ? { homes } : {},
     pinnacles: [],
     founded: game.time.worldTime
   };
-}
-
-/**
- * A building project started before tracks finished: count it as the track stage it matches.
- * (New work is done with "Develop a settlement".)
- */
-export function addBuilding(realm, settlementId, structure, ctx = null) {
-  const settlement = settlements(realm).find((s) => s.id === settlementId);
-  if (!settlement) return null;
-  const raised = tracksFromBuildings({ type: "village", buildings: [{ slug: structure.slug }] });
-  settlement.tracks ??= {};
-  for (const [trackId, stage] of Object.entries(raised)) {
-    if (trackId === "homes" && stage === 0 && trackStage(settlement, "homes") >= 0) continue;
-    if (stage > trackStage(settlement, trackId)) settlement.tracks[trackId] = stage;
-  }
-  fitSize(settlement);
-  ctx?.note(game.i18n.format("UKM.Track.FromBuilding", { name: structure.name, settlement: settlement.name }));
-  refreshDerived(realm);
-  return settlement;
 }
 
 /**
@@ -388,7 +216,6 @@ export async function foundCapital(request) {
     addLog(r, { type: "capital", text: name });
     refreshDerived(r);
   });
-  await syncKingdomSettlements();
   const kingdom = getKingdom();
   if (kingdom) await kingdom.update({ capital: name });
   await ChatMessage.create({
@@ -418,18 +245,6 @@ export async function adoptMapSettlements() {
       addLog(r, { type: "settlement", text: hex.name });
     }
   });
-  await syncKingdomSettlements();
-}
-
-/**
- * Settlements used to be copied onto the PF2e kingdom sheet so its Consumption matched. The kingdom's
- * numbers are this module's own now (food is added up from the Settlements tab), so there's nothing to copy.
- */
-export async function syncKingdomSettlements() {}
-
-/** Overcrowded settlements each add 1 Unrest a month. */
-export function overcrowdedCount(realm) {
-  return settlements(realm).filter((s) => settlementState(s).overcrowded).length;
 }
 
 export const NAME_LIMIT = 40;

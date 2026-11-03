@@ -23,12 +23,7 @@ export async function proposeProject(request) {
   const seatDef = def.signature ? signatureForSeat(def.seat) : def;
   if (!seatDef?.seat || !canActForSeat(user, seatDef.seat)) return { ok: false, reason: "NotYourSeat" };
   const targets = projectTargets(seatDef);
-  const target =
-    seatDef.target === "settlement"
-      ? targets.find((t) => t.settlementId === request.settlementId)
-      : isHexProject(seatDef)
-        ? targets[0]
-        : targets.find((t) => t.hexKey === (request.hexKey ?? null));
+  const target = isHexProject(seatDef) ? targets[0] : targets.find((t) => t.hexKey === (request.hexKey ?? null));
   if (!target) return { ok: false, reason: "NoTarget" };
   const quote = projectQuote(seatDef, target);
   const where = String(request.where ?? "").trim().slice(0, 80);

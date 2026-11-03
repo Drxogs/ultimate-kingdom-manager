@@ -205,38 +205,3 @@ export function legacySlugs(settlementList) {
   return [...out];
 }
 
-/**
- * Settlements from before tracks had buildings. Turn each building into the track stage that
- * matches it best, and the old size into Homes. Approximate on purpose.
- */
-const FROM_BUILDING = {
-  "founders-hall": [["homes", 0], ["food", 0]],
-  tenement: [["homes", 1]], houses: [["homes", 0]], mansion: [["homes", 2]], "noble-villa": [["homes", 3]], orphanage: [["homes", 1]],
-  shrine: [["faith", 0]], temple: [["faith", 2]], cathedral: [["faith", 3]], cemetery: [["faith", 1]],
-  "festival-hall": [["performance", 1]], theater: [["performance", 2]], "opera-house": [["performance", 3]], arena: [["performance", 3]],
-  "general-store": [["commerce", 0]], marketplace: [["commerce", 1]], "luxury-store": [["commerce", 2]], bank: [["commerce", 3]], mint: [["commerce", 3]],
-  "trade-shop": [["industry", 1]], lumberyard: [["industry", 1]], stonemason: [["industry", 1]], foundry: [["industry", 2]], smithy: [["industry", 2]], "construction-yard": [["industry", 3]], guildhall: [["industry", 3]],
-  "town-hall": [["governance", 2]], castle: [["governance", 2]], palace: [["governance", 3]], embassy: [["governance", 2]],
-  jail: [["watch", 2]], "thieves-guild": [["watch", 0]],
-  "wall-wooden": [["walls", 1]], "wall-stone": [["walls", 2]], watchtower: [["walls", 1]], keep: [["walls", 3]],
-  barracks: [["army", 1]], garrison: [["army", 2]], "military-academy": [["army", 3]],
-  library: [["learning", 1]], academy: [["learning", 2]], university: [["learning", 3]], "arcanists-tower": [["learning", 1]], "magic-shop": [["learning", 2]],
-  "paved-streets": [["publicworks", 1]], dump: [["publicworks", 0]], "sewer-system": [["publicworks", 3]], "magical-streetlamps": [["publicworks", 2]], bridge: [["publicworks", 1]],
-  "tavern-dive": [["food", 1]], "tavern-popular": [["food", 2]], "tavern-luxury": [["food", 3]], "tavern-world-class": [["food", 3]], inn: [["food", 3]],
-  mill: [["food", 1]], granary: [["food", 1]], stockyard: [["food", 1]], pier: [["commerce", 0]], waterfront: [["commerce", 2]]
-};
-const HOMES_FROM_SIZE = { village: 0, town: 1, city: 2, metropolis: 3 };
-
-export function tracksFromBuildings(settlement, kingdomLevel = 20) {
-  const tracks = {};
-  const raise = (id, stage) => {
-    tracks[id] = Math.max(tracks[id] ?? NONE, stage);
-  };
-  raise("homes", HOMES_FROM_SIZE[settlement.type] ?? 0);
-  for (const b of settlement.buildings ?? []) for (const [id, stage] of FROM_BUILDING[b.slug] ?? []) raise(id, stage);
-  // Keep within what the settlement's size allows.
-  const homes = Math.min(tracks.homes, stageLimit({ tracks }, "homes", kingdomLevel));
-  tracks.homes = homes;
-  for (const id of Object.keys(tracks)) if (id !== "homes") tracks[id] = Math.min(tracks[id], Math.min(3, Math.max(0, homes) + 1));
-  return tracks;
-}
