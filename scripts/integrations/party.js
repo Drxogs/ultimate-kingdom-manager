@@ -78,6 +78,3 @@ export function getFame() {
   return { value: fame?.value ?? 0, max: fame?.max ?? 3 };
 }
 
-export function getSkillStatistic(skill) {
-  return getKingdom()?.skills?.[skill] ?? null;
-}

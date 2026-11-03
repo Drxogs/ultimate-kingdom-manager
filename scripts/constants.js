@@ -46,8 +46,6 @@ export const CARD_DEADLINE_DAYS = 30;
 
 export const STORY_FOLDER_NAME = "Kingdom Manager: Story (GM)";
 
-export const STORY_CATEGORIES = ["regions", "locations", "events", "quests", "characters", "structures"];
-
 export const KINGMAKER_JOURNALS = {
   gazetteers: ["5QajqjVS7Dm8u7hi", "lMIawppop9uCHRXq", "GRbTr3VTyhezOEhW", "btt2UVnNmyuPWfHF"],
   events: "dAtoyQhSfSBvjr2W",

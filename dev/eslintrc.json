@@ -1,0 +1,57 @@
+{
+ "root": true,
+ "parserOptions": {
+  "ecmaVersion": 2024,
+  "sourceType": "module"
+ },
+ "env": {
+  "browser": true,
+  "es2024": true
+ },
+ "globals": {
+  "game": "readonly",
+  "foundry": "readonly",
+  "Hooks": "readonly",
+  "ui": "readonly",
+  "CONFIG": "readonly",
+  "CONST": "readonly",
+  "Handlebars": "readonly",
+  "ChatMessage": "readonly",
+  "Roll": "readonly",
+  "fromUuidSync": "readonly",
+  "fromUuid": "readonly",
+  "Folder": "readonly",
+  "JournalEntry": "readonly",
+  "Actor": "readonly",
+  "socketlib": "readonly",
+  "canvas": "readonly",
+  "kingmaker": "readonly",
+  "Dialog": "readonly",
+  "TextEditor": "readonly",
+  "renderTemplate": "readonly",
+  "loadTemplates": "readonly"
+ },
+ "rules": {
+  "no-undef": "error",
+  "no-unused-vars": [
+   "warn",
+   {
+    "args": "none",
+    "caughtErrors": "none",
+    "ignoreRestSiblings": true
+   }
+  ],
+  "no-unreachable": "warn",
+  "no-dupe-keys": "error",
+  "no-duplicate-case": "error",
+  "no-self-assign": "warn",
+  "no-useless-escape": "off",
+  "no-empty": "warn",
+  "no-constant-condition": [
+   "warn",
+   {
+    "checkLoops": false
+   }
+  ]
+ }
+}

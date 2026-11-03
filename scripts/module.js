@@ -8,7 +8,7 @@ import { registerClock, tick } from "./realm/clock.js";
 import { freshStartFromOld, getRealm, migrateSixSeats, REALM_FLAG } from "./realm/state.js";
 import { registerRequests, sendRequest } from "./realm/requests.js";
 import { onRerollMessage } from "./realm/resolve.js";
-import { buildStructureCatalog, isFortified, structureCatalog } from "./realm/projects.js";
+import { buildStructureCatalog, isFortified } from "./realm/projects.js";
 import { ensureHandbook, openHandbook } from "./content/handbook.js";
 import { isLeader, leaderSettled, startLeader } from "./realm/leader.js";
 import { adoptMapSettlements, repairSettlements } from "./realm/settlements.js";

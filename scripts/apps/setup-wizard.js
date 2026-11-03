@@ -1,11 +1,10 @@
 import { ATTITUDES, FOUNDING_PICKS, HIRED_ADVISOR, MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
-import { companionForName, getCompanions } from "../content/data.js";
+import { getCompanions } from "../content/data.js";
 import { inspectSources } from "../content/story-import.js";
 import { getKingdom, getPlayerCharacters, syncKingdomLevel } from "../integrations/party.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { applyFounding, foundingPicks, resetFounding } from "../realm/ranks.js";
 import { getRealm } from "../realm/state.js";
-import { sendRequest } from "../realm/requests.js";
 import { StoryImportApp } from "./story-import-app.js";
 import { MidCampaignApp } from "./midcampaign-app.js";
 import { isKnownAdvisor } from "../realm/rules.js";
@@ -13,16 +12,7 @@ import { SHEET_CLASSES, UkmDialog, bannerContext } from "./dialog.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-function companionOfActor(actor) {
-  return companionForName(actor.name);
-}
-
-function isCompanionActor(actor) {
-  return !!companionOfActor(actor);
-}
-
 export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
-  #showAllActors = false;
   #draft = null;
 
   constructor(options = {}) {
@@ -39,7 +29,6 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     form: { handler: SetupWizard.#onSubmit, closeOnSubmit: true },
     actions: {
       openImport: SetupWizard.#openImport,
-      toggleActors: SetupWizard.#toggleActors,
       resetFounding: SetupWizard.#resetFounding,
       addAdvisor: SetupWizard.#addAdvisor,
       foundCapital: SetupWizard.#foundCapital,
@@ -110,27 +99,6 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     });
 
     const pcIds = new Set(characters.map((a) => a.uuid));
-    const assigned = new Set(seats.map((s) => s.holder).filter(Boolean));
-    const otherActors = game.actors
-      .filter((a) => !pcIds.has(a.uuid) && ["npc", "character"].includes(a.type))
-      .filter((a) => this.#showAllActors || assigned.has(a.uuid) || isCompanionActor(a, companions))
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    // Companion actors are offered as holders only for the seats they suit; a player character fits any seat.
-    const holderGroupsFor = (seat, current) => {
-      const others = otherActors.filter((a) => {
-        const companion = companionOfActor(a);
-        return !companion || (companion.seats?.includes(seat) && known(companion.id)) || a.uuid === current;
-      });
-      return [
-        { label: game.i18n.localize("UKM.Setup.GroupCharacters"), choices: actorChoices },
-        {
-          label: game.i18n.localize(this.#showAllActors ? "UKM.Setup.GroupOthers" : "UKM.Setup.GroupCompanions"),
-          choices: Object.fromEntries(others.map((a) => [a.uuid, a.name]))
-        }
-      ].filter((g) => Object.keys(g.choices).length);
-    };
-
     const picked = foundingPicks(getRealm());
     const statChoices = Object.fromEntries(
       Object.entries(REALM_STATS).map(([key, def]) => [
@@ -155,7 +123,6 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       pinsShown: draft?.pinsShown ?? getSetting(SETTINGS.pinsShown),
       raiseDead: draft?.raiseDead ?? getSetting(SETTINGS.raiseDead),
       rollDice: draft?.rollDice ?? getSetting(SETTINGS.rollDice),
-      showAllActors: this.#showAllActors,
       tapChoices: {
         approval: "UKM.Settings.TapTreasury.Approval",
         allowed: "UKM.Settings.TapTreasury.Allowed",
@@ -163,17 +130,9 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       },
       seats: seats.map((row) => ({
         ...row,
-        holderGroups: holderGroupsFor(row.seat, row.holder),
         // A seat a character holds still wants an advisor: delegated work then has a second pair of hands.
         wantsAdvisor: !row.companion && Object.keys(row.companionChoices ?? {}).length > 1
       })),
-      holderGroups: [
-        { label: game.i18n.localize("UKM.Setup.GroupCharacters"), choices: actorChoices },
-        {
-          label: game.i18n.localize(this.#showAllActors ? "UKM.Setup.GroupOthers" : "UKM.Setup.GroupCompanions"),
-          choices: Object.fromEntries(otherActors.map((a) => [a.uuid, a.name]))
-        }
-      ].filter((g) => Object.keys(g.choices).length),
       supervisorChoices: actorChoices,
       attitudeChoices,
       advisorRows: companions.map((c) => ({
@@ -249,12 +208,6 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!getSetting(SETTINGS.storyImported) && inspectSources().adventureImported) {
       new StoryImportApp().render(true);
     }
-  }
-
-  static #toggleActors() {
-    this.#draft = foundry.utils.expandObject(new foundry.applications.ux.FormDataExtended(this.element).object);
-    this.#showAllActors = !this.#showAllActors;
-    this.render();
   }
 
   static async #resetFounding() {

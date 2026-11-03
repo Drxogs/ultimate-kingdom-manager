@@ -12,12 +12,6 @@ import { grantFavour } from "./royal.js";
 import { UkmDialog } from "../apps/dialog.js";
 import { getSetting, SETTINGS } from "../settings.js";
 
-/** Unrest never goes above the cap, if one is set. */
-export function capUnrest(value) {
-  const cap = Number(getSetting(SETTINGS.unrestCap)) || 0;
-  return cap > 0 ? Math.min(cap, value) : value;
-}
-
 /** Whether reward dice are rolled by the players from chat (the default) or straight away. */
 export function playersRollDice() {
   return getSetting(SETTINGS.rollDice) !== false;
@@ -644,7 +638,7 @@ export async function commitKingdomChanges(ctx) {
   if (!kingdom) return;
   const update = {};
 
-  if (ctx.unrest) update["unrest.value"] = capUnrest(Math.max(0, (kingdom.unrest?.value ?? 0) + ctx.unrest));
+  if (ctx.unrest) update["unrest.value"] = Math.max(0, (kingdom.unrest?.value ?? 0) + ctx.unrest);
 
   for (const ruin of RUINS) {
     const delta = ctx.ruin[ruin];

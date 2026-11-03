@@ -1,6 +1,6 @@
 import { FLAG_SCOPE, MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
 import { describeEffects } from "../realm/effects.js";
-import { getAmbition, getCompanions, getProjects, getRankUpScene, getSeatAbilities, getTrackData, getTracks, getTroubles } from "./data.js";
+import { getAmbition, getProjects, getRankUpScene, getSeatAbilities, getTrackData, getTracks, getTroubles } from "./data.js";
 import { isLeader } from "../realm/leader.js";
 import { KINGMAKER_SHEET, kingmakerSheetAvailable } from "./story-import.js";
 

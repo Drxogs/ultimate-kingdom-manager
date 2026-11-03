@@ -44,7 +44,7 @@ export function rankUpChoices(project) {
     always: describeEffects(always),
     options: scene.options.map((o) => {
       const raw = o.effects[level] ?? [];
-      const { effects, converted } = convertWasted(raw);
+      const { effects } = convertWasted(raw);
       return {
         id: o.id,
         label: o.label,

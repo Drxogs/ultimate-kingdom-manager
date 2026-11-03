@@ -68,8 +68,7 @@ export async function guardWithFame(update) {
 export async function setUnrest(value) {
   const kingdom = getKingdom();
   if (!kingdom) return;
-  const { capUnrest } = await import("./effects.js");
-  const update = await guardWithFame({ "unrest.value": capUnrest(Math.max(0, value)) });
+  const update = await guardWithFame({ "unrest.value": Math.max(0, value) });
   await kingdom.update(update);
   await announceAnarchy();
 }

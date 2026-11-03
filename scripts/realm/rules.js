@@ -1,5 +1,5 @@
 import { ATTITUDES, DIE_AVERAGE, HIRED_ADVISOR, POINTS_PER_RANK, REALM_STATS, ROUTINE_ADVISOR_BONUS, ROUTINE_POINTS } from "../constants.js";
-import { companionForName, getCompanion, getCompanions } from "../content/data.js";
+import { companionForName, getCompanion } from "../content/data.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { getKingdom, getResourceDie } from "../integrations/party.js";
 import { summarizeRealm, isKingmakerActive } from "../integrations/kingmaker.js";
@@ -172,7 +172,6 @@ export function rawSeatCompanionId(seat) {
 
 /** Whether someone sits in a seat, and whether it's a companion in a role they're suited to. */
 export function seatFilled(seat) {
-  const leader = getKingdom()?.leadership?.[seat];
   const companionId = seatCompanionId(seat);
   const companion = companionId ? getCompanion(companionId) : null;
   return {
