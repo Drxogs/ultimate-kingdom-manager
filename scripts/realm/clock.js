@@ -172,6 +172,8 @@ function expireCards(realm) {
   realm.cards = realm.cards.filter((c) => !c.resolvedAt || c.pendingEffects || ["open", "assigned", "escalated", "rolled"].includes(c.status) || c.resolvedAt > cutoff);
   realm.timedModifiers = realm.timedModifiers.filter((m) => m.expires > now);
   realm.fortunes = realm.fortunes.filter((f) => f.expires > now && f.uses > 0);
+  // Ticked-off GM tasks stay a month, then go.
+  realm.gmTasks = realm.gmTasks.filter((t) => !t.done || now - (t.created ?? 0) < 30 * secondsPerDay());
   for (const card of realm.cards) {
     if (!isExpiring(card, now)) continue;
 

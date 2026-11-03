@@ -582,3 +582,4 @@ for (let level = 1; level <= MAX_LEVEL; level++) {
 }
 const final = levelLines.at(-1);
 realLog("SUMMARY", JSON.stringify({ story: stats.story ?? 0, degrees, seed: SEED, daysPerLevel: DAYS_PER_LEVEL, engagement: ENGAGEMENT, resolved: stats.resolved, expired: stats.expired, trouble: stats.trouble, personal: stats.personal, advisor: stats.advisor, fameRerolls: stats.fameRerolls, decrees: stats.decrees, maxUnrest: stats.maxUnrest, anarchyDays: stats.anarchyDays, bp: { rankUps: Math.round(stats.bpOnRankUps), projects: Math.round(stats.bpOnProjects), tracks: Math.round(stats.bpOnTracks) }, projects: stats.projectsStarted, final }));
+if (process.env.DUMP) (await import("node:fs")).writeFileSync(process.env.DUMP, JSON.stringify({ realm: env.flags[realmKey], settings: Object.fromEntries(env.settings) }));

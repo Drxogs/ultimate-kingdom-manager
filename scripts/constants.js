@@ -47,15 +47,13 @@ export const KINGMAKER_JOURNALS = {
   gazetteers: ["5QajqjVS7Dm8u7hi", "lMIawppop9uCHRXq", "GRbTr3VTyhezOEhW", "btt2UVnNmyuPWfHF"],
   events: "dAtoyQhSfSBvjr2W",
   quests: "OnxXPMl0iaK9lUp1",
-  characters: "PoopszF8pbV8RtX8",
-  structures: "BIu4C1T1RR17QNwl"
+  characters: "PoopszF8pbV8RtX8"
 };
 
 export const KINGMAKER_JOURNAL_NAMES = {
   events: "Appendix 2c: Kingdom Events",
   quests: "Appendix 2d: Quests",
-  characters: "Appendix 5: Characters",
-  structures: "Appendix 2b: Settlements"
+  characters: "Appendix 5: Characters"
 };
 
 /** Standard DC by level (Core Rulebook table 10-5). */

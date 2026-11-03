@@ -271,8 +271,12 @@
             "bpDice": 4
           },
           {
-            "settlementItemBonus": {
-              "double": "all",
+            "modifier": {
+              "type": "circumstance",
+              "value": 2,
+              "selector": [
+                "economy"
+              ],
               "days": 30
             }
           }
@@ -282,8 +286,12 @@
             "bpDice": 2
           },
           {
-            "settlementItemBonus": {
-              "double": "one",
+            "modifier": {
+              "type": "circumstance",
+              "value": 1,
+              "selector": [
+                "economy"
+              ],
               "days": 30
             }
           }
@@ -1898,20 +1906,21 @@
       "outcomes": {
         "criticalSuccess": [
           {
-            "freeStructure": [
-              "monument",
-              "park"
-            ],
+            "freeTrackStage": {
+              "track": "performance"
+            },
             "noCheck": true
+          },
+          {
+            "freeTrackStage": {
+              "track": "publicworks"
+            }
           }
         ],
         "success": [
           {
-            "freeStructure": {
-              "oneOf": [
-                "monument",
-                "park"
-              ]
+            "freeTrackStage": {
+              "track": "performance"
             },
             "autoSucceed": true,
             "withinDays": 30
@@ -2922,14 +2931,19 @@
       "outcomes": {
         "criticalSuccess": [
           {
-            "freeStructure": "noble-villa",
-            "where": "capital-or-largest-with-room"
+            "freeTrackStage": {
+              "track": "homes"
+            }
+          },
+          {
+            "bpDice": 1
           }
         ],
         "success": [
           {
-            "freeStructure": "mansion",
-            "where": "capital-or-largest-with-room"
+            "freeTrackStage": {
+              "track": "homes"
+            }
           }
         ],
         "failure": [],

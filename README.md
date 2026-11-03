@@ -38,7 +38,7 @@ Coming from a 0.x version? 1.0 starts fresh. The first time the GM loads a world
 ## Quick start for GMs
 
 1. **Enable the module.** Setup opens the first time the GM logs in.
-2. **Import the story text** when asked. It copies the adventure's regions, locations, kingdom events, quests, characters and structures into GM-only journals, so cards can link to the right pages. Your own journals are never changed, and pages you edit are left alone on re-import.
+2. **Import the story text** when asked. It copies the adventure's regions, locations, kingdom events, quests and characters into GM-only journals, so cards can link to the right pages. Your own journals are never changed, and pages you edit are left alone on re-import.
 3. **Run Setup:** the kingdom's name and ruler, your table's options, the capital, the founding focus (two realm stats that start at rank 1), and the six leadership seats. Each seat has a character who holds it and an advisor who works the cards you delegate. A seat with no companion gets a hired advisor until the party meets one.
 4. **Point your players at the Player's Handbook** in the journal sidebar.
 

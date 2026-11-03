@@ -37,6 +37,7 @@ ok(L.kingdomFromPf2e({ active: false }) === null, "no built kingdom, nothing to 
 // Startup import: only when this realm has never had its own numbers.
 ok(!(await L.importPf2eKingdom()), "a realm that already has its kingdom isn't overwritten");
 env.flags[`${env.id}.realm`].kingdom.active = false;
+(await import(`${R}/realm/state.js`)).invalidateRealm();
 ok(await L.importPf2eKingdom(), "a realm without numbers takes them from PF2e once");
 ok(getKingdom().unrest.value === 12 && getRealm().kingdomImported, "imported");
 ok(!(await L.importPf2eKingdom()), "and only once");

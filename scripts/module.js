@@ -5,7 +5,7 @@ import { inspectSources } from "./content/story-import.js";
 import { onRegionChange } from "./integrations/kingmaker.js";
 import { getParty, syncKingdomLevel } from "./integrations/party.js";
 import { registerClock, tick } from "./realm/clock.js";
-import { freshStartFromOld, getRealm, REALM_FLAG } from "./realm/state.js";
+import { freshStartFromOld, getRealm, invalidateRealm, REALM_FLAG } from "./realm/state.js";
 import { registerRequests, sendRequest } from "./realm/requests.js";
 import { onRerollMessage } from "./realm/resolve.js";
 import { isFortified } from "./realm/projects.js";
@@ -94,6 +94,7 @@ Hooks.on("updateActor", (actor, changes) => {
   const party = getParty();
   if (!party) return;
   if (actor.id === party.id) {
+    invalidateRealm();
     if (foundry.utils.hasProperty(changes, "system.details.members")) syncKingdomLevel();
     KingdomManager.refresh();
     return;
