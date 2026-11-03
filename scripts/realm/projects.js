@@ -15,7 +15,7 @@ import { attitudeAtLeast, seatCompanionId, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { syncPins } from "./pins.js";
 import { secondsPerDay } from "./time.js";
-import { applyTrackStage, hasCapital, newSettlement, settlementHex, settlements } from "./settlements.js";
+import { applyTrackStage, hasCapital, newSettlement, settlementHex, settlements, trackBlockedBy } from "./settlements.js";
 import { discountHere, kingdomPerks, nextStep } from "./tracks.js";
 
 const NEVER = 3650;
@@ -290,6 +290,8 @@ export function developmentQuote(settlementId, trackId, realm = getRealm()) {
   if (!settlement || !track) return { blocked: "Unknown" };
   const step = nextStep(settlement, track.id, { kingdomLevel: getKingdom()?.level ?? 1, others: settlements(realm), working: trackUnderway(settlement.id, track.id, realm) });
   if (step.blocked) return { ...step, settlement, track };
+  const stoppedBy = trackBlockedBy(realm, settlement, track.id);
+  if (stoppedBy) return { ...step, blocked: "Event", event: stoppedBy, settlement, track };
   const cost = Math.max(1, Math.round(step.bp * (1 - projectDiscount(settlement, realm) / 100)));
   return { ...step, cost, settlement, track };
 }
@@ -305,7 +307,7 @@ async function startDevelopment(def, request, user, { canActForSeat }) {
   const { settlement, track } = step;
   if (!settlement || !track) return { ok: false, reason: "NoTarget" };
   if (!canActForSeat(user, track.seat)) return { ok: false, reason: "NotYourSeat" };
-  if (step.blocked) return { ok: false, reason: `Track${step.blocked}`, data: { level: step.level ?? "" } };
+  if (step.blocked) return { ok: false, reason: `Track${step.blocked}`, data: { level: step.level ?? "", event: step.event ?? "" } };
   const cost = step.cost;
   if (realm.treasury < cost) return { ok: false, reason: "TooPoor", data: { cost } };
   const now = game.time.worldTime;

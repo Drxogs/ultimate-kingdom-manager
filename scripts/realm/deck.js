@@ -14,6 +14,7 @@ import { getSetting, SETTINGS } from "../settings.js";
 import { addLog, getRealm, newId } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { settlementHex, settlementState, settlements as realmSettlements } from "./settlements.js";
+import { hasPinnacle, trackStage } from "./tracks.js";
 
 const SETTLEMENT_TYPES = ["metropolis", "city", "town", "village"];
 const DRAWS_BY_NATION = { territory: 1, province: 1, state: 2, country: 2, dominion: 3 };
@@ -147,10 +148,8 @@ function requirementsMet(event, realm) {
     const hasNpc = leaders.some((l) => l.uuid && fromUuidSync(l.uuid)?.type !== "character");
     if (!hasNpc && !req.orGmPcLeader) return false;
   }
-  if (req.structureAny) {
-    const built = new Set(realm.structures ?? []);
-    if (!req.structureAny.some((s) => built.has(s))) return false;
-  }
+  // A settlement somewhere with this track at this stage or higher: { track, stage }.
+  if (req.track && !realmSettlements(realm).some((s) => hasPinnacle(s, req.track) || trackStage(s, req.track) >= (req.stage ?? 0))) return false;
   return true;
 }
 

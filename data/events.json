@@ -39,7 +39,8 @@
           },
           {
             "if": {
-              "structure": "museum"
+              "track": "learning",
+              "stage": 2
             },
             "then": [
               {
@@ -88,18 +89,6 @@
       "seat": "viceroy",
       "skill": [
         "intrigue"
-      ],
-      "special": [
-        {
-          "if": {
-            "atWar": true
-          },
-          "then": [
-            {
-              "setMod": 3
-            }
-          ]
-        }
       ],
       "setup": [
         {
@@ -255,7 +244,8 @@
       "special": [
         {
           "if": {
-            "noStructure": "dump"
+            "lacksTrack": "publicworks",
+            "stage": 1
           },
           "then": [
             {
@@ -446,7 +436,8 @@
       "special": [
         {
           "if": {
-            "structure": "sewer-system"
+            "track": "publicworks",
+            "stage": 3
           },
           "then": [
             {
@@ -455,19 +446,6 @@
                 "type": "item",
                 "value": -2
               }
-            }
-          ]
-        },
-        {
-          "if": {
-            "chapter": 5
-          },
-          "then": [
-            {
-              "setMod": 3
-            },
-            {
-              "note": "The cult worships Lamashtu."
             }
           ]
         }
@@ -893,18 +871,6 @@
       "seat": "viceroy",
       "skill": [
         "exploration"
-      ],
-      "special": [
-        {
-          "if": {
-            "claimedHexThisMonth": true
-          },
-          "then": [
-            {
-              "degree": 1
-            }
-          ]
-        }
       ],
       "continuous": {
         "endOn": [
@@ -1572,7 +1538,8 @@
       "special": [
         {
           "if": {
-            "structure": "cemetery"
+            "track": "faith",
+            "stage": 2
           },
           "then": [
             {
@@ -1893,10 +1860,8 @@
         ]
       },
       "requires": {
-        "structureAny": [
-          "mansion",
-          "noble-villa"
-        ]
+        "track": "homes",
+        "stage": 2
       },
       "seat": "viceroy",
       "skill": [
@@ -2001,11 +1966,8 @@
         "type": "kingdom"
       },
       "requires": {
-        "structureAny": [
-          "shrine",
-          "temple",
-          "cathedral"
-        ]
+        "track": "faith",
+        "stage": 0
       },
       "seat": "magister",
       "skill": [
@@ -2076,20 +2038,22 @@
       "special": [
         {
           "if": {
-            "noStructure": "dump"
+            "lacksTrack": "publicworks",
+            "stage": 1
           },
           "then": [
             {
               "checkModifier": {
                 "type": "item",
-                "value": -4
+                "value": -2
               }
             }
           ]
         },
         {
           "if": {
-            "structure": "sewer-system"
+            "track": "publicworks",
+            "stage": 3
           },
           "then": [
             {
@@ -2104,7 +2068,8 @@
       "whileActive": [
         {
           "if": {
-            "noStructure": "sewer-system"
+            "lacksTrack": "publicworks",
+            "stage": 3
           },
           "then": [
             {
@@ -2563,7 +2528,8 @@
       "special": [
         {
           "if": {
-            "structure": "sewer-system"
+            "track": "publicworks",
+            "stage": 3
           },
           "then": [
             {
@@ -2577,7 +2543,7 @@
       ],
       "whileActive": [
         {
-          "gm": "Squatters camp in the settlement: its Homes can't be raised until this ends."
+          "blockTrack": "homes"
         }
       ],
       "continuous": {
@@ -2647,10 +2613,11 @@
       ],
       "special": [
         {
-          "modPerStructure": {
-            "structure": "cemetery",
+          "modPerTrack": {
+            "track": "faith",
+            "stage": 2,
             "each": 1,
-            "max": 4
+            "max": 2
           }
         }
       ],

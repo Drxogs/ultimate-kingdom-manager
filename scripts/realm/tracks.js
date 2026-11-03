@@ -169,39 +169,3 @@ export function missingNeeds(settlement) {
     .map(([trackId, min]) => ({ trackId, min }));
 }
 
-/**
- * Old-style building names for events and goals that still ask "does the kingdom have a ...?"
- * (Plague checks for a Sewer System, Local Disaster for a Cemetery...).
- */
-const LEGACY = [
-  ["publicworks", 1, ["dump", "paved-streets"]],
-  ["publicworks", 3, ["sewer-system", "magical-streetlamps"]],
-  ["faith", 0, ["shrine"]],
-  ["faith", 2, ["temple", "cemetery"]],
-  ["faith", 3, ["cathedral"]],
-  ["learning", 1, ["library"]],
-  ["learning", 2, ["academy", "museum"]],
-  ["learning", 3, ["university"]],
-  ["homes", 2, ["mansion"]],
-  ["homes", 3, ["noble-villa"]],
-  ["food", 2, ["tavern-popular"]],
-  ["food", 3, ["inn"]],
-  ["watch", 2, ["jail"]],
-  ["walls", 1, ["wall-wooden"]],
-  ["walls", 2, ["wall-stone"]],
-  ["army", 1, ["barracks"]],
-  ["army", 2, ["garrison"]],
-  ["commerce", 1, ["marketplace"]],
-  ["commerce", 3, ["bank"]],
-  ["governance", 2, ["town-hall"]],
-  ["governance", 3, ["palace"]],
-  ["performance", 2, ["theater"]],
-  ["industry", 3, ["smithy"]]
-];
-
-export function legacySlugs(settlementList) {
-  const out = new Set();
-  for (const s of settlementList) for (const [trackId, stage, slugs] of LEGACY) if (trackStage(s, trackId) >= stage) slugs.forEach((x) => out.add(x));
-  return [...out];
-}
-

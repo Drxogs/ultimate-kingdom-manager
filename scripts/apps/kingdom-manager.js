@@ -25,6 +25,7 @@ import {
   settlementHex,
   settlements,
   settlementState,
+  trackBlockedBy,
   unknownMapSettlements
 } from "../realm/settlements.js";
 import { getEvents, getProject, getStoryEvents, storyChapter } from "../content/data.js";
@@ -548,8 +549,10 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
           const now = current >= 0 ? stageDef(track.id, current) : null;
           const underway = trackUnderway(s.id, track.id, realm);
           const step = nextStep(s, track.id, { kingdomLevel: level, others: all, working: underway });
+          const stoppedBy = step.blocked ? null : trackBlockedBy(realm, s, track.id);
+          if (stoppedBy) Object.assign(step, { blocked: "Event", event: stoppedBy });
           const bp = step.bp ? Math.max(1, Math.round(step.bp * (1 - discount / 100))) : null;
-          const blocked = step.blocked && step.blocked !== "Working" ? game.i18n.format(`UKM.Track.Block.${step.blocked}`, { level: step.level ?? "" }) : null;
+          const blocked = step.blocked && step.blocked !== "Working" ? game.i18n.format(`UKM.Track.Block.${step.blocked}`, { level: step.level ?? "", event: step.event ?? "" }) : null;
           return {
             id: track.id,
             name: track.name,

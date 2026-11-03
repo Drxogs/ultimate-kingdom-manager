@@ -1,4 +1,5 @@
 import { MODULE_ID, RUINS } from "../constants.js";
+import { getCardEvent } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
 import { settlementHexes } from "./deck.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
@@ -7,8 +8,8 @@ import { hasTenements, isCrimeCard } from "./troubles.js";
 import {
   eventsBonus,
   foodNeed,
+  hasPinnacle,
   kingdomPerks,
-  legacySlugs,
   missingNeeds,
   NONE,
   PINNACLE,
@@ -91,16 +92,81 @@ export function structureModifiers(realm, card, skill) {
   const out = best ? [{ slug: `ukm-structures-${skill}`, label: game.i18n.format("UKM.Settlement.BonusLabel", { name: from.name }), modifier: best, type: "item" }] : [];
   // Tenements: crime checks there take −1 (dirty streets).
   if (here && hasTenements(here) && isCrimeCard(card)) out.push({ slug: "ukm-dirty-streets", label: game.i18n.localize("UKM.Trouble.DirtyStreets"), modifier: -1, type: "circumstance" });
+  out.push(...eventSpecials(realm, card).modifiers);
+  if (here && card?.project?.track) out.push(...whileActiveModifiers(realm, here));
   return out;
 }
 
-/** Old building names the realm's tracks stand for, for events that ask "does the kingdom have a ...". */
-export function builtSlugs(realm) {
-  return legacySlugs(settlements(realm));
+/* ---------- Events that care about a settlement's tracks ---------- */
+
+const LIVE = ["open", "assigned", "rolled", "escalated"];
+
+/** Whether the card's settlement (or, for a card not tied to one, any settlement) has a track at a stage or higher. */
+export function hasTrackStage(realm, card, trackId, stage = 0) {
+  const here = cardSettlement(card, realm);
+  return (here ? [here] : settlements(realm)).some((s) => hasPinnacle(s, trackId) || trackStage(s, trackId) >= stage);
 }
 
-export function refreshDerived(realm) {
-  if (settlements(realm).length || realm.settlementsStarted) realm.structures = builtSlugs(realm);
+/**
+ * A condition in the event data: { track, stage } is "has that track at that stage or higher",
+ * { lacksTrack, stage } the opposite. Returns null for anything that isn't a track condition.
+ */
+export function trackCondition(realm, card, condition = {}) {
+  if (condition.track) return hasTrackStage(realm, card, condition.track, condition.stage ?? 0);
+  if (condition.lacksTrack) return !hasTrackStage(realm, card, condition.lacksTrack, condition.stage ?? 0);
+  return null;
+}
+
+/**
+ * An event's special rules for this card, from its "special" list: check modifiers (all checks, or one
+ * stage's), a DC that rises with how many settlements have a track, a result one step better or worse,
+ * and halved resource-dice losses.
+ */
+export function eventSpecials(realm, card) {
+  const event = getCardEvent(card);
+  const out = { modifiers: [], dc: 0, degree: 0, halveBpLoss: false };
+  (event?.special ?? []).forEach((rule, i) => {
+    if (rule.modPerTrack) {
+      const { track, stage = 0, each = 1, max = Infinity } = rule.modPerTrack;
+      const n = settlements(realm).filter((s) => hasPinnacle(s, track) || trackStage(s, track) >= stage).length;
+      out.dc += Math.min(max, n * each);
+      return;
+    }
+    if (!trackCondition(realm, card, rule.if)) return;
+    for (const then of rule.then ?? []) {
+      const mod = then.checkModifier ?? (then.stageModifier && (card.stage ?? 0) === then.stageModifier.stage ? then.stageModifier : null);
+      if (mod) out.modifiers.push({ slug: `ukm-special-${event.id}-${i}`, label: event.name, modifier: mod.value, type: mod.type ?? "circumstance" });
+      if (then.degree) out.degree += then.degree;
+      if (then.halveBpDiceLoss) out.halveBpLoss = true;
+    }
+  });
+  return out;
+}
+
+/** Ongoing events in a settlement that hold back building there (a plague without sewers, say). */
+function whileActiveModifiers(realm, settlement) {
+  const out = [];
+  for (const other of realm.cards ?? []) {
+    if (!LIVE.includes(other.status) || cardSettlement(other, realm) !== settlement) continue;
+    const event = getCardEvent(other);
+    for (const rule of event?.whileActive ?? []) {
+      if (rule.if && !trackCondition(realm, other, rule.if)) continue;
+      for (const then of rule.then ?? []) {
+        if (then.settlementModifier?.selector === "build") out.push({ slug: `ukm-while-${event.id}`, label: event.name, modifier: then.settlementModifier.value, type: then.settlementModifier.type ?? "status" });
+      }
+    }
+  }
+  return out;
+}
+
+/** The event stopping a track from being raised in a settlement (squatters stop new Homes), if any. */
+export function trackBlockedBy(realm, settlement, trackId) {
+  for (const other of realm.cards ?? []) {
+    if (!LIVE.includes(other.status) || cardSettlement(other, realm) !== settlement) continue;
+    const event = getCardEvent(other);
+    if ((event?.whileActive ?? []).some((rule) => rule.blockTrack === trackId)) return event.name;
+  }
+  return null;
 }
 
 /** Keep a settlement's size in step with its Homes. */
@@ -173,7 +239,6 @@ export function applyTrackStage(realm, settlementId, trackId, stage, ctx = null,
     addLog(realm, { type: "settlement-grew", text: `${settlement.name} (${game.i18n.localize(`UKM.Settlement.Type.${after}`)})` });
   }
   addLog(realm, { type: "track-stage", text: `${settlement.name}: ${def?.name ?? trackId}` });
-  refreshDerived(realm);
   return settlement;
 }
 
@@ -214,7 +279,6 @@ export async function foundCapital(request) {
       r.gmTasks.push({ id: newId(), text: game.i18n.format("UKM.Settlement.CapitalTask", { name, where: place }), card: null, hexKey: null, created: game.time.worldTime, done: false });
     }
     addLog(r, { type: "capital", text: name });
-    refreshDerived(r);
   });
   const kingdom = getKingdom();
   if (kingdom) await kingdom.update({ capital: name });

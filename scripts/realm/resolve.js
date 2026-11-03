@@ -9,7 +9,7 @@ import { addStatPoints, cardWorkDays, isHired, seatCompanionId, weeklyIncome } f
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { isLeader } from "./leader.js";
-import { structureModifiers } from "./settlements.js";
+import { eventSpecials, structureModifiers } from "./settlements.js";
 import { chatClass, chatKicker } from "./chat-style.js";
 import { inAnarchy } from "./standing.js";
 
@@ -31,7 +31,7 @@ export function cardStage(card) {
 export function cardLevelMod(card, realm = getRealm()) {
   const event = getCardEvent(card);
   const stage = event?.stages?.[card.stage ?? 0];
-  return (stage?.mod ?? event?.mod ?? 0) + (realm.levelModBoosts?.[card.eventId] ?? 0);
+  return (stage?.mod ?? event?.mod ?? 0) + (realm.levelModBoosts?.[card.eventId] ?? 0) + eventSpecials(realm, card).dc;
 }
 
 function assigneeKey(assignee) {
@@ -582,10 +582,10 @@ async function handRollToPlayer(card) {
 }
 
 function finalDegree(roll) {
-  let degree = roll.degree;
+  let degree = roll.degree + (roll.shift ?? 0);
   // Anarchy makes every result a step worse.
-  if (roll.anarchy) degree = Math.max(0, degree - 1);
-  return degree;
+  if (roll.anarchy) degree -= 1;
+  return Math.max(0, Math.min(3, degree));
 }
 
 /** Apply a rolled card's result. A new degree replaces the pending one (after a reroll). */
@@ -602,6 +602,8 @@ export async function acceptRoll(cardId, rerolledDegree = null) {
     assignee = card.assignee;
     card.pendingRoll = null;
     roll.anarchy = inAnarchy();
+    // An event's settlement rule can move the result a step (Boomtown without paved streets, say).
+    roll.shift = eventSpecials(realm, card).degree;
     const degreeName = DEGREES[finalDegree(roll)];
     ctx = await settleCard(realm, card, degreeName, { skill: roll.skill });
     if (roll.anarchy) ctx.lines.unshift(loc("AnarchyWorse"));
