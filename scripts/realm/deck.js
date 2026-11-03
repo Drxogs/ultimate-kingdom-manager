@@ -106,7 +106,7 @@ function chooseHex(rule, kind = null) {
 
 /**
  * Pick a settlement for an event from the Settlements tab (the realm's one list), with its place on the map
- * if it has one. Size goes by buildings, so a busy town counts as bigger than an empty one.
+ * if it has one. Size goes by track stages, so a busy town counts as bigger than an empty one.
  */
 function chooseSettlement(rule, avoid = null) {
   const list = realmSettlements().filter((s) => !avoid?.has(s.name)).map((s) => {

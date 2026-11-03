@@ -15,7 +15,7 @@ import { syncPins } from "./pins.js";
 import { resolveDue } from "./resolve.js";
 import { advanceRankUps } from "./ranks.js";
 import { isLeader } from "./leader.js";
-import { adoptMapSettlements, hasCapital, overcrowdedCount, settlementHex } from "./settlements.js";
+import { adoptMapSettlements, hasCapital, settlementHex } from "./settlements.js";
 import { kingdomPerks } from "./tracks.js";
 import { applyEffects, EffectContext } from "./effects.js";
 import { monthlyStanding, setUnrest } from "./standing.js";
@@ -72,13 +72,6 @@ export async function tick() {
       expireCards(realm);
       if (newMonth && founded) drawn = drawMonthlyEvents(realm);
       if (newMonth && founded) drawn.push(...drawTroubles(realm, { hexOf: settlementHex }));
-      if (newMonth) {
-        const crowded = overcrowdedCount(realm);
-        if (crowded) {
-          unrest += crowded;
-          addLog(realm, { type: "overcrowded", amount: crowded });
-        }
-      }
       if (newMonth && founded && getSetting(SETTINGS.audiences)) {
         const card = drawAudience(realm);
         if (card) drawn.push(card);

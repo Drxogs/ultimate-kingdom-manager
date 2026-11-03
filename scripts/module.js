@@ -5,13 +5,13 @@ import { inspectSources } from "./content/story-import.js";
 import { onRegionChange } from "./integrations/kingmaker.js";
 import { getParty, syncKingdomLevel } from "./integrations/party.js";
 import { registerClock, tick } from "./realm/clock.js";
-import { freshStartFromOld, getRealm, migrateSixSeats, REALM_FLAG } from "./realm/state.js";
+import { freshStartFromOld, getRealm, REALM_FLAG } from "./realm/state.js";
 import { registerRequests, sendRequest } from "./realm/requests.js";
 import { onRerollMessage } from "./realm/resolve.js";
-import { buildStructureCatalog, isFortified } from "./realm/projects.js";
+import { isFortified } from "./realm/projects.js";
 import { ensureHandbook, openHandbook } from "./content/handbook.js";
 import { isLeader, leaderSettled, startLeader } from "./realm/leader.js";
-import { adoptMapSettlements, repairSettlements } from "./realm/settlements.js";
+import { adoptMapSettlements } from "./realm/settlements.js";
 import { importPf2eKingdom } from "./realm/pf2e-kingdom.js";
 import { cardsOnHex } from "./realm/pins.js";
 import { daysUntil } from "./realm/time.js";
@@ -65,11 +65,8 @@ Hooks.once("ready", async () => {
     await freshStartFromOld();
     await syncKingdomLevel();
     await importPf2eKingdom();
-    await migrateSixSeats();
-    await repairSettlements();
     noteUnrest();
     await tick();
-    if (getSetting(SETTINGS.storyImported)) await buildStructureCatalog();
     await ensureHandbook().catch((err) => console.error(`${MODULE_ID} |`, err));
   }
 

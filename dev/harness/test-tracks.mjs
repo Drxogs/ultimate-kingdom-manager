@@ -97,10 +97,6 @@ const { monthlyTrackPerks } = await import(`${R}/realm/clock.js`);
 await monthlyTrackPerks();
 ok(getKingdom().abilities.economy.ruin.value === 2, `monthly: Crime −1 (${getKingdom().abilities.economy.ruin.value})`);
 
-// Migration from buildings.
-const old = { id: "o", name: "Old", type: "town", buildings: [{ slug: "shrine" }, { slug: "tavern-dive" }, { slug: "marketplace" }, { slug: "houses" }] };
-const tr = T.tracksFromBuildings(old, 5);
-ok(tr.homes === 1 && tr.faith >= 0 && tr.commerce >= 1 && tr.food >= 1, `old town migrates (${JSON.stringify(tr)})`);
 const slugs = T.legacySlugs([{ tracks: { publicworks: 3, faith: 2 } }]);
 ok(slugs.includes("sewer-system") && slugs.includes("cemetery"), "legacy slugs for events");
 

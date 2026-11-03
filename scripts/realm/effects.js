@@ -6,7 +6,6 @@ import { isKingmakerActive, summarizeRealm } from "../integrations/kingmaker.js"
 import { getRealm, newId } from "./state.js";
 import { secondsPerDay } from "./time.js";
 import { completeProject, refundProject } from "./projects.js";
-import { syncKingdomSettlements } from "./settlements.js";
 import { announceAnarchy, guardWithFame, inAnarchy } from "./standing.js";
 import { grantFavour } from "./royal.js";
 import { UkmDialog } from "../apps/dialog.js";
@@ -664,7 +663,6 @@ export async function commitKingdomChanges(ctx) {
 
   if (Object.keys(update).length) await kingdom.update(await guardWithFame(update));
   if ("unrest.value" in update) await announceAnarchy();
-  if (ctx.syncSettlements) await syncKingdomSettlements();
   if (!ctx.deferFlats) await postFlatChecks(ctx);
 }
 

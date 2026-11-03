@@ -38,7 +38,6 @@ const EVENT_ICONS = {
   "project:establish-farmland": "icons/environment/settlement/house-farmland.webp",
   "project:establish-work-site": "icons/environment/settlement/mine-cart-rocks-red.webp",
   "project:found-settlement": "icons/environment/settlement/house-farmland-small.webp",
-  "project:build-structure": "icons/tools/hand/hammer-and-nail.webp",
   "project:fortify-hex": "icons/environment/settlement/watchtower-cliff.webp"
 };
 const KIND_ICONS = {

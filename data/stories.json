@@ -2208,12 +2208,6 @@
       "failure": "Settlers, surveyors and well-diggers set out to found a new village, but a hard season wore them down, and the founding stalled.",
       "criticalFailure": "Settlers, surveyors and well-diggers set out to found a new village, and it failed. The well came up dry, and the settlers scattered."
     },
-    "build-structure": {
-      "criticalSuccess": "The builders went to work on the new building and finished it ahead of time. The town turned out to admire it.",
-      "success": "The builders went to work on the new building, and it's finished.",
-      "failure": "The builders went to work on the new building, but it isn't finished this time. Materials ran short and the work stopped.",
-      "criticalFailure": "The builders went to work on the new building, and part of it came down during the work. The effort and the materials were lost."
-    },
     "fortify-hex": {
       "criticalSuccess": "Workers raised a watchtower and earthworks to guard the hex. The fortifications are strong, and anyone watching the border has taken note.",
       "success": "Workers raised a watchtower and earthworks to guard the hex. The fortifications are up.",

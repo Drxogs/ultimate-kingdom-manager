@@ -12,7 +12,6 @@ export const SETTINGS = {
   clock: "clock",
   seatAssignments: "seatAssignments",
   deskMatters: "deskMatters",
-  structureCatalog: "structureCatalog",
   audiences: "audiences",
   companionAttitudes: "companionAttitudes",
   knownAdvisors: "knownAdvisors",
@@ -123,7 +122,6 @@ export function registerSettings() {
   world(SETTINGS.importReminder, { config: false, type: Number, default: 0 });
   world(SETTINGS.clock, { config: false, type: Object, default: {} });
   world(SETTINGS.seatAssignments, { config: false, type: Object, default: {} });
-  world(SETTINGS.structureCatalog, { config: false, type: Array, default: [] });
   world(SETTINGS.companionAttitudes, { config: false, type: Object, default: {} });
   world(SETTINGS.knownAdvisors, { config: false, type: Object, default: {} });
   world(SETTINGS.customAdvisors, { config: false, type: Array, default: [] });

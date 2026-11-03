@@ -710,18 +710,15 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const probe = { eventId: `project:${def.id}`, seat: def.seat, dcAdjust: 0 };
     const odds = estimateCheck(probe, { type: "advisor", skill: def.skill[0] });
     const quoteText = (q) => game.i18n.format("UKM.Project.Quote", { cost: q.cost, days: q.days });
-    let body = "";
-    {
-      body = `<p>${quoteText(projectQuote(def, picked))}</p>`;
-      if (def.id === "found-settlement") {
-        body += `<div class="form-group"><label>${game.i18n.localize("UKM.Project.SettlementName")}</label><input type="text" name="settlementName" maxlength="60" required placeholder="${esc(game.i18n.localize("UKM.Settlement.NamePlaceholder"))}"></div>
-          <div class="form-group"><label>${game.i18n.localize("UKM.Settlement.Waterside")}</label><input type="checkbox" name="waterside"></div>
-          <p class="hint">${game.i18n.localize("UKM.Settlement.WatersideHint")}</p>`;
-      }
-      if (isHexProject(def)) {
-        body += `<div class="form-group"><label>${game.i18n.localize("UKM.Project.WhereNote")}</label><input type="text" name="where" maxlength="80" placeholder="${esc(game.i18n.localize("UKM.Project.WherePlaceholder"))}"></div>
-          <p class="hint">${game.i18n.localize("UKM.Project.WhereHint")}</p>`;
-      }
+    let body = `<p>${quoteText(projectQuote(def, picked))}</p>`;
+    if (def.id === "found-settlement") {
+      body += `<div class="form-group"><label>${game.i18n.localize("UKM.Project.SettlementName")}</label><input type="text" name="settlementName" maxlength="60" required placeholder="${esc(game.i18n.localize("UKM.Settlement.NamePlaceholder"))}"></div>
+        <div class="form-group"><label>${game.i18n.localize("UKM.Settlement.Waterside")}</label><input type="checkbox" name="waterside"></div>
+        <p class="hint">${game.i18n.localize("UKM.Settlement.WatersideHint")}</p>`;
+    }
+    if (isHexProject(def)) {
+      body += `<div class="form-group"><label>${game.i18n.localize("UKM.Project.WhereNote")}</label><input type="text" name="where" maxlength="80" placeholder="${esc(game.i18n.localize("UKM.Project.WherePlaceholder"))}"></div>
+        <p class="hint">${game.i18n.localize("UKM.Project.WhereHint")}</p>`;
     }
     if (def.id === "establish-work-site") {
       body += `<div class="form-group"><label>${game.i18n.localize("UKM.Project.CampLabel")}</label><select name="camp">${["lumber", "quarry", "mine"]
@@ -734,7 +731,6 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       const f = button.form.elements;
       return {
         mode,
-        structure: button.form.querySelector("input[name=structure]:checked")?.value ?? f.structure?.value ?? null,
         camp: f.camp?.value ?? null,
         where: f.where?.value ?? "",
         settlementName: f.settlementName?.value ?? "",
@@ -753,7 +749,6 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       type: def.id,
       hexKey: picked.hexKey,
       settlementId: picked.settlementId ?? null,
-      structure: choice.structure,
       camp: choice.camp,
       where: choice.where,
       settlementName: choice.settlementName,
