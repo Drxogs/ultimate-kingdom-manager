@@ -30,7 +30,8 @@ export function cardStage(card) {
 
 export function cardLevelMod(card, realm = getRealm()) {
   const event = getCardEvent(card);
-  return (event?.mod ?? 0) + (realm.levelModBoosts?.[card.eventId] ?? 0);
+  const stage = event?.stages?.[card.stage ?? 0];
+  return (stage?.mod ?? event?.mod ?? 0) + (realm.levelModBoosts?.[card.eventId] ?? 0);
 }
 
 function assigneeKey(assignee) {
@@ -519,7 +520,7 @@ async function settleCard(realm, card, degreeName, { points = true, skill = null
   if (ctx.ended || (!advancedStage && (!continuous || endsOn(event, { ...card, stage: stageBefore }, degreeName)))) {
     closeCard(realm, card, degreeName);
   } else {
-    const days = ctx.continueCard || (event?.deadlineDays ?? 30);
+    const days = ctx.continueCard || (event?.stages?.[card.stage ?? 0]?.deadlineDays ?? event?.deadlineDays ?? 30);
     reopenCard(card, degreeName, days);
   }
 
@@ -665,6 +666,20 @@ export async function recordOutcome(cardId, degreeName) {
     ctx = await settleCard(realm, card, degreeName);
   });
   if (ctx) await finish(card, degreeName, ctx, null);
+}
+
+/** The GM ends an ongoing card the story has settled (the troll king is dead), with a line in chat. */
+export async function endCard(cardId) {
+  let name = null;
+  await updateRealm((realm) => {
+    const card = realm.cards.find((c) => c.id === cardId);
+    if (!card || card.status === "resolved") return;
+    closeCard(realm, card, "ended");
+    name = card.name;
+    addLog(realm, { type: "card-ended", card: cardId, seat: card.seat, text: card.name });
+  });
+  if (name) await ChatMessage.create({ speaker: { alias: getKingdom()?.name || game.i18n.localize("UKM.Manager.Unnamed") }, content: `<div class="ukm-chat"><h3>${Handlebars.escapeExpression(name)}</h3><p>${game.i18n.localize("UKM.Card.EndedChat")}</p></div>` });
+  return { ok: !!name };
 }
 
 export async function dismissCard(cardId) {

@@ -181,6 +181,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       rollNow: KingdomManager.#rollNow,
       recordOutcome: KingdomManager.#recordOutcome,
       dismiss: KingdomManager.#dismiss,
+      endCard: KingdomManager.#endCard,
       toggleTask: KingdomManager.#toggleTask,
       beginRankUp: KingdomManager.#beginRankUp,
       startProject: KingdomManager.#startProject,
@@ -216,7 +217,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     desks: { template: `modules/${MODULE_ID}/templates/manager/desks.hbs`, scrollable: [""] },
     settlements: { template: `modules/${MODULE_ID}/templates/manager/settlements.hbs`, scrollable: [""] },
     council: { template: `modules/${MODULE_ID}/templates/manager/council.hbs`, scrollable: [""] },
-    log: { template: `modules/${MODULE_ID}/templates/manager/log.hbs`, scrollable: [""] }
+    log: { template: `modules/${MODULE_ID}/templates/manager/log.hbs`, scrollable: [""] },
+    gm: { template: `modules/${MODULE_ID}/templates/manager/gm.hbs`, scrollable: [""] }
   };
 
   static TABS = {
@@ -225,12 +227,26 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         { id: "overview", icon: "fa-solid fa-landmark", label: "UKM.Manager.Tab.Overview" },
         { id: "desks", icon: "fa-solid fa-inbox", label: "UKM.Manager.Tab.Desks" },
         { id: "settlements", icon: "fa-solid fa-city", label: "UKM.Manager.Tab.Settlements" },
-        { id: "council", icon: "fa-solid fa-landmark-dome", label: "UKM.Manager.Tab.Council" },
-        { id: "log", icon: "fa-solid fa-scroll", label: "UKM.Manager.Tab.Log" }
+        { id: "council", icon: "fa-solid fa-crown", label: "UKM.Manager.Tab.Council" },
+        { id: "log", icon: "fa-solid fa-scroll", label: "UKM.Manager.Tab.Log" },
+        { id: "gm", icon: "fa-solid fa-user-secret", label: "UKM.Manager.Tab.Gm" }
       ],
       initial: "desks"
     }
   };
+
+  /** The GM tab is only for the GM. */
+  _configureRenderParts(options) {
+    const parts = super._configureRenderParts(options);
+    if (!game.user.isGM) delete parts.gm;
+    return parts;
+  }
+
+  _prepareTabs(group) {
+    const tabs = super._prepareTabs(group);
+    if (group === "primary" && !game.user.isGM) delete tabs.gm;
+    return tabs;
+  }
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
@@ -396,6 +412,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
           return {
             ...card,
             stageLabel: stage.stage?.label ?? null,
+            progressText: stage.stage?.goal ? game.i18n.format("UKM.Card.Progress", { label: stage.stage.progressLabel ?? "", now: card.progress ?? 0, goal: stage.stage.goal }) : null,
             isOpen: card.status === "open",
             restingUntil: resting ? formatDate(card.restUntil) : null,
             isAssigned: card.status === "assigned",
@@ -429,6 +446,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             mod: cardLevelMod(card, realm) + (card.dcAdjust ?? 0),
             continuous: event?.traits?.includes("continuous"),
             continuousHint: event?.continuous ? game.i18n.format("UKM.Card.ContinuousUntil", { ends: endsText(event) || "…" }) : null,
+            gmEnds: game.user.isGM && (event?.continuous?.endOn ?? []).includes("gm") && card.status !== "resolved",
+            gmNote: game.user.isGM ? event?.gmNote ?? null : null,
             escalate: !!event?.escalate,
             daysLeft: days,
             urgent: days <= 7 && !resting,
@@ -793,6 +812,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const realm = getRealm();
     const fame = getFame();
     const ruins = getRuin();
+    const esc = Handlebars.escapeExpression;
     const num = (name, value, min = 0, max = 999) => `<input type="number" name="${name}" value="${value}" min="${min}" max="${max}" step="1">`;
     const rows = Object.entries(ruins)
       .map(([key, r]) => `<tr><td>${game.i18n.localize(`UKM.Ruin.${key}`)}</td><td>${num(`${key}.value`, r.value, 0, 99)}</td><td>${num(`${key}.max`, r.max, 1, 99)}</td><td>${num(`${key}.penalty`, Math.abs(r.penalty ?? 0), 0, 20)}</td></tr>`)
@@ -801,9 +821,22 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       <div class="form-group"><label>BP</label>${num("treasury", realm.treasury, -9999, 99999)}</div>
       <div class="form-group"><label>${game.i18n.localize("UKM.Manager.Unrest")}</label>${num("unrest", getUnrest(), 0, 99)}</div>
       <div class="form-group"><label>${game.i18n.localize("UKM.Manager.Fame")}</label>${num("fame", fame.value, 0, fame.max ?? 3)}</div>
-      <table class="ukm-adjust"><thead><tr><th></th><th>${game.i18n.localize("UKM.Adjust.Ruin")}</th><th>${game.i18n.localize("UKM.Adjust.Threshold")}</th><th>${game.i18n.localize("UKM.Adjust.Penalty")}</th></tr></thead><tbody>${rows}</tbody></table>`;
+      <table class="ukm-adjust"><thead><tr><th></th><th>${game.i18n.localize("UKM.Adjust.Ruin")}</th><th>${game.i18n.localize("UKM.Adjust.Threshold")}</th><th>${game.i18n.localize("UKM.Adjust.Penalty")}</th></tr></thead><tbody>${rows}</tbody></table>
+      <div class="form-group"><label>${game.i18n.localize("UKM.Adjust.Trade")}</label>${num("trade", realm.tradeAgreements.length, 0, 20)}</div>
+      <details class="ukm-fold" open><summary>${game.i18n.localize("UKM.Adjust.Stats")}</summary>
+        <table class="ukm-adjust"><thead><tr><th></th><th>${game.i18n.localize("UKM.Manager.Rank")}</th><th>${game.i18n.localize("UKM.Adjust.Points")}</th></tr></thead><tbody>${Object.keys(REALM_STATS)
+          .map((stat) => `<tr><td>${game.i18n.localize(`UKM.Stat.${stat}`)}</td><td>${num(`stats.${stat}.rank`, realm.stats[stat]?.rank ?? 0, 0, 10)}</td><td>${num(`stats.${stat}.points`, Math.floor(realm.stats[stat]?.points ?? 0), 0, 99)}</td></tr>`)
+          .join("")}</tbody></table>
+      </details>
+      <details class="ukm-fold"><summary>${game.i18n.localize("UKM.Adjust.Ambitions")}</summary>
+        <table class="ukm-adjust"><thead><tr><th></th><th>${game.i18n.localize("UKM.Adjust.Steps")}</th><th>${game.i18n.localize("UKM.Adjust.Handled")}</th></tr></thead><tbody>${ambitionsView(realm)
+          .map((a) => `<tr><td>${esc(a.seatLabel)}: ${esc(a.title)}</td><td>${num(`ambitions.${a.seat}`, a.reached, 0, a.total)}</td><td>${num(`seatRecord.${a.seat}`, realm.seatRecord?.[a.seat] ?? 0, 0, 999)}</td></tr>`)
+          .join("")}</tbody></table>
+        <p class="hint">${game.i18n.localize("UKM.Adjust.AmbitionsHint")}</p>
+      </details>`;
     const data = await UkmDialog.prompt({
       window: { title: game.i18n.localize("UKM.Adjust.Title") },
+      position: { width: 520 },
       content,
       ok: { label: game.i18n.localize("UKM.Adjust.Save"), callback: (event, button) => foundry.utils.expandObject(new foundry.applications.ux.FormDataExtended(button.form).object) },
       rejectClose: false
@@ -1126,6 +1159,13 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     if (degree) await sendRequest("gm", { op: "record", cardId: card.id, degree });
   }
 
+  static async #endCard(event, target) {
+    const card = findCard(target);
+    if (!card || !game.user.isGM) return;
+    const ok = await UkmDialog.confirm({ window: { title: card.name }, content: `<p>${game.i18n.localize("UKM.Card.EndConfirm")}</p>`, rejectClose: false });
+    if (ok) await sendRequest("gm", { op: "endCard", cardId: card.id });
+  }
+
   static async #dismiss(event, target) {
     const card = findCard(target);
     if (!card || !game.user.isGM) return;
@@ -1160,7 +1200,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       const noteKey = `UKM.Manager.StoryNotes.${chapter}`;
       const note = game.i18n.has(noteKey) ? `<p class="hint">${esc(game.i18n.localize(noteKey))}</p>` : "";
       const list = events.length
-        ? `<ul class="ukm-scene-options">${events.map((e) => `<li><strong>${esc(e.name)}</strong> ${esc(e.hook ?? "")}</li>`).join("")}</ul>`
+        ? `<ul class="ukm-scene-options">${events.map((e) => `<li><strong>${esc(e.name)}</strong> ${esc(e.hook ?? "")}${e.gmNote ? `<br><span class="hint">${esc(e.gmNote)}</span>` : ""}</li>`).join("")}</ul>`
         : `<p class="hint">${esc(L("StoryNone"))}</p>`;
       const choice = await UkmDialog.wait({
         window: { title: L("StoryEvents") },

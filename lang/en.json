@@ -134,8 +134,9 @@
         "Overview": "Realm",
         "Desks": "Desks",
         "Log": "Chronicle",
-        "Council": "Council",
-        "Settlements": "Settlements"
+        "Council": "Court",
+        "Settlements": "Settlements",
+        "Gm": "GM"
       },
       "Level": "Level",
       "Size": "Size",
@@ -245,7 +246,13 @@
       "LentFrom": "lent from {desks}",
       "NoDesk": "no desk",
       "ContinuousUntil": "Ongoing: after each try it rests until next month, and it keeps coming back until {ends}.",
-      "Resting": "Back on {date}. An ongoing card can be tried once a month."
+      "Resting": "Back on {date}. An ongoing card can be tried once a month.",
+      "Progress": "{label} {now} / {goal}",
+      "End": "It's over",
+      "EndHint": "The story has settled this (the threat is dealt with): end the card now.",
+      "EndConfirm": "End this card now? Nothing else is applied.",
+      "EndedChat": "This is over.",
+      "GmNote": "GM: {note}"
     },
     "Log": {
       "income": "Treasury collected {amount} BP.",
@@ -282,7 +289,8 @@
       "track-monthly": "Settlements: {name}",
       "kingdom-imported": "Kingdom read from the PF2e kingdom sheet: {name}",
       "gm-adjust": "The GM set the kingdom's numbers by hand",
-      "service": "Crown service: {name} ({amount} BP)"
+      "service": "Crown service: {name} ({amount} BP)",
+      "card-ended": "Ended: {name}."
     },
     "Seat": {
       "ruler": "Ruler",
@@ -496,7 +504,12 @@
       "AnarchyHarder": "In anarchy this works ×{n}.",
       "TradeAgreements": "{n} new trade agreements",
       "Times": "{line} (×{n})",
-      "DicePending": "Unrest {amount}: roll it from chat."
+      "DicePending": "Unrest {amount}: roll it from chat.",
+      "Progress": "{label} {amount} ({now} of {goal}).",
+      "ProgressDefault": "Progress",
+      "ProgressPreview": "Progress {amount}",
+      "EveryN": "Every {n}th time: {what}",
+      "Chosen": "Chosen: {label}."
     },
     "Difficulty": {
       "veryEasy": "Very easy",
@@ -639,7 +652,8 @@
       "DecisionFunded": "{ruler} funds <strong>{name}</strong> ({cost} BP). The council voted {yes} for, {no} against. Work starts on its desk.",
       "DecisionRejectedTitle": "The crown turns down a proposal",
       "DecisionRejected": "{ruler} turns down <strong>{name}</strong>. The council voted {yes} for, {no} against.",
-      "ProposeOrStart": "Start it now from the treasury, or put it to the council?"
+      "ProposeOrStart": "Start it now from the treasury, or put it to the council?",
+      "Heading": "The council"
     },
     "Ambition": {
       "Heading": "Seat ambitions",
@@ -936,7 +950,15 @@
       "Ruin": "Ruin",
       "Threshold": "Threshold",
       "Penalty": "Penalty (−)",
-      "Save": "Save"
+      "Save": "Save",
+      "Trade": "Trade agreements",
+      "TradeName": "Trade agreement",
+      "Stats": "Realm stats",
+      "Points": "Points",
+      "Ambitions": "Seat ambitions",
+      "Steps": "Steps done",
+      "Handled": "Matters handled",
+      "AmbitionsHint": "Steps done sets where each ambition stands (no rewards are given). Matters handled is the count the first step of most ambitions looks at."
     },
     "Ends": {
       "criticalSuccess": "a critical success",

@@ -1,3 +1,4 @@
+import { resourceDieValue } from "./rules.js";
 import { drawAudience } from "./audiences.js";
 import { createCard, drawMonthlyEvents, drawWeeklyMatter } from "./deck.js";
 import { forceTrouble, troubleOptions } from "./troubles.js";
@@ -8,7 +9,7 @@ import { setFortified } from "./projects.js";
 import { applyTrackStage, refreshDerived, settlementHex, settlements, syncKingdomSettlements } from "./settlements.js";
 import { getKingdom } from "../integrations/party.js";
 import { applyStartingPoint } from "./midcampaign.js";
-import { completeGmTask, dismissCard, recordOutcome, rollCard } from "./resolve.js";
+import { completeGmTask, dismissCard, endCard, recordOutcome, rollCard } from "./resolve.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 
 function drawnNotice(card) {
@@ -23,6 +24,9 @@ const OPS = {
   record: async ({ cardId, degree }) => {
     await recordOutcome(cardId, degree);
     return {};
+  },
+  endCard: async ({ cardId }) => {
+    await endCard(cardId);
   },
   dismiss: async ({ cardId }) => {
     await dismissCard(cardId);
@@ -105,6 +109,24 @@ const OPS = {
         a.ruin.value = Math.max(0, n(given.value, a.ruin.value));
         a.penalty = -Math.abs(n(given.penalty, a.penalty));
       }
+      for (const [stat, given] of Object.entries(data.stats ?? {})) {
+        const s = realm.stats[stat];
+        if (!s) continue;
+        s.rank = Math.max(0, Math.min(10, n(given.rank, s.rank)));
+        s.points = Math.max(0, n(given.points, s.points));
+      }
+      for (const [seat, steps] of Object.entries(data.ambitions ?? {})) {
+        realm.ambitions ??= {};
+        realm.ambitions[seat] = Math.max(0, n(steps, realm.ambitions[seat] ?? 0));
+      }
+      for (const [seat, count] of Object.entries(data.seatRecord ?? {})) {
+        realm.seatRecord ??= {};
+        realm.seatRecord[seat] = Math.max(0, n(count, realm.seatRecord[seat] ?? 0));
+      }
+      // Trade agreements: add plain ones or drop the newest to reach the number given.
+      const wanted = Math.max(0, n(data.trade, realm.tradeAgreements.length));
+      while (realm.tradeAgreements.length > wanted) realm.tradeAgreements.pop();
+      while (realm.tradeAgreements.length < wanted) realm.tradeAgreements.push({ id: foundry.utils.randomID(), name: game.i18n.localize("UKM.Adjust.TradeName"), weekly: Math.max(1, Math.round(resourceDieValue() / 2)) });
       addLog(realm, { type: "gm-adjust" });
     });
     return {};

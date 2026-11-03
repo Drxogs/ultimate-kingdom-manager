@@ -154,6 +154,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
       tapTreasury: draft?.tapTreasury ?? getSetting(SETTINGS.tapTreasury),
       pinsShown: draft?.pinsShown ?? getSetting(SETTINGS.pinsShown),
       raiseDead: draft?.raiseDead ?? getSetting(SETTINGS.raiseDead),
+      rollDice: draft?.rollDice ?? getSetting(SETTINGS.rollDice),
       showAllActors: this.#showAllActors,
       tapChoices: {
         approval: "UKM.Settings.TapTreasury.Approval",
@@ -195,6 +196,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
     await setSetting(SETTINGS.tapTreasury, data.tapTreasury);
     await setSetting(SETTINGS.pinsShown, !!data.pinsShown);
     await setSetting(SETTINGS.raiseDead, !!data.raiseDead);
+    await setSetting(SETTINGS.rollDice, !!data.rollDice);
     if (data.advisors) {
       const attitudes = {};
       const known = {};

@@ -82,6 +82,21 @@
       </div>
       </details>
     </article>
+    {{#if @first}}
+    <header class="ukm-major"><i class="fa-solid fa-map"></i> {{localize "UKM.Land.Heading"}}</header>
+    {{#if @root.land.available}}
+      <ul class="ukm-land">
+        <li><i class="fa-solid fa-hexagon-nodes"></i> {{localize "UKM.Land.Hexes" n=@root.land.hexes}} · {{localize "UKM.Land.Roads" n=@root.land.roads}} · {{localize "UKM.Land.Settlements" n=@root.land.settlements}}</li>
+        <li><i class="fa-solid fa-wheat-awn"></i> {{@root.land.foodLine}}</li>
+        <li><i class="fa-solid fa-tree"></i> {{#if @root.land.camps.length}}{{#each @root.land.camps}}{{this}}{{#unless @last}} · {{/unless}}{{/each}} → {{localize "UKM.Land.CampBp" bp=@root.land.worksiteBp}}{{else}}{{localize "UKM.Land.NoCamps"}}{{/if}}</li>
+        <li><i class="fa-solid fa-gem"></i> {{#if @root.land.commodities.length}}{{localize "UKM.Land.Commodities"}} {{#each @root.land.commodities}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}{{#if @root.land.idle.length}} <span class="hint">· {{localize "UKM.Land.Idle"}} {{#each @root.land.idle}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}{{else}}{{localize "UKM.Land.NoCommodities"}}{{/if}}</li>
+        {{#if @root.land.other.length}}<li><i class="fa-solid fa-landmark"></i> {{#each @root.land.other}}{{this}}{{#unless @last}} · {{/unless}}{{/each}}</li>{{/if}}
+      </ul>
+      <p class="hint">{{localize "UKM.Land.Hint"}}</p>
+    {{else}}
+      <p class="hint">{{localize "UKM.Land.NoMap"}}</p>
+    {{/if}}
+    {{/if}}
   {{else}}
     {{#if hasCapital}}<p class="hint">{{localize "UKM.Settlement.Empty"}}</p>{{/if}}
   {{/each}}

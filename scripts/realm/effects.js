@@ -1,5 +1,5 @@
 import { COMMODITY_BP, REALM_STATS, RUINS, RUIN_ABILITY, STAT_ALIASES } from "../constants.js";
-import { getEvent } from "../content/data.js";
+import { getCardEvent, getEvent } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
 import { resourceDieValue, weeklyIncome } from "./rules.js";
 import { isKingmakerActive, summarizeRealm } from "../integrations/kingmaker.js";
@@ -54,6 +54,10 @@ export function describeEffects(effects = []) {
   });
 }
 
+function getCardStages(card) {
+  return getCardEvent(card)?.stages ?? null;
+}
+
 /** A short readable line for one effect, used on cards, choice buttons and chat. */
 export function describeEffect(effect) {
   const [key, value] = Object.entries(effect)[0] ?? [];
@@ -101,7 +105,7 @@ export function describeEffect(effect) {
     case "flat":
       return loc("FlatPreview", { dc: value.dc });
     case "choose":
-      return loc("ChoosePreview", { n: value.n ?? 1, options: (value.from ?? []).map((o) => o.map(describeEffect).join(", ")).join(" / ") });
+      return loc("ChoosePreview", { n: value.n ?? 1, options: (value.from ?? []).map((o, i) => optionText(o, value.labels?.[i], ", ")).join(" / ") });
     case "spawn":
     case "repeat":
       return loc("Spawn", { name: getEvent(key === "repeat" ? null : value)?.name ?? game.i18n.localize("UKM.Effect.ThisEvent") });
@@ -111,6 +115,10 @@ export function describeEffect(effect) {
       return loc("Revealed");
     case "nextStage":
       return loc("NextStage");
+    case "progress":
+      return loc("ProgressPreview", { amount: formatAmount(value) });
+    case "ifEvery":
+      return value.label ? `${value.label}: ${describeEffects(value.then ?? []).join(", ")}` : loc("EveryN", { n: value.n, what: describeEffects(value.then ?? []).join(", ") });
     case "endEvent":
     case "endEventOneOf":
       return loc("EndsOther");
@@ -200,7 +208,13 @@ async function chooseRuin(ctx, amount, { exclude = [], count = 1 } = {}) {
   return chosen;
 }
 
-async function chooseOption(ctx, n, options) {
+/** One option of a choice, with its name if it has one: "Execution: Decay +1, Crime −2". */
+function optionText(effects, label, sep = "; ") {
+  const text = describeEffects(effects).join(sep);
+  return label ? `${label}: ${text}` : text;
+}
+
+async function chooseOption(ctx, n, options, labels = []) {
   const picked = [];
   for (let i = 0; i < n; i++) {
     const remaining = options.map((o, index) => ({ o, index })).filter(({ index }) => !picked.includes(index));
@@ -208,12 +222,12 @@ async function chooseOption(ctx, n, options) {
     const pick = await UkmDialog.wait({
       window: { title: ctx.card?.name ?? "" },
       content: `<p>${loc(n > 1 ? "ChooseMany" : "ChooseOne", { n, i: i + 1 })}</p>`,
-      buttons: remaining.map(({ o, index }) => ({ action: String(index), label: o.map(describeEffect).join("; ") })),
+      buttons: remaining.map(({ o, index }) => ({ action: String(index), label: optionText(o, labels[index]) })),
       rejectClose: false
     });
     picked.push(pick === null || pick === undefined ? remaining[0].index : Number(pick));
   }
-  return picked.map((i) => options[i]);
+  return picked.map((i) => ({ effects: options[i], label: labels[i] ?? null }));
 }
 
 function spreadIncome(realm, total, weeks = 4) {
@@ -448,8 +462,11 @@ export async function applyEffects(ctx, effects = []) {
         break;
       }
       case "choose": {
-        const picks = await chooseOption(ctx, value.n ?? 1, value.from ?? []);
-        for (const pick of picks) await applyEffects(ctx, pick);
+        const picks = await chooseOption(ctx, value.n ?? 1, value.from ?? [], value.labels ?? []);
+        for (const pick of picks) {
+          if (pick.label) ctx.note(loc("Chosen", { label: pick.label }));
+          await applyEffects(ctx, pick.effects);
+        }
         break;
       }
       case "spawnOneOf": {
@@ -485,6 +502,26 @@ export async function applyEffects(ctx, effects = []) {
       }
       case "ifRepeat": {
         if (ctx.card?.lastOutcome === value) await applyEffects(ctx, effect.then ?? []);
+        break;
+      }
+      case "progress": {
+        // A tally on the card (Grigori's Support Points, say); reaching the stage's goal moves it on.
+        const card = ctx.card;
+        if (!card) break;
+        const stages = getCardStages(card);
+        const goal = stages?.[card.stage ?? 0]?.goal;
+        card.progress = Math.max(0, (card.progress ?? 0) + value);
+        ctx.note(loc("Progress", { label: stages?.[card.stage ?? 0]?.progressLabel ?? loc("ProgressDefault"), amount: formatAmount(value), now: card.progress, goal: goal ?? "?" }));
+        if (goal && card.progress >= goal) {
+          card.stage = (card.stage ?? 0) + 1;
+          card.progress = 0;
+          ctx.note(loc("NextStage"));
+        }
+        break;
+      }
+      case "ifEvery": {
+        // Every nth try of an ongoing card (the 4th week = a month, say).
+        if ((ctx.card?.months ?? 1) % (value.n ?? 1) === 0) await applyEffects(ctx, value.then ?? []);
         break;
       }
       case "ifFirstMonth": {

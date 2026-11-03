@@ -52,10 +52,12 @@
                 {{#if matter}}<span class="ukm-tag">{{localize "UKM.Card.Matter"}}</span>{{/if}}{{#if trouble}}<span class="ukm-tag problem">{{localize "UKM.Trouble.Tag"}}</span>{{/if}}
                 {{#if escalate}}<span class="ukm-tag" data-tooltip="{{localize "UKM.Card.EscalateHint"}}"><i class="fa-solid fa-dragon"></i></span>{{/if}}
                 {{#if stageLabel}}<span class="ukm-tag">{{stageLabel}}</span>{{/if}}
+                {{#if progressText}}<span class="ukm-tag">{{progressText}}</span>{{/if}}
                 {{#if rerollTag}}<span class="ukm-tag ukm-reroll-tag" data-tooltip="{{localize "UKM.Fortune.What"}}"><i class="fa-solid fa-rotate"></i> {{localize "UKM.Fortune.Available" n=rerollTag}}</span>{{/if}}
                 {{#if (gt months 1)}}<span class="ukm-tag">{{localize "UKM.Card.Month" n=months}}</span>{{/if}}
               </div>
               <p class="ukm-hook">{{hook}}</p>
+              {{#if gmNote}}<p class="hint ukm-gm-note"><i class="fa-solid fa-user-secret"></i> {{gmNote}}</p>{{/if}}
               <div class="ukm-card-meta">
                 {{#unless isAudience}}<span><i class="fa-solid fa-dice-d20"></i> {{skill}} ({{ukmSigned mod}})</span>{{/unless}}
                 {{#if place}}<span><i class="fa-solid fa-location-dot"></i> {{place}}</span>{{/if}}
@@ -112,6 +114,7 @@
                   {{#if isAssigned}}<button type="button" data-action="rollNow" data-tooltip="{{localize "UKM.Card.RollNow"}}"><i class="fa-solid fa-dice-d20"></i></button>{{/if}}
                   {{#if canReveal}}<button type="button" data-action="reveal" data-tooltip="{{#if revealed}}{{localize "UKM.Pins.Hide"}}{{else}}{{localize "UKM.Pins.Reveal"}}{{/if}}"><i class="fa-solid {{#if revealed}}fa-eye-slash{{else}}fa-eye{{/if}}"></i></button>{{/if}}
                   <button type="button" data-action="recordOutcome" data-tooltip="{{localize "UKM.Card.Record"}}"><i class="fa-solid fa-gavel"></i></button>
+                  {{#if gmEnds}}<button type="button" data-action="endCard" data-tooltip="{{localize "UKM.Card.EndHint"}}"><i class="fa-solid fa-flag-checkered"></i> {{localize "UKM.Card.End"}}</button>{{/if}}
                   <button type="button" data-action="dismiss" data-tooltip="{{localize "UKM.Card.Dismiss"}}"><i class="fa-solid fa-xmark"></i></button>
                 {{/if}}
                 {{#if canFocus}}<button type="button" data-action="focusHex" data-tooltip="{{localize "UKM.Card.Focus"}}"><i class="fa-solid fa-map-location-dot"></i></button>{{/if}}

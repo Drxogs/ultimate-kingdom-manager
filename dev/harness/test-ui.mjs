@@ -1,7 +1,7 @@
 import { env } from "./setup.mjs";
 import Handlebars from "handlebars";
 import fs from "node:fs";
-foundry.applications.api.ApplicationV2 = class { async _prepareContext() { return {}; } _prepareTabs() { return { overview: { cssClass: "active" }, desks: {}, council: {}, log: {} }; } async _preparePartContext(p, c) { return c; } };
+foundry.applications.api.ApplicationV2 = class { async _prepareContext() { return {}; } _configureRenderParts() { return {}; } _prepareTabs() { return { overview: { cssClass: "active" }, desks: {}, council: {}, log: {}, gm: {} }; } async _preparePartContext(p, c) { return c; } };
 foundry.applications.api.HandlebarsApplicationMixin = (c) => c;
 globalThis.Handlebars = Object.assign(Handlebars, {});
 const R = "/home/claude/ukm-repo/scripts";
@@ -43,7 +43,7 @@ const ctx = await app._prepareContext({});
 const helpers = { localize: (k, o) => (o?.hash && Object.keys(o.hash).length ? game.i18n.format(k, o.hash) : game.i18n.localize(k)), ukmSigned: (n) => (n > 0 ? `+${n}` : `${n}`), concat: (...a) => a.slice(0, -1).join(""), gt: (a, b) => a > b, lt: (a, b) => a < b, eq: (a, b) => a === b };
 for (const [n, f] of Object.entries(helpers)) Handlebars.registerHelper(n, f);
 const out = {};
-for (const part of ["header", "overview", "desks", "settlements", "council", "log"]) {
+for (const part of ["header", "overview", "desks", "settlements", "council", "log", "gm"]) {
   const tpl = Handlebars.compile(fs.readFileSync(`/home/claude/ukm-repo/templates/manager/${part}.hbs`, "utf8"));
   const html = tpl({ ...ctx, tab: { cssClass: part === (process.env.TAB ?? "desks") ? "active" : "" } });
   out[part] = html;
@@ -51,6 +51,8 @@ for (const part of ["header", "overview", "desks", "settlements", "council", "lo
   if (part === "desks") console.log(html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 1400));
   if (part === "overview") console.log(html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 2600));
   if (part === "council") console.log(html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 400));
+  if (part === "settlements") { const t = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " "); const i = t.indexOf("The land"); console.log("LAND@", i, t.slice(i, i + 200)); }
+  if (part === "gm") console.log(html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 300));
 }
 if (process.env.PREVIEW) {
   const tabs = ["overview", "desks", "settlements", "council", "log"].map((t) => `<a class="${t === (process.env.TAB ?? "desks") ? "active" : ""}" data-tab="${t}"><i></i><span>${game.i18n.localize(`UKM.Manager.Tab.${{ overview: "Overview", desks: "Desks", settlements: "Settlements", council: "Council", log: "Log" }[t]}`)}</span></a>`).join("");

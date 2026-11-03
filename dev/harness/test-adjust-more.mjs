@@ -1,0 +1,15 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const { preloadData } = await import(`${R}/content/data.js`);
+await preloadData();
+env.settings.set("seatAssignments", {});
+const ok = (c, m) => console.log(c ? "ok  " : "FAIL", m);
+const G = await import(`${R}/realm/gm.js`);
+const { getRealm } = await import(`${R}/realm/state.js`);
+await G.gmAction({ op: "adjust", userId: "gm", data: { treasury: 50, unrest: 3, fame: 1, trade: 2, stats: { culture: { rank: 4, points: 7 } }, ambitions: { viceroy: 2 }, seatRecord: { emissary: 5 } } });
+const r = getRealm();
+ok(r.stats.culture.rank === 4 && r.stats.culture.points === 7, "stat rank and points set");
+ok(r.ambitions.viceroy === 2 && r.seatRecord.emissary === 5, "ambition step and matters handled set");
+ok(r.tradeAgreements.length === 2, "trade agreements added");
+await G.gmAction({ op: "adjust", userId: "gm", data: { trade: 0 } });
+ok(getRealm().tradeAgreements.length === 0 && getRealm().stats.culture.rank === 4, "trade agreements removed; other numbers kept");

@@ -3158,7 +3158,7 @@
         ]
       },
       "escalate": true,
-      "hook": "The devil the Sootscale kobolds worship has come looking for them. Run it from party level 13, if the Sootscales joined the realm.",
+      "hook": "Something is stirring up a settlement near the Sootscale caves.",
       "outcomes": {
         "criticalSuccess": [
           {
@@ -3200,7 +3200,8 @@
             "gm": "An NPC leader falls in with Zozraael's cult: treat their seat as empty until this ends or they're replaced."
           }
         ]
-      }
+      },
+      "gmNote": "Zozraael, the devil the Sootscales worship. Run it from party level 13, and only if the Sootscales joined the realm."
     },
     {
       "id": "forgotten-keep-elves",
@@ -3210,7 +3211,7 @@
         "chapter": 2,
         "gm": true
       },
-      "hook": "Elven diplomats want to visit and restore the Forgotten Keep. Run it a few months after the keep is claimed.",
+      "hook": "Elven diplomats want to visit and restore the Forgotten Keep.",
       "addOutcomes": {
         "success": [
           {
@@ -3224,7 +3225,8 @@
             "days": 30
           }
         ]
-      }
+      },
+      "gmNote": "Run it a few months after the keep is claimed. A success brings New Subjects a month later."
     },
     {
       "id": "slain-townsfolk",
@@ -3234,13 +3236,14 @@
         "chapter": 4,
         "gm": true
       },
-      "hook": "Villagers are being killed on the edge of the capital. It comes back every month until the killer is stopped.",
+      "hook": "Villagers are being killed on the edge of the capital.",
       "continuous": {
         "endOn": [
           "criticalSuccess",
           "gm"
         ]
-      }
+      },
+      "gmNote": "Kundal the werewolf. It comes back every month until he's stopped; end the card then (Unrest −1, or −1d4 if he's cured)."
     },
     {
       "id": "rabble-rouser",
@@ -3273,7 +3276,7 @@
           "stage2:criticalFailure"
         ]
       },
-      "hook": "A bard named Grigori is turning the capital against its rulers.",
+      "hook": "A bard named Grigori is turning the capital against its rulers. Answer him every week; a week he's ignored counts as a failure.",
       "stages": [
         {
           "label": "Answer his propaganda",
@@ -3282,41 +3285,101 @@
             "statecraft",
             "arts"
           ],
+          "goal": 15,
+          "progressLabel": "Support",
           "outcomes": {
             "criticalSuccess": [
               {
-                "note": "His campaign collapses. He can be arrested and put on trial."
+                "progress": 4
               },
               {
-                "nextStage": true
+                "ifEvery": {
+                  "n": 4,
+                  "label": "Each month he's still at it",
+                  "then": [
+                    {
+                      "unrest": "1d6"
+                    },
+                    {
+                      "spawn": "public-scandal",
+                      "days": 0
+                    }
+                  ]
+                }
               }
             ],
             "success": [
               {
+                "progress": 2
+              },
+              {
                 "unrest": 1
+              },
+              {
+                "ifEvery": {
+                  "n": 4,
+                  "label": "Each month he's still at it",
+                  "then": [
+                    {
+                      "unrest": "1d6"
+                    },
+                    {
+                      "spawn": "public-scandal",
+                      "days": 0
+                    }
+                  ]
+                }
               }
             ],
             "failure": [
               {
-                "unrest": "1d6"
+                "progress": -1
               },
               {
-                "spawn": "public-scandal",
-                "days": 0
+                "unrest": 1
+              },
+              {
+                "ifEvery": {
+                  "n": 4,
+                  "label": "Each month he's still at it",
+                  "then": [
+                    {
+                      "unrest": "1d6"
+                    },
+                    {
+                      "spawn": "public-scandal",
+                      "days": 0
+                    }
+                  ]
+                }
               }
             ],
             "criticalFailure": [
               {
-                "unrest": "1d6"
+                "progress": -2
+              },
+              {
+                "unrest": "1d4"
               },
               {
                 "ruin": {
-                  "strife": 1
+                  "choice": 1
                 }
               },
               {
-                "spawn": "public-scandal",
-                "days": 0
+                "ifEvery": {
+                  "n": 4,
+                  "label": "Each month he's still at it",
+                  "then": [
+                    {
+                      "unrest": "1d6"
+                    },
+                    {
+                      "spawn": "public-scandal",
+                      "days": 0
+                    }
+                  ]
+                }
               }
             ]
           }
@@ -3336,6 +3399,11 @@
               {
                 "choose": {
                   "n": 1,
+                  "labels": [
+                    "Execution",
+                    "Exile",
+                    "Pardon"
+                  ],
                   "from": [
                     [
                       {
@@ -3372,7 +3440,7 @@
                 }
               },
               {
-                "gm": "Grigori is found guilty. The party picks the sentence: execution, exile or pardon (the choice above)."
+                "note": "Grigori is found guilty"
               },
               {
                 "end": true
@@ -3382,6 +3450,10 @@
               {
                 "choose": {
                   "n": 1,
+                  "labels": [
+                    "Execution",
+                    "Exile"
+                  ],
                   "from": [
                     [
                       {
@@ -3406,7 +3478,7 @@
                 }
               },
               {
-                "gm": "Grigori is found guilty: execution or exile (the choice above)."
+                "note": "Grigori is found guilty"
               },
               {
                 "end": true
@@ -3442,10 +3514,14 @@
                 "end": true
               }
             ]
-          }
+          },
+          "deadlineDays": 30,
+          "mod": 2
         }
       ],
-      "outcomes": {}
+      "outcomes": {},
+      "deadlineDays": 7,
+      "gmNote": "He's an agent of Pitax, though he doesn't know it."
     },
     {
       "id": "desperate-spies",
@@ -3469,7 +3545,7 @@
         "defense",
         "intrigue"
       ],
-      "hook": "Two kobold spies are skulking around the capital for the troll king. One roll covers their week in town.",
+      "hook": "Someone is skulking around the capital, poking at its defenses.",
       "outcomes": {
         "criticalSuccess": [
           {
@@ -3478,32 +3554,26 @@
         ],
         "success": [
           {
-            "flat": {
-              "dc": 11,
-              "failure": [
-                {
-                  "unrest": 1
-                }
-              ]
-            }
+            "unrest": "1d4+1"
           }
         ],
         "failure": [
           {
-            "unrest": 1
+            "unrest": "1d6+2"
           }
         ],
         "criticalFailure": [
           {
-            "unrest": 1
+            "unrest": "2d4+3"
           },
           {
             "ruin": {
-              "decay": 1
+              "decay": 2
             }
           }
         ]
-      }
+      },
+      "gmNote": "Kereek and Prazil, kobolds sent by Hargulka. One roll covers their week in town."
     },
     {
       "id": "cult-of-gyronna",
@@ -3519,7 +3589,8 @@
         "rule": "capital",
         "hidden": true
       },
-      "hook": "A respected midwife leads a cult of the Angry Hag in the capital. Run it once the realm is level 4."
+      "hook": "Someone is setting the capital's people against each other in secret.",
+      "gmNote": "A cult of Gyronna led by the midwife Malgorzata Niska. Run it once the realm is level 4."
     },
     {
       "id": "founding-of-tatzlford",
@@ -3662,7 +3733,7 @@
           "gm"
         ]
       },
-      "hook": "Trolls are raiding the borders. Run it from party level 5; it comes back every month until Hargulka is defeated.",
+      "hook": "Trolls are raiding the realm's borders.",
       "outcomes": {
         "criticalSuccess": [
           {
@@ -3697,7 +3768,8 @@
             "gm": "Trolls raze a farm: remove one Farmland (or, with none, lose a border hex near NM7)."
           }
         ]
-      }
+      },
+      "gmNote": "Run it from party level 5. It comes back every month until Hargulka is defeated: end the card then."
     },
     {
       "id": "weird-gnome",
@@ -3751,7 +3823,8 @@
             }
           }
         ]
-      }
+      },
+      "gmNote": "The Lantern King, looking the realm over."
     },
     {
       "id": "rampage-of-the-beast",
@@ -3774,7 +3847,7 @@
       "skill": [
         "defense"
       ],
-      "hook": "A huge owlbear tore through town. Play it as a flashback; a settlement with only water around it gets one degree better.",
+      "hook": "A huge beast tore through town.",
       "outcomes": {
         "criticalSuccess": [
           {
@@ -3820,7 +3893,8 @@
             "gm": "Walls lose a stage, and four other tracks there (players' choice) lose a stage."
           }
         ]
-      }
+      },
+      "gmNote": "The Beast of Tatzlford. Play it as a flashback; a settlement with only water around it gets one degree better."
     },
     {
       "id": "bloom-cult-activity",
@@ -3831,7 +3905,8 @@
         "chapter": 5,
         "gm": true
       },
-      "hook": "Lamashtu's bloom cult is at work in a settlement."
+      "hook": "A cult is at work in a settlement.",
+      "gmNote": "Lamashtu's bloom cult."
     },
     {
       "id": "bloom-monster-activity",
@@ -3841,7 +3916,8 @@
         "chapter": 5,
         "gm": true
       },
-      "hook": "Bloom-cursed beasts are loose. While the cult stands, one of these starts every month."
+      "hook": "Monsters are loose in the countryside.",
+      "gmNote": "Bloom-cursed beasts. While the cult stands, one starts every month."
     },
     {
       "id": "asmeranda-troupe",
@@ -3882,7 +3958,7 @@
           "gm"
         ]
       },
-      "hook": "First World armies besiege the capital from a bloom. It's rolled every day, 2 harder each day, until the bloom is ended. A day the bloom was beaten counts one degree better.",
+      "hook": "Strange armies besiege the capital.",
       "outcomes": {
         "criticalSuccess": [
           {
@@ -3940,7 +4016,8 @@
             "eventDc": 2
           }
         ]
-      }
+      },
+      "gmNote": "First World armies from a bloom. Rolled daily, 2 harder each day, until the bloom is ended; a day the bloom was beaten counts one degree better. End the card when it's over."
     }
   ]
 }

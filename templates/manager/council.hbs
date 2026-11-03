@@ -1,4 +1,63 @@
 <section class="tab ukm-council {{tab.cssClass}}" data-tab="council" data-group="primary">
+  <header class="ukm-major"><i class="fa-solid fa-crown"></i> {{localize "UKM.Royal.Heading"}}</header>
+  <section class="ukm-crown">
+    {{#if crown.ruler}}
+      <p>{{localize "UKM.Royal.RulerLine" ruler=crown.ruler}}</p>
+      <ul class="ukm-royal-powers">
+        {{#each crown.powers}}
+          <li data-power="{{power}}">
+            <strong>{{name}}</strong> <span class="ukm-tag {{#unless left}}spent{{/unless}}">{{#if left}}{{localize "UKM.Royal.Ready"}}{{else}}{{localize "UKM.Royal.Used"}}{{/if}}</span>
+            <span class="hint">{{hint}}</span>
+            {{#if button}}<button type="button" class="ukm-rank-up" data-action="royalCourt"><i class="fa-solid fa-crown"></i> {{localize "UKM.Royal.HoldCourt"}}</button>{{/if}}
+          </li>
+        {{/each}}
+      </ul>
+      {{#if crown.canAbdicate}}
+        <p class="ukm-abdicate"><span class="ukm-urgent"><i class="fa-solid fa-chess-king"></i> {{localize "UKM.Royal.AbdicateTitle"}}</span> <span class="hint">{{crown.abdicateHint}}</span>
+          <button type="button" class="ukm-rank-up" data-action="abdicate"><i class="fa-solid fa-chess-king"></i> {{localize "UKM.Royal.Abdicate"}}</button></p>
+      {{/if}}
+      {{#if crown.favours.length}}
+        <p class="ukm-favours-title"><strong>{{localize "UKM.Royal.Favours"}}</strong></p>
+        <ul class="ukm-favours">
+          {{#each crown.favours}}
+            <li data-favour="{{id}}"><i class="fa-solid fa-scroll"></i> <strong>{{name}}</strong> <span class="hint">{{preview}}{{#if from}} · {{from}}{{/if}}</span>
+              {{#if @root.crown.canUse}}<button type="button" class="ukm-rank-up" data-action="useFavour"><i class="fa-solid fa-hand-sparkles"></i> {{localize "UKM.Royal.UseFavour"}}</button>{{/if}}
+            </li>
+          {{/each}}
+        </ul>
+      {{/if}}
+    {{else}}
+      <p class="hint">{{localize "UKM.Royal.NoRuler"}}</p>
+    {{/if}}
+  </section>
+
+  <header class="ukm-major"><i class="fa-solid fa-hand-holding-heart"></i> {{localize "UKM.Service.Heading"}}</header>
+  <section class="ukm-services">
+    <p class="hint">{{localize "UKM.Service.Intro"}}</p>
+    <ul class="ukm-service-list">
+      {{#each services}}
+        <li class="ukm-service {{#if blocked}}blocked{{/if}}" data-service="{{id}}">
+          <strong>{{name}}</strong> <span class="ukm-tag">{{cost}} BP</span>
+          <span class="hint">{{hook}}</span>
+          {{#if pending}}<span class="hint"><i class="fa-solid fa-hourglass-half"></i> {{localize "UKM.Service.Pending"}}</span>
+          {{else if canAsk}}<button type="button" class="ukm-rank-up" data-action="requestService"><i class="fa-solid fa-hand-holding-heart"></i> {{#if buyNow}}{{localize "UKM.Service.Buy"}}{{else}}{{localize "UKM.Service.Ask"}}{{/if}}</button>
+          {{else}}<span class="hint" data-tooltip="{{needs}}">{{blocked}}</span>{{/if}}
+        </li>
+      {{/each}}
+    </ul>
+  </section>
+
+  <header class="ukm-major">{{localize "UKM.Fortune.Heading"}}{{#if fortunes.length}} <span class="ukm-tag">{{fortunes.length}}</span>{{/if}}</header>
+  {{#if fortunes.length}}
+    <ul class="ukm-fortunes">
+      {{#each fortunes}}<li><i class="fa-solid fa-rotate"></i> {{text}} {{#if from}}<span class="hint">· {{from}}</span>{{/if}}</li>{{/each}}
+    </ul>
+    <p class="hint">{{localize "UKM.Fortune.What"}}</p>
+  {{else}}
+    <p class="hint">{{localize "UKM.Fortune.None"}}</p>
+  {{/if}}
+
+  <header class="ukm-major"><i class="fa-solid fa-landmark-dome"></i> {{localize "UKM.Council.Heading"}}</header>
   {{#if council.enabled}}
     <header class="ukm-council-head">
       <p>{{localize "UKM.Council.Intro"}}</p>
