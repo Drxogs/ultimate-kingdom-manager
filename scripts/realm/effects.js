@@ -515,13 +515,16 @@ export async function applyEffects(ctx, effects = []) {
         if (goal && card.progress >= goal) {
           card.stage = (card.stage ?? 0) + 1;
           card.progress = 0;
+          card.stageStarted = card.stage;
+          card.months = 0;
           ctx.note(loc("NextStage"));
         }
         break;
       }
       case "ifEvery": {
         // Every nth try of an ongoing card (the 4th week = a month, say).
-        if ((ctx.card?.months ?? 1) % (value.n ?? 1) === 0) await applyEffects(ctx, value.then ?? []);
+        const tries = ctx.card?.months ?? 1;
+        if (tries > 0 && tries % (value.n ?? 1) === 0) await applyEffects(ctx, value.then ?? []);
         break;
       }
       case "ifFirstMonth": {
@@ -565,6 +568,7 @@ export async function applyEffects(ctx, effects = []) {
       }
       case "nextStage": {
         ctx.card.stage = (ctx.card.stage ?? 0) + 1;
+        ctx.card.stageStarted = ctx.card.stage;
         if (effect.dcAdjust) ctx.card.dcAdjust = (ctx.card.dcAdjust ?? 0) + effect.dcAdjust;
         break;
       }

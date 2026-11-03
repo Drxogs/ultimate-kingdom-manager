@@ -54,10 +54,10 @@
                 {{#if stageLabel}}<span class="ukm-tag">{{stageLabel}}</span>{{/if}}
                 {{#if progressText}}<span class="ukm-tag">{{progressText}}</span>{{/if}}
                 {{#if rerollTag}}<span class="ukm-tag ukm-reroll-tag" data-tooltip="{{localize "UKM.Fortune.What"}}"><i class="fa-solid fa-rotate"></i> {{localize "UKM.Fortune.Available" n=rerollTag}}</span>{{/if}}
-                {{#if (gt months 1)}}<span class="ukm-tag">{{localize "UKM.Card.Month" n=months}}</span>{{/if}}
+                {{#if tryLabel}}<span class="ukm-tag">{{tryLabel}}</span>{{/if}}
               </div>
               <p class="ukm-hook">{{hook}}</p>
-              {{#if gmNote}}<p class="hint ukm-gm-note"><i class="fa-solid fa-user-secret"></i> {{gmNote}}</p>{{/if}}
+              {{#if gmNote}}<p class="hint ukm-gm-note"><i class="fa-solid fa-user-secret"></i> {{gmNote}}{{#if adventureLink}} <a data-action="openAdventure"><i class="fa-solid fa-book-open"></i> {{localize "UKM.Card.InAdventure"}}</a>{{/if}}</p>{{/if}}
               <div class="ukm-card-meta">
                 {{#unless isAudience}}<span><i class="fa-solid fa-dice-d20"></i> {{skill}} ({{ukmSigned mod}})</span>{{/unless}}
                 {{#if place}}<span><i class="fa-solid fa-location-dot"></i> {{place}}</span>{{/if}}
@@ -69,7 +69,7 @@
                   <span class="{{#if urgent}}ukm-urgent{{/if}}"><i class="fa-solid fa-hourglass-half"></i> {{localize "UKM.Card.DaysLeft" days=daysLeft}}</span>
                 {{/if}}
               </div>
-              {{#if restingUntil}}<p class="hint ukm-resting"><i class="fa-solid fa-moon"></i> {{localize "UKM.Card.Resting" date=restingUntil}}</p>{{/if}}
+              {{#if restingText}}<p class="hint ukm-resting"><i class="fa-solid fa-hourglass-half"></i> {{restingText}}</p>{{/if}}
               {{#if isAssigned}}
                 <p class="ukm-working">
                   <i class="fa-solid {{#if assigneePersonal}}fa-user{{else}}fa-user-tie{{/if}}"></i>

@@ -2992,7 +2992,8 @@
             "inDays": 1
           }
         ]
-      }
+      },
+      "apHeading": "Public Outburst"
     },
     {
       "id": "too-close-to-home",
@@ -3061,7 +3062,8 @@
             }
           }
         ]
-      }
+      },
+      "apHeading": "Too Close To Home"
     },
     {
       "id": "urban-outbreak",
@@ -3128,7 +3130,8 @@
             }
           }
         ]
-      }
+      },
+      "apHeading": "Urban Outbreak"
     },
     {
       "id": "old-sharptooth",
@@ -3201,7 +3204,8 @@
           }
         ]
       },
-      "gmNote": "Zozraael, the devil the Sootscales worship. Run it from party level 13, and only if the Sootscales joined the realm."
+      "gmNote": "Zozraael, the devil the Sootscales worship. Run it from party level 13, and only if the Sootscales joined the realm.",
+      "apHeading": "Old Sharptooth"
     },
     {
       "id": "forgotten-keep-elves",
@@ -3226,7 +3230,8 @@
           }
         ]
       },
-      "gmNote": "Run it a few months after the keep is claimed. A success brings New Subjects a month later."
+      "gmNote": "Run it a few months after the keep is claimed. A success brings New Subjects a month later.",
+      "apHeading": "Forgotten Keep"
     },
     {
       "id": "slain-townsfolk",
@@ -3243,7 +3248,8 @@
           "gm"
         ]
       },
-      "gmNote": "Kundal the werewolf. It comes back every month until he's stopped; end the card then (Unrest −1, or −1d4 if he's cured)."
+      "gmNote": "Kundal the werewolf. It comes back every month until he's stopped; end the card then (Unrest −1, or −1d4 if he's cured).",
+      "apHeading": "The Slain Townsfolk"
     },
     {
       "id": "rabble-rouser",
@@ -3521,7 +3527,8 @@
       ],
       "outcomes": {},
       "deadlineDays": 7,
-      "gmNote": "He's an agent of Pitax, though he doesn't know it."
+      "gmNote": "He's an agent of Pitax, though he doesn't know it.",
+      "apHeading": "The Rabble-Rouser"
     },
     {
       "id": "desperate-spies",
@@ -3573,7 +3580,8 @@
           }
         ]
       },
-      "gmNote": "Kereek and Prazil, kobolds sent by Hargulka. One roll covers their week in town."
+      "gmNote": "Kereek and Prazil, kobolds sent by Hargulka. One roll covers their week in town.",
+      "apHeading": "Desperate Spies"
     },
     {
       "id": "cult-of-gyronna",
@@ -3590,7 +3598,8 @@
         "hidden": true
       },
       "hook": "Someone is setting the capital's people against each other in secret.",
-      "gmNote": "A cult of Gyronna led by the midwife Malgorzata Niska. Run it once the realm is level 4."
+      "gmNote": "A cult of Gyronna led by the midwife Malgorzata Niska. Run it once the realm is level 4.",
+      "apHeading": "The Cult of Gyronna"
     },
     {
       "id": "founding-of-tatzlford",
@@ -3648,7 +3657,8 @@
             "bpDice": -4
           }
         ]
-      }
+      },
+      "apHeading": "The Founding of Tatzlford"
     },
     {
       "id": "return-of-the-black-tears",
@@ -3706,7 +3716,8 @@
             }
           }
         ]
-      }
+      },
+      "apHeading": "Return of the Black Tears"
     },
     {
       "id": "troll-sightings",
@@ -3769,7 +3780,8 @@
           }
         ]
       },
-      "gmNote": "Run it from party level 5. It comes back every month until Hargulka is defeated: end the card then."
+      "gmNote": "Run it from party level 5. It comes back every month until Hargulka is defeated: end the card then.",
+      "apHeading": "Troll Sightings"
     },
     {
       "id": "weird-gnome",
@@ -3824,7 +3836,8 @@
           }
         ]
       },
-      "gmNote": "The Lantern King, looking the realm over."
+      "gmNote": "The Lantern King, looking the realm over.",
+      "apHeading": "Trouble with a Weird Gnome"
     },
     {
       "id": "rampage-of-the-beast",
@@ -3894,7 +3907,8 @@
           }
         ]
       },
-      "gmNote": "The Beast of Tatzlford. Play it as a flashback; a settlement with only water around it gets one degree better."
+      "gmNote": "The Beast of Tatzlford. Play it as a flashback; a settlement with only water around it gets one degree better.",
+      "apHeading": "Rampage of the Beast"
     },
     {
       "id": "bloom-cult-activity",
@@ -3906,7 +3920,8 @@
         "gm": true
       },
       "hook": "A cult is at work in a settlement.",
-      "gmNote": "Lamashtu's bloom cult."
+      "gmNote": "Lamashtu's bloom cult.",
+      "apHeading": "Random Cult Events"
     },
     {
       "id": "bloom-monster-activity",
@@ -3927,7 +3942,8 @@
         "chapter": 8,
         "gm": true
       },
-      "hook": "The singer Asmeranda brings her troupe to a theater of the party's choice, in thanks for her rescue."
+      "hook": "The singer Asmeranda brings her troupe to a theater of the party's choice, in thanks for her rescue.",
+      "apHeading": "Asmeranda"
     },
     {
       "id": "endure-bloom-siege",
@@ -4017,7 +4033,8 @@
           }
         ]
       },
-      "gmNote": "First World armies from a bloom. Rolled daily, 2 harder each day, until the bloom is ended; a day the bloom was beaten counts one degree better. End the card when it's over."
+      "gmNote": "First World armies from a bloom. Rolled daily, 2 harder each day, until the bloom is ended; a day the bloom was beaten counts one degree better. End the card when it's over.",
+      "apHeading": "Endure Bloom Siege"
     }
   ]
 }

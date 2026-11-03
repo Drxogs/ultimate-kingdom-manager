@@ -252,7 +252,12 @@
       "EndHint": "The story has settled this (the threat is dealt with): end the card now.",
       "EndConfirm": "End this card now? Nothing else is applied.",
       "EndedChat": "This is over.",
-      "GmNote": "GM: {note}"
+      "GmNote": "GM: {note}",
+      "InAdventure": "Read it in the adventure",
+      "NoAdventure": "This event's section wasn't found in the imported adventure.",
+      "Week": "Week {n}",
+      "RestingIn": "Back in {days} days ({date}). An ongoing card waits between tries.",
+      "RestingStage": "{stage} in {days} days ({date})."
     },
     "Log": {
       "income": "Treasury collected {amount} BP.",

@@ -28,6 +28,7 @@ import {
   unknownMapSettlements
 } from "../realm/settlements.js";
 import { getProject, getStoryEvents, storyChapter } from "../content/data.js";
+import { adventurePage, openAdventurePage } from "../content/adventure-links.js";
 import { sendRequest } from "../realm/requests.js";
 import {
   busyWith,
@@ -160,6 +161,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     position: { width: 860, height: 720 },
     actions: {
       openCard: KingdomManager.#openCard,
+      openAdventure: KingdomManager.#openAdventure,
       focusHex: KingdomManager.#focusHex,
       drawEvents: KingdomManager.#drawEvents,
       drawMatter: KingdomManager.#drawMatter,
@@ -415,6 +417,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             progressText: stage.stage?.goal ? game.i18n.format("UKM.Card.Progress", { label: stage.stage.progressLabel ?? "", now: card.progress ?? 0, goal: stage.stage.goal }) : null,
             isOpen: card.status === "open",
             restingUntil: resting ? formatDate(card.restUntil) : null,
+            restingText: resting ? game.i18n.format(stage.stage?.label && card.stageStarted === card.stage ? "UKM.Card.RestingStage" : "UKM.Card.RestingIn", { stage: stage.stage?.label ?? "", days: Math.max(1, daysUntil(card.restUntil, now)), date: formatDate(card.restUntil) }) : null,
+            tryLabel: (card.months ?? 1) > 1 ? game.i18n.format((stage.stage?.deadlineDays ?? event?.deadlineDays ?? 30) <= 7 ? "UKM.Card.Week" : "UKM.Card.Month", { n: card.months }) : null,
             isAssigned: card.status === "assigned",
             isEscalated: card.status === "escalated",
             isRolled: card.status === "rolled",
@@ -455,7 +459,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
               ? card.target?.settlement || (zone ? `${zone.label} (${game.i18n.localize("UKM.Manager.Level")} ${zone.level})` : null)
               : game.i18n.localize("UKM.Manager.Unknown"),
             canFocus: showPlace && !!card.target?.hexKey,
-            hasPage: game.user.isGM && !!getImportedPage(`event-${card.eventId}`)
+            hasPage: game.user.isGM && !!getImportedPage(`event-${card.eventId}`),
+            adventureLink: game.user.isGM && !!event?.apHeading && !!adventurePage(event.apHeading),
           };
         });
 
@@ -591,6 +596,11 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     const key = `UKM.Log.${entry.type}`;
     const data = { name: entry.text ?? "", amount: entry.amount ?? 0 };
     return game.i18n.has(key) ? game.i18n.format(key, data) : entry.text ?? entry.type;
+  }
+
+  static #openAdventure(event, target) {
+    const heading = target.dataset.heading ?? getCardEvent(getRealm().cards.find((c) => c.id === target.closest("[data-card]")?.dataset.card))?.apHeading;
+    if (!openAdventurePage(heading)) ui.notifications.info(game.i18n.localize("UKM.Card.NoAdventure"));
   }
 
   static #openCard(event, target) {
@@ -1200,7 +1210,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       const noteKey = `UKM.Manager.StoryNotes.${chapter}`;
       const note = game.i18n.has(noteKey) ? `<p class="hint">${esc(game.i18n.localize(noteKey))}</p>` : "";
       const list = events.length
-        ? `<ul class="ukm-scene-options">${events.map((e) => `<li><strong>${esc(e.name)}</strong> ${esc(e.hook ?? "")}${e.gmNote ? `<br><span class="hint">${esc(e.gmNote)}</span>` : ""}</li>`).join("")}</ul>`
+        ? `<ul class="ukm-scene-options">${events.map((e) => `<li><strong>${esc(e.name)}</strong> ${esc(e.hook ?? "")}${e.gmNote ? `<br><span class="hint">${esc(e.gmNote)}</span>` : ""}${e.apHeading && adventurePage(e.apHeading) ? ` <a data-heading="${esc(e.apHeading)}"><i class="fa-solid fa-book-open"></i> ${esc(game.i18n.localize("UKM.Card.InAdventure"))}</a>` : ""}</li>`).join("")}</ul>`
         : `<p class="hint">${esc(L("StoryNone"))}</p>`;
       const choice = await UkmDialog.wait({
         window: { title: L("StoryEvents") },
@@ -1209,6 +1219,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         buttons: [...events.map((e) => ({ action: e.id, label: e.name })), { action: "cancel", label: game.i18n.localize("Cancel") }],
         render: (event, dialog) => {
           const root = dialog.element ?? event?.target?.element;
+          root?.querySelectorAll("[data-heading]").forEach((a) => a.addEventListener("click", () => openAdventurePage(a.dataset.heading)));
           root?.querySelector("[data-ukm-chapter]")?.addEventListener("change", (ev) => {
             chapter = Number(ev.target.value);
             dialog.close();

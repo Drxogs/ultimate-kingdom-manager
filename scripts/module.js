@@ -19,6 +19,7 @@ import { KingdomManager } from "./apps/kingdom-manager.js";
 import { SetupWizard } from "./apps/setup-wizard.js";
 import { StoryImportApp } from "./apps/story-import-app.js";
 import { bindFlatButtons } from "./realm/flat.js";
+import { clearAdventureLinks } from "./content/adventure-links.js";
 import { announceAnarchy, noteUnrest } from "./realm/standing.js";
 
 const TEMPLATES = [
@@ -213,6 +214,8 @@ Hooks.on("renderActorSheet", (app, html) => {
 
 // Flat-check buttons in chat: any player can roll them.
 Hooks.on("renderChatMessageHTML", (message, html) => bindFlatButtons(html));
+// A newly imported adventure can now be linked from story cards.
+for (const hook of ["createJournalEntry", "deleteJournalEntry", "createJournalEntryPage"]) Hooks.on(hook, () => clearAdventureLinks());
 
 Hooks.on("renderHexHUD", addHexHudLine);
 Hooks.on("renderKingmakerHexHUD", addHexHudLine);

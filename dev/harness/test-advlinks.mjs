@@ -1,0 +1,14 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const ok = (c, m) => console.log(c ? "ok  " : "FAIL", m);
+let opened = null;
+const page = { id: "p4", name: "Part 1: Home Sweet Home", type: "text", text: { content: "<h2>Kingdom Events</h2><p>…</p><h3>Event 2: The Rabble-Rouser</h3><p>Grigori…</p>" }, toc: { "event-2-the-rabble-rouser": { text: "Event 2: The Rabble-Rouser" } } };
+const ours = { getFlag: () => "events", pages: [{ type: "text", name: "The Rabble-Rouser", text: { content: "" } }] };
+const chapter = { getFlag: () => null, pages: [page], sheet: { render: (f, o) => (opened = o) } };
+page.parent = chapter;
+globalThis.game.journal = [ours, chapter];
+const A = await import(`${R}/content/adventure-links.js`);
+const found = A.adventurePage("The Rabble-Rouser");
+ok(found?.page === page && found.anchor === "event-2-the-rabble-rouser", "finds the adventure's heading, not our own page");
+ok(A.openAdventurePage("The Rabble-Rouser") && opened.pageId === "p4" && opened.anchor === "event-2-the-rabble-rouser", "opens the chapter at that heading");
+ok(A.adventurePage("Nothing Like This") === null, "no link when it isn't there");
