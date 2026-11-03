@@ -837,7 +837,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       <div class="form-group"><label>${game.i18n.localize("UKM.Manager.Fame")}</label>${num("fame", fame.value, 0, fame.max ?? 3)}</div>
       <table class="ukm-adjust"><thead><tr><th></th><th>${game.i18n.localize("UKM.Adjust.Ruin")}</th><th>${game.i18n.localize("UKM.Adjust.Threshold")}</th><th>${game.i18n.localize("UKM.Adjust.Penalty")}</th></tr></thead><tbody>${rows}</tbody></table>
       <div class="form-group"><label>${game.i18n.localize("UKM.Adjust.Trade")}</label>${num("trade", realm.tradeAgreements.length, 0, 20)}</div>
-      <details class="ukm-fold" open><summary>${game.i18n.localize("UKM.Adjust.Stats")}</summary>
+      <details class="ukm-fold"><summary>${game.i18n.localize("UKM.Adjust.Stats")}</summary>
         <table class="ukm-adjust"><thead><tr><th></th><th>${game.i18n.localize("UKM.Manager.Rank")}</th><th>${game.i18n.localize("UKM.Adjust.Points")}</th></tr></thead><tbody>${Object.keys(REALM_STATS)
           .map((stat) => `<tr><td>${game.i18n.localize(`UKM.Stat.${stat}`)}</td><td>${num(`stats.${stat}.rank`, realm.stats[stat]?.rank ?? 0, 0, 10)}</td><td>${num(`stats.${stat}.points`, Math.floor(realm.stats[stat]?.points ?? 0), 0, 99)}</td></tr>`)
           .join("")}</tbody></table>
