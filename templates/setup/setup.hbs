@@ -102,10 +102,6 @@
   <section>
     <h3>{{localize "UKM.Setup.Seats"}}</h3>
     <p class="hint">{{localize "UKM.Setup.SeatsHint"}}</p>
-    <p class="hint">
-      {{#if showAllActors}}{{localize "UKM.Setup.ShowingAll"}}{{else}}{{localize "UKM.Setup.ShowingCompanions"}}{{/if}}
-      <a data-action="toggleActors">{{#if showAllActors}}{{localize "UKM.Setup.ShowFewer"}}{{else}}{{localize "UKM.Setup.ShowAll"}}{{/if}}</a>
-    </p>
     <table class="ukm-seats">
       <thead>
         <tr>
@@ -122,20 +118,18 @@
           <td>
             <select name="seats.{{seat}}.holder">
               <option value="">{{localize "UKM.Setup.None"}}</option>
-              {{#each holderGroups}}
-                <optgroup label="{{label}}">{{selectOptions choices selected=../holder}}</optgroup>
-              {{/each}}
+              {{selectOptions @root.supervisorChoices selected=holder}}
             </select>
           </td>
           <td>
             <select name="seats.{{seat}}.companion">
-              <option value="">{{localize "UKM.Setup.None"}}</option>
+              <option value="">{{localize "UKM.Setup.AutoHired"}}</option>
               {{selectOptions companionChoices selected=companion}}
             </select>
             {{#if wantsAdvisor}}<p class="hint ukm-urgent">{{localize "UKM.Setup.WantsAdvisor"}}</p>{{/if}}
           </td>
           <td>
-            <select name="seats.{{seat}}.supervisor">
+            <select name="seats.{{seat}}.supervisor" {{#if holder}}disabled{{/if}}>
               <option value="">{{localize "UKM.Setup.None"}}</option>
               {{selectOptions @root.supervisorChoices selected=supervisor}}
             </select>

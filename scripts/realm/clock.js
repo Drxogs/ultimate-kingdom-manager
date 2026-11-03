@@ -131,7 +131,7 @@ function runWeek(realm) {
   const income = weeklyIncome(realm);
   const foodCost = Math.round(weeklyFoodShortfall(realm) * 0.5);
   realm.treasury += income.total;
-  const hired = SEATS.filter((seat) => isHired(seat) && !getKingdom()?.leadership?.[seat]?.uuid).length;
+  const hired = SEATS.filter((seat) => isHired(seat)).length;
   if (hired) {
     realm.treasury = Math.max(0, realm.treasury - hired * HIRED_UPKEEP);
     addLog(realm, { type: "hired-upkeep", amount: -hired * HIRED_UPKEEP });

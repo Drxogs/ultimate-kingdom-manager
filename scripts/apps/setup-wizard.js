@@ -63,7 +63,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
   /** Ticking an advisor as known (or not) updates the seat lists straight away, keeping the rest of the form. */
   _onRender(context, options) {
     super._onRender?.(context, options);
-    for (const box of this.element.querySelectorAll('input[name^="advisors."][name$=".known"]')) {
+    for (const box of this.element.querySelectorAll('input[name^="advisors."][name$=".known"], select[name^="seats."][name$=".holder"]')) {
       box.addEventListener("change", () => {
         this.#draft = foundry.utils.expandObject(new foundry.applications.ux.FormDataExtended(this.element).object);
         this.render();
@@ -165,7 +165,7 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
         ...row,
         holderGroups: holderGroupsFor(row.seat, row.holder),
         // A seat a character holds still wants an advisor: delegated work then has a second pair of hands.
-        wantsAdvisor: !!row.holder && !row.companion && Object.keys(row.companionChoices ?? {}).length > 0
+        wantsAdvisor: !row.companion && Object.keys(row.companionChoices ?? {}).length > 1
       })),
       holderGroups: [
         { label: game.i18n.localize("UKM.Setup.GroupCharacters"), choices: actorChoices },

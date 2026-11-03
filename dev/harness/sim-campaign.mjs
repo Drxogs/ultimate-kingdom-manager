@@ -239,7 +239,8 @@ const seatScore = (pc, seat) => {
 const seatOf = {};
 const pairs = party.flatMap((pc) => ALL_SEATS.map((seat) => ({ pc, seat, score: seatScore(pc, seat) }))).sort((a, b) => b.score - a.score);
 for (const { pc, seat } of pairs) if (!Object.values(seatOf).includes(seat) && !seatOf[pc.id]) seatOf[pc.id] = seat;
-const COMPANION = { treasurer: "jubilost", viceroy: "svetlana", counselor: "linzi", magister: "octavia", emissary: "valerie", general: "amiri" };
+// The advisors known from the start: the Levetons and the companions from Lady Jamandi's feast.
+const COMPANION = { treasurer: "oleg", viceroy: "svetlana", counselor: "linzi", magister: "harrim", emissary: "valerie", general: "amiri" };
 const assignments = {};
 for (const seat of ALL_SEATS) if (!Object.values(seatOf).includes(seat)) assignments[seat] = { companion: COMPANION[seat], supervisor: party[0].uuid };
 // By default a companion advises every seat (COMPANIONS=empty: only seats nobody holds), also the ones a character holds (supervised by that character).

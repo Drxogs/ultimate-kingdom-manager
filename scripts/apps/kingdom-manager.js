@@ -395,7 +395,9 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       const mine =
         (leader?.isOwner && !game.user.isGM) || (supervisor?.isOwner && !game.user.isGM) || false;
       const canAct = canActForSeat(game.user, seat);
-      const holderName = leader?.name ?? companion?.name ?? (hired ? game.i18n.localize("UKM.Hired.Name") : null);
+      // The desk is held by a character (or nobody); its delegated work always goes to the advisor.
+      const advisorName = companion?.name ?? game.i18n.localize("UKM.Hired.Name");
+      const holderName = leader?.name ?? advisorName;
       const advisorBusy = busyWith(realm, `seat:${seat}`);
       const lentTo = realm.cards.find((c) => c.status === "assigned" && c.assignee?.lockSeats?.includes(seat));
 
@@ -473,7 +475,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         holder: holderName,
         isCompanion: !leader && (!!companion || hired),
         sulking: sulking ? game.i18n.format("UKM.Attitude.WontAdvise", { name: sulking.name, attitude: game.i18n.localize(`UKM.Attitude.${companionAttitude(sulking.id)}`) }) : null,
-        advisor: leader && companion && !leader.name.toLowerCase().startsWith(companion.name.toLowerCase()) ? companion.name : null,
+        advisor: leader ? advisorName : null,
+        advisorHired: hired,
         supervisor: supervisor && supervisor.uuid !== leader?.uuid ? supervisor.name : null,
         mine,
         openToAll: seatOpenToAll(seat),

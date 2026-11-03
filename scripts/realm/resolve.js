@@ -89,18 +89,15 @@ export function canActForSeat(user, seat) {
   return seatOpenToAll(seat);
 }
 
-function seatHolderName(seat) {
-  const leaderUuid = getKingdom()?.leadership?.[seat]?.uuid;
-  const leader = leaderUuid ? fromUuidSync(leaderUuid) : null;
-  if (leader) return leader.name;
+/** Who works a seat's delegated cards: its companion advisor, or a hired one. */
+export function seatAdvisorName(seat) {
   const companionId = seatCompanionId(seat);
   if (companionId) return getCompanion(companionId)?.name ?? null;
-  return isHired(seat) ? game.i18n.localize("UKM.Hired.Name") : null;
+  return game.i18n.localize("UKM.Hired.Name");
 }
 
 function hiredOnly(seat) {
-  const kingdom = getKingdom();
-  return isHired(seat) && !kingdom?.leadership?.[seat]?.uuid;
+  return isHired(seat);
 }
 
 /**
@@ -126,19 +123,11 @@ export async function assignCard(request) {
     if (!actor || (!inParty && !user.isGM && !actor.testUserPermission(user, "OWNER"))) return { ok: false, reason: "NotYourCharacter" };
     if (!actor.skills?.[request.personalSkill]) return { ok: false, reason: "NoSkill" };
     assignee = { type: "pc", actorUuid: actor.uuid, name: actor.name, skill, personalSkill: request.personalSkill };
-    const own = seatsOf(actor.uuid);
-    if (!own.includes(card.seat)) {
-      const lockSeats = [card.seat, ...own];
-      for (const seat of lockSeats) {
-        const busy = busyWith(realm, `seat:${seat}`);
-        if (busy) return { ok: false, reason: "DeskBusy", data: { desk: game.i18n.localize(`UKM.Seat.${seat}`), card: busy.name } };
-      }
-      assignee.lockSeats = lockSeats;
-      assignee.helping = true;
-    }
+    // A character from another desk can help; only the character is busy. Each desk's advisor keeps working.
+    if (!seatsOf(actor.uuid).includes(card.seat)) assignee.helping = true;
   } else {
     const event = cardStage(card).event;
-    const name = event?.signature ? getCompanion(seatCompanionId(card.seat))?.name ?? seatHolderName(card.seat) : seatHolderName(card.seat);
+    const name = seatAdvisorName(card.seat);
     if (!name) return { ok: false, reason: "SeatVacant" };
     assignee = { type: "advisor", seat: card.seat, name, skill };
   }
@@ -159,10 +148,9 @@ export async function assignCard(request) {
     addLog(r, { type: "card-assigned", card: card.id, seat: card.seat, text: `${card.name} — ${assignee.name}` });
   });
   if (assignee.helping) {
-    const desks = assignee.lockSeats.map((s) => game.i18n.localize(`UKM.Seat.${s}`)).join(", ");
     await ChatMessage.create({
       speaker: { alias: getKingdom()?.name || game.i18n.localize("UKM.Manager.Unnamed") },
-      content: `<div class="ukm-chat${chatClass(card)}">${chatKicker(card)}<h3>${Handlebars.escapeExpression(card.name)}</h3><p>${game.i18n.format("UKM.Card.HelpingChat", { name: Handlebars.escapeExpression(assignee.name), seat: game.i18n.localize(`UKM.Seat.${card.seat}`), days, desks })}</p></div>`
+      content: `<div class="ukm-chat${chatClass(card)}">${chatKicker(card)}<h3>${Handlebars.escapeExpression(card.name)}</h3><p>${game.i18n.format("UKM.Card.HelpingChat", { name: Handlebars.escapeExpression(assignee.name), seat: game.i18n.localize(`UKM.Seat.${card.seat}`), days })}</p></div>`
     });
   }
   return { ok: true, days };

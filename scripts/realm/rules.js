@@ -123,8 +123,12 @@ export function attitudeAtLeast(id, wanted) {
   return ATTITUDES.indexOf(companionAttitude(id)) >= ATTITUDES.indexOf(wanted);
 }
 
+/**
+ * Delegated work always goes to the seat's advisor, never to the character who holds it. A seat with no
+ * willing companion advisor gets a hired one automatically (−2 on rolls, 1 BP a week).
+ */
 export function isHired(seat) {
-  return getSetting(SETTINGS.seatAssignments)?.[seat]?.companion === HIRED_ADVISOR;
+  return getSetting(SETTINGS.seatAssignments)?.[seat]?.companion === HIRED_ADVISOR || !seatCompanionId(seat);
 }
 
 /** The companion advising a seat, as long as they're still willing to. */
@@ -134,8 +138,8 @@ export function seatCompanionId(seat) {
   return attitudeAtLeast(id, "indifferent") ? id : null;
 }
 
-/** Advisors the party meets at Oleg's Trading Post at the start, known unless the GM says otherwise. */
-const KNOWN_AT_START = new Set(["oleg", "svetlana", "kesten"]);
+/** Advisors the party meets at the start (Lady Jamandi's party and Oleg's Trading Post), known unless the GM says otherwise. */
+const KNOWN_AT_START = new Set(["oleg", "svetlana", "kesten", "amiri", "linzi", "valerie", "harrim"]);
 
 /** Whether the party has met an advisor, so they're offered for seats. Advisors the GM added are always known. */
 export function isKnownAdvisor(id) {
@@ -172,7 +176,8 @@ export function seatFilled(seat) {
   const companionId = seatCompanionId(seat);
   const companion = companionId ? getCompanion(companionId) : null;
   return {
-    filled: !!leader?.uuid || !!companion || isHired(seat),
+    // Every seat has an advisor now (a hired one if nothing else), so every seat is worked.
+    filled: true,
     suited: !!companion?.seats?.includes(seat)
   };
 }
