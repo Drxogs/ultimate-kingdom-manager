@@ -132,6 +132,7 @@
               <option value="">{{localize "UKM.Setup.None"}}</option>
               {{selectOptions companionChoices selected=companion}}
             </select>
+            {{#if wantsAdvisor}}<p class="hint ukm-urgent">{{localize "UKM.Setup.WantsAdvisor"}}</p>{{/if}}
           </td>
           <td>
             <select name="seats.{{seat}}.supervisor">

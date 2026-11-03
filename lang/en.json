@@ -54,7 +54,7 @@
       "Reimport": "Re-import",
       "Table": "Your table",
       "Seats": "Leadership seats",
-      "SeatsHint": "Give each seat a holder: a player character, an NPC actor, or a companion advisor. Seats held by advisors need a player to supervise them, so every desk has someone at the table looking after it.",
+      "SeatsHint": "Give each seat a holder (a player character, an NPC actor or a companion) and, if you can, a companion advisor as well, even on seats a character holds. The advisor takes delegated cards with a bonus while the character is free to handle others personally. Seats held by advisors need a player to supervise them.",
       "Seat": "Seat",
       "Holder": "Holder",
       "Companion": "Advisor",
@@ -100,7 +100,8 @@
       "KingdomHint": "The kingdom's numbers (Unrest, Ruin, Fame, level) are kept by the Kingdom Manager, not the PF2e kingdom sheet.",
       "Ruler": "Ruler",
       "RulerHint": "One player character wears the crown. The ruler isn't a seat: they also hold whatever seat they sit in, and they get the royal powers (Realm tab, The crown).",
-      "CapitalName": "Capital's name"
+      "CapitalName": "Capital's name",
+      "WantsAdvisor": "No advisor yet: delegated cards here have nobody but the holder to work them."
     },
     "Import": {
       "Title": "Import Story Content",

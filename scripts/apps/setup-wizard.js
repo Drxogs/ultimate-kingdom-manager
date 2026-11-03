@@ -161,7 +161,12 @@ export class SetupWizard extends HandlebarsApplicationMixin(ApplicationV2) {
         allowed: "UKM.Settings.TapTreasury.Allowed",
         disabled: "UKM.Settings.TapTreasury.Disabled"
       },
-      seats: seats.map((row) => ({ ...row, holderGroups: holderGroupsFor(row.seat, row.holder) })),
+      seats: seats.map((row) => ({
+        ...row,
+        holderGroups: holderGroupsFor(row.seat, row.holder),
+        // A seat a character holds still wants an advisor: delegated work then has a second pair of hands.
+        wantsAdvisor: !!row.holder && !row.companion && Object.keys(row.companionChoices ?? {}).length > 0
+      })),
       holderGroups: [
         { label: game.i18n.localize("UKM.Setup.GroupCharacters"), choices: actorChoices },
         {

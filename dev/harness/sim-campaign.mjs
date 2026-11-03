@@ -242,8 +242,8 @@ for (const { pc, seat } of pairs) if (!Object.values(seatOf).includes(seat) && !
 const COMPANION = { treasurer: "jubilost", viceroy: "svetlana", counselor: "linzi", magister: "octavia", emissary: "valerie", general: "amiri" };
 const assignments = {};
 for (const seat of ALL_SEATS) if (!Object.values(seatOf).includes(seat)) assignments[seat] = { companion: COMPANION[seat], supervisor: party[0].uuid };
-// COMPANIONS=all: a companion advises every seat, also the ones a character holds (supervised by that character).
-if (process.env.COMPANIONS === "all") for (const pc of party) if (seatOf[pc.id]) assignments[seatOf[pc.id]] = { companion: COMPANION[seatOf[pc.id]], supervisor: pc.uuid };
+// By default a companion advises every seat (COMPANIONS=empty: only seats nobody holds), also the ones a character holds (supervised by that character).
+if (process.env.COMPANIONS !== "empty") for (const pc of party) if (seatOf[pc.id]) assignments[seatOf[pc.id]] = { companion: COMPANION[seatOf[pc.id]], supervisor: pc.uuid };
 realLog("PARTY", PARTY, JSON.stringify(seatOf), "companions", Object.keys(assignments).join(","));
 for (const [k, v] of Object.entries({ seatAssignments: assignments, knownAdvisors: Object.fromEntries(Object.values(COMPANION).map((c) => [c, true])), companionAttitudes: Object.fromEntries(Object.values(COMPANION).map((c) => [c, "friendly"])), levelGravity: 1, costGradient: {}, clock: {}, audiences: true, council: false, deskMatters: true, pinResolved: "remove", tapTreasury: "disabled", pinsShown: false, rollDice: false, anarchyRule: process.env.ANARCHY ?? "all", unrestCap: Number(process.env.UCAP ?? 0) })) env.settings.set(k, v);
 const realmKey = "ultimate-kingdom-manager-next.realm";
