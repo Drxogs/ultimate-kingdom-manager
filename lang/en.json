@@ -795,6 +795,17 @@
       "stability": "Stability",
       "TheAdvisor": "The advisor"
     },
+    "GmTab": {
+      "SetupHead": "Setting up",
+      "Setup": "Seats, advisors, the founding focus and the module's options.",
+      "Adjust": "Fix a number by hand: BP, Unrest, Fame, Ruin, trade agreements, realm stats and ambitions.",
+      "Import": "Bring the adventure's journals and the kingdom handbook into this world.",
+      "EventsHead": "Drawing events",
+      "DrawNow": "Run this month's random draw now instead of waiting for the month to turn.",
+      "DrawAudience": "Someone asks for an audience at court.",
+      "DrawMatter": "Put a small weekly matter on the quietest desk.",
+      "PickEvent": "Choose any event from the monthly deck and put it on its desk."
+    },
     "Start": {
       "Title": "Joining mid-campaign",
       "Open": "Joining mid-campaign?",

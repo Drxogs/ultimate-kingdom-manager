@@ -358,6 +358,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
           }))
       : [];
     context.openTasks = context.gmTasks.filter((t) => !t.done).length;
+    if (game.user.isGM) Object.assign(context, this.#prepareGmTools());
     context.log = realm.log
       .slice(-LOG_SHOWN)
       .reverse()
@@ -370,6 +371,11 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     for (const fold of this.element.querySelectorAll("details[data-fold]")) {
       fold.addEventListener("toggle", () => writeFold(fold.dataset.fold, fold.open));
     }
+    // GM tab: picking a chapter shows its story events.
+    this.element.querySelector("select[name=ukm-story-chapter]")?.addEventListener("change", async (ev) => {
+      if (game.user.isGM) await setSetting(SETTINGS.chapter, Number(ev.target.value));
+      this.render();
+    });
   }
 
   async _preparePartContext(partId, context) {
@@ -462,6 +468,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
               ? card.target?.settlement || (zone ? `${zone.label} (${game.i18n.localize("UKM.Manager.Level")} ${zone.level})` : null)
               : game.i18n.localize("UKM.Manager.Unknown"),
             canFocus: showPlace && !!card.target?.hexKey,
+            // A settlement's problem says which settlement in its title, so two plagues can be told apart.
+            name: showPlace && card.target?.settlement && event?.placement?.type === "settlement" && !card.name.includes(card.target.settlement) ? `${card.name} (${card.target.settlement})` : card.name,
             hasPage: game.user.isGM && !!getImportedPage(`event-${card.eventId}`),
             adventureLink: game.user.isGM && !!event?.apHeading && !!adventurePage(event.apHeading),
           };
@@ -1197,69 +1205,36 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
     if (task) await sendRequest("gm", { op: "task", taskId: id });
   }
 
-  static async #storyEvent() {
-    const all = getStoryEvents();
-    if (!all.length) return;
-    const esc = Handlebars.escapeExpression;
+  /** GM tab: the chosen chapter's story events, and every deck event for Pick an event. */
+  #prepareGmTools() {
     const L = (k) => game.i18n.localize(`UKM.Manager.${k}`);
-    let chapter = Number(getSetting(SETTINGS.chapter)) || 4;
-    let shown = chapter;
-    let eventId = null;
-    // Pick a chapter, then an event from it; changing the chapter redraws the list.
-    for (;;) {
-      const events = all.filter((e) => storyChapter(e) === chapter);
-      const options = Array.from({ length: 11 }, (_, i) => i + 1)
-        .map((n) => `<option value="${n}" ${n === chapter ? "selected" : ""}>${esc(game.i18n.localize(`UKM.Manager.StoryChapters.${n}`))}</option>`)
-        .join("");
-      const noteKey = `UKM.Manager.StoryNotes.${chapter}`;
-      const note = game.i18n.has(noteKey) ? `<p class="hint">${esc(game.i18n.localize(noteKey))}</p>` : "";
-      const list = events.length
-        ? `<ul class="ukm-scene-options">${events.map((e) => `<li><strong>${esc(e.name)}</strong> ${esc(e.hook ?? "")}${e.gmNote ? `<br><span class="hint">${esc(e.gmNote)}</span>` : ""}${e.apHeading && adventurePage(e.apHeading) ? ` <a data-heading="${esc(e.apHeading)}"><i class="fa-solid fa-book-open"></i> ${esc(game.i18n.localize("UKM.Card.InAdventure"))}</a>` : ""}</li>`).join("")}</ul>`
-        : `<p class="hint">${esc(L("StoryNone"))}</p>`;
-      const choice = await UkmDialog.wait({
-        window: { title: L("StoryEvents") },
-        position: { width: 560 },
-        content: `<p class="hint">${esc(L("StoryEventsHint"))}</p><div class="form-group"><label>${esc(L("StoryChapter"))}</label><select name="chapter" data-ukm-chapter>${options}</select></div>${list}${note}`,
-        buttons: [...events.map((e) => ({ action: e.id, label: e.name })), { action: "cancel", label: game.i18n.localize("Cancel") }],
-        render: (event, dialog) => {
-          const root = dialog.element ?? event?.target?.element;
-          root?.querySelectorAll("[data-heading]").forEach((a) => a.addEventListener("click", () => openAdventurePage(a.dataset.heading)));
-          root?.querySelector("[data-ukm-chapter]")?.addEventListener("change", (ev) => {
-            chapter = Number(ev.target.value);
-            dialog.close();
-          });
-        },
-        rejectClose: false
-      });
-      if (choice == null && chapter !== shown) {
-        shown = chapter;
-        if (game.user.isGM) await setSetting(SETTINGS.chapter, chapter);
-        continue;
-      }
-      eventId = choice && choice !== "cancel" ? choice : null;
-      break;
-    }
+    const chapter = Number(getSetting(SETTINGS.chapter)) || 4;
+    const noteKey = `UKM.Manager.StoryNotes.${chapter}`;
+    const kinds = { problem: L("PickEventProblem"), opportunity: L("PickEventOpportunity") };
+    return {
+      story: {
+        chapters: Array.from({ length: 11 }, (_, i) => ({ n: i + 1, label: game.i18n.localize(`UKM.Manager.StoryChapters.${i + 1}`), selected: i + 1 === chapter })),
+        note: game.i18n.has(noteKey) ? game.i18n.localize(noteKey) : "",
+        events: getStoryEvents()
+          .filter((e) => storyChapter(e) === chapter)
+          .map((e) => ({ id: e.id, name: e.name, hook: e.hook ?? "", gmNote: e.gmNote ?? "", heading: e.apHeading && adventurePage(e.apHeading) ? e.apHeading : null }))
+      },
+      deckEvents: getEvents()
+        .slice()
+        .sort((x, y) => x.name.localeCompare(y.name))
+        .map((e) => ({ id: e.id, label: `${e.name} (${kinds[e.kind] ?? e.kind})` }))
+    };
+  }
+
+  static async #storyEvent(event, target) {
+    const eventId = target.dataset.eventId;
     if (eventId) await sendRequest("gm", { op: "storyEvent", eventId });
   }
 
-  /** Put any event from the monthly deck on its desk: for testing, or when the story uses one. */
-  static async #deckEvent() {
-    const esc = Handlebars.escapeExpression;
-    const L = (k) => game.i18n.localize(`UKM.Manager.${k}`);
-    const events = getEvents().slice().sort((a, b) => a.name.localeCompare(b.name));
-    const kinds = { problem: L("PickEventProblem"), opportunity: L("PickEventOpportunity") };
-    const options = events.map((e) => `<option value="${esc(e.id)}">${esc(e.name)} (${esc(kinds[e.kind] ?? e.kind)})</option>`).join("");
-    const eventId = await UkmDialog.wait({
-      window: { title: L("PickEvent") },
-      position: { width: 460 },
-      content: `<p class="hint">${esc(L("PickEventHint"))}</p><div class="form-group"><select name="eventId">${options}</select></div>`,
-      buttons: [
-        { action: "ok", label: L("PickEventGo"), default: true, callback: (event, button) => button.form.elements.eventId.value },
-        { action: "cancel", label: game.i18n.localize("Cancel") }
-      ],
-      rejectClose: false
-    });
-    if (eventId && eventId !== "cancel") await sendRequest("gm", { op: "deckEvent", eventId });
+  /** Put the event picked in the GM tab's list on its desk. */
+  static async #deckEvent(event, target) {
+    const eventId = target.closest("li")?.querySelector("select[name=ukm-deck-event]")?.value;
+    if (eventId) await sendRequest("gm", { op: "deckEvent", eventId });
   }
 
   static async #drawMatter() {

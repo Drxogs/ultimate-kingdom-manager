@@ -14,15 +14,46 @@
       <p class="hint">{{localize "UKM.Manager.NoTasks"}}</p>
     {{/if}}
 
-    <footer class="ukm-gm-tools">
-      <button type="button" data-action="adjustNumbers"><i class="fa-solid fa-pencil"></i> {{localize "UKM.Adjust.Title"}}</button>
-      <button type="button" data-action="openSetup"><i class="fa-solid fa-gear"></i> {{localize "UKM.Manager.Setup"}}</button>
-      <button type="button" data-action="openMidCampaign"><i class="fa-solid fa-forward"></i> {{localize "UKM.Start.Open"}}</button>
-      <button type="button" data-action="openImport"><i class="fa-solid fa-book-open"></i> {{#if storyImported}}{{localize "UKM.Setup.Reimport"}}{{else}}{{localize "UKM.Setup.Import"}}{{/if}}</button>
-      <button type="button" data-action="drawEvents"><i class="fa-solid fa-layer-group"></i> {{localize "UKM.Manager.DrawNow"}}</button>
-      <button type="button" data-action="drawAudience"><i class="fa-solid fa-comments"></i> {{localize "UKM.Manager.DrawAudience"}}</button>
-      <button type="button" data-action="deckEvent"><i class="fa-solid fa-hand-pointer"></i> {{localize "UKM.Manager.PickEvent"}}</button>
-      <button type="button" data-action="storyEvent"><i class="fa-solid fa-book-skull"></i> {{localize "UKM.Manager.StoryEvents"}}</button>
-      <button type="button" data-action="drawMatter"><i class="fa-solid fa-inbox"></i> {{localize "UKM.Manager.DrawMatter"}}</button>
-    </footer>
+    <header class="ukm-major">{{localize "UKM.GmTab.SetupHead"}}</header>
+    <ul class="ukm-gm-tools">
+      <li><button type="button" data-action="openSetup"><i class="fa-solid fa-gear"></i> {{localize "UKM.Manager.Setup"}}</button><span class="hint">{{localize "UKM.GmTab.Setup"}}</span></li>
+      <li><button type="button" data-action="adjustNumbers"><i class="fa-solid fa-pencil"></i> {{localize "UKM.Adjust.Title"}}</button><span class="hint">{{localize "UKM.GmTab.Adjust"}}</span></li>
+      <li><button type="button" data-action="openMidCampaign"><i class="fa-solid fa-forward"></i> {{localize "UKM.Start.Open"}}</button><span class="hint">{{localize "UKM.Start.Hint"}}</span></li>
+      <li><button type="button" data-action="openImport"><i class="fa-solid fa-book-open"></i> {{#if storyImported}}{{localize "UKM.Setup.Reimport"}}{{else}}{{localize "UKM.Setup.Import"}}{{/if}}</button><span class="hint">{{localize "UKM.GmTab.Import"}}</span></li>
+    </ul>
+
+    <header class="ukm-major">{{localize "UKM.GmTab.EventsHead"}}</header>
+    <ul class="ukm-gm-tools">
+      <li><button type="button" data-action="drawEvents"><i class="fa-solid fa-layer-group"></i> {{localize "UKM.Manager.DrawNow"}}</button><span class="hint">{{localize "UKM.GmTab.DrawNow"}}</span></li>
+      <li><button type="button" data-action="drawAudience"><i class="fa-solid fa-comments"></i> {{localize "UKM.Manager.DrawAudience"}}</button><span class="hint">{{localize "UKM.GmTab.DrawAudience"}}</span></li>
+      <li><button type="button" data-action="drawMatter"><i class="fa-solid fa-inbox"></i> {{localize "UKM.Manager.DrawMatter"}}</button><span class="hint">{{localize "UKM.GmTab.DrawMatter"}}</span></li>
+      <li class="ukm-gm-pick">
+        <button type="button" data-action="deckEvent" data-tooltip="{{localize "UKM.GmTab.PickEvent"}}"><i class="fa-solid fa-hand-pointer"></i> {{localize "UKM.Manager.PickEvent"}}</button>
+        <select name="ukm-deck-event" aria-label="{{localize "UKM.Manager.PickEvent"}}">{{#each deckEvents}}<option value="{{id}}">{{label}}</option>{{/each}}</select>
+      </li>
+    </ul>
+
+    <header class="ukm-major">{{localize "UKM.Manager.StoryEvents"}}</header>
+    <p class="hint">{{localize "UKM.Manager.StoryEventsHint"}}</p>
+    <div class="form-group ukm-gm-chapter">
+      <label>{{localize "UKM.Manager.StoryChapter"}}</label>
+      <select name="ukm-story-chapter">{{#each story.chapters}}<option value="{{n}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+    </div>
+    {{#if story.events.length}}
+      <ul class="ukm-gm-story">
+        {{#each story.events}}
+          <li>
+            <div class="ukm-gm-story-text">
+              <strong>{{name}}</strong> {{hook}}
+              {{#if gmNote}}<br><span class="hint">{{gmNote}}</span>{{/if}}
+              {{#if heading}}<br><a data-action="openAdventure" data-heading="{{heading}}"><i class="fa-solid fa-book-open"></i> {{localize "UKM.Card.InAdventure"}}</a>{{/if}}
+            </div>
+            <button type="button" data-action="storyEvent" data-event-id="{{id}}"><i class="fa-solid fa-book-skull"></i> {{localize "UKM.Manager.PickEventGo"}}</button>
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p class="hint">{{localize "UKM.Manager.StoryNone"}}</p>
+    {{/if}}
+    {{#if story.note}}<p class="hint">{{story.note}}</p>{{/if}}
 </section>
