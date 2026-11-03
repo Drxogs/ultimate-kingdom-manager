@@ -98,10 +98,14 @@ function buildLocations() {
 
 function buildEvents() {
   const journal = findJournal(KINGMAKER_JOURNALS.events, KINGMAKER_JOURNAL_NAMES.events);
-  return [...getEvents(), ...getStoryEvents()].map((event) => {
+  const entry = (event) => {
     const page = journal?.pages.get(event.page) ?? journal?.pages.getName(event.name) ?? null;
     return { key: `event-${event.id}`, name: event.name, source: page, flags: { eventId: event.id } };
-  });
+  };
+  // Most story events are told in the chapters, not in the Kingdom Events journal. Those have no
+  // page to copy (their cards link to the chapter instead, see adventure-links.js), so they're left out
+  // rather than reported missing.
+  return [...getEvents().map(entry), ...getStoryEvents().map(entry).filter((e) => e.source)];
 }
 
 function buildQuests() {
