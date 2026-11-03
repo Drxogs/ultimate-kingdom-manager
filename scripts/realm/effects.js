@@ -558,7 +558,7 @@ export async function applyEffects(ctx, effects = []) {
       case "spawn": {
         const at = effect.now ? now : now + (effect.days ?? effect.inDays ?? 0) * day;
         realm.scheduled ??= [];
-        realm.scheduled.push({ id: newId(), eventId: value, at, placement: effect.placement ?? null });
+        realm.scheduled.push({ id: newId(), eventId: value, at, placement: effect.placement ?? null, from: ctx.card.target?.settlement ?? null });
         ctx.note(loc("Spawn", { name: getEvent(value)?.name ?? value }));
         break;
       }

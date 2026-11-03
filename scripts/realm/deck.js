@@ -108,8 +108,8 @@ function chooseHex(rule, kind = null) {
  * Pick a settlement for an event from the Settlements tab (the realm's one list), with its place on the map
  * if it has one. Size goes by buildings, so a busy town counts as bigger than an empty one.
  */
-function chooseSettlement(rule) {
-  const list = realmSettlements().map((s) => {
+function chooseSettlement(rule, avoid = null) {
+  const list = realmSettlements().filter((s) => !avoid?.has(s.name)).map((s) => {
     const state = settlementState(s);
     // A temple or better keeps a graveyard.
     const cemeteries = (s.tracks?.faith ?? -1) >= 2 ? 1 : 0;
@@ -168,12 +168,13 @@ function isAlreadyActive(event, realm) {
   return realm.cards.some((c) => c.eventId === event.id && ["open", "assigned"].includes(c.status));
 }
 
-export function createCard(event, { now = game.time.worldTime, tier = null } = {}) {
+export function createCard(event, { now = game.time.worldTime, tier = null, settlementName = null, avoid = null } = {}) {
   const version = tier && event.tiers ? { ...event, ...event.tiers[tier] } : event;
   const target = {};
   if (event.placement?.type === "hex") target.hexKey = chooseHex(event.placement.rule, version.kind);
   if (event.placement?.type === "settlement") {
-    const settlement = chooseSettlement(event.placement.rule);
+    const named = settlementName ? chooseSettlement("largest", new Set(realmSettlements().map((s) => s.name).filter((n) => n !== settlementName))) : null;
+    const settlement = named ?? chooseSettlement(event.placement.rule, avoid);
     target.hexKey = settlement?.key ?? null;
     target.settlement = settlement?.name ?? null;
   }

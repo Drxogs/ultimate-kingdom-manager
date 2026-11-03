@@ -707,7 +707,23 @@ async function releaseScheduled() {
     for (const entry of due) {
       const event = getEvent(entry.eventId);
       if (!event) continue;
-      const card = createCard(event);
+      // A follow-up never doubles up: one copy of an event per settlement (or one in all, for
+      // ongoing events that aren't tied to a settlement). A plague with nowhere new to go fades out.
+      const live = realm.cards.filter((c) => c.eventId === event.id && ACTIVE.includes(c.status));
+      let card;
+      if (event.placement?.type === "settlement") {
+        const taken = new Set(live.map((c) => c.target?.settlement).filter(Boolean));
+        if (entry.placement === "same-settlement" && entry.from) {
+          if (taken.has(entry.from)) continue;
+          card = createCard(event, { settlementName: entry.from });
+        } else {
+          card = createCard(event, { avoid: taken });
+          if (!card.target.settlement) continue;
+        }
+      } else {
+        if (event.continuous && live.length) continue;
+        card = createCard(event);
+      }
       for (const effect of event.onSpawn ?? []) {
         if (effect.endEvent) {
           for (const other of realm.cards) {
