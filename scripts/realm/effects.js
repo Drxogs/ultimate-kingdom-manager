@@ -1,5 +1,5 @@
 import { COMMODITY_BP, REALM_STATS, RUINS, RUIN_ABILITY, STAT_ALIASES } from "../constants.js";
-import { getCardEvent, getEvent } from "../content/data.js";
+import { getCardEvent, getEvent, getTrack } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
 import { resourceDieValue, weeklyIncome } from "./rules.js";
 import { isKingmakerActive, summarizeRealm } from "../integrations/kingmaker.js";
@@ -10,6 +10,8 @@ import { announceAnarchy, guardWithFame, inAnarchy } from "./standing.js";
 import { grantFavour } from "./royal.js";
 import { UkmDialog } from "../apps/dialog.js";
 import { getSetting, SETTINGS } from "../settings.js";
+import { applyTrackStage, cardSettlement, settlements } from "./settlements.js";
+import { nextStep, PINNACLE, stageCost } from "./tracks.js";
 
 /** Whether reward dice are rolled by the players from chat (the default) or straight away. */
 export function playersRollDice() {
@@ -112,6 +114,8 @@ export function describeEffect(effect) {
       return loc("SpawnOneOf");
     case "revealPin":
       return loc("Revealed");
+    case "freeTrackStage":
+      return loc("FreeTrackStage", { track: getTrack(value.track)?.name ?? value.track });
     case "nextStage":
       return loc("NextStage");
     case "progress":
@@ -388,6 +392,10 @@ export async function applyEffects(ctx, effects = []) {
         }
         break;
       }
+      case "freeTrackStage": {
+        freeTrackStage(ctx, value);
+        break;
+      }
       case "bp": {
         const amount = await rollAmount(value);
         realm.treasury = Math.max(0, realm.treasury + amount);
@@ -629,6 +637,29 @@ export async function applyEffects(ctx, effects = []) {
       }
     }
   }
+}
+
+/**
+ * A track's next stage, built for free: in the card's settlement if it has one, otherwise the
+ * capital, then the largest. If no settlement can take it (size, level or the top of the track),
+ * the realm gets what the stage would have cost instead.
+ */
+function freeTrackStage(ctx, { track: trackId }) {
+  const realm = ctx.realm;
+  const list = settlements(realm);
+  const here = cardSettlement(ctx.card, realm);
+  const order = [here, list.find((s) => s.capital), ...list.slice().sort((a, b) => Object.keys(b.tracks ?? {}).length - Object.keys(a.tracks ?? {}).length)].filter(Boolean);
+  const level = getKingdom()?.level ?? 1;
+  for (const settlement of new Set(order)) {
+    const step = nextStep(settlement, trackId, { kingdomLevel: level, others: list });
+    if (step.blocked || step.stage === PINNACLE) continue;
+    applyTrackStage(realm, settlement.id, trackId, step.stage, ctx, { free: true });
+    ctx.note(loc("FreeTrackStageBuilt", { stage: step.def?.name ?? "", settlement: settlement.name }));
+    return;
+  }
+  const bp = stageCost(1).bp ?? 0;
+  realm.treasury += bp;
+  ctx.note(loc("FreeTrackStageBp", { track: getTrack(trackId)?.name ?? trackId, amount: bp }));
 }
 
 /** Write Unrest, Ruin and Fame changes to the PF2e kingdom. Ruin rolls over into its penalty at the threshold. */

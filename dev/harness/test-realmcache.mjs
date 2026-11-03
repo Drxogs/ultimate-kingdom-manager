@@ -1,0 +1,17 @@
+import { env } from "./setup.mjs";
+const R = "/home/claude/ukm-repo/scripts";
+const ok = (c, m) => console.log(c ? "ok  " : "FAIL", m);
+const { getRealm, updateRealm, invalidateRealm } = await import(`${R}/realm/state.js`);
+const a = getRealm();
+ok(getRealm() === a, "reading twice gives the same copy");
+let seen = null;
+await updateRealm((r) => { r.treasury = 123; r.cards.push({ id: "x" }); seen = getRealm(); });
+ok(seen?.treasury === 123, "during a change, readers see the change");
+const b = getRealm();
+ok(b !== a && b.treasury === 123 && b.cards.some((c) => c.id === "x"), "after a change, a new copy with it");
+ok(a.treasury !== 123 && !a.cards.some((c) => c.id === "x"), "the old copy wasn't touched");
+const stored = env.flags[`${env.id}.realm`];
+ok(stored.cards !== b.cards && stored.kingdom !== b.kingdom, "the copy shares nothing with the stored flag");
+stored.treasury = 5;
+invalidateRealm();
+ok(getRealm().treasury === 5, "invalidateRealm picks up a change made outside updateRealm");

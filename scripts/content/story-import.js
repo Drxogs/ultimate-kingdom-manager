@@ -9,8 +9,7 @@ const JOURNAL_TITLES = {
   locations: "Locations",
   events: "Kingdom Events",
   quests: "Quests",
-  characters: "Characters",
-  structures: "Structures"
+  characters: "Characters"
 };
 
 function hashText(text) {
@@ -54,8 +53,7 @@ export function inspectSources() {
     gazetteers: KINGMAKER_JOURNALS.gazetteers.every((id, i) => !!findJournal(id, GAZETTEER_NAMES[i])),
     events: !!findJournal(KINGMAKER_JOURNALS.events, KINGMAKER_JOURNAL_NAMES.events),
     quests: !!findJournal(KINGMAKER_JOURNALS.quests, KINGMAKER_JOURNAL_NAMES.quests),
-    characters: !!findJournal(KINGMAKER_JOURNALS.characters, KINGMAKER_JOURNAL_NAMES.characters),
-    structures: !!findJournal(KINGMAKER_JOURNALS.structures, KINGMAKER_JOURNAL_NAMES.structures)
+    characters: !!findJournal(KINGMAKER_JOURNALS.characters, KINGMAKER_JOURNAL_NAMES.characters)
   };
   const adventureImported = Object.values(sources).every(Boolean);
   return { kingmaker, adventureImported, sources };
@@ -129,24 +127,12 @@ function buildCharacters() {
     .map((page) => ({ key: `npc-${slug(page.name)}`, name: page.name, source: page, flags: { npc: slug(page.name) } }));
 }
 
-function buildStructures() {
-  const journal = findJournal(KINGMAKER_JOURNALS.structures, KINGMAKER_JOURNAL_NAMES.structures);
-  const pages = sortedPages(journal);
-  const start = pages.findIndex((p) => p.name === "Structures");
-  const after = pages.slice(start + 1);
-  const end = after.findIndex((p) => p.title?.level === 1);
-  return (end === -1 ? after : after.slice(0, end))
-    .filter((p) => p.title?.level === 2)
-    .map((page) => ({ key: `structure-${slug(page.name)}`, name: page.name, source: page, flags: { structure: slug(page.name) } }));
-}
-
 const BUILDERS = {
   regions: buildRegions,
   locations: buildLocations,
   events: buildEvents,
   quests: buildQuests,
-  characters: buildCharacters,
-  structures: buildStructures
+  characters: buildCharacters
 };
 
 /** Counts of what an import would copy, without writing anything. */
@@ -200,6 +186,8 @@ async function ensureJournal(folder, category) {
  */
 export async function runStoryImport({ onProgress } = {}) {
   const folder = await ensureFolder();
+  // Earlier versions also copied the adventure's building pages; nothing uses them now.
+  for (const journal of game.journal.filter((j) => j.getFlag(FLAG_SCOPE, "category") === "structures")) await journal.delete();
   const summary = { created: 0, updated: 0, skippedEdited: 0, missing: [], byCategory: {} };
   const categories = Object.keys(BUILDERS);
 

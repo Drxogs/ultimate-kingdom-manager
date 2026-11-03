@@ -49,11 +49,44 @@ export function defaultKingdomData() {
   };
 }
 
-export function getRealm() {
-  const stored = getParty()?.getFlag(FLAG_SCOPE, FLAG_KEY);
-  const realm = foundry.utils.mergeObject(defaultRealm(), stored ?? {}, { inplace: false });
-  realm.kingdom = { ...defaultKingdomData(), ...(stored?.kingdom ?? {}) };
+/** The stored realm over the defaults, as a copy that shares nothing with the actor's flag. */
+function buildRealm(stored) {
+  const copy = foundry.utils.deepClone(stored ?? {});
+  const realm = foundry.utils.mergeObject(defaultRealm(), copy, { inplace: false });
+  realm.kingdom = { ...defaultKingdomData(), ...(copy.kingdom ?? {}) };
   return realm;
+}
+
+/*
+ * Reading the realm means copying the party actor's flag over the defaults, and one redraw of the
+ * Kingdom Manager reads it dozens of times. So the copy is kept until the party actor changes
+ * (invalidateRealm, called from the updateActor hook) or a different flag object turns up.
+ * The copy is shared: read from it, but change the realm only through updateRealm.
+ */
+let cached = null;
+
+export function invalidateRealm() {
+  cached = null;
+}
+
+export function getRealm() {
+  // While a change is being made, everything sees the realm as it's being changed.
+  if (inFlight) return inFlight;
+  const stored = getParty()?.getFlag(FLAG_SCOPE, FLAG_KEY);
+  if (cached && cached.stored === stored) return cached.realm;
+  const realm = buildRealm(stored);
+  cached = { stored, realm };
+  if (globalThis.__UKM_FREEZE__) deepFreeze(realm);
+  return realm;
+}
+
+/** Tests only: make accidental writes to the shared copy throw. */
+function deepFreeze(value) {
+  if (value && typeof value === "object" && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const v of Object.values(value)) deepFreeze(v);
+  }
+  return value;
 }
 
 // The realm being changed right now, if any, so the kingdom can read and write it mid-change.
@@ -74,7 +107,8 @@ export function updateRealm(mutator) {
   const run = queue.then(async () => {
     const party = getParty();
     if (!party) return null;
-    const realm = getRealm();
+    // Changes go to a fresh copy, never the shared one readers hold.
+    const realm = buildRealm(party.getFlag(FLAG_SCOPE, FLAG_KEY));
     inFlight = realm;
     try {
       await mutator(realm);
@@ -83,6 +117,7 @@ export function updateRealm(mutator) {
     }
     if (realm.log.length > LOG_LIMIT) realm.log = realm.log.slice(-LOG_LIMIT);
     await party.setFlag(FLAG_SCOPE, FLAG_KEY, realm);
+    invalidateRealm();
     return realm;
   });
   queue = run.catch(() => null);
@@ -109,6 +144,7 @@ export async function freshStartFromOld() {
   if (!stored || stored.kingdom) return false;
   await party.setFlag(FLAG_SCOPE, "realm-v0", stored);
   await party.unsetFlag(FLAG_SCOPE, FLAG_KEY);
+  invalidateRealm();
   for (const setting of game.settings.settings.values()) {
     if (setting.namespace !== MODULE_ID || setting.scope !== "world") continue;
     await game.settings.set(MODULE_ID, setting.key, foundry.utils.deepClone(setting.default));
