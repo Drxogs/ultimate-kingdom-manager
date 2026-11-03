@@ -5,7 +5,6 @@ export const SETTINGS = {
   setupComplete: "setupComplete",
   storyImported: "storyImported",
   importReminder: "importReminder",
-  courtOverride: "courtOverride",
   tapTreasury: "tapTreasury",
   levelGravity: "levelGravity",
   costGradient: "costGradient",
@@ -23,9 +22,7 @@ export const SETTINGS = {
   pinsShown: "pinsShown",
   raiseDead: "raiseDead",
   rollDice: "rollDice",
-  chapter: "chapter",
-  anarchyRule: "anarchyRule",
-  unrestCap: "unrestCap"
+  chapter: "chapter"
 };
 
 export function registerSettings() {
@@ -86,10 +83,6 @@ export function registerSettings() {
   });
 
   world(SETTINGS.chapter, { config: false, type: Number, default: 4 });
-  // Balance switches, tried in the simulator before being offered: how anarchy worsens checks, and a cap on Unrest.
-  world(SETTINGS.anarchyRule, { config: false, type: String, default: "all" });
-  world(SETTINGS.unrestCap, { config: false, type: Number, default: 0 });
-
   world(SETTINGS.rollDice, {
     name: "UKM.Settings.RollDice.Name",
     hint: "UKM.Settings.RollDice.Hint",
@@ -125,7 +118,6 @@ export function registerSettings() {
   });
 
   world(SETTINGS.levelGravity, { config: false, type: Number, default: 1 });
-  world(SETTINGS.courtOverride, { config: false, type: String, default: "auto" });
   world(SETTINGS.setupComplete, { config: false, type: Boolean, default: false });
   world(SETTINGS.storyImported, { config: false, type: Boolean, default: false });
   world(SETTINGS.importReminder, { config: false, type: Number, default: 0 });

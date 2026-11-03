@@ -43,11 +43,6 @@ function assigneeKey(assignee) {
 export function busyWith(realm, key) {
   const card = realm.cards.find((c) => c.status === "assigned" && assigneeKey(c.assignee) === key);
   if (card) return card;
-  if (key?.startsWith("seat:")) {
-    const seat = key.slice(5);
-    const lent = realm.cards.find((c) => c.status === "assigned" && c.assignee?.lockSeats?.includes(seat));
-    if (lent) return lent;
-  }
   const project = realm.projects.find((p) => p.status === "working" && `seat:${p.seat}` === key);
   return project ? { name: project.name } : null;
 }
@@ -126,14 +121,11 @@ export async function assignCard(request) {
     // A character from another desk can help; only the character is busy. Each desk's advisor keeps working.
     if (!seatsOf(actor.uuid).includes(card.seat)) assignee.helping = true;
   } else {
-    const event = cardStage(card).event;
     const name = seatAdvisorName(card.seat);
     if (!name) return { ok: false, reason: "SeatVacant" };
     assignee = { type: "advisor", seat: card.seat, name, skill };
   }
 
-  const lent = realm.cards.find((c) => c.status === "assigned" && c.assignee?.lockSeats?.includes(card.seat));
-  if (lent) return { ok: false, reason: "DeskBusy", data: { desk: game.i18n.localize(`UKM.Seat.${card.seat}`), card: lent.name } };
   const busy = busyWith(realm, assigneeKey(assignee));
   if (busy) return { ok: false, reason: "Busy", data: { name: assignee.name, card: busy.name } };
 
@@ -591,8 +583,8 @@ async function handRollToPlayer(card) {
 
 function finalDegree(roll) {
   let degree = roll.degree;
-  // Anarchy makes every result a step worse, or (the gentler rule) only failures.
-  if (roll.anarchy && (getSetting(SETTINGS.anarchyRule) !== "failures" || degree <= 1)) degree = Math.max(0, degree - 1);
+  // Anarchy makes every result a step worse.
+  if (roll.anarchy) degree = Math.max(0, degree - 1);
   return degree;
 }
 

@@ -1,5 +1,5 @@
 import { canUseRoyal } from "./royal.js";
-import { MODULE_ID, SEATS } from "../constants.js";
+import { MODULE_ID } from "../constants.js";
 import { getProject } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
 import { developmentQuote, isHexProject, projectQuote, projectTargets, signatureForSeat, startProject } from "./projects.js";

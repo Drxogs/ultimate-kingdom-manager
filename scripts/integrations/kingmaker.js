@@ -21,12 +21,6 @@ export function offsetToStateKey(offsetKey) {
   return String(1000 * i + j);
 }
 
-export function stateKeyToOffset(stateKey) {
-  const n = Number(stateKey);
-  if (!Number.isInteger(n)) return null;
-  return { i: Math.floor(n / 1000), j: n % 1000 };
-}
-
 export function getZones() {
   const zones = km()?.CONST.ZONES ?? {};
   return Object.values(zones)
@@ -59,12 +53,6 @@ export function getHexDefinitions() {
     page: data.page ?? null,
     defaults: data.state ?? null
   }));
-}
-
-/** Current saved state for one hex, merged over its defaults. Never written by this module. */
-export function getHexState(stateKey) {
-  const saved = km()?.state?.hexes?.[stateKey] ?? {};
-  return foundry.utils.deepClone(saved);
 }
 
 /** All hex state entries with valid keys. Stray entries (e.g. "NaN") are skipped. */
@@ -153,10 +141,6 @@ export function onRegionChange(callback) {
     if (setting.key === `${KINGMAKER_ID}.state`) callback();
   });
   Hooks.on("closeKingmakerHexEdit", () => callback());
-}
-
-export function onHexHud(callback) {
-  Hooks.on("renderKingmakerHexHUD", (app, html) => callback(app, html));
 }
 
 const ART_ALIASES = { specializedartisan: "specialartisan", theater: "theatre", cemetary: "cemetery" };

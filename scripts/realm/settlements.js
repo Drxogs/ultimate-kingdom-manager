@@ -1,6 +1,5 @@
 import { MODULE_ID, RUINS, SKILL_TO_STAT } from "../constants.js";
 import { getKingdom } from "../integrations/party.js";
-import { getSetting, SETTINGS } from "../settings.js";
 import { settlementHexes } from "./deck.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { isLeader } from "./leader.js";
@@ -162,34 +161,6 @@ export function hasCapital(realm = getRealm()) {
 }
 
 /**
- * Buildings of the module's own, not in the Kingmaker book. The capital gets a Founders' Hall for free:
- * it houses the first settlers (counts as a home) and its stores cut the settlement's food need by 1.
- */
-export const FOUNDERS_HALL = "founders-hall";
-const BUILTIN_STRUCTURES = [
-  {
-    slug: FOUNDERS_HALL,
-    name: "Founders' Hall",
-    level: 0,
-    lots: 1,
-    residential: true,
-    edifice: true,
-    capitalOnly: true,
-    consumption: 1,
-    bonuses: [],
-    builtin: true
-  }
-];
-
-export function catalogEntry(slug) {
-  return BUILTIN_STRUCTURES.find((s) => s.slug === slug) ?? (getSetting(SETTINGS.structureCatalog) ?? []).find((s) => s.slug === slug) ?? null;
-}
-
-function buildingInfo(building) {
-  return { ...building, ...(catalogEntry(building.slug) ?? {}) };
-}
-
-/**
  * A settlement's size, food need and how built-up it is, from its tracks (stage 3 of the redesign).
  * "stages" counts every stage standing, so a busier settlement counts as bigger for events.
  */
@@ -210,11 +181,6 @@ export function settlementState(settlement, realm = null) {
     consumption: foodNeed(settlement, kingdomPerks(list).foodAll),
     missing: missingNeeds(settlement)
   };
-}
-
-/** Size comes from Homes now; nothing grows on its own. Kept for older callers. */
-export function canGrow() {
-  return null;
 }
 
 export function roomFor() {
@@ -268,12 +234,6 @@ export function fitSize(settlement) {
   settlement.type = sizeFor(settlement);
   return settlement;
 }
-
-export function growIfReady() {
-  return [];
-}
-
-export async function growSettlements() {}
 
 /**
  * Run once when the GM's window starts. Settlements from before tracks (with buildings) get tracks
@@ -387,13 +347,6 @@ export function applyTrackStage(realm, settlementId, trackId, stage, ctx = null,
   addLog(realm, { type: "track-stage", text: `${settlement.name}: ${def?.name ?? trackId}` });
   refreshDerived(realm);
   return settlement;
-}
-
-export function removeBuilding(realm, settlementId, index) {
-  const settlement = settlements(realm).find((s) => s.id === settlementId);
-  if (!settlement?.buildings?.[index]) return;
-  settlement.buildings.splice(index, 1);
-  refreshDerived(realm);
 }
 
 /* ---------- Founding ---------- */

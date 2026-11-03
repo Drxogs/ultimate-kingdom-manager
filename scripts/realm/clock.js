@@ -15,7 +15,7 @@ import { syncPins } from "./pins.js";
 import { resolveDue } from "./resolve.js";
 import { advanceRankUps } from "./ranks.js";
 import { isLeader } from "./leader.js";
-import { adoptMapSettlements, growSettlements, hasCapital, overcrowdedCount, settlementHex } from "./settlements.js";
+import { adoptMapSettlements, hasCapital, overcrowdedCount, settlementHex } from "./settlements.js";
 import { kingdomPerks } from "./tracks.js";
 import { applyEffects, EffectContext } from "./effects.js";
 import { monthlyStanding, setUnrest } from "./standing.js";
@@ -60,7 +60,6 @@ export async function tick() {
       await checkAmbitions();
       await runWatchers();
       await adoptMapSettlements();
-      await growSettlements();
       await syncPins();
       return;
     }
@@ -100,7 +99,6 @@ export async function tick() {
     await checkAmbitions();
     await runWatchers();
     await adoptMapSettlements();
-    await growSettlements();
     await syncPins();
 
     if (newMonth && getSetting(SETTINGS.council)) await announceCouncil();

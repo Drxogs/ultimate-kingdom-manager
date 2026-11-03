@@ -1,5 +1,5 @@
-import { COMMODITY_BP, FLAG_SCOPE, MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
-import { getCompanion, getProject, getProjects, getSeatAbility, getTrack } from "../content/data.js";
+import { COMMODITY_BP, FLAG_SCOPE, MODULE_ID, REALM_STATS } from "../constants.js";
+import { getProject, getProjects, getSeatAbility, getTrack } from "../content/data.js";
 import {
   getAllHexStates,
   getClaimedHexes,
@@ -11,13 +11,13 @@ import {
 } from "../integrations/kingmaker.js";
 import { getKingdom, getPartyLevel } from "../integrations/party.js";
 import { getSetting, setSetting, SETTINGS } from "../settings.js";
-import { neighbors, settlementHexes } from "./deck.js";
+import { neighbors } from "./deck.js";
 import { attitudeAtLeast, seatCompanionId, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { syncPins } from "./pins.js";
 import { secondsPerDay } from "./time.js";
 import { isLeader } from "./leader.js";
-import { addBuilding, applyTrackStage, hasCapital, newSettlement, parseStructureHtml, roomFor, settlementHex, settlements, settlementState, syncKingdomSettlements } from "./settlements.js";
+import { addBuilding, applyTrackStage, hasCapital, newSettlement, parseStructureHtml, roomFor, settlementHex, settlements, settlementState } from "./settlements.js";
 import { discountHere, kingdomPerks, nextStep } from "./tracks.js";
 
 const NEVER = 3650;

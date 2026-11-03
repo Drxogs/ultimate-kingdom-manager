@@ -6,7 +6,7 @@ import { focusHex, getHexDefinitions, getZone } from "../integrations/kingmaker.
 import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnrest } from "../integrations/party.js";
 import { weeklyFoodShortfall } from "../realm/rules.js";
 import { advisorProficiency, canRankUp, companionAttitude, isHired, rankBonus, rankCap, rawSeatCompanionId, routinePoints, seatCompanionId, statProgress, weeklyIncome } from "../realm/rules.js";
-import { getRealm, updateRealm } from "../realm/state.js";
+import { getRealm } from "../realm/state.js";
 import { rankUpChoices, rankUpCost, rankUpProject } from "../realm/ranks.js";
 import { isHexProject, projectDiscount, projectQuote, projectsForSeat, projectTargets, trackUnderway } from "../realm/projects.js";
 import { hasPinnacle, missingNeeds, nextStep, PINNACLE, sizeFor, stageDef, trackBonuses, trackStage } from "../realm/tracks.js";
@@ -37,15 +37,11 @@ import {
   canCallBack,
   cardLevelMod,
   cardStage,
-  completeGmTask,
-  dismissCard,
   endsText,
   estimateCheck,
   fortuneUses,
   outcomePreview,
-  recordOutcome,
   isResting,
-  rollCard,
   seatsOf
 } from "../realm/resolve.js";
 import { daysUntil, formatDate } from "../realm/time.js";
@@ -406,7 +402,6 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
       const advisorName = companion?.name ?? game.i18n.localize("UKM.Hired.Name");
       const holderName = leader?.name ?? advisorName;
       const advisorBusy = busyWith(realm, `seat:${seat}`);
-      const lentTo = realm.cards.find((c) => c.status === "assigned" && c.assignee?.lockSeats?.includes(seat));
 
       const cards = realm.cards
         .filter((c) => c.seat === seat && ["open", "assigned", "escalated", "rolled"].includes(c.status))
@@ -442,8 +437,8 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
             assigneeName: card.assignee?.name ?? null,
             assigneePersonal: card.assignee?.type === "pc",
             canDelegate: open && canAct && !!holderName && !advisorBusy && card.kind !== "audience",
-            advisorBusy: open && !!advisorBusy && !lentTo,
-            canHandle: open && canAct && !lentTo && !event?.advisorOnly && card.kind !== "audience",
+            advisorBusy: open && !!advisorBusy,
+            canHandle: open && canAct && !event?.advisorOnly && card.kind !== "audience",
             helping: !!card.assignee?.helping,
             isAudience: card.kind === "audience",
             isProject: card.kind === "project",
@@ -489,7 +484,6 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
         supervisor: supervisor && supervisor.uuid !== leader?.uuid ? supervisor.name : null,
         mine,
         openToAll: seatOpenToAll(seat),
-        tiedUp: lentTo ? game.i18n.format("UKM.Card.DeskBusy", { card: lentTo.name }) : null,
         canStartProject: canAct && hasCapital(realm) && projectsForSeat(seat).length > 0,
         canTap: seat === "treasurer" && canAct && tapMode() !== "disabled",
         cards,
