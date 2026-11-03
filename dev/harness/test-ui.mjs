@@ -56,7 +56,7 @@ for (const part of ["header", "overview", "desks", "settlements", "council", "lo
 }
 if (process.env.PREVIEW) {
   const tabs = ["overview", "desks", "settlements", "council", "log", "gm"].map((t) => `<a class="${t === (process.env.TAB ?? "desks") ? "active" : ""}" data-tab="${t}"><i></i><span>${game.i18n.localize(`UKM.Manager.Tab.${{ overview: "Overview", desks: "Desks", settlements: "Settlements", council: "Council", log: "Log", gm: "Gm" }[t]}`)}</span></a>`).join("");
-  const page = `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="modules/ultimate-kingdom-manager-next/styles/ukm.css"><style>body{margin:0;background:#333;font-family:Roboto,sans-serif;font-size:14px}.window-app{width:860px;height:${process.env.H ?? 900}px;display:flex;flex-direction:column;margin:10px}.window-header{background:#222;color:#eee;padding:4px 8px}button{cursor:pointer}</style></head><body>
+  const page = `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="modules/${env.id}/styles/ukm.css"><style>body{margin:0;background:#333;font-family:Roboto,sans-serif;font-size:14px}.window-app{width:860px;height:${process.env.H ?? 900}px;display:flex;flex-direction:column;margin:10px}.window-header{background:#222;color:#eee;padding:4px 8px}button{cursor:pointer}</style></head><body>
   <div class="application ukm ukm-sheet ukm-manager themed theme-light window-app"><header class="window-header">Ultimate Kingdom Manager</header><section class="window-content">${out.header}<nav class="tabs">${tabs}</nav>${out.overview}${out.desks}${out.settlements}${out.council}${out.log}${out.gm}</section></div></body></html>`;
   fs.writeFileSync(process.env.PREVIEW, page);
 }

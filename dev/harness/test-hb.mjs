@@ -19,8 +19,8 @@ env.settings.set("structureCatalog", [{ slug: "mill", name: "Mill", level: 1, bp
 const H = await import(`${R}/content/handbook.js`);
 await H.ensureHandbook();
 for (const j of journals) console.log(j.name, j.ownership, j.pages.contents.map((p) => `${p.name}(${p.text.content.length})`).join(", "));
-const dup = journals[0].pages.contents.find((p) => p.flags["ultimate-kingdom-manager-next"].handbookKey === "projectref"); dup.flags["ultimate-kingdom-manager-next"].handbookKey = "projects";
+const dup = journals[0].pages.contents.find((p) => p.flags[env.id].handbookKey === "projectref"); dup.flags[env.id].handbookKey = "projects";
 const before = journals[0].pages.contents.length;
 await H.ensureHandbook();
-console.log("second run pages", journals[0].pages.contents.length, before, journals[0].pages.contents.map((p) => p.flags["ultimate-kingdom-manager-next"].handbookKey).join(","));
+console.log("second run pages", journals[0].pages.contents.length, before, journals[0].pages.contents.map((p) => p.flags[env.id].handbookKey).join(","));
 console.log(journals[0].pages.contents.find((p) => p.name === "Companion Abilities").text.content.slice(0, 700));

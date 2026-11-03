@@ -795,6 +795,7 @@
       "stability": "Stability",
       "TheAdvisor": "The advisor"
     },
+    "FreshStart": "Ultimate Kingdom Manager 1.0 starts fresh: the old version's kingdom was set aside and Setup will open. The old data is kept on the party actor if you ever need it.",
     "GmTab": {
       "SetupHead": "Setting up",
       "Setup": "Seats, advisors, the founding focus and the module's options.",

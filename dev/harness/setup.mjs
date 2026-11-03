@@ -4,6 +4,7 @@ import path from "node:path";
 const ROOT = "/home/claude/ukm-repo";
 const lang = JSON.parse(fs.readFileSync(`${ROOT}/lang/en.json`, "utf8"));
 const lookup = (key) => key.split(".").reduce((o, k) => o?.[k], lang);
+const { MODULE_ID: ID } = await import(`${process.env.UKM_SCRIPTS ?? "/home/claude/ukm-repo/scripts"}/constants.js`);
 const settings = new Map();
 const flags = {};
 const messages = [];
@@ -47,14 +48,14 @@ globalThis.__setDegree = (d) => { nextDegree = d; globalThis.__ukmTestDegree = d
 globalThis.__ukmTestDegree = 2;
 const statistic = (mod) => ({ mod, label: "Skill", roll: async () => ({ degreeOfSuccess: nextDegree, total: 15 }) });
 // The kingdom's numbers live in the realm flag now; seed them like the old PF2e mock.
-flags["ultimate-kingdom-manager-next.realm"] = { kingdom: {
+flags[`${ID}.realm`] = { kingdom: {
   active: true, level: 3, name: "Testland", size: 3, capital: null,
   abilities: { culture: { ruin: { value: 0, max: 10 }, penalty: 0 }, economy: { ruin: { value: 0, max: 10 }, penalty: 0 }, loyalty: { ruin: { value: 0, max: 10 }, penalty: 0 }, stability: { ruin: { value: 9, max: 10 }, penalty: 0 } },
   leadership: { ruler: { uuid: "Actor.wes" }, counselor: { uuid: "Actor.clorg" }, general: { uuid: "Actor.fred" } },
   resources: { fame: { value: 0, max: 3 } },
   unrest: { value: 2 }
 } };
-const kingdom = new Proxy({}, { get: (_, k) => flags["ultimate-kingdom-manager-next.realm"]?.kingdom?.[k], set: (_, k, v) => { flags["ultimate-kingdom-manager-next.realm"].kingdom[k] = v; return true; } });
+const kingdom = new Proxy({}, { get: (_, k) => flags[`${ID}.realm`]?.kingdom?.[k], set: (_, k, v) => { flags[`${ID}.realm`].kingdom[k] = v; return true; } });
 const pc = { uuid: "Actor.wes", name: "Wes", type: "character", isOwner: true, testUserPermission: () => true, skills: { diplomacy: statistic(8), society: statistic(6), survival: statistic(4), crafting: statistic(7) } };
 const party = {
   id: "party", campaign: kingdom, members: [pc], level: 3,
@@ -91,5 +92,5 @@ globalThis.kingmaker = {
   state: { hexes },
   region: { hexes: { get: (n) => ({ key: n, center: { x: 1, y: 1 }, getNeighbors: () => (neighborsMap[n] ?? []).map((k) => ({ key: k })) }) }, scene: null }
 };
-export const env = { settings, flags, messages, kingdom, party, hexes, advance: (days) => (worldTime += days * 86400), get time() { return worldTime; } };
+export const env = { id: ID, settings, flags, messages, kingdom, party, hexes, advance: (days) => (worldTime += days * 86400), get time() { return worldTime; } };
 globalThis.CONFIG ??= { JournalEntry: { sheetClasses: { base: { "pf2e-kingmaker.KingmakerJournalSheet": {} } } } };

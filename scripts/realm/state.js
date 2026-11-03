@@ -98,6 +98,26 @@ export function newId() {
 }
 
 /**
+ * Version 1.0 starts fresh. A world that ran the old 0.x module (before the redesign) has a realm
+ * with no kingdom numbers of its own and no seat version; its shape doesn't fit the new rules, so
+ * it is set aside on the party actor (flag "realm-v0", untouched, in case anyone wants it) and the
+ * module's world settings go back to their defaults. Runs once on the GM's window.
+ */
+export async function freshStartFromOld() {
+  const party = getParty();
+  const stored = party?.getFlag(FLAG_SCOPE, FLAG_KEY);
+  if (!stored || stored.kingdom || stored.seatsVersion) return false;
+  await party.setFlag(FLAG_SCOPE, "realm-v0", stored);
+  await party.unsetFlag(FLAG_SCOPE, FLAG_KEY);
+  for (const setting of game.settings.settings.values()) {
+    if (setting.namespace !== MODULE_ID || setting.scope !== "world") continue;
+    await game.settings.set(MODULE_ID, setting.key, foundry.utils.deepClone(setting.default));
+  }
+  ui.notifications.info(game.i18n.localize("UKM.FreshStart"), { permanent: true });
+  return true;
+}
+
+/**
  * Next 0.91 went from eight seats to six. A realm saved before that has cards on the Ruler's and
  * Warden's desks and points in Loyalty and Stability; move them to the seats that took over.
  * Runs once on the GM's window.
