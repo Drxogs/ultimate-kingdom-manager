@@ -2,7 +2,7 @@ import { MODULE_ID, SEATS } from "../constants.js";
 import { getAmbition } from "../content/data.js";
 import { isKingmakerActive, summarizeRealm } from "../integrations/kingmaker.js";
 import { getFame, getKingdom } from "../integrations/party.js";
-import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
+import { applyEffects, commitKingdomChanges, describeEffects, EffectContext } from "./effects.js";
 import { weeklyIncome } from "./rules.js";
 import { convertWasted } from "./bonuses.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
@@ -62,7 +62,7 @@ export function ambitionsView(realm = getRealm()) {
       value: progress?.value ?? 0,
       target: progress?.target ?? 0,
       percent: progress ? Math.min(100, Math.round((progress.value / Math.max(progress.target, 1)) * 100)) : 100,
-      reward: tier ? convertWasted(tier.reward, realm).effects.map(describeEffect).join(", ") : null
+      reward: tier ? describeEffects(convertWasted(tier.reward, realm).effects).join(", ") : null
     };
   }).filter(Boolean);
 }

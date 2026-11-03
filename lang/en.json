@@ -38,6 +38,10 @@
       "RaiseDead": {
         "Name": "Crown services can raise the dead",
         "Hint": "Off: death stays final as far as the realm is concerned. On: from kingdom level 12, a realm with a Cathedral can pay to raise a fallen character, once a month."
+      },
+      "RollDice": {
+        "Name": "Players roll reward dice",
+        "Hint": "On: dice in a result (Unrest −1d4, say) get a button in chat, and the result applies when someone rolls. Off: the module rolls them straight away."
       }
     },
     "Setup": {
@@ -174,7 +178,31 @@
       "Week": "wk",
       "GmAway": "No GM is online. You can read the desks, but nothing can be done until the GM is back.",
       "AnyPlayer": "Any player",
-      "AnyPlayerHint": "Nobody at the table plays this seat, so any player can handle its cards and choices. Pick a supervising player in Setup to give it to one person."
+      "AnyPlayerHint": "Nobody at the table plays this seat, so any player can handle its cards and choices. Pick a supervising player in Setup to give it to one person.",
+      "StoryChapter": "Chapter",
+      "StoryNone": "No story events in this chapter.",
+      "StoryChapters": {
+        "1": "1: A Call for Heroes",
+        "2": "2: Into the Wild",
+        "3": "3: Stolen Land",
+        "4": "4: Rivers Run Red",
+        "5": "5: Cult of the Bloom",
+        "6": "6: The Varnhold Vanishing",
+        "7": "7: Blood for Blood",
+        "8": "8: War of the River Kings",
+        "9": "9: They Lurk Below",
+        "10": "10: Sound of a Thousand Screams",
+        "11": "11: Curse of the Lantern King"
+      },
+      "StoryNotes": {
+        "2": "Some hexes also offer kingdom work the GM runs by hand: restoring the Temple of the Elk (Folklore), repairing the flooded mine (Engineering, master) and harvesting azure lily pollen (Agriculture, master).",
+        "4": "When Hargulka falls: Unrest −2d6, and the next month starts with 3 Fame (use the pencil).",
+        "6": "If Varnhold's people get their belongings back: 3 Fame (or Unrest +1d4+2 if they don't), and 4 extra resource dice of BP next month.",
+        "7": "The Battle for Tatzlford is a war fight. A win: Unrest −1d4 and one Ruin −1. A costly win or a loss: see the adventure; a loss costs Unrest +1d4, one Ruin +1 and Tatzlford's hex.",
+        "8": "While Avinash's armies raid the realm, each month: Unrest +1d6+4, one Ruin +2 and the other three +1. Once he has retreated to Pitax: Unrest +1d4 and one Ruin +1 each month until his field armies are beaten.",
+        "9": "As Yog-Sothoth's influence spreads, you can draw extra problem events.",
+        "10": "The blooms play out over one month with no kingdom turns; the capital's siege is the card above."
+      }
     },
     "Card": {
       "Kind": {
@@ -465,7 +493,10 @@
       "Favour": "The ruler gains a favour: {name}",
       "BpOverMonth": "{amount} BP, paid over the next month",
       "BpDiceRoll": "{amount} × {per} BP, paid over the next month",
-      "AnarchyHarder": "In anarchy this works ×{n}."
+      "AnarchyHarder": "In anarchy this works ×{n}.",
+      "TradeAgreements": "{n} new trade agreements",
+      "Times": "{line} (×{n})",
+      "DicePending": "Unrest {amount}: roll it from chat."
     },
     "Difficulty": {
       "veryEasy": "Very easy",
@@ -665,14 +696,13 @@
       "WontAdvise": "{name} won't advise ({attitude})"
     },
     "Bonus": {
-      "Wasted": "Adds nothing right now: these checks already get a +{existing} status bonus, and status bonuses don't stack.",
-      "Partial": "Only adds +{gain} right now: these checks already get a +{existing} status bonus, and status bonuses don't stack.",
       "Converted": "The status bonus wouldn't have added anything here, so it became two rerolls on the same checks instead.",
-      "WillConvert": "Its status bonus would add nothing here (these checks already have one, and status bonuses don't stack), so it becomes two rerolls on the same checks instead.",
       "RankLabel": "{stat} ({prof})",
       "Reward": "Reward",
       "RankUpSource": "{stat} rank {rank}",
-      "AdvisorTip": "An advisor rolls like a character of the kingdom's level who is {prof} in these skills: level + proficiency + a good attribute. Settlement tracks add item bonuses, a companion a status bonus."
+      "AdvisorTip": "An advisor rolls like a character of the kingdom's level who is {prof} in these skills: level + proficiency + a good attribute. Settlement tracks add item bonuses, a companion a status bonus.",
+      "WontStack": "+{value} from {name} to {what} won't stack.",
+      "Checks": "{what} checks"
     },
     "Settlement": {
       "Type": {
@@ -793,7 +823,15 @@
       "Roll": "Roll flat check (DC {dc})",
       "Flavor": "Flat check, DC {dc}",
       "Passed": "Rolled {total} against DC {dc}: passed.",
-      "Failed": "Rolled {total} against DC {dc}: failed."
+      "Failed": "Rolled {total} against DC {dc}: failed.",
+      "RollDice": "Roll {formula}",
+      "DiceTitle": "Roll for the realm",
+      "DiceWhy": "{what} {sign}{formula}: roll it.",
+      "DiceFlavor": "Rolled for the realm",
+      "DiceRolled": "Rolled {total}.",
+      "DiceKey": {
+        "unrest": "Unrest"
+      }
     },
     "Check": {
       "Level": "Kingdom level",
@@ -909,7 +947,8 @@
       "successPlural": "successes",
       "Twice": "two {result} in a row",
       "AtStage": "{result} at stage {stage}",
-      "Or": " or "
+      "Or": " or ",
+      "gm": "the GM ends it"
     },
     "Land": {
       "Heading": "The land",

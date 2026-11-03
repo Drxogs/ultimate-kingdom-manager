@@ -10,7 +10,13 @@ import { syncKingdomSettlements } from "./settlements.js";
 import { announceAnarchy, guardWithFame, inAnarchy } from "./standing.js";
 import { grantFavour } from "./royal.js";
 import { UkmDialog } from "../apps/dialog.js";
-import { postFlatCheck, queueFlatCheck } from "./flat.js";
+import { getSetting, SETTINGS } from "../settings.js";
+
+/** Whether reward dice are rolled by the players from chat (the default) or straight away. */
+export function playersRollDice() {
+  return getSetting(SETTINGS.rollDice) !== false;
+}
+import { postFlatCheck, queueDiceRoll, queueFlatCheck } from "./flat.js";
 
 
 const loc = (key, data) => (data ? game.i18n.format(`UKM.Effect.${key}`, data) : game.i18n.localize(`UKM.Effect.${key}`));
@@ -29,6 +35,23 @@ export async function rollAmount(value) {
 function formatAmount(value) {
   if (typeof value === "number") return value > 0 ? `+${value}` : value < 0 ? `−${Math.abs(value)}` : "0";
   return value.startsWith("-") ? `−${value.slice(1)}` : `+${value}`;
+}
+
+/** Readable lines for a list of effects, with repeats merged ("2 new trade agreements", "Fame +1 (×2)"). */
+export function describeEffects(effects = []) {
+  const counts = new Map();
+  const keyOf = new Map();
+  for (const effect of effects ?? []) {
+    const line = describeEffect(effect);
+    if (!line) continue;
+    counts.set(line, (counts.get(line) ?? 0) + 1);
+    keyOf.set(line, Object.keys(effect ?? {})[0]);
+  }
+  return [...counts].map(([line, n]) => {
+    if (n === 1) return line;
+    if (keyOf.get(line) === "tradeAgreement") return loc("TradeAgreements", { n });
+    return loc("Times", { line, n });
+  });
 }
 
 /** A short readable line for one effect, used on cards, choice buttons and chat. */
@@ -311,6 +334,14 @@ export async function applyEffects(ctx, effects = []) {
     const [key, value] = Object.entries(effect)[0] ?? [];
     switch (key) {
       case "unrest": {
+        // Dice are rolled at the table: chat gets a button, and the result lands when someone rolls.
+        if (typeof value === "string" && /d/i.test(value) && !ctx.rollNow && playersRollDice()) {
+          const flat = queueDiceRoll(realm, { effect, title: ctx.card?.name || ctx.source || "", cardId: ctx.card?.id ?? null, hexKey: ctx.card?.target?.hexKey ?? null });
+          ctx.flatChecks ??= [];
+          ctx.flatChecks.push(flat);
+          ctx.note(loc("DicePending", { amount: formatAmount(value) }));
+          break;
+        }
         let amount = await rollAmount(value);
         // Some calming effects work harder while the realm is in anarchy.
         if (amount < 0 && effect.anarchyTimes && inAnarchy()) {

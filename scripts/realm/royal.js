@@ -1,6 +1,6 @@
 import { MODULE_ID } from "../constants.js";
 import { getKingdom, getPlayerCharacters, getUnrest } from "../integrations/party.js";
-import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
+import { applyEffects, commitKingdomChanges, describeEffects, EffectContext } from "./effects.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
 import { announceAnarchy, inAnarchy, setUnrest } from "./standing.js";
 import { monthKey, secondsPerDay } from "./time.js";
@@ -159,7 +159,7 @@ export async function useFavour({ favourId, userId }) {
 
 /** What a favour will do, for its button's tooltip. */
 export function favourPreview(favour) {
-  const effects = (favour.effects ?? []).map((e) => describeEffect(e)).filter(Boolean).join("; ");
+  const effects = describeEffects(favour.effects ?? []).join("; ");
   return [favour.text, effects].filter(Boolean).join(" ");
 }
 

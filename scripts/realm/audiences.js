@@ -2,7 +2,7 @@ import { MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
 import { chatClass, chatKicker } from "./chat-style.js";
 import { getAudience, getAudiences } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
-import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
+import { applyEffects, commitKingdomChanges, describeEffects, EffectContext } from "./effects.js";
 import { addStatPoints } from "./rules.js";
 import { canActForSeat } from "./resolve.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
@@ -66,7 +66,7 @@ export function audienceResponses(card) {
   return {
     petitioner: audience.petitioner,
     request: audience.request,
-    responses: audience.responses.map((r) => ({ ...r, lines: r.effects.map(describeEffect).filter(Boolean) }))
+    responses: audience.responses.map((r) => ({ ...r, lines: describeEffects(r.effects) }))
   };
 }
 

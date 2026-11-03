@@ -143,7 +143,7 @@ export async function requestService({ serviceId, details, userId }) {
   if (block) return { ok: false, reason: `Service${block.reason}`, data: block.data };
   const clean = cleanDetails(service, details, realm);
   if (!clean) return { ok: false, reason: "ServiceTarget" };
-  if (canUseRoyal(user, realm)) return performService({ serviceId, details: clean, byName: user.character?.name ?? user.name });
+  if (canUseRoyal(user, realm)) return performService({ serviceId, details: clean });
 
   const { label } = describe(service, clean, realm);
   await updateRealm((r) => {
@@ -167,7 +167,7 @@ export async function requestService({ serviceId, details, userId }) {
 }
 
 /** Pay for a service and carry it out. Runs on the active GM. */
-export async function performService({ serviceId, details, byName = "" }) {
+export async function performService({ serviceId, details }) {
   const service = getServices().find((s) => s.id === serviceId);
   if (!service) return { ok: false, reason: "Unknown" };
   const realm = getRealm();
@@ -197,7 +197,6 @@ export async function performService({ serviceId, details, byName = "" }) {
     await setSetting(SETTINGS.companionAttitudes, attitudes);
     lines.push(loc("Warmer", { name: getCompanion(clean.companionId)?.name ?? "", attitude: game.i18n.localize(`UKM.Attitude.${after}`) }));
   }
-  if (byName) lines.push(loc("AskedBy", { name: byName }));
   await ChatMessage.create({
     speaker: { alias: getKingdom()?.name || game.i18n.localize("UKM.Manager.Unnamed") },
     content: `<div class="ukm-chat ukm-royal"><h3><i class="fa-solid fa-hand-holding-heart"></i> ${esc(service.name)}</h3><p class="ukm-story">${esc(chat)}</p><ul>${lines.map((l) => `<li>${esc(l)}</li>`).join("")}</ul></div>`

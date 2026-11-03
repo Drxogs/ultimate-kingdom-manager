@@ -21,7 +21,9 @@ export const SETTINGS = {
   toolsNotice: "toolsNotice",
   council: "council",
   pinsShown: "pinsShown",
-  raiseDead: "raiseDead"
+  raiseDead: "raiseDead",
+  rollDice: "rollDice",
+  chapter: "chapter"
 };
 
 export function registerSettings() {
@@ -79,6 +81,16 @@ export function registerSettings() {
     config: true,
     type: Boolean,
     default: false
+  });
+
+  world(SETTINGS.chapter, { config: false, type: Number, default: 4 });
+
+  world(SETTINGS.rollDice, {
+    name: "UKM.Settings.RollDice.Name",
+    hint: "UKM.Settings.RollDice.Hint",
+    config: true,
+    type: Boolean,
+    default: true
   });
 
   world(SETTINGS.raiseDead, {

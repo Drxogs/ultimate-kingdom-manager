@@ -27,7 +27,7 @@ import {
   settlementState,
   unknownMapSettlements
 } from "../realm/settlements.js";
-import { getProject, getStoryEvents } from "../content/data.js";
+import { getProject, getStoryEvents, storyChapter } from "../content/data.js";
 import { sendRequest } from "../realm/requests.js";
 import {
   busyWith,
@@ -48,7 +48,7 @@ import {
   seatsOf
 } from "../realm/resolve.js";
 import { daysUntil, formatDate } from "../realm/time.js";
-import { getSetting, SETTINGS } from "../settings.js";
+import { getSetting, setSetting, SETTINGS } from "../settings.js";
 import { SetupWizard } from "./setup-wizard.js";
 import { StoryImportApp } from "./story-import-app.js";
 import { MidCampaignApp } from "./midcampaign-app.js";
@@ -1144,17 +1144,46 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #storyEvent() {
-    const events = getStoryEvents();
-    if (!events.length) return;
+    const all = getStoryEvents();
+    if (!all.length) return;
     const esc = Handlebars.escapeExpression;
-    const eventId = await UkmDialog.wait({
-      window: { title: game.i18n.localize("UKM.Manager.StoryEvents") },
-      content: `<p class="hint">${game.i18n.localize("UKM.Manager.StoryEventsHint")}</p><ul class="ukm-scene-options">${events
-        .map((e) => `<li><strong>${esc(e.name)}</strong> ${esc(e.hook ?? "")}</li>`)
-        .join("")}</ul>`,
-      buttons: events.map((e) => ({ action: e.id, label: e.name })),
-      rejectClose: false
-    });
+    const L = (k) => game.i18n.localize(`UKM.Manager.${k}`);
+    let chapter = Number(getSetting(SETTINGS.chapter)) || 4;
+    let shown = chapter;
+    let eventId = null;
+    // Pick a chapter, then an event from it; changing the chapter redraws the list.
+    for (;;) {
+      const events = all.filter((e) => storyChapter(e) === chapter);
+      const options = Array.from({ length: 11 }, (_, i) => i + 1)
+        .map((n) => `<option value="${n}" ${n === chapter ? "selected" : ""}>${esc(game.i18n.localize(`UKM.Manager.StoryChapters.${n}`))}</option>`)
+        .join("");
+      const noteKey = `UKM.Manager.StoryNotes.${chapter}`;
+      const note = game.i18n.has(noteKey) ? `<p class="hint">${esc(game.i18n.localize(noteKey))}</p>` : "";
+      const list = events.length
+        ? `<ul class="ukm-scene-options">${events.map((e) => `<li><strong>${esc(e.name)}</strong> ${esc(e.hook ?? "")}</li>`).join("")}</ul>`
+        : `<p class="hint">${esc(L("StoryNone"))}</p>`;
+      const choice = await UkmDialog.wait({
+        window: { title: L("StoryEvents") },
+        position: { width: 560 },
+        content: `<p class="hint">${esc(L("StoryEventsHint"))}</p><div class="form-group"><label>${esc(L("StoryChapter"))}</label><select name="chapter" data-ukm-chapter>${options}</select></div>${list}${note}`,
+        buttons: [...events.map((e) => ({ action: e.id, label: e.name })), { action: "cancel", label: game.i18n.localize("Cancel") }],
+        render: (event, dialog) => {
+          const root = dialog.element ?? event?.target?.element;
+          root?.querySelector("[data-ukm-chapter]")?.addEventListener("change", (ev) => {
+            chapter = Number(ev.target.value);
+            dialog.close();
+          });
+        },
+        rejectClose: false
+      });
+      if (choice == null && chapter !== shown) {
+        shown = chapter;
+        if (game.user.isGM) await setSetting(SETTINGS.chapter, chapter);
+        continue;
+      }
+      eventId = choice && choice !== "cancel" ? choice : null;
+      break;
+    }
     if (eventId) await sendRequest("gm", { op: "storyEvent", eventId });
   }
 

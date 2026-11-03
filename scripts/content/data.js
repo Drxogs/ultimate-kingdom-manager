@@ -58,8 +58,34 @@ export function getStory(eventId, degreeName, tier = null) {
   return set?.[degreeName] ?? null;
 }
 
+let storyEventsCache = null;
+
+/**
+ * Events from the adventure's story, fired by the GM. An entry with a "base" is a deck event told
+ * as part of the story: it takes the base event's rules, with its own name, hook and chapter, and
+ * "addOutcomes" adds to the base's results.
+ */
 export function getStoryEvents() {
-  return cache.events?.storyEvents ?? [];
+  const list = cache.events?.storyEvents;
+  if (!list) return [];
+  if (storyEventsCache?.source === list) return storyEventsCache.events;
+  const deck = cache.events?.events ?? [];
+  const events = list.map((entry) => {
+    if (!entry.base) return entry;
+    const base = deck.find((e) => e.id === entry.base);
+    if (!base) return entry;
+    const { base: _base, addOutcomes, ...own } = entry;
+    const merged = { ...foundry.utils.deepClone(base), ...own, weight: 0, baseEvent: base.id };
+    for (const [degree, effects] of Object.entries(addOutcomes ?? {})) merged.outcomes[degree] = [...(merged.outcomes[degree] ?? []), ...effects];
+    return merged;
+  });
+  storyEventsCache = { source: list, events };
+  return events;
+}
+
+/** The chapter of the adventure a story event belongs to. */
+export function storyChapter(event) {
+  return event?.trigger?.chapter ?? null;
 }
 
 export function getMatters() {

@@ -1,5 +1,5 @@
 import { FLAG_SCOPE, MODULE_ID, REALM_STATS, SEATS } from "../constants.js";
-import { describeEffect } from "../realm/effects.js";
+import { describeEffects } from "../realm/effects.js";
 import { getAmbition, getCompanions, getProjects, getRankUpScene, getSeatAbilities, getTrackData, getTracks, getTroubles } from "./data.js";
 import { isLeader } from "../realm/leader.js";
 import { KINGMAKER_SHEET, kingmakerSheetAvailable } from "./story-import.js";
@@ -23,7 +23,7 @@ function hashText(text) {
 }
 
 function effects(list) {
-  const lines = (list ?? []).map(describeEffect).filter(Boolean);
+  const lines = describeEffects(list ?? []);
   return lines.length ? esc(lines.join("; ")) : "—";
 }
 

@@ -241,7 +241,7 @@ const COMPANION = { treasurer: "jubilost", viceroy: "svetlana", counselor: "linz
 const assignments = {};
 for (const seat of ALL_SEATS) if (!Object.values(seatOf).includes(seat)) assignments[seat] = { companion: COMPANION[seat], supervisor: party[0].uuid };
 realLog("PARTY", PARTY, JSON.stringify(seatOf), "companions", Object.keys(assignments).join(","));
-for (const [k, v] of Object.entries({ seatAssignments: assignments, knownAdvisors: Object.fromEntries(Object.values(COMPANION).map((c) => [c, true])), companionAttitudes: Object.fromEntries(Object.values(COMPANION).map((c) => [c, "friendly"])), levelGravity: 1, costGradient: {}, clock: {}, audiences: true, council: false, deskMatters: true, pinResolved: "remove", tapTreasury: "disabled", pinsShown: false })) env.settings.set(k, v);
+for (const [k, v] of Object.entries({ seatAssignments: assignments, knownAdvisors: Object.fromEntries(Object.values(COMPANION).map((c) => [c, true])), companionAttitudes: Object.fromEntries(Object.values(COMPANION).map((c) => [c, "friendly"])), levelGravity: 1, costGradient: {}, clock: {}, audiences: true, council: false, deskMatters: true, pinResolved: "remove", tapTreasury: "disabled", pinsShown: false, rollDice: false })) env.settings.set(k, v);
 const realmKey = "ultimate-kingdom-manager-next.realm";
 env.flags[realmKey] = {
   kingdom: {

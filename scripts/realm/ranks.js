@@ -1,7 +1,7 @@
 import { FOUNDING_PICKS, MODULE_ID, POINTS_PER_RANK, REALM_STATS } from "../constants.js";
 import { getRankUpAlways, getRankUpScene } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
-import { applyEffects, commitKingdomChanges, describeEffect, EffectContext } from "./effects.js";
+import { applyEffects, commitKingdomChanges, describeEffects, EffectContext } from "./effects.js";
 import { advisorProficiency, canRankUp, rankBonus, weeklyIncome } from "./rules.js";
 import { busyWith, canActForSeat } from "./resolve.js";
 import { addLog, getRealm, newId, updateRealm } from "./state.js";
@@ -41,7 +41,7 @@ export function rankUpChoices(project) {
   return {
     title: scene.title,
     scene: scene.scene,
-    always: always.map(describeEffect),
+    always: describeEffects(always),
     options: scene.options.map((o) => {
       const raw = o.effects[level] ?? [];
       const { effects, converted } = convertWasted(raw);
@@ -50,8 +50,8 @@ export function rankUpChoices(project) {
         label: o.label,
         text: o.text,
         effects,
-        lines: effects.map(describeEffect),
-        warning: converted ? game.i18n.localize("UKM.Bonus.WillConvert") : statusNote(raw)
+        lines: describeEffects(effects),
+        warning: statusNote(raw)
       };
     })
   };

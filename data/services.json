@@ -9,9 +9,8 @@
       "minLevel": 3,
       "costWeeks": 0.5,
       "detail": "character",
-      "notePrompt": "Which disease, poison or curse?",
       "chat": "The priests of {settlement} pray over {target}.",
-      "task": "{target}: counteract {note} as a rank {rank} spell with +{mod}."
+      "task": "{target}: counteract the affliction as a rank {rank} spell with +{mod}."
     },
     {
       "id": "restoration",
@@ -22,9 +21,8 @@
       "minLevel": 3,
       "costWeeks": 0.5,
       "detail": "character",
-      "notePrompt": "Which condition?",
       "chat": "{target} spends a day in the temple of {settlement}.",
-      "task": "{target}: Restoration at rank {rank} ({note})."
+      "task": "{target}: Restoration at rank {rank}."
     },
     {
       "id": "regenerate",
@@ -36,9 +34,8 @@
       "costWeeks": 2,
       "cooldownDays": 30,
       "detail": "character",
-      "notePrompt": "What was lost?",
       "chat": "The choir of {settlement} sings for {target} through the night.",
-      "task": "{target}: Regenerate at rank {rank}; restore {note}."
+      "task": "{target}: Regenerate at rank {rank}."
     },
     {
       "id": "raise-the-fallen",
@@ -51,7 +48,6 @@
       "cooldownDays": 30,
       "setting": "raiseDead",
       "detail": "character",
-      "notePrompt": "How did they fall? (for the chat)",
       "chat": "Bells ring across the realm. In the cathedral of {settlement}, the high priests hold vigil over {target}, and the people pray with them.",
       "task": "{target}: Raise Dead at rank {rank}, as the spell; the realm has paid. The usual drawbacks apply."
     },

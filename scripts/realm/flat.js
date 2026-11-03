@@ -17,19 +17,32 @@ function speaker() {
 }
 
 /** A flat check waiting to be rolled. Call inside updateRealm; post it with postFlatCheck afterwards. */
-export function queueFlatCheck(realm, { dc = 11, success = [], failure = [], title = "", why = "", cardId = null, hexKey = null }) {
-  const flat = { id: newId(), dc, success, failure, title, why, cardId, hexKey, created: game.time.worldTime };
+export function queueFlatCheck(realm, { dc = 11, success = [], failure = [], title = "", why = "", cardId = null, hexKey = null, dice = null }) {
+  const flat = { id: newId(), dc, success, failure, title, why, cardId, hexKey, dice, created: game.time.worldTime };
   realm.pendingFlats ??= [];
   realm.pendingFlats.push(flat);
   return flat;
 }
 
+/**
+ * Dice in an outcome (Unrest −1d4, say) are rolled at the table the same way: a button in chat,
+ * and the result is applied once someone rolls. Call inside updateRealm.
+ * effect: the outcome's effect, e.g. { unrest: "-1d4" }.
+ */
+export function queueDiceRoll(realm, { effect, title = "", cardId = null, hexKey = null }) {
+  const [key, value] = Object.entries(effect)[0];
+  const negative = String(value).trim().startsWith("-");
+  const formula = String(value).trim().replace(/^[-+]/, "");
+  return queueFlatCheck(realm, { title, cardId, hexKey, why: loc("DiceWhy", { what: game.i18n.localize(`UKM.Flat.DiceKey.${key}`), formula, sign: negative ? "−" : "+" }), dice: { formula, negative, effect } });
+}
+
 /** The chat card with the roll button. */
 export async function postFlatCheck(flat) {
+  const label = flat.dice ? loc("RollDice", { formula: flat.dice.formula }) : loc("Roll", { dc: flat.dc });
   const content = `<div class="ukm-chat ukm-flat">
-    <h3>${esc(flat.title || loc("Title"))}</h3>
+    <h3>${esc(flat.title || loc(flat.dice ? "DiceTitle" : "Title"))}</h3>
     ${flat.why ? `<p>${esc(flat.why)}</p>` : ""}
-    <p class="ukm-flat-slot"><button type="button" data-ukm-flat="${flat.id}" data-dc="${flat.dc}"><i class="fa-solid fa-dice-d20"></i> ${esc(loc("Roll", { dc: flat.dc }))}</button></p>
+    <p class="ukm-flat-slot"><button type="button" data-ukm-flat="${flat.id}" data-dc="${flat.dc}"${flat.dice ? ` data-formula="${esc(flat.dice.formula)}"` : ""}><i class="fa-solid fa-dice"></i> ${esc(label)}</button></p>
   </div>`;
   await ChatMessage.create({ content, speaker: speaker(), flags: { [MODULE_ID]: { flat: flat.id } } });
 }
@@ -42,8 +55,9 @@ async function rollFromChat(event) {
   button.remove();
   const id = button.dataset.ukmFlat;
   const dc = Number(button.dataset.dc) || 11;
-  const roll = await new Roll("1d20").evaluate();
-  await roll.toMessage({ flavor: loc("Flavor", { dc }), speaker: ChatMessage.getSpeaker() });
+  const formula = button.dataset.formula;
+  const roll = await new Roll(formula || "1d20").evaluate();
+  await roll.toMessage({ flavor: formula ? loc("DiceFlavor") : loc("Flavor", { dc }), speaker: ChatMessage.getSpeaker() });
   const { sendRequest } = await import("./requests.js");
   const result = await sendRequest("resolveFlat", { id, total: roll.total });
   if (!result?.ok && result?.reason !== "AlreadyRolled") slot?.append(button);
@@ -65,6 +79,7 @@ export async function resolveFlat({ id, total }) {
   const waiting = getRealm().pendingFlats?.find((f) => f.id === id);
   if (!waiting) return { ok: false, reason: "AlreadyRolled" };
   const passed = Number(total) >= waiting.dc;
+  const dice = waiting.dice;
   let ctx = null;
   await updateRealm(async (realm) => {
     const flat = realm.pendingFlats?.find((f) => f.id === id);
@@ -72,7 +87,11 @@ export async function resolveFlat({ id, total }) {
     realm.pendingFlats = realm.pendingFlats.filter((f) => f.id !== id);
     const card = flat.cardId ? realm.cards.find((c) => c.id === flat.cardId) ?? null : null;
     ctx = new EffectContext({ realm, card, event: null });
-    await applyEffects(ctx, passed ? flat.success : flat.failure);
+    if (dice) {
+      const [key] = Object.keys(dice.effect);
+      ctx.rollNow = true;
+      await applyEffects(ctx, [{ ...dice.effect, [key]: (dice.negative ? -1 : 1) * Number(total) }]);
+    } else await applyEffects(ctx, passed ? flat.success : flat.failure);
     for (const task of ctx.gmTasks) {
       task.hexKey ??= flat.hexKey;
       realm.gmTasks.push(task);
@@ -81,7 +100,7 @@ export async function resolveFlat({ id, total }) {
   if (!ctx) return { ok: false, reason: "AlreadyRolled" };
   await commitKingdomChanges(ctx);
 
-  const verdict = loc(passed ? "Passed" : "Failed", { total, dc: waiting.dc });
+  const verdict = dice ? loc("DiceRolled", { total }) : loc(passed ? "Passed" : "Failed", { total, dc: waiting.dc });
   const lines = ctx.lines.map((l) => `<li>${l}</li>`).join("");
   const message = game.messages?.find?.((m) => m.getFlag?.(MODULE_ID, "flat") === id);
   if (message) {
@@ -97,5 +116,5 @@ export async function resolveFlat({ id, total }) {
       speaker: { alias: game.i18n.localize("UKM.Manager.Title") }
     });
   }
-  return { ok: true, passed };
+  return { ok: true, passed: dice ? true : passed };
 }

@@ -4,7 +4,7 @@ import { getControlDC, getFame, getKingdom, getPartyLevel, getPlayerCharacters, 
 import { unrestPenalty } from "./kingdom.js";
 import { getSetting, SETTINGS } from "../settings.js";
 import { createCard } from "./deck.js";
-import { applyEffects, commitKingdomChanges, describeEffect, EffectContext, postFlatChecks } from "./effects.js";
+import { applyEffects, commitKingdomChanges, describeEffects, EffectContext, postFlatChecks } from "./effects.js";
 import { addStatPoints, cardWorkDays, isHired, seatCompanionId, weeklyIncome } from "./rules.js";
 import { addLog, getRealm, updateRealm } from "./state.js";
 import { secondsPerDay } from "./time.js";
@@ -485,8 +485,10 @@ function reopenCard(card, degreeName, days) {
   card.assignee = null;
   card.workUntil = null;
   card.months = (card.months ?? 1) + 1;
-  card.restUntil = now + ONGOING_REST_DAYS * secondsPerDay();
-  card.deadline = now + Math.max(days, ONGOING_REST_DAYS + 14) * secondsPerDay();
+  // Monthly cards rest between tries; a card that comes back daily (a siege, a rampage) doesn't.
+  const rest = days >= 14 ? ONGOING_REST_DAYS : 0;
+  card.restUntil = rest ? now + rest * secondsPerDay() : null;
+  card.deadline = now + (rest ? Math.max(days, rest + 14) : days) * secondsPerDay();
 }
 
 /** Whether an ongoing card is resting until its next month. */
@@ -744,6 +746,6 @@ export function outcomePreview(card) {
     .map((degree) => ({
       degree,
       label: game.i18n.localize(`UKM.Degree.${degree}`),
-      effects: (outcomes[degree] ?? []).map(describeEffect).filter(Boolean)
+      effects: describeEffects(outcomes[degree] ?? [])
     }));
 }

@@ -32,7 +32,7 @@ const cost = cleanse().cost;
 let r = await SV.requestService({ serviceId: "cleanse-affliction", details: { actorUuid: pc.uuid, note: "goblin pox" }, userId: "gm" });
 ok(r.ok && !r.pending && getRealm().treasury === before - cost, `paid ${cost} BP at once (${JSON.stringify(r)})`);
 const task = getRealm().gmTasks.at(-1)?.text ?? "";
-ok(task.includes("Wes") && task.includes("goblin pox") && task.includes("rank 2"), `GM task: ${task}`);
+ok(task.includes("Wes") && task.includes("affliction") && task.includes("rank 2"), `GM task: ${task}`);
 ok(env.messages.at(-1)?.content.includes("Cleanse Affliction"), "chat post");
 
 // Anyone else asks; it waits for the ruler on the council.

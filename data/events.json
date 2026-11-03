@@ -2944,7 +2944,7 @@
   "storyEvents": [
     {
       "id": "public-outbreak",
-      "name": "Public Outbreak",
+      "name": "Public Outburst",
       "page": "oACpUsHavxM0gXje",
       "kind": "problem",
       "mod": 0,
@@ -3126,6 +3126,818 @@
             "becomeContinuous": {
               "everyDays": 1
             }
+          }
+        ]
+      }
+    },
+    {
+      "id": "old-sharptooth",
+      "name": "Old Sharptooth Comes Calling",
+      "kind": "problem",
+      "mod": 3,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "settlement"
+      ],
+      "trigger": {
+        "chapter": 2,
+        "gm": true
+      },
+      "placement": {
+        "type": "settlement",
+        "rule": "random"
+      },
+      "seat": "viceroy",
+      "skill": [
+        "intrigue"
+      ],
+      "continuous": {
+        "endOn": [
+          "criticalSuccess"
+        ]
+      },
+      "escalate": true,
+      "hook": "The devil the Sootscale kobolds worship has come looking for them. Run it from party level 13, if the Sootscales joined the realm.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "gm": "Zozraael's hidden lair in the settlement is found. The party can confront him there."
+          }
+        ],
+        "success": [
+          {
+            "unrest": 1
+          },
+          {
+            "ruin": {
+              "choice": 1
+            }
+          }
+        ],
+        "failure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "choice": 1,
+              "count": 3
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "choice": 1,
+              "count": 3
+            }
+          },
+          {
+            "gm": "An NPC leader falls in with Zozraael's cult: treat their seat as empty until this ends or they're replaced."
+          }
+        ]
+      }
+    },
+    {
+      "id": "forgotten-keep-elves",
+      "base": "diplomatic-overture",
+      "name": "Elves at the Forgotten Keep",
+      "trigger": {
+        "chapter": 2,
+        "gm": true
+      },
+      "hook": "Elven diplomats want to visit and restore the Forgotten Keep. Run it a few months after the keep is claimed.",
+      "addOutcomes": {
+        "success": [
+          {
+            "spawn": "new-subjects",
+            "days": 30
+          }
+        ],
+        "criticalSuccess": [
+          {
+            "spawn": "new-subjects",
+            "days": 30
+          }
+        ]
+      }
+    },
+    {
+      "id": "slain-townsfolk",
+      "base": "monster-activity",
+      "name": "The Slain Townsfolk",
+      "trigger": {
+        "chapter": 4,
+        "gm": true
+      },
+      "hook": "Villagers are being killed on the edge of the capital. It comes back every month until the killer is stopped.",
+      "continuous": {
+        "endOn": [
+          "criticalSuccess",
+          "gm"
+        ]
+      }
+    },
+    {
+      "id": "rabble-rouser",
+      "name": "The Rabble-Rouser",
+      "kind": "problem",
+      "mod": 0,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "settlement"
+      ],
+      "trigger": {
+        "chapter": 4,
+        "gm": true
+      },
+      "placement": {
+        "type": "settlement",
+        "rule": "capital"
+      },
+      "seat": "emissary",
+      "skill": [
+        "politics",
+        "statecraft",
+        "arts"
+      ],
+      "continuous": {
+        "endOn": [
+          "stage2:criticalSuccess",
+          "stage2:success",
+          "stage2:criticalFailure"
+        ]
+      },
+      "hook": "A bard named Grigori is turning the capital against its rulers.",
+      "stages": [
+        {
+          "label": "Answer his propaganda",
+          "skill": [
+            "politics",
+            "statecraft",
+            "arts"
+          ],
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "note": "His campaign collapses. He can be arrested and put on trial."
+              },
+              {
+                "nextStage": true
+              }
+            ],
+            "success": [
+              {
+                "unrest": 1
+              }
+            ],
+            "failure": [
+              {
+                "unrest": "1d6"
+              },
+              {
+                "spawn": "public-scandal",
+                "days": 0
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d6"
+              },
+              {
+                "ruin": {
+                  "strife": 1
+                }
+              },
+              {
+                "spawn": "public-scandal",
+                "days": 0
+              }
+            ]
+          }
+        },
+        {
+          "label": "Grigori's trial",
+          "skill": [
+            "intrigue",
+            "politics",
+            "statecraft"
+          ],
+          "outcomes": {
+            "criticalSuccess": [
+              {
+                "unrest": "-1d6"
+              },
+              {
+                "choose": {
+                  "n": 1,
+                  "from": [
+                    [
+                      {
+                        "ruin": {
+                          "decay": 1
+                        }
+                      },
+                      {
+                        "ruin": {
+                          "crime": -2
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "ruin": {
+                          "strife": -1
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "ruin": {
+                          "strife": 1
+                        }
+                      },
+                      {
+                        "ruin": {
+                          "corruption": -2
+                        }
+                      }
+                    ]
+                  ]
+                }
+              },
+              {
+                "gm": "Grigori is found guilty. The party picks the sentence: execution, exile or pardon (the choice above)."
+              },
+              {
+                "end": true
+              }
+            ],
+            "success": [
+              {
+                "choose": {
+                  "n": 1,
+                  "from": [
+                    [
+                      {
+                        "ruin": {
+                          "decay": 1
+                        }
+                      },
+                      {
+                        "ruin": {
+                          "crime": -2
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "ruin": {
+                          "strife": -1
+                        }
+                      }
+                    ]
+                  ]
+                }
+              },
+              {
+                "gm": "Grigori is found guilty: execution or exile (the choice above)."
+              },
+              {
+                "end": true
+              }
+            ],
+            "failure": [
+              {
+                "unrest": "1d4"
+              },
+              {
+                "ruin": {
+                  "corruption": 1
+                }
+              },
+              {
+                "note": "The trial drags on into next month."
+              }
+            ],
+            "criticalFailure": [
+              {
+                "unrest": "1d4"
+              },
+              {
+                "ruin": {
+                  "choice": 2,
+                  "count": 2
+                }
+              },
+              {
+                "gm": "Grigori is found not guilty and flees the realm. He may come back as a foe."
+              },
+              {
+                "end": true
+              }
+            ]
+          }
+        }
+      ],
+      "outcomes": {}
+    },
+    {
+      "id": "desperate-spies",
+      "name": "Desperate Spies",
+      "kind": "problem",
+      "mod": 3,
+      "traits": [
+        "dangerous",
+        "settlement"
+      ],
+      "trigger": {
+        "chapter": 4,
+        "gm": true
+      },
+      "placement": {
+        "type": "settlement",
+        "rule": "capital"
+      },
+      "seat": "viceroy",
+      "skill": [
+        "defense",
+        "intrigue"
+      ],
+      "hook": "Two kobold spies are skulking around the capital for the troll king. One roll covers their week in town.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "gm": "The two kobold spies, Kereek and Prazil, are caught and held for questioning."
+          }
+        ],
+        "success": [
+          {
+            "flat": {
+              "dc": 11,
+              "failure": [
+                {
+                  "unrest": 1
+                }
+              ]
+            }
+          }
+        ],
+        "failure": [
+          {
+            "unrest": 1
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 1
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cult-of-gyronna",
+      "base": "cult-activity",
+      "name": "The Cult of Gyronna",
+      "mod": 2,
+      "trigger": {
+        "chapter": 4,
+        "gm": true
+      },
+      "placement": {
+        "type": "settlement",
+        "rule": "capital",
+        "hidden": true
+      },
+      "hook": "A respected midwife leads a cult of the Angry Hag in the capital. Run it once the realm is level 4."
+    },
+    {
+      "id": "founding-of-tatzlford",
+      "name": "The Founding of Tatzlford",
+      "kind": "opportunity",
+      "mod": 0,
+      "traits": [
+        "beneficial",
+        "hex"
+      ],
+      "trigger": {
+        "chapter": 4,
+        "gm": true
+      },
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "viceroy",
+      "skill": [
+        "exploration"
+      ],
+      "hook": "Loy and Latricia Rezbin want the realm's help founding a village at a ford on the Skunk River (GB16).",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "gm": "Tatzlford is founded at GB16 as a village with water on one side, and the hex joins the realm. Add it on the map."
+          }
+        ],
+        "success": [
+          {
+            "gm": "Tatzlford is founded at GB16. It joins the realm only if that hex is already claimed; otherwise it's a freehold."
+          }
+        ],
+        "failure": [
+          {
+            "gm": "Tatzlford is founded at GB16 (it joins the realm only if the hex is claimed)."
+          },
+          {
+            "bpDice": -2
+          }
+        ],
+        "criticalFailure": [
+          {
+            "gm": "The Rezbins are lost: captured by Hargulka's trolls if they still stand, and rescuing them founds Tatzlford after all."
+          },
+          {
+            "unrest": 1
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          },
+          {
+            "bpDice": -4
+          }
+        ]
+      }
+    },
+    {
+      "id": "return-of-the-black-tears",
+      "name": "Return of the Black Tears",
+      "kind": "problem",
+      "mod": 0,
+      "traits": [
+        "dangerous"
+      ],
+      "trigger": {
+        "chapter": 4,
+        "gm": true
+      },
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "emissary",
+      "skill": [
+        "intrigue"
+      ],
+      "hook": "The Black Tears mercenaries have come south to make an example of the realm.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": "-1d4"
+          }
+        ],
+        "success": [
+          {
+            "unrest": 1
+          }
+        ],
+        "failure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "choice": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "choice": 1
+            }
+          },
+          {
+            "ruin": {
+              "crime": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "troll-sightings",
+      "name": "Troll Sightings",
+      "kind": "problem",
+      "mod": 0,
+      "traits": [
+        "continuous",
+        "dangerous"
+      ],
+      "trigger": {
+        "chapter": 4,
+        "gm": true
+      },
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "viceroy",
+      "skill": [
+        "defense"
+      ],
+      "continuous": {
+        "endOn": [
+          "gm"
+        ]
+      },
+      "hook": "Trolls are raiding the borders. Run it from party level 5; it comes back every month until Hargulka is defeated.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "gm": "Scouts track the trolls home: show the party Hargulka's lair (NM7)."
+          }
+        ],
+        "success": [
+          {
+            "unrest": 1
+          }
+        ],
+        "failure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          },
+          {
+            "gm": "Trolls raze a farm: remove one Farmland (or, with none, lose a border hex near NM7)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "weird-gnome",
+      "name": "Trouble with a Weird Gnome",
+      "kind": "problem",
+      "mod": 0,
+      "traits": [
+        "dangerous"
+      ],
+      "trigger": {
+        "chapter": 4,
+        "gm": true
+      },
+      "placement": {
+        "type": "kingdom"
+      },
+      "seat": "magister",
+      "skill": [
+        "intrigue"
+      ],
+      "hook": "A gnome with bright orange hair keeps turning up where no one could have got to.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": -1
+          }
+        ],
+        "success": [
+          {
+            "unrest": 1
+          }
+        ],
+        "failure": [
+          {
+            "unrest": 1
+          },
+          {
+            "ruin": {
+              "choice": 1
+            }
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": 2
+          },
+          {
+            "ruin": {
+              "choice": 1,
+              "count": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "rampage-of-the-beast",
+      "name": "Rampage of the Beast",
+      "kind": "problem",
+      "mod": 4,
+      "traits": [
+        "dangerous",
+        "settlement"
+      ],
+      "trigger": {
+        "chapter": 4,
+        "gm": true
+      },
+      "placement": {
+        "type": "settlement",
+        "rule": "capital"
+      },
+      "seat": "viceroy",
+      "skill": [
+        "defense"
+      ],
+      "hook": "A huge owlbear tore through town. Play it as a flashback; a settlement with only water around it gets one degree better.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": 1
+          }
+        ],
+        "success": [
+          {
+            "unrest": "1d4"
+          },
+          {
+            "ruin": {
+              "decay": 1
+            }
+          },
+          {
+            "gm": "Walls lose a stage, or (with no Walls) one track there (players' choice) loses a stage."
+          }
+        ],
+        "failure": [
+          {
+            "unrest": "1d6"
+          },
+          {
+            "ruin": {
+              "decay": "1d4"
+            }
+          },
+          {
+            "gm": "Walls lose a stage, and two other tracks there (players' choice) lose a stage."
+          }
+        ],
+        "criticalFailure": [
+          {
+            "unrest": "2d4"
+          },
+          {
+            "ruin": {
+              "decay": "1d6"
+            }
+          },
+          {
+            "gm": "Walls lose a stage, and four other tracks there (players' choice) lose a stage."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bloom-cult-activity",
+      "base": "cult-activity",
+      "name": "Cult of the Bloom",
+      "mod": 3,
+      "trigger": {
+        "chapter": 5,
+        "gm": true
+      },
+      "hook": "Lamashtu's bloom cult is at work in a settlement."
+    },
+    {
+      "id": "bloom-monster-activity",
+      "base": "monster-activity",
+      "name": "Bloom Monsters",
+      "trigger": {
+        "chapter": 5,
+        "gm": true
+      },
+      "hook": "Bloom-cursed beasts are loose. While the cult stands, one of these starts every month."
+    },
+    {
+      "id": "asmeranda-troupe",
+      "base": "visiting-celebrity",
+      "name": "Asmeranda's Troupe",
+      "trigger": {
+        "chapter": 8,
+        "gm": true
+      },
+      "hook": "The singer Asmeranda brings her troupe to a theater of the party's choice, in thanks for her rescue."
+    },
+    {
+      "id": "endure-bloom-siege",
+      "name": "Endure the Bloom Siege",
+      "kind": "problem",
+      "mod": 0,
+      "traits": [
+        "continuous",
+        "dangerous",
+        "settlement"
+      ],
+      "trigger": {
+        "chapter": 10,
+        "gm": true
+      },
+      "placement": {
+        "type": "settlement",
+        "rule": "capital"
+      },
+      "seat": "general",
+      "skill": [
+        "defense",
+        "magic"
+      ],
+      "deadlineDays": 1,
+      "continuous": {
+        "endOn": [
+          "gm"
+        ]
+      },
+      "hook": "First World armies besiege the capital from a bloom. It's rolled every day, 2 harder each day, until the bloom is ended. A day the bloom was beaten counts one degree better.",
+      "outcomes": {
+        "criticalSuccess": [
+          {
+            "unrest": 1
+          },
+          {
+            "eventDc": 2
+          }
+        ],
+        "success": [
+          {
+            "ruin": {
+              "decay": 1
+            }
+          },
+          {
+            "unrest": 1
+          },
+          {
+            "gm": "Walls or one track in the capital (players' choice) loses a stage."
+          },
+          {
+            "eventDc": 2
+          }
+        ],
+        "failure": [
+          {
+            "ruin": {
+              "decay": 1
+            }
+          },
+          {
+            "unrest": "1d4"
+          },
+          {
+            "gm": "Two tracks in the capital (players' choice) lose a stage."
+          },
+          {
+            "eventDc": 2
+          }
+        ],
+        "criticalFailure": [
+          {
+            "ruin": {
+              "decay": 2
+            }
+          },
+          {
+            "unrest": "1d4+2"
+          },
+          {
+            "gm": "Three tracks in the capital (players' choice) lose a stage."
+          },
+          {
+            "eventDc": 2
           }
         ]
       }

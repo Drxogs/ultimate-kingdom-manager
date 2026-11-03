@@ -107,7 +107,7 @@ export async function fundProposal({ proposalId, userId }) {
   if (!p) return { ok: false, reason: "Unknown" };
   if (p.request?.type === "service") {
     const { performService } = await import("./services.js");
-    const done = await performService({ serviceId: p.request.serviceId, details: p.request.details, byName: p.byName });
+    const done = await performService({ serviceId: p.request.serviceId, details: p.request.details });
     if (!done.ok) return done;
     await settle(proposalId, "funded");
     return done;

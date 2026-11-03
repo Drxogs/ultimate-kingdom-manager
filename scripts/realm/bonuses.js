@@ -1,4 +1,4 @@
-import { KINGDOM_SKILLS, selectorReaches } from "../constants.js";
+import { KINGDOM_SKILLS, REALM_STATS, selectorReaches } from "../constants.js";
 import { getKingdom } from "../integrations/party.js";
 import { getRealm } from "./state.js";
 
@@ -7,6 +7,20 @@ const ALL_SKILLS = KINGDOM_SKILLS;
 /** The kingdom skills a modifier's selector reaches: an attribute, a skill, or every event check. */
 export function skillsFor(selector) {
   return ALL_SKILLS.filter((skill) => selectorReaches(selector, skill));
+}
+
+/** The best status bonus a skill already gets, and where it comes from. */
+export function currentStatusSource(skill, realm = getRealm()) {
+  const statistic = getKingdom()?.skills?.[skill];
+  let best = { value: 0, label: "" };
+  for (const m of statistic?.modifiers ?? []) {
+    if (m.type === "status" && m.enabled !== false && !m.ignored && m.modifier > best.value) best = { value: m.modifier, label: m.label ?? "" };
+  }
+  const now = game.time.worldTime;
+  for (const m of realm.timedModifiers ?? []) {
+    if (m.type === "status" && m.value > best.value && m.expires > now && skillsFor(m.selector).includes(skill)) best = { value: m.value, label: m.label ?? "" };
+  }
+  return best;
 }
 
 /** The best status bonus a skill already gets: from the kingdom sheet or a timed bonus. */
@@ -35,13 +49,22 @@ export function statusGain(modifier, realm = getRealm()) {
   return { best: Math.max(...gains), worst: Math.min(...gains), existing: Math.max(...existing), skills };
 }
 
-/** A short warning for a choice whose status bonus would add little or nothing. */
+/** What a modifier's selector covers, in words: "Culture checks" or "Trade and Industry checks". */
+function coverLabel(selector, skills) {
+  const same = (def) => def.skills.length === skills.length && def.skills.every((k) => skills.includes(k));
+  const statId = REALM_STATS[selector] ? selector : Object.keys(REALM_STATS).find((k) => same(REALM_STATS[k]));
+  const stat = statId ? game.i18n.localize(`UKM.Stat.${statId}`) : null;
+  const what = stat ?? skills.map((s) => game.i18n.localize(`UKM.Skill.${s}`)).join(", ");
+  return game.i18n.format("UKM.Bonus.Checks", { what });
+}
+
+/** A short warning for a choice whose status bonus overlaps one the realm already has. */
 export function statusNote(effects, realm = getRealm()) {
   for (const effect of effects ?? []) {
     const gain = statusGain(effect.modifier, realm);
     if (!gain || gain.best >= effect.modifier.value) continue;
-    if (gain.best === 0) return game.i18n.format("UKM.Bonus.Wasted", { existing: gain.existing });
-    return game.i18n.format("UKM.Bonus.Partial", { gain: gain.best, existing: gain.existing });
+    const source = gain.skills.map((s) => currentStatusSource(s, realm)).sort((a, b) => b.value - a.value)[0];
+    return game.i18n.format("UKM.Bonus.WontStack", { value: source.value, name: source.label || game.i18n.localize("UKM.Bonus.Reward"), what: coverLabel(effect.modifier.selector, gain.skills) });
   }
   return null;
 }
