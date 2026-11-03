@@ -1,5 +1,5 @@
 import { CARD_DEADLINE_DAYS, MODULE_ID, SEATS } from "../constants.js";
-import { getEvents, getMatters, matterTier } from "../content/data.js";
+import { getEvent, getEvents, getMatters, matterTier } from "../content/data.js";
 import { getKingdom } from "../integrations/party.js";
 import {
   getAllHexStates,
@@ -160,7 +160,8 @@ export const MAX_ONGOING_PROBLEMS = 2;
 const isOngoingProblem = (event) => event?.kind === "problem" && !!event.continuous;
 
 export function ongoingProblems(realm) {
-  return realm.cards.filter((c) => ["open", "assigned", "rolled", "escalated"].includes(c.status) && isOngoingProblem(getEvents().find((e) => e.id === c.eventId))).length;
+  // Story problems count too: while the adventure has the realm busy, the monthly draw gives way.
+  return realm.cards.filter((c) => ["open", "assigned", "rolled", "escalated"].includes(c.status) && isOngoingProblem(getEvent(c.eventId))).length;
 }
 
 function isAlreadyActive(event, realm) {

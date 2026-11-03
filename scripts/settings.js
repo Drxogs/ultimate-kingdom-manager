@@ -23,7 +23,9 @@ export const SETTINGS = {
   pinsShown: "pinsShown",
   raiseDead: "raiseDead",
   rollDice: "rollDice",
-  chapter: "chapter"
+  chapter: "chapter",
+  anarchyRule: "anarchyRule",
+  unrestCap: "unrestCap"
 };
 
 export function registerSettings() {
@@ -84,6 +86,9 @@ export function registerSettings() {
   });
 
   world(SETTINGS.chapter, { config: false, type: Number, default: 4 });
+  // Balance switches, tried in the simulator before being offered: how anarchy worsens checks, and a cap on Unrest.
+  world(SETTINGS.anarchyRule, { config: false, type: String, default: "all" });
+  world(SETTINGS.unrestCap, { config: false, type: Number, default: 0 });
 
   world(SETTINGS.rollDice, {
     name: "UKM.Settings.RollDice.Name",

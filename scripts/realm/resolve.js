@@ -603,7 +603,8 @@ async function handRollToPlayer(card) {
 
 function finalDegree(roll) {
   let degree = roll.degree;
-  if (roll.anarchy) degree = Math.max(0, degree - 1);
+  // Anarchy makes every result a step worse, or (the gentler rule) only failures.
+  if (roll.anarchy && (getSetting(SETTINGS.anarchyRule) !== "failures" || degree <= 1)) degree = Math.max(0, degree - 1);
   return degree;
 }
 

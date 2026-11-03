@@ -180,7 +180,9 @@ function makePc(key) {
 const PARTIES = {
   average: ["fighter", "wizard", "cleric", "rogue"],
   skilled6: ["rogue", "investigator", "bard", "ranger", "swashbuckler", "wizard"],
-  poor: ["barbarian", "fighter", "champion", "monk"]
+  poor: ["barbarian", "fighter", "champion", "monk"],
+  small3: ["fighter", "cleric", "rogue"],
+  poor3: ["barbarian", "fighter", "monk"]
 };
 const PARTY = process.env.PARTY ?? "average";
 const party = PARTIES[PARTY].map(makePc);
@@ -240,8 +242,10 @@ for (const { pc, seat } of pairs) if (!Object.values(seatOf).includes(seat) && !
 const COMPANION = { treasurer: "jubilost", viceroy: "svetlana", counselor: "linzi", magister: "octavia", emissary: "valerie", general: "amiri" };
 const assignments = {};
 for (const seat of ALL_SEATS) if (!Object.values(seatOf).includes(seat)) assignments[seat] = { companion: COMPANION[seat], supervisor: party[0].uuid };
+// COMPANIONS=all: a companion advises every seat, also the ones a character holds (supervised by that character).
+if (process.env.COMPANIONS === "all") for (const pc of party) if (seatOf[pc.id]) assignments[seatOf[pc.id]] = { companion: COMPANION[seatOf[pc.id]], supervisor: pc.uuid };
 realLog("PARTY", PARTY, JSON.stringify(seatOf), "companions", Object.keys(assignments).join(","));
-for (const [k, v] of Object.entries({ seatAssignments: assignments, knownAdvisors: Object.fromEntries(Object.values(COMPANION).map((c) => [c, true])), companionAttitudes: Object.fromEntries(Object.values(COMPANION).map((c) => [c, "friendly"])), levelGravity: 1, costGradient: {}, clock: {}, audiences: true, council: false, deskMatters: true, pinResolved: "remove", tapTreasury: "disabled", pinsShown: false, rollDice: false })) env.settings.set(k, v);
+for (const [k, v] of Object.entries({ seatAssignments: assignments, knownAdvisors: Object.fromEntries(Object.values(COMPANION).map((c) => [c, true])), companionAttitudes: Object.fromEntries(Object.values(COMPANION).map((c) => [c, "friendly"])), levelGravity: 1, costGradient: {}, clock: {}, audiences: true, council: false, deskMatters: true, pinResolved: "remove", tapTreasury: "disabled", pinsShown: false, rollDice: false, anarchyRule: process.env.ANARCHY ?? "all", unrestCap: Number(process.env.UCAP ?? 0) })) env.settings.set(k, v);
 const realmKey = "ultimate-kingdom-manager-next.realm";
 env.flags[realmKey] = {
   kingdom: {
@@ -470,6 +474,47 @@ function countResults() {
 const degreeCount = { 0: 0, 1: 0, 2: 0, 3: 0 };
 const origAccept = RS.acceptRoll;
 
+// ---------- the adventure's story events, fired by the "GM" at about the levels the AP runs them ----------
+const STORY = process.env.STORY === "1";
+const GMOPS = await import(`${R}/realm/gm.js`);
+const roll = (f) => { const [n, d] = f.split("d").map(Number); let t = 0; for (let i = 0; i < n; i++) t += 1 + Math.floor(rand() * d); return t; };
+const STORY_PLAN = [
+  // Chapter 4 over levels 4-5, spaced the way the adventure suggests.
+  [4, 5, "slain-townsfolk"], [4, 20, "rabble-rouser"], [4, 40, "founding-of-tatzlford"], [4, 45, "end", "slain-townsfolk"], [4, 60, "desperate-spies"],
+  [5, 1, "troll-sightings"], [5, 10, "cult-of-gyronna"], [5, 40, "return-of-the-black-tears"], [5, 50, "rampage-of-the-beast"], [5, 70, "weird-gnome"], [6, 1, "end", "troll-sightings"],
+  [6, 10, "bloom-cult-activity"], [6, 20, "bloom-monster-activity"], [6, 40, "public-outbreak"], [6, 50, "bloom-monster-activity"],
+  [6, 60, "too-close-to-home"], [7, 10, "urban-outbreak"], [7, 20, "bloom-monster-activity"], [7, 40, "public-outbreak"], [8, 1, "end", "bloom-monster-activity"],
+  [8, 30, "forgotten-keep-elves"], [12, 20, "asmeranda-troupe"], [13, 30, "old-sharptooth"],
+  [17, 40, "endure-bloom-siege"], [17, 46, "end", "endure-bloom-siege"]
+];
+// Effects the AP has the GM apply by hand: the Battle for Tatzlford (a win) and Avinash's raids.
+const STORY_HAND = [
+  [10, 30, () => ({ unrest: -roll("1d4"), ruin: -1 })],
+  [12, 10, () => ({ unrest: roll("1d6") + 4, ruin: 2, others: 1 })], [12, 40, () => ({ unrest: roll("1d6") + 4, ruin: 2, others: 1 })],
+  [12, 70, () => ({ unrest: roll("1d4"), ruin: 1 })], [13, 10, () => ({ unrest: roll("1d4"), ruin: 1 })]
+];
+async function storyDay(level, d) {
+  if (!STORY) return;
+  for (const [l, dd, what, id] of STORY_PLAN) {
+    if (l !== level || dd !== d) continue;
+    if (what === "end") {
+      for (const c of getRealm().cards.filter((x) => x.eventId === id && x.status !== "resolved")) await RS.endCard(c.id);
+    } else {
+      await GMOPS.gmAction({ op: "storyEvent", eventId: what, userId: "gm" });
+      stats.story = (stats.story ?? 0) + 1;
+    }
+  }
+  for (const [l, dd, fx] of STORY_HAND) {
+    if (l !== level || dd !== d) continue;
+    const e = fx();
+    const k = getKingdom();
+    const abil = Object.keys(k.abilities);
+    const upd = { "unrest.value": Math.max(0, k.unrest.value + e.unrest) };
+    abil.forEach((a, i) => { upd[`abilities.${a}.ruin.value`] = Math.max(0, k.abilities[a].ruin.value + (i === 0 ? e.ruin : e.others ?? 0)); });
+    await k.update(upd);
+  }
+}
+
 let day = 0;
 const T0 = Date.now();
 const MAX_LEVEL = Number(process.env.MAXLEVEL ?? 20);
@@ -485,6 +530,7 @@ for (let level = 1; level <= MAX_LEVEL; level++) {
     env.advance(1);
     try {
       const u0 = getKingdom().unrest.value;
+      await storyDay(level, i);
       await tick();
       if (ENGAGEMENT === "daily" || day % 7 === 0) {
         await handleCards();
@@ -534,4 +580,4 @@ for (let level = 1; level <= MAX_LEVEL; level++) {
   if (!QUIET) realLog(JSON.stringify(line));
 }
 const final = levelLines.at(-1);
-realLog("SUMMARY", JSON.stringify({ degrees, seed: SEED, daysPerLevel: DAYS_PER_LEVEL, engagement: ENGAGEMENT, resolved: stats.resolved, expired: stats.expired, trouble: stats.trouble, personal: stats.personal, advisor: stats.advisor, fameRerolls: stats.fameRerolls, decrees: stats.decrees, maxUnrest: stats.maxUnrest, anarchyDays: stats.anarchyDays, bp: { rankUps: Math.round(stats.bpOnRankUps), projects: Math.round(stats.bpOnProjects), tracks: Math.round(stats.bpOnTracks) }, projects: stats.projectsStarted, final }));
+realLog("SUMMARY", JSON.stringify({ story: stats.story ?? 0, degrees, seed: SEED, daysPerLevel: DAYS_PER_LEVEL, engagement: ENGAGEMENT, resolved: stats.resolved, expired: stats.expired, trouble: stats.trouble, personal: stats.personal, advisor: stats.advisor, fameRerolls: stats.fameRerolls, decrees: stats.decrees, maxUnrest: stats.maxUnrest, anarchyDays: stats.anarchyDays, bp: { rankUps: Math.round(stats.bpOnRankUps), projects: Math.round(stats.bpOnProjects), tracks: Math.round(stats.bpOnTracks) }, projects: stats.projectsStarted, final }));
