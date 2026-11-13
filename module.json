@@ -2,7 +2,7 @@
   "id": "ultimate-kingdom-manager",
   "title": "Ultimate Kingdom Manager",
   "description": "Kingdom building for Pathfinder 2e Kingmaker that plays like the video game. Every player gets a desk, problems land on it with a deadline, companions take days to sort them out, and your settlements grow while the party is off adventuring. Written with Claude, Anthropic's AI model; see the README for details.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "authors": [
     {
       "name": "Drxogs",
@@ -11,7 +11,7 @@
   ],
   "url": "https://github.com/Drxogs/ultimate-kingdom-manager",
   "manifest": "https://github.com/Drxogs/ultimate-kingdom-manager/releases/latest/download/module.json",
-  "download": "https://github.com/Drxogs/ultimate-kingdom-manager/releases/download/v1.0.4/module.zip",
+  "download": "https://github.com/Drxogs/ultimate-kingdom-manager/releases/download/v1.0.5/module.zip",
   "bugs": "https://github.com/Drxogs/ultimate-kingdom-manager/issues",
   "compatibility": {
     "minimum": "13",
@@ -24,7 +24,7 @@
         "type": "system",
         "compatibility": {
           "minimum": "7.0.0",
-          "verified": "8.6.1"
+          "verified": "8.7.0"
         }
       }
     ],
