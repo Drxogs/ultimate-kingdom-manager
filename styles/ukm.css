@@ -690,6 +690,8 @@
 .ukm-dialog .window-content p { color: #2b2118; }
 .ukm-dialog .form-footer { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--ukm-divider); }
 
+.ukm-hex-editor { max-height: calc(100vh - 20px); }
+.ukm-hex-editor .window-content { overflow-y: auto; max-height: calc(100vh - 60px); }
 .ukm-hex-edit ul { margin: 0.3rem 0 0; padding-left: 1.1rem; font-size: var(--font-size-14, 14px); }
 
 /* Flat-check button in chat, in the desk-button style */

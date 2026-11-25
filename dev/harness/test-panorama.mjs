@@ -107,3 +107,12 @@ const vb = (cls) => [...vt.html.matchAll(new RegExp(`class="ukm-px ${cls}" style
 const hutL = Math.min(...vb("ukm-px-home").map(([l]) => l)), hutR = Math.max(...vb("ukm-px-home").map(([l, w]) => l + w));
 const palL = Math.min(...vb("ukm-px-wall").map(([l]) => l)), palR = Math.max(...vb("ukm-px-wall").map(([l, w]) => l + w));
 ok(palL <= hutL - 10 && palR >= hutR - 10 + 20, `palisade reaches about a hut past the village (${palL.toFixed(0)}-${palR.toFixed(0)} vs huts ${hutL.toFixed(0)}-${hutR.toFixed(0)})`);
+
+const { terrainKey } = await import(`${R}/apps/panorama.js`);
+ok(["swamp", "Swamp", "wetlands", "Wetland", "marsh", "bog", "lake", "PF2E.Kingmaker.Terrain.Swamp", { id: "swamp" }].every((t) => terrainKey(t) === "swamp"), "every swamp spelling gets the swamp background");
+ok(terrainKey("forest") === "forest" && terrainKey("mountains") === "mountains" && terrainKey("hills") === "hills" && terrainKey("plains") === "plains" && terrainKey(null) === "plains", "other terrains unchanged");
+globalThis.game.modules = new Map([["pf2e-kingmaker", { active: true }]]);
+globalThis.kingmaker = { CONST: { HEXES: { "3.5": { zone: "HT", terrain: "forest" }, "4.6": { zone: "HT" } }, ZONES: { HT: { terrain: "swamp" } } }, state: { hexes: { 3005: { terrain: "swamp" } } } };
+const { hexTerrain } = await import(`${R}/integrations/kingmaker.js`);
+ok(hexTerrain("3005") === "swamp", "terrain set in the hex editor wins over the map's own");
+ok(hexTerrain("4006") === "swamp", "a hex with no terrain of its own takes its zone's");

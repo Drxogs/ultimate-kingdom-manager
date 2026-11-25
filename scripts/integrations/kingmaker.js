@@ -55,6 +55,21 @@ export function getHexDefinitions() {
   }));
 }
 
+/**
+ * The terrain of one hex (state key "1000 * i + j"): what the GM set in the hex editor if anything,
+ * else the map's own data for the hex, else its zone's terrain.
+ */
+export function hexTerrain(stateKey) {
+  const k = km();
+  if (!k || stateKey === undefined || stateKey === null) return null;
+  const saved = k.state?.hexes?.[stateKey]?.terrain;
+  if (saved) return saved;
+  const i = Math.floor(Number(stateKey) / 1000);
+  const j = Number(stateKey) % 1000;
+  const def = k.CONST?.HEXES?.[`${i}.${j}`];
+  return def?.terrain ?? k.CONST?.ZONES?.[def?.zone]?.terrain ?? null;
+}
+
 /** All hex state entries with valid keys. Stray entries (e.g. "NaN") are skipped. */
 export function getAllHexStates() {
   const hexes = km()?.state?.hexes ?? {};

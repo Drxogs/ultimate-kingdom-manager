@@ -40,12 +40,14 @@ const TERRAIN = {
   swamp: { sky: "#cdd9d4", far: "#93a68f", mid: "#9aae7e", near: "#8ea36f", pools: "#7f9fa3" }
 };
 
-function terrainKey(terrain) {
-  const t = String(terrain ?? "").toLowerCase();
-  if (t.includes("forest") || t.includes("wood")) return "forest";
+/** Which background a hex's terrain gets. Kingmaker's terrain may be a key, a label or an object. */
+export function terrainKey(terrain) {
+  const raw = terrain && typeof terrain === "object" ? terrain.id ?? terrain.value ?? terrain.label ?? terrain.name : terrain;
+  const t = String(raw ?? "").toLowerCase();
+  if (t.includes("forest") || t.includes("wood") || t.includes("jungle")) return "forest";
   if (t.includes("mountain")) return "mountains";
-  if (t.includes("hill")) return "hills";
-  if (t.includes("swamp") || t.includes("marsh") || t.includes("bog")) return "swamp";
+  if (t.includes("hill") || t.includes("upland")) return "hills";
+  if (/swamp|marsh|bog|wetland|fen|mire|slough|lake|water/.test(t)) return "swamp";
   return "plains";
 }
 

@@ -154,6 +154,16 @@ function addHexEditorSection(app, html) {
   const footer = root.querySelector(".form-footer");
   if (footer) footer.before(section);
   else (root.querySelector(".window-content") ?? root).append(section);
+  // Our section makes the editor taller: let it grow to fit, and scroll when it can't, so Save stays reachable.
+  const frame = app?.element instanceof HTMLElement ? app.element : app?.element?.[0] ?? root.closest?.(".application, .app") ?? root;
+  frame.classList.add("ukm-hex-editor");
+  const content = root.matches?.(".window-content") ? root : frame.querySelector(".window-content") ?? root;
+  content.style.overflowY = "auto";
+  try {
+    app.setPosition?.({ height: "auto" });
+  } catch {
+    // Older windows may not take "auto"; the scrolling set above still keeps Save reachable.
+  }
 }
 
 // Anarchy starts or ends whenever Unrest changes in the realm.
