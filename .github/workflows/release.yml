@@ -34,7 +34,7 @@ jobs:
 
       - name: Build package
         if: steps.check.outputs.exists == 'false'
-        run: zip -r module.zip module.json LICENSE README.md scripts templates styles lang data handbook
+        run: zip -r module.zip module.json LICENSE README.md scripts templates styles lang data handbook art
 
       - name: Publish release
         if: steps.check.outputs.exists == 'false'
