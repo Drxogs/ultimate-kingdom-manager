@@ -690,6 +690,8 @@
 .ukm-dialog .window-content p { color: #2b2118; }
 .ukm-dialog .form-footer { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--ukm-divider); }
 
+.ukm-hex-editor { max-height: calc(100vh - 20px); }
+.ukm-hex-editor .window-content { overflow-y: auto; max-height: calc(100vh - 60px); }
 .ukm-hex-edit ul { margin: 0.3rem 0 0; padding-left: 1.1rem; font-size: var(--font-size-14, 14px); }
 
 /* Flat-check button in chat, in the desk-button style */
@@ -750,7 +752,10 @@
 
 /* Settlement tracks (stage 3) */
 .ukm-sheet .ukm-panorama { margin: 0.35rem 0 0.5rem; border: 1px solid var(--ukm-divider); border-radius: 4px; overflow: hidden; box-shadow: var(--ukm-shadow); line-height: 0; }
-.ukm-sheet .ukm-panorama svg { width: 100%; height: auto; aspect-ratio: 860 / 180; display: block; }
+.ukm-sheet .ukm-panorama-px { position: relative; width: 100%; aspect-ratio: 576 / 120; overflow: hidden; background: #cfe3ee; }
+.ukm-sheet .ukm-panorama-px > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ukm-sheet .ukm-px-stage { position: absolute; }
+.ukm-sheet .ukm-px { position: absolute; display: block; background-size: 100% 100%; background-repeat: no-repeat; image-rendering: crisp-edges; image-rendering: pixelated; pointer-events: none; }
 .ukm-sheet .ukm-settlement-facts.row { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; align-items: baseline; margin-bottom: 0.4rem; }
 .ukm-sheet .ukm-settlement-bonuses { margin: 0 0 0.5rem; }
 .ukm-sheet .ukm-settlement-bonuses .ukm-facts-head { font: 600 var(--font-size-13, 13px) var(--serif, serif); color: var(--ukm-head); margin-right: 0.3rem; }

@@ -8,7 +8,9 @@ The kingdom rules in the Kingmaker hardcover are a monthly spreadsheet with dice
 
 Every seat on the council is a desk and every player sits at one. When something goes wrong in the realm a card lands on the right desk with a deadline. You can handle it personally, which means your character rolls with their own skills and spends their own days on it, or you can delegate it to the companion advising that seat, who rolls their own check and comes back in a few days while you get on with the dungeon. Leave a card too long and it gets worse. Nobody has to run a kingdom turn because there isn't one. The kingdom levels when the party levels, income arrives weekly, events draw themselves each month, and the GM just lets the calendar move.
 
-Settlements grow along tracks instead of a building grid. A capital can push toward markets or temples or walls, and each stage changes what the town can do and how it looks, with a picture of the skyline that fills in as you build. Reach the top of a track and you get a pinnacle.
+Settlements grow along tracks instead of a building grid. A capital can push toward markets or temples or walls, and each stage changes what the town can do and how it looks, with a pixel-art view of the town that fills in as you build. Reach the top of a track and you get a pinnacle.
+
+<p align="center"><img src="media/panorama-growth.png" alt="One capital on the Settlements tab, growing from a village to a town, a city and a metropolis" width="860"></p>
 
 The adventure's own kingdom events are in here too, sorted by chapter: Grigori stirring up the capital, the trolls, the werewolf, the bloom. The GM picks the chapter and puts them on the desks when the story calls for it, and if you own the official Kingmaker module the cards link straight to the right page of the adventure.
 

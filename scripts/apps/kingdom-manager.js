@@ -2,7 +2,7 @@ import { DEGREES, MODULE_ID, PERSONAL_SKILLS, REALM_STATS, SEATS } from "../cons
 import { getCardEvent, getCompanion } from "../content/data.js";
 import { getImportedPage } from "../content/story-import.js";
 import { CAMP_COMMODITY, isKingmakerActive, landSummary } from "../integrations/kingmaker.js";
-import { focusHex, getHexDefinitions, getZone } from "../integrations/kingmaker.js";
+import { focusHex, getHexDefinitions, getZone, hexTerrain } from "../integrations/kingmaker.js";
 import { getControlDC, getFame, getKingdom, getPlayerCharacters, getRuin, getUnrest } from "../integrations/party.js";
 import { weeklyFoodShortfall } from "../realm/rules.js";
 import { advisorProficiency, canRankUp, companionAttitude, isHired, rankBonus, rankCap, rawSeatCompanionId, routinePoints, seatCompanionId, statProgress, weeklyIncome } from "../realm/rules.js";
@@ -586,7 +586,7 @@ export class KingdomManager extends HandlebarsApplicationMixin(ApplicationV2) {
           consumption: state.consumption,
           onMap: !!hexKey,
           hexKey,
-          panorama: renderPanorama(s, { terrain: hexes.get(hexKey)?.terrain ?? null }),
+          panorama: renderPanorama(s, { terrain: hexTerrain(hexKey) ?? hexes.get(hexKey)?.terrain ?? null }),
           bonuses: Object.entries(trackBonuses(s)).map(([k, v]) => `${skill(k)} +${v}`),
           missing: missing.length ? game.i18n.format("UKM.Track.Missing", { size: label(sizeFor(s)), list: missing.join(", ") }) : null,
           tenements: hasTenements(s),
