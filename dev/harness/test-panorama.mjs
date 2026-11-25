@@ -1,7 +1,7 @@
 import { env } from "./setup.mjs";
 const R = "/home/claude/ukm-repo/scripts";
 const ok = (c, m) => console.log(c ? "ok  " : "FAIL", m);
-const { renderPanorama, pxSprite, pxZoom } = await import(`${R}/apps/panorama.js`);
+const { renderPanorama, pxSprite, pxView } = await import(`${R}/apps/panorama.js`);
 const { ART_SIZES } = await import(`${R}/apps/panorama-art.js`);
 const fs = await import("node:fs");
 void env;
@@ -11,14 +11,15 @@ ok(files.length === Object.keys(ART_SIZES).length && files.every((f) => ART_SIZE
 
 const village = { id: "v1", name: "Oleg's", tracks: { homes: 0 }, pinnacles: [] };
 const city = { id: "c1", name: "Big <City>", tracks: { homes: 2 }, pinnacles: [], waterside: true };
-ok(pxZoom(village) === 2 && pxZoom(city) === 1, "villages zoom 2x, cities 1x");
+ok(pxView(village).zoom === 2 && pxView({ tracks: { homes: 1 } }).zoom === 1.6 && pxView(city).zoom === 1, "villages 2x, towns 1.6x, cities 1x");
 
 const v = renderPanorama(village, { terrain: "forest" });
+const c = renderPanorama(city, { terrain: "Mountain" });
 ok(v.includes("art/panorama/bg-forest.png") && !v.includes("water.png"), "village: forest background, no river");
-ok(v.includes('data-zoom="2"') && v.includes("width:200%"), "village stage drawn at 2x");
+ok(v.includes('data-zoom="2"') && v.includes("left:-50%;top:-73.3333%;width:200%;height:200%"), "village stage drawn at 2x, cropped to the middle");
+ok(c.includes("left:0%;top:0%;width:100%;height:100%"), "city stage drawn whole");
 ok(v.includes("<svg"), "old drawing kept underneath as fallback");
 
-const c = renderPanorama(city, { terrain: "Mountain" });
 ok(c.includes("bg-mountains.png") && c.includes("water.png"), "city: mountain background and river");
 ok(c.includes('aria-label="Big &#60;City&#62;"'), "label escaped");
 ok(renderPanorama(city, {}).includes("bg-plains.png"), "unknown terrain falls back to plains");
@@ -26,3 +27,18 @@ ok(renderPanorama(city, {}).includes("bg-plains.png"), "unknown terrain falls ba
 const s = pxSprite("faith-2", 100, 92);
 ok(s.includes("left:17.3611%") && s.includes("top:36.6667%") && s.includes("width:5.5556%"), "sprite stands on its bottom edge at grid position");
 ok(pxSprite("nope", 0, 0) === "", "unknown sprite draws nothing");
+
+const { pxPlot } = await import(`${R}/apps/panorama.js`);
+const busy = { id: "t1", tracks: { homes: 2, faith: 2, governance: 3, commerce: 1, army: 0, food: 3, learning: 2, industry: 1, watch: 2, publicworks: 2, performance: 1 } };
+const b = renderPanorama(busy, { terrain: "plains" });
+ok(["faith-2", "governance-3", "commerce-1", "army-0", "food-3", "publicworks-2"].every((n) => b.includes(`/${n}.png`)), "every built track drawn at its stage");
+ok(b.indexOf("governance-3") < b.indexOf("faith-2") && b.indexOf("faith-2") < b.indexOf("commerce-1"), "far rows drawn before near rows");
+ok(!renderPanorama({ id: "e", tracks: { homes: 0 } }).includes("faith-"), "unbuilt tracks not drawn");
+const gp = pxPlot(busy, "governance", 3), cp = pxPlot(busy, "commerce", 1);
+ok(gp.y < 92 && cp.y > 92, `back row raised (${gp.y}), near row lowered (${cp.y})`);
+const vx = pxPlot({ tracks: { homes: 0 } }, "army", 0).x;
+ok(vx >= 144 && vx + 20 <= 432, `village buildings inside the 2x crop (army at ${vx})`);
+const tx = pxPlot({ tracks: { homes: 1 } }, "industry", 2).x, tg = pxPlot({ tracks: { homes: 1 } }, "governance", 2);
+ok(tx + 32 <= 288 + 180 && tg.y - 48 >= 26, `town buildings inside the 1.6x crop (industry right edge ${tx + 32}, governance top ${tg.y - 48})`);
+const mx = pxPlot({ tracks: { homes: 3 } }, "industry", 3).x;
+ok(mx >= 0 && mx + 48 <= 576, `metropolis buildings inside the frame (industry at ${mx})`);

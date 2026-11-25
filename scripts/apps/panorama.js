@@ -280,8 +280,8 @@ function renderPanoramaSvg(settlement, { terrain: terrainName = null, title = ""
 const PX_W = 576;
 const PX_H = 120;
 export const PX_GROUND = 92;
-/** Villages and towns are shown at 2x: the middle 288 x 60 of the grid, from this row down. */
-const PX_CROP_TOP = 44;
+/** Close-ups by Homes stage (none, huts, tenements, ...): how much to enlarge and the top row shown. */
+const PX_VIEW = [{ zoom: 2, top: 44 }, { zoom: 2, top: 44 }, { zoom: 1.6, top: 26 }, { zoom: 1, top: 0 }, { zoom: 1, top: 0 }];
 const artUrl = (name) => `modules/${MODULE_ID}/art/panorama/${name}.png`;
 const pct = (v, of) => `${+((v / of) * 100).toFixed(4)}%`;
 
@@ -301,9 +301,9 @@ export function pxSprite(name, x, y, { flip = false, cls = "" } = {}) {
   return `<i class="ukm-px${cls ? ` ${cls}` : ""}" style="${style.join(";")}"></i>`;
 }
 
-/** 2 for villages and towns (Homes up to stage 1), 1 for cities and metropolises. */
-export function pxZoom(settlement) {
-  return trackStage(settlement, "homes") <= 1 ? 2 : 1;
+/** Villages are shown at 2x, towns at 1.6x, cities and metropolises whole. */
+export function pxView(settlement) {
+  return PX_VIEW[trackStage(settlement, "homes") + 1] ?? PX_VIEW[0];
 }
 
 /** The far layer: the terrain's background and, for a waterside settlement, the river along the bottom. */
@@ -313,17 +313,44 @@ function pxBackdrop(settlement, key) {
   return out;
 }
 
+/** How far either side of the middle the track buildings spread, by Homes stage (none, huts..boroughs). */
+const PX_SPREAD = [56, 56, 110, 170, 236];
+/** Rows up from the ground line for each plot depth: back rows stand higher so they show over the houses. */
+const PX_DEPTH = { 2: 12, 1: 6, 0: 0, [-1]: -4 };
+
+/** Where a track's building stands: its left edge and ground row on the grid. */
+export function pxPlot(settlement, trackId, stage) {
+  const plot = PLOTS[trackId];
+  const homes = trackStage(settlement, "homes");
+  const [w] = ART_SIZES[`${trackId}-${stage}`] ?? [0];
+  const cx = PX_W / 2 + plot.x * PX_SPREAD[homes + 1];
+  return { x: Math.round(cx - w / 2), y: PX_GROUND - (PX_DEPTH[plot.back] ?? 0) };
+}
+
+/** The track buildings, split into the rows behind the houses and the rows in front of them. */
+function pxTracks(settlement) {
+  const plotted = Object.keys(PLOTS)
+    .map((trackId) => ({ trackId, stage: Math.min(trackStage(settlement, trackId), 3), back: PLOTS[trackId].back }))
+    .filter((p) => p.stage !== NONE)
+    .sort((a, b) => b.back - a.back);
+  const draw = (list) => list.map(({ trackId, stage }) => {
+    const { x, y } = pxPlot(settlement, trackId, stage);
+    return pxSprite(`${trackId}-${stage}`, x, y, { cls: `ukm-px-${trackId}` });
+  }).join("");
+  return { behind: draw(plotted.filter((p) => p.back > 0)), front: draw(plotted.filter((p) => p.back <= 0)) };
+}
+
 /**
  * The panorama for one settlement.
  * settlement: the realm record (tracks, pinnacles, waterside, id); terrain: the hex's terrain if known.
  */
 export function renderPanorama(settlement, { terrain: terrainName = null, title = "" } = {}) {
   const key = terrainKey(terrainName);
-  const zoom = pxZoom(settlement);
-  const stage = zoom === 1
-    ? "left:0;top:0;width:100%;height:100%"
-    : `left:-50%;top:-${pct(PX_CROP_TOP * 2, PX_H)};width:200%;height:200%`;
-  const layers = pxBackdrop(settlement, key);
+  const { zoom, top } = pxView(settlement);
+  // The stage is the whole grid enlarged; shift it so the middle columns and the chosen rows fill the frame.
+  const stage = `left:${pct(-(zoom - 1) * PX_W / 2, PX_W)};top:${pct(-top * zoom, PX_H)};width:${pct(zoom * PX_W, PX_W)};height:${pct(zoom * PX_H, PX_H)}`;
+  const tracks = pxTracks(settlement);
+  const layers = pxBackdrop(settlement, key) + tracks.behind + tracks.front;
   const label = Handlebars.escapeExpression(title || settlement.name || "");
   return `<div class="ukm-panorama-px" role="img" aria-label="${label}" data-terrain="${key}" data-zoom="${zoom}">`
     + renderPanoramaSvg(settlement, { terrain: terrainName, title })
