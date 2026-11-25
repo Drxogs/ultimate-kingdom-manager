@@ -42,3 +42,16 @@ const tx = pxPlot({ tracks: { homes: 1 } }, "industry", 2).x, tg = pxPlot({ trac
 ok(tx + 32 <= 288 + 180 && tg.y - 48 >= 26, `town buildings inside the 1.6x crop (industry right edge ${tx + 32}, governance top ${tg.y - 48})`);
 const mx = pxPlot({ tracks: { homes: 3 } }, "industry", 3).x;
 ok(mx >= 0 && mx + 48 <= 576, `metropolis buildings inside the frame (industry at ${mx})`);
+
+const { pxHomes } = await import(`${R}/apps/panorama.js`);
+const count = (h) => (h.match(/ukm-px-home/g) ?? []).length;
+const hv = pxHomes({ id: "h", tracks: { homes: 0 } }), hm = pxHomes({ id: "h", tracks: { homes: 3 } });
+ok(count(hv) >= 2 && count(hv) <= 6 && hv.includes("homes-0-a"), `village: a few huts (${count(hv)})`);
+ok(count(hm) > count(pxHomes({ id: "h", tracks: { homes: 2 } })) && count(pxHomes({ id: "h", tracks: { homes: 2 } })) > count(pxHomes({ id: "h", tracks: { homes: 1 } })), `bigger places, more houses (metropolis ${count(hm)})`);
+ok(pxHomes({ id: "h", tracks: { homes: 2 } }) === pxHomes({ id: "h", tracks: { homes: 2 } }), "same settlement, same houses");
+ok(pxHomes({ id: "h", tracks: { homes: 2 } }) !== pxHomes({ id: "k", tracks: { homes: 2 } }), "different settlements, different houses");
+ok(pxHomes({ id: "h", tracks: {} }) === "", "no Homes, no houses");
+const hb = renderPanorama({ id: "q", tracks: { homes: 2, governance: 2, commerce: 2 } });
+ok(hb.indexOf("governance-2") < hb.indexOf("ukm-px-home") && hb.indexOf("ukm-px-home") < hb.indexOf("commerce-2"), "houses between the back and near rows");
+const lefts = [...hm.matchAll(/left:([\d.-]+)%/g)].map((m) => Number(m[1]));
+ok(lefts.every((l) => l >= 0 && l <= 100), "metropolis houses stay in frame");

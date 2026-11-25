@@ -317,6 +317,8 @@ function pxBackdrop(settlement, key) {
 const PX_SPREAD = [56, 56, 110, 170, 236];
 /** Rows up from the ground line for each plot depth: back rows stand higher so they show over the houses. */
 const PX_DEPTH = { 2: 12, 1: 6, 0: 0, [-1]: -4 };
+/** Back rows stand higher still in big places, where the houses are taller and deeper. */
+const PX_DEPTH_SCALE = [1, 1, 1, 1.3, 1.6];
 
 /** Where a track's building stands: its left edge and ground row on the grid. */
 export function pxPlot(settlement, trackId, stage) {
@@ -324,20 +326,67 @@ export function pxPlot(settlement, trackId, stage) {
   const homes = trackStage(settlement, "homes");
   const [w] = ART_SIZES[`${trackId}-${stage}`] ?? [0];
   const cx = PX_W / 2 + plot.x * PX_SPREAD[homes + 1];
-  return { x: Math.round(cx - w / 2), y: PX_GROUND - (PX_DEPTH[plot.back] ?? 0) };
+  const depth = (PX_DEPTH[plot.back] ?? 0) * (plot.back > 0 ? PX_DEPTH_SCALE[homes + 1] : 1);
+  return { x: Math.round(cx - w / 2), y: PX_GROUND - Math.round(depth) };
+}
+
+/**
+ * House rows by Homes stage (huts, tenements, neighborhoods, boroughs): how many rows, how far they reach
+ * (share of the spread), rows between them, pixels each house overlaps the next (negative leaves a gap)
+ * and the chance of an empty plot, which grows toward the ends of a row.
+ */
+const PX_HOMES = [
+  { rows: 1, reach: 0.8, rise: 0, overlap: -5, gap: 0.2 },
+  { rows: 2, reach: 0.92, rise: 5, overlap: 1, gap: 0.12 },
+  { rows: 3, reach: 0.97, rise: 6, overlap: 3, gap: 0.08 },
+  { rows: 3, reach: 0.98, rise: 8, overlap: 2, gap: 0.05 }
+];
+
+/** The houses: rows of the Homes stage's house sprites, seeded per settlement so a place keeps its look. */
+export function pxHomes(settlement, keepClear = []) {
+  const homes = Math.min(trackStage(settlement, "homes"), 3);
+  if (homes === NONE) return "";
+  const shape = PX_HOMES[homes];
+  const rnd = seeded(`${settlement.id ?? settlement.name ?? "x"}:px-homes`);
+  const names = Object.keys(ART_SIZES).filter((n) => n.startsWith(`homes-${homes}-`));
+  const mid = PX_W / 2;
+  let out = "";
+  // Back rows first; each row stands a little higher and reaches a little less far.
+  for (let r = shape.rows - 1; r >= 0; r--) {
+    const half = PX_SPREAD[homes + 1] * shape.reach * (1 - r * 0.12);
+    const y = PX_GROUND + 2 - r * shape.rise;
+    let x = Math.round(mid - half + rnd() * 6);
+    while (x < mid + half) {
+      const name = names[Math.floor(rnd() * names.length)];
+      const [w] = ART_SIZES[name];
+      if (x + w > mid + half + 4) break;
+      const edge = Math.abs(x + w / 2 - mid) / half;
+      // Behind the front row, leave room in front of the big back-row buildings so they show.
+      const blocked = r > 0 && keepClear.some(([a, b]) => x + w / 2 > a && x + w / 2 < b);
+      if (blocked || rnd() < shape.gap + 0.45 * edge ** 3) {
+        x += Math.round(w * 0.7);
+        continue;
+      }
+      out += pxSprite(name, x, y + Math.floor(rnd() * 2), { cls: "ukm-px-home" });
+      x += w - shape.overlap + Math.floor(rnd() * 3);
+    }
+  }
+  return out;
 }
 
 /** The track buildings, split into the rows behind the houses and the rows in front of them. */
 function pxTracks(settlement) {
+  const clear = [];
   const plotted = Object.keys(PLOTS)
     .map((trackId) => ({ trackId, stage: Math.min(trackStage(settlement, trackId), 3), back: PLOTS[trackId].back }))
     .filter((p) => p.stage !== NONE)
     .sort((a, b) => b.back - a.back);
   const draw = (list) => list.map(({ trackId, stage }) => {
     const { x, y } = pxPlot(settlement, trackId, stage);
+    if (PLOTS[trackId].back > 0) clear.push([x + 2, x + (ART_SIZES[`${trackId}-${stage}`]?.[0] ?? 0) - 2]);
     return pxSprite(`${trackId}-${stage}`, x, y, { cls: `ukm-px-${trackId}` });
   }).join("");
-  return { behind: draw(plotted.filter((p) => p.back > 0)), front: draw(plotted.filter((p) => p.back <= 0)) };
+  return { behind: draw(plotted.filter((p) => p.back > 0)), front: draw(plotted.filter((p) => p.back <= 0)), clear };
 }
 
 /**
@@ -350,7 +399,7 @@ export function renderPanorama(settlement, { terrain: terrainName = null, title 
   // The stage is the whole grid enlarged; shift it so the middle columns and the chosen rows fill the frame.
   const stage = `left:${pct(-(zoom - 1) * PX_W / 2, PX_W)};top:${pct(-top * zoom, PX_H)};width:${pct(zoom * PX_W, PX_W)};height:${pct(zoom * PX_H, PX_H)}`;
   const tracks = pxTracks(settlement);
-  const layers = pxBackdrop(settlement, key) + tracks.behind + tracks.front;
+  const layers = pxBackdrop(settlement, key) + tracks.behind + pxHomes(settlement, tracks.clear) + tracks.front;
   const label = Handlebars.escapeExpression(title || settlement.name || "");
   return `<div class="ukm-panorama-px" role="img" aria-label="${label}" data-terrain="${key}" data-zoom="${zoom}">`
     + renderPanoramaSvg(settlement, { terrain: terrainName, title })
