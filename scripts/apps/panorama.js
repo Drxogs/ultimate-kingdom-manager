@@ -316,9 +316,9 @@ function pxBackdrop(settlement, key) {
 /** How far either side of the middle the track buildings spread, by Homes stage (none, huts..boroughs). */
 const PX_SPREAD = [56, 56, 110, 170, 236];
 /** Rows up from the ground line for each plot depth: back rows stand higher so they show over the houses. */
-const PX_DEPTH = { 2: 12, 1: 6, 0: 0, [-1]: -4 };
-/** Back rows stand higher still in big places, where the houses are taller and deeper. */
-const PX_DEPTH_SCALE = [1, 1, 1, 1.3, 1.6];
+const PX_DEPTH = { 2: 8, 1: 4, 0: 0, [-1]: -2 };
+/** The houses in front leave room for the back rows, so they only need to clear the front row's eaves. */
+const PX_DEPTH_SCALE = [1, 1, 1, 1, 1];
 
 /** Where a track's building stands: its left edge and ground row on the grid. */
 export function pxPlot(settlement, trackId, stage) {
@@ -354,6 +354,8 @@ export function pxHomes(settlement, { left = PX_W / 2 - 40, right = PX_W / 2 + 4
   const shape = PX_HOMES[homes];
   const rnd = seeded(`${settlement.id ?? settlement.name ?? "x"}:px-homes`);
   const names = Object.keys(ART_SIZES).filter((n) => n.startsWith(`homes-${homes}-`));
+  // In front of a big back-row building, the front row uses the smaller houses of the stage below.
+  const low = homes >= 2 ? Object.keys(ART_SIZES).filter((n) => n.startsWith(`homes-${homes - 1}-`)) : names;
   const mid = PX_W / 2;
   let out = "";
   // Back rows first; each stands a little higher and stops a little short of the ends.
@@ -363,9 +365,11 @@ export function pxHomes(settlement, { left = PX_W / 2 - 40, right = PX_W / 2 + 4
     const y = PX_GROUND + 2 - r * shape.rise;
     let x = from - Math.floor(rnd() * 4);
     while (x < to) {
-      const name = names[Math.floor(rnd() * names.length)];
+      const inFront = (cx) => keepClear.some(([a, b]) => cx > a && cx < b);
+      const pick = r === 0 && inFront(x + 8) ? low : names;
+      const name = pick[Math.floor(rnd() * pick.length)];
       const [w] = ART_SIZES[name];
-      const blocked = r > 0 && keepClear.some(([a, b]) => x + w / 2 > a && x + w / 2 < b);
+      const blocked = r > 0 && inFront(x + w / 2);
       if (blocked || (r > 0 && rnd() < shape.gap)) {
         x += Math.round(w * 0.7);
         continue;
@@ -390,8 +394,11 @@ function pxTracks(settlement) {
     });
 }
 
-/** The wall's ground row: across the front of the town, in front of everything else. */
-const PX_WALL_Y = PX_GROUND + 8;
+/** The wall's ground row: well in front of the town so it hides little of it, inside the view. */
+function pxWallY(settlement) {
+  const { zoom, top } = pxView(settlement);
+  return Math.min(PX_GROUND + 12, Math.floor(top + PX_H / zoom) - 1);
+}
 
 /** The keep of a stage 3 wall, which stands with the back row on the left of the town. */
 function pxKeep(settlement) {
@@ -414,11 +421,12 @@ export function pxWalls(settlement, { left, right } = {}) {
   right = Math.round(right ?? PX_W / 2 + half);
   const tile = `walls-${stage}-tile`;
   const [tw] = ART_SIZES[tile];
+  const wallY = pxWallY(settlement);
   let wall = "";
-  for (let x = left; x < right; x += tw) wall += pxSprite(tile, Math.min(x, right - tw), PX_WALL_Y, { cls: "ukm-px-wall" });
+  for (let x = left; x < right; x += tw) wall += pxSprite(tile, Math.min(x, right - tw), wallY, { cls: "ukm-px-wall" });
   if (stage === 1) {
-    wall += pxSprite("walls-1-cap-left", left - ART_SIZES["walls-1-cap-left"][0] + 2, PX_WALL_Y, { cls: "ukm-px-wall" });
-    wall += pxSprite("walls-1-cap-right", right - 2, PX_WALL_Y, { cls: "ukm-px-wall" });
+    wall += pxSprite("walls-1-cap-left", left - ART_SIZES["walls-1-cap-left"][0] + 2, wallY, { cls: "ukm-px-wall" });
+    wall += pxSprite("walls-1-cap-right", right - 2, wallY, { cls: "ukm-px-wall" });
   }
   if (stage >= 2) {
     const tower = `walls-${stage}-tower`;
@@ -427,7 +435,7 @@ export function pxWalls(settlement, { left, right } = {}) {
     const gaps = Math.max(1, Math.round((right - left) / 120));
     for (let i = 0; i <= gaps; i++) {
       const x = left + ((right - left) * i) / gaps;
-      wall += pxSprite(tower, x - ow / 2, PX_WALL_Y + 1, { cls: "ukm-px-tower" });
+      wall += pxSprite(tower, x - ow / 2, wallY + 1, { cls: "ukm-px-tower" });
     }
   }
   return wall;
