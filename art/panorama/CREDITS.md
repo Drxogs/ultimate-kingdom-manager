@@ -1,6 +1,6 @@
 # Panorama art
 
-Pixel art for the Settlements tab panorama. Generated with PixelLab (an AI pixel-art tool) for Drxogs and picked, trimmed and arranged by Claude. The wall tiles were cut to repeat seamlessly, the stage 2 wall tower was made by shortening the citadel tower, the plains sky was cleaned by hand, and the river strip (`water.png`) was drawn in code.
+Pixel art for the Settlements tab panorama. Generated with PixelLab (an AI pixel-art tool) for Drxogs and picked, trimmed and arranged by Claude. Every sprite is cropped to its drawing (no empty edges), so it stands on the bottom of its file. The wall tiles were cut to repeat seamlessly, the stage 2 wall tower was made by shortening the citadel tower, the plains sky was cleaned by hand, and the river strip (`water.png`) was drawn in code.
 
 Scale: one pixel of art is one pixel of the 576 × 120 panorama canvas; the ground line is at y 92. Buildings stand on the bottom edge of their file.
 

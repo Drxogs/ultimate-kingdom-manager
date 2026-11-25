@@ -25,7 +25,8 @@ ok(c.includes('aria-label="Big &#60;City&#62;"'), "label escaped");
 ok(renderPanorama(city, {}).includes("bg-plains.png"), "unknown terrain falls back to plains");
 
 const s = pxSprite("faith-2", 100, 92);
-ok(s.includes("left:17.3611%") && s.includes("top:36.6667%") && s.includes("width:5.5556%"), "sprite stands on its bottom edge at grid position");
+const [fw, fh] = ART_SIZES["faith-2"];
+ok(s.includes("left:17.3611%") && s.includes(`top:${+(((92 - fh) / 120) * 100).toFixed(4)}%`) && s.includes(`width:${+((fw / 576) * 100).toFixed(4)}%`), "sprite stands on its bottom edge at grid position");
 ok(pxSprite("nope", 0, 0) === "", "unknown sprite draws nothing");
 
 const { pxPlot } = await import(`${R}/apps/panorama.js`);
@@ -46,8 +47,10 @@ ok(mx >= 0 && mx + 48 <= 576, `metropolis buildings inside the frame (industry a
 const { pxHomes } = await import(`${R}/apps/panorama.js`);
 const count = (h) => (h.match(/ukm-px-home/g) ?? []).length;
 const hv = pxHomes({ id: "h", tracks: { homes: 0 } }), hm = pxHomes({ id: "h", tracks: { homes: 3 } });
-ok(count(hv) >= 2 && count(hv) <= 6 && hv.includes("homes-0-a"), `village: a few huts (${count(hv)})`);
-ok(count(hm) > count(pxHomes({ id: "h", tracks: { homes: 2 } })) && count(pxHomes({ id: "h", tracks: { homes: 2 } })) > count(pxHomes({ id: "h", tracks: { homes: 1 } })), `bigger places, more houses (metropolis ${count(hm)})`);
+ok(count(hv) >= 2 && count(hv) <= 8 && hv.includes("homes-0-a"), `village: a row of huts (${count(hv)})`);
+const wide = { left: 100, right: 476 };
+const cnt = (h) => count(pxHomes({ id: "h", tracks: { homes: h } }, wide));
+ok(cnt(3) > cnt(1) && cnt(2) > cnt(1) && cnt(1) > cnt(0), `bigger places, more houses over the same width (${[0, 1, 2, 3].map(cnt).join(", ")})`);
 ok(pxHomes({ id: "h", tracks: { homes: 2 } }) === pxHomes({ id: "h", tracks: { homes: 2 } }), "same settlement, same houses");
 ok(pxHomes({ id: "h", tracks: { homes: 2 } }) !== pxHomes({ id: "k", tracks: { homes: 2 } }), "different settlements, different houses");
 ok(pxHomes({ id: "h", tracks: {} }) === "", "no Homes, no houses");

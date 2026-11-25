@@ -318,7 +318,7 @@ const PX_SPREAD = [56, 56, 110, 170, 236];
 /** Rows up from the ground line for each plot depth: back rows stand higher so they show over the houses. */
 const PX_DEPTH = { 2: 8, 1: 4, 0: 0, [-1]: -2 };
 /** The houses in front leave room for the back rows, so they only need to clear the front row's eaves. */
-const PX_DEPTH_SCALE = [1, 1, 1, 1, 1];
+const PX_DEPTH_SCALE = [1, 1, 1, 1, 1.5];
 
 /** Where a track's building stands: its left edge and ground row on the grid. */
 export function pxPlot(settlement, trackId, stage) {
@@ -477,7 +477,7 @@ export function pxTown(settlement) {
   left = Math.max(left, viewLeft + 2);
   right = Math.min(right, PX_W - viewLeft - 2);
   const keepClear = [...tracks.filter((t) => t.back > 0), ...pinnacles, ...(keep ? [keep] : [])]
-    .map((t) => [t.x + 2, t.x + t.w - 2]);
+    .map((t) => [t.x - 4, t.x + t.w + 4]);
   return {
     left,
     right,
