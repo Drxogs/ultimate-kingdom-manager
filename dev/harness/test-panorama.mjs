@@ -56,22 +56,47 @@ ok(hb.indexOf("governance-2") < hb.indexOf("ukm-px-home") && hb.indexOf("ukm-px-
 const lefts = [...hm.matchAll(/left:([\d.-]+)%/g)].map((m) => Number(m[1]));
 ok(lefts.every((l) => l >= 0 && l <= 100), "metropolis houses stay in frame");
 
-const { pxWalls, pxPinnacles } = await import(`${R}/apps/panorama.js`);
-ok(pxWalls({ tracks: { homes: 1 } }).wall === "", "no walls, no wall");
-const w0 = pxWalls({ tracks: { homes: 0, walls: 0 } }).wall;
+const { pxWalls, pxPinnacles, pxTown } = await import(`${R}/apps/panorama.js`);
+ok(pxWalls({ tracks: { homes: 1 } }) === "", "no walls, no wall");
+const w0 = pxWalls({ tracks: { homes: 0, walls: 0 } });
 ok(w0.includes("walls-0-tile") && !w0.includes("tower"), "palisade: tiles only");
-const w1 = pxWalls({ tracks: { homes: 1, walls: 1 } }).wall;
+const w1 = pxWalls({ tracks: { homes: 1, walls: 1 } });
 ok(w1.includes("walls-1-cap-left") && w1.includes("walls-1-cap-right"), "stage 1: end caps");
 const w2 = pxWalls({ tracks: { homes: 2, walls: 2 } });
-ok((w2.wall.match(/walls-2-tower/g) ?? []).length === 4 && w2.keep === "", "stage 2: four towers, no keep");
-const w3 = pxWalls({ tracks: { homes: 3, walls: 3 } });
-ok(w3.keep.includes("walls-3-keep") && w3.wall.includes("walls-3-tower"), "stage 3: towers and a keep");
+ok((w2.match(/walls-2-tower/g) ?? []).length >= 3, "stage 2: towers along the wall");
 const full = renderPanorama({ id: "m", tracks: { homes: 3, walls: 3, commerce: 3 }, pinnacles: ["faith", "publicworks", "walls"] });
+ok(full.includes("walls-3-keep") && full.includes("walls-3-tower"), "stage 3: towers and a keep");
 ok(full.lastIndexOf("walls-3-tile") > full.lastIndexOf("commerce-3"), "wall drawn in front of the town");
-ok(full.indexOf("faith-pinnacle") < full.indexOf("ukm-px-home"), "pinnacles behind the town");
+ok(full.indexOf("faith-pinnacle") < full.indexOf("ukm-px-home"), "pinnacles behind the houses");
 const pins = pxPinnacles({ tracks: { homes: 3 }, pinnacles: ["faith", "publicworks", "walls", "army"] });
 const pl = [...pins.matchAll(/left:([\d.-]+)%;top:[\d.-]+%;width:([\d.-]+)%/g)].map((m) => [Number(m[1]), Number(m[2])]);
 ok(pl.length === 4 && pl.every(([l, w]) => l >= 0 && l + w <= 100.01), "four pinnacles, all in frame");
 const vp = pxPinnacles({ tracks: { homes: 0 }, pinnacles: ["food"] });
 ok(Number(vp.match(/left:([\d.]+)%/)[1]) >= 25, "village pinnacle inside the 2x view");
 ok(!pxPinnacles({ tracks: { homes: 3 }, pinnacles: ["nonsense"] }).includes("ukm-px"), "unknown pinnacle skipped");
+
+// Nothing stands off on its own: houses and walls reach the furthest thing in town on both sides.
+const boxes = (h, cls) => [...h.matchAll(new RegExp(`class="ukm-px ${cls}" style="left:([\\d.-]+)%;top:([\\d.-]+)%;width:([\\d.-]+)%;height:([\\d.-]+)%`, "g"))]
+  .map((m) => ({ x: (Number(m[1]) / 100) * 576, w: (Number(m[3]) / 100) * 576, top: (Number(m[2]) / 100) * 120, h: (Number(m[4]) / 100) * 120 }));
+const all3 = (n) => Object.fromEntries(["faith", "governance", "learning", "performance", "commerce", "industry", "watch", "army", "publicworks", "food"].map((t) => [t, n]));
+for (const [label, s] of [
+  ["metropolis + 4 pinnacles", { id: "z1", tracks: { homes: 3, walls: 3, ...all3(3) }, pinnacles: ["governance", "publicworks", "commerce", "walls"] }],
+  ["city + 1 pinnacle", { id: "z2", tracks: { homes: 2, walls: 2, ...all3(2) }, pinnacles: ["learning"] }],
+  ["town", { id: "z3", tracks: { homes: 1, walls: 1, ...all3(2) } }],
+  ["village", { id: "z4", tracks: { homes: 0, walls: 0, ...all3(1) } }]
+]) {
+  const t = pxTown(s);
+  const homesB = boxes(t.html, "ukm-px-home");
+  const wallB = boxes(t.html, "ukm-px-wall");
+  const things = boxes(t.html, "ukm-px-(?!home|wall|tower)[a-z]+");
+  const hl = Math.min(...homesB.map((b) => b.x)), hr = Math.max(...homesB.map((b) => b.x + b.w));
+  const wl = Math.min(...wallB.map((b) => b.x)), wr = Math.max(...wallB.map((b) => b.x + b.w));
+  const tl = Math.min(...things.map((b) => b.x)), tr = Math.max(...things.map((b) => b.x + b.w));
+  ok(hl <= tl + 6 && hr >= tr - 6, `${label}: houses reach the outermost buildings (${hl.toFixed(0)}-${hr.toFixed(0)} vs ${tl.toFixed(0)}-${tr.toFixed(0)})`);
+  ok(wl <= tl + 8 && wr >= tr - 8, `${label}: wall reaches them too (${wl.toFixed(0)}-${wr.toFixed(0)})`);
+  // Every raised building has a front-row house under its middle.
+  const front = homesB.filter((b) => b.top + b.h >= 92);
+  const raised = things.filter((b) => b.top + b.h < 92);
+  const floating = raised.filter((b) => !front.some((f) => f.x <= b.x + b.w / 2 && f.x + f.w >= b.x + b.w / 2));
+  ok(floating.length === 0, `${label}: nothing floating (${raised.length} raised)`);
+}

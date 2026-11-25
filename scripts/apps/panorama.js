@@ -336,14 +336,19 @@ export function pxPlot(settlement, trackId, stage) {
  * and the chance of an empty plot, which grows toward the ends of a row.
  */
 const PX_HOMES = [
-  { rows: 1, reach: 0.8, rise: 0, overlap: -5, gap: 0.2 },
-  { rows: 2, reach: 0.92, rise: 5, overlap: 1, gap: 0.12 },
-  { rows: 3, reach: 0.97, rise: 6, overlap: 3, gap: 0.08 },
-  { rows: 3, reach: 0.98, rise: 8, overlap: 2, gap: 0.05 }
+  { rows: 1, rise: 0, overlap: 1, gap: 0.12 },
+  { rows: 2, rise: 5, overlap: 1, gap: 0.1 },
+  { rows: 3, rise: 6, overlap: 3, gap: 0.08 },
+  { rows: 3, rise: 8, overlap: 2, gap: 0.05 }
 ];
 
-/** The houses: rows of the Homes stage's house sprites, seeded per settlement so a place keeps its look. */
-export function pxHomes(settlement, keepClear = []) {
+/**
+ * The houses: rows of the Homes stage's house sprites across the town's whole width, seeded per
+ * settlement so a place keeps its look. The front row never breaks, so everything standing behind it
+ * (raised back-row buildings, the keep, pinnacles) sits on rooftops rather than floating. Back rows
+ * leave room in front of the big buildings so they show.
+ */
+export function pxHomes(settlement, { left = PX_W / 2 - 40, right = PX_W / 2 + 40, keepClear = [] } = {}) {
   const homes = Math.min(trackStage(settlement, "homes"), 3);
   if (homes === NONE) return "";
   const shape = PX_HOMES[homes];
@@ -351,58 +356,62 @@ export function pxHomes(settlement, keepClear = []) {
   const names = Object.keys(ART_SIZES).filter((n) => n.startsWith(`homes-${homes}-`));
   const mid = PX_W / 2;
   let out = "";
-  // Back rows first; each row stands a little higher and reaches a little less far.
+  // Back rows first; each stands a little higher and stops a little short of the ends.
   for (let r = shape.rows - 1; r >= 0; r--) {
-    const half = PX_SPREAD[homes + 1] * shape.reach * (1 - r * 0.12);
+    const from = Math.round(left + (mid - left) * 0.08 * r);
+    const to = Math.round(right - (right - mid) * 0.08 * r);
     const y = PX_GROUND + 2 - r * shape.rise;
-    let x = Math.round(mid - half + rnd() * 6);
-    while (x < mid + half) {
+    let x = from - Math.floor(rnd() * 4);
+    while (x < to) {
       const name = names[Math.floor(rnd() * names.length)];
       const [w] = ART_SIZES[name];
-      if (x + w > mid + half + 4) break;
-      const edge = Math.abs(x + w / 2 - mid) / half;
-      // Behind the front row, leave room in front of the big back-row buildings so they show.
       const blocked = r > 0 && keepClear.some(([a, b]) => x + w / 2 > a && x + w / 2 < b);
-      if (blocked || rnd() < shape.gap + 0.45 * edge ** 3) {
+      if (blocked || (r > 0 && rnd() < shape.gap)) {
         x += Math.round(w * 0.7);
         continue;
       }
-      out += pxSprite(name, x, y + Math.floor(rnd() * 2), { cls: "ukm-px-home" });
-      x += w - shape.overlap + Math.floor(rnd() * 3);
+      out += pxSprite(name, Math.min(x, to - w + 3), y + Math.floor(rnd() * 2), { cls: "ukm-px-home" });
+      x += w - shape.overlap + (r > 0 || shape.overlap < 0 ? Math.floor(rnd() * 3) : 0);
     }
   }
   return out;
 }
 
-/** The track buildings, split into the rows behind the houses and the rows in front of them. */
+/** The track buildings: their markup in drawing order, with where each stands. */
 function pxTracks(settlement) {
-  const clear = [];
-  const plotted = Object.keys(PLOTS)
+  return Object.keys(PLOTS)
     .map((trackId) => ({ trackId, stage: Math.min(trackStage(settlement, trackId), 3), back: PLOTS[trackId].back }))
     .filter((p) => p.stage !== NONE)
-    .sort((a, b) => b.back - a.back);
-  const draw = (list) => list.map(({ trackId, stage }) => {
-    const { x, y } = pxPlot(settlement, trackId, stage);
-    if (PLOTS[trackId].back > 0) clear.push([x + 2, x + (ART_SIZES[`${trackId}-${stage}`]?.[0] ?? 0) - 2]);
-    return pxSprite(`${trackId}-${stage}`, x, y, { cls: `ukm-px-${trackId}` });
-  }).join("");
-  return { behind: draw(plotted.filter((p) => p.back > 0)), front: draw(plotted.filter((p) => p.back <= 0)), clear };
+    .sort((a, b) => b.back - a.back)
+    .map(({ trackId, stage, back }) => {
+      const { x, y } = pxPlot(settlement, trackId, stage);
+      const [w] = ART_SIZES[`${trackId}-${stage}`] ?? [0];
+      return { back, x, w, html: pxSprite(`${trackId}-${stage}`, x, y, { cls: `ukm-px-${trackId}` }) };
+    });
 }
 
 /** The wall's ground row: across the front of the town, in front of everything else. */
 const PX_WALL_Y = PX_GROUND + 8;
 
-/**
- * The walls by stage: palisade, earth-and-timber wall with end caps, stone wall with towers, citadel
- * wall with taller towers and a keep behind. Returns the keep (drawn with the back row) and the wall.
- */
-export function pxWalls(settlement) {
-  const stage = Math.min(trackStage(settlement, "walls"), 3);
-  if (stage === NONE) return { keep: "", wall: "" };
+/** The keep of a stage 3 wall, which stands with the back row on the left of the town. */
+function pxKeep(settlement) {
+  if (Math.min(trackStage(settlement, "walls"), 3) !== 3) return null;
   const homes = trackStage(settlement, "homes");
-  const half = PX_SPREAD[homes + 1] + 14;
-  const left = Math.round(PX_W / 2 - half);
-  const right = Math.round(PX_W / 2 + half);
+  const x = Math.round(PX_W / 2 - (PX_SPREAD[homes + 1] + 14) * 0.8 - 16);
+  const y = PX_GROUND - Math.round(6 * PX_DEPTH_SCALE[homes + 1]);
+  return { x, w: ART_SIZES["walls-3-keep"][0], html: pxSprite("walls-3-keep", x, y, { cls: "ukm-px-keep" }) };
+}
+
+/**
+ * The walls by stage across the front of the town, from left to right: palisade, earth-and-timber wall
+ * with end caps, stone wall with towers, citadel wall with taller towers.
+ */
+export function pxWalls(settlement, { left, right } = {}) {
+  const stage = Math.min(trackStage(settlement, "walls"), 3);
+  if (stage === NONE) return "";
+  const half = PX_SPREAD[trackStage(settlement, "homes") + 1] + 14;
+  left = Math.round(left ?? PX_W / 2 - half);
+  right = Math.round(right ?? PX_W / 2 + half);
   const tile = `walls-${stage}-tile`;
   const [tw] = ART_SIZES[tile];
   let wall = "";
@@ -414,28 +423,62 @@ export function pxWalls(settlement) {
   if (stage >= 2) {
     const tower = `walls-${stage}-tower`;
     const [ow] = ART_SIZES[tower];
-    for (const x of [left, PX_W / 2 - half * 0.5, PX_W / 2 + half * 0.5, right]) {
+    // A tower at each end and about every 120 pixels between.
+    const gaps = Math.max(1, Math.round((right - left) / 120));
+    for (let i = 0; i <= gaps; i++) {
+      const x = left + ((right - left) * i) / gaps;
       wall += pxSprite(tower, x - ow / 2, PX_WALL_Y + 1, { cls: "ukm-px-tower" });
     }
   }
-  const keep = stage === 3
-    ? pxSprite("walls-3-keep", PX_W / 2 - half * 0.8 - 16, PX_GROUND - Math.round(6 * PX_DEPTH_SCALE[homes + 1]), { cls: "ukm-px-keep" })
-    : "";
-  return { keep, wall };
+  return wall;
 }
 
-/** The landmarks: pinnacles stand at the edges of the view, alternating left and right, behind the town. */
-export function pxPinnacles(settlement) {
+/** The landmarks: pinnacles stand toward the edges of the view, alternating left and right, at the town's ends. */
+function pxPinnacleList(settlement) {
   const { zoom } = pxView(settlement);
   const edge = PX_W / 2 - PX_W / (2 * zoom);
   return (settlement.pinnacles ?? []).map((trackId, i) => {
-    const name = ART_SIZES[`${trackId}-pinnacle`] ? `${trackId}-pinnacle` : null;
-    if (!name) return "";
+    const name = `${trackId}-pinnacle`;
+    if (!ART_SIZES[name]) return null;
     const [w] = ART_SIZES[name];
     const step = Math.floor(i / 2) * 60;
-    const x = i % 2 === 0 ? edge + 4 + step : PX_W - edge - 4 - w - step;
-    return pxSprite(name, x, PX_GROUND + 3, { cls: "ukm-px-pinnacle" });
-  }).join("");
+    const x = Math.round(i % 2 === 0 ? edge + 6 + step : PX_W - edge - 6 - w - step);
+    return { x, w, html: pxSprite(name, x, PX_GROUND + 3, { cls: "ukm-px-pinnacle" }) };
+  }).filter(Boolean);
+}
+
+export function pxPinnacles(settlement) {
+  return pxPinnacleList(settlement).map((p) => p.html).join("");
+}
+
+/**
+ * Lays the town out: the houses and the wall reach from the leftmost thing in town to the rightmost,
+ * so nothing stands off on its own.
+ */
+export function pxTown(settlement) {
+  const tracks = pxTracks(settlement);
+  const keep = pxKeep(settlement);
+  const pinnacles = pxPinnacleList(settlement);
+  const things = [...tracks, ...pinnacles, ...(keep ? [keep] : [])];
+  const { zoom } = pxView(settlement);
+  const viewLeft = PX_W / 2 - PX_W / (2 * zoom);
+  const homes = trackStage(settlement, "homes");
+  const base = PX_SPREAD[homes + 1] * 0.6;
+  let left = Math.min(PX_W / 2 - base, ...things.map((t) => t.x - 4));
+  let right = Math.max(PX_W / 2 + base, ...things.map((t) => t.x + t.w + 4));
+  left = Math.max(left, viewLeft + 2);
+  right = Math.min(right, PX_W - viewLeft - 2);
+  const keepClear = [...tracks.filter((t) => t.back > 0), ...pinnacles, ...(keep ? [keep] : [])]
+    .map((t) => [t.x + 2, t.x + t.w - 2]);
+  return {
+    left,
+    right,
+    html: pinnacles.map((p) => p.html).join("") + (keep?.html ?? "")
+      + tracks.filter((t) => t.back > 0).map((t) => t.html).join("")
+      + pxHomes(settlement, { left, right, keepClear })
+      + tracks.filter((t) => t.back <= 0).map((t) => t.html).join("")
+      + pxWalls(settlement, { left: left + 2, right: right - 2 })
+  };
 }
 
 /**
@@ -447,10 +490,7 @@ export function renderPanorama(settlement, { terrain: terrainName = null, title 
   const { zoom, top } = pxView(settlement);
   // The stage is the whole grid enlarged; shift it so the middle columns and the chosen rows fill the frame.
   const stage = `left:${pct(-(zoom - 1) * PX_W / 2, PX_W)};top:${pct(-top * zoom, PX_H)};width:${pct(zoom * PX_W, PX_W)};height:${pct(zoom * PX_H, PX_H)}`;
-  const tracks = pxTracks(settlement);
-  const walls = pxWalls(settlement);
-  const layers = pxBackdrop(settlement, key) + pxPinnacles(settlement) + walls.keep + tracks.behind
-    + pxHomes(settlement, tracks.clear) + tracks.front + walls.wall;
+  const layers = pxBackdrop(settlement, key) + pxTown(settlement).html;
   const label = Handlebars.escapeExpression(title || settlement.name || "");
   return `<div class="ukm-panorama-px" role="img" aria-label="${label}" data-terrain="${key}" data-zoom="${zoom}">`
     + renderPanoramaSvg(settlement, { terrain: terrainName, title })
