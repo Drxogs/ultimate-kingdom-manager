@@ -11,12 +11,12 @@ ok(files.length === Object.keys(ART_SIZES).length && files.every((f) => ART_SIZE
 
 const village = { id: "v1", name: "Oleg's", tracks: { homes: 0 }, pinnacles: [] };
 const city = { id: "c1", name: "Big <City>", tracks: { homes: 2 }, pinnacles: [], waterside: true };
-ok(pxView(village).zoom === 2 && pxView({ tracks: { homes: 1 } }).zoom === 1.6 && pxView(city).zoom === 1, "villages 2x, towns 1.6x, cities 1x");
+ok([village, { tracks: { homes: 1 } }, city].every((x) => pxView(x).zoom === 1), "every size shows the whole landscape");
 
 const v = renderPanorama(village, { terrain: "forest" });
 const c = renderPanorama(city, { terrain: "Mountain" });
 ok(v.includes("art/panorama/bg-forest.png") && !v.includes("water.png"), "village: forest background, no river");
-ok(v.includes('data-zoom="2"') && v.includes("left:-50%;top:-73.3333%;width:200%;height:200%"), "village stage drawn at 2x, cropped to the middle");
+ok(v.includes('data-zoom="1"') && v.includes("left:0%;top:0%;width:100%;height:100%"), "village drawn whole, not zoomed");
 ok(c.includes("left:0%;top:0%;width:100%;height:100%"), "city stage drawn whole");
 ok(v.includes("<svg"), "old drawing kept underneath as fallback");
 
@@ -37,10 +37,6 @@ ok(b.indexOf("governance-3") < b.indexOf("faith-2") && b.indexOf("faith-2") < b.
 ok(!renderPanorama({ id: "e", tracks: { homes: 0 } }).includes("faith-"), "unbuilt tracks not drawn");
 const gp = pxPlot(busy, "governance", 3), cp = pxPlot(busy, "commerce", 1);
 ok(gp.y < cp.y && cp.y <= 92, `back rows stand highest (${gp.y}), near rows just behind the front houses (${cp.y})`);
-const vx = pxPlot({ tracks: { homes: 0 } }, "army", 0).x;
-ok(vx >= 144 && vx + 20 <= 432, `village buildings inside the 2x crop (army at ${vx})`);
-const tx = pxPlot({ tracks: { homes: 1 } }, "industry", 2).x, tg = pxPlot({ tracks: { homes: 1 } }, "governance", 2);
-ok(tx + 32 <= 288 + 180 && tg.y - 48 >= 26, `town buildings inside the 1.6x crop (industry right edge ${tx + 32}, governance top ${tg.y - 48})`);
 const mx = pxPlot({ tracks: { homes: 3 } }, "industry", 3).x;
 ok(mx >= 0 && mx + 48 <= 576, `metropolis buildings inside the frame (industry at ${mx})`);
 
@@ -77,7 +73,7 @@ const pins = pxPinnacles({ tracks: { homes: 3 }, pinnacles: ["faith", "publicwor
 const pl = [...pins.matchAll(/left:([\d.-]+)%;top:[\d.-]+%;width:([\d.-]+)%/g)].map((m) => [Number(m[1]), Number(m[2])]);
 ok(pl.length === 4 && pl.every(([l, w]) => l >= 0 && l + w <= 100.01), "four pinnacles, all in frame");
 const vp = pxPinnacles({ tracks: { homes: 0 }, pinnacles: ["food"] });
-ok(Number(vp.match(/left:([\d.]+)%/)[1]) >= 25, "village pinnacle inside the 2x view");
+ok(vp.includes("food-pinnacle"), "village pinnacle drawn");
 ok(!pxPinnacles({ tracks: { homes: 3 }, pinnacles: ["nonsense"] }).includes("ukm-px"), "unknown pinnacle skipped");
 
 // Nothing stands off on its own: houses and walls reach the furthest thing in town on both sides.

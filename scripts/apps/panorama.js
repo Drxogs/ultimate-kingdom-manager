@@ -280,8 +280,11 @@ function renderPanoramaSvg(settlement, { terrain: terrainName = null, title = ""
 const PX_W = 576;
 const PX_H = 120;
 export const PX_GROUND = 92;
-/** Close-ups by Homes stage (none, huts, tenements, ...): how much to enlarge and the top row shown. */
-const PX_VIEW = [{ zoom: 2, top: 44 }, { zoom: 2, top: 44 }, { zoom: 1.6, top: 26 }, { zoom: 1, top: 0 }, { zoom: 1, top: 0 }];
+/**
+ * The view by Homes stage (none, huts, tenements, ...): how much to enlarge and the top row shown. Every size
+ * shows the whole landscape, so a village is a little cluster of huts on a big field.
+ */
+const PX_VIEW = [{ zoom: 1, top: 0 }, { zoom: 1, top: 0 }, { zoom: 1, top: 0 }, { zoom: 1, top: 0 }, { zoom: 1, top: 0 }];
 const artUrl = (name) => `modules/${MODULE_ID}/art/panorama/${name}.png`;
 const pct = (v, of) => `${+((v / of) * 100).toFixed(4)}%`;
 
@@ -301,7 +304,7 @@ export function pxSprite(name, x, y, { flip = false, cls = "" } = {}) {
   return `<i class="ukm-px${cls ? ` ${cls}` : ""}" style="${style.join(";")}"></i>`;
 }
 
-/** Villages are shown at 2x, towns at 1.6x, cities and metropolises whole. */
+/** How the view is framed for this settlement (see PX_VIEW). */
 export function pxView(settlement) {
   return PX_VIEW[trackStage(settlement, "homes") + 1] ?? PX_VIEW[0];
 }
