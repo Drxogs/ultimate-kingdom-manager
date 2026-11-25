@@ -101,6 +101,6 @@ ok(getKingdom().abilities.economy.ruin.value === 2, `monthly: Crime −1 (${getK
 // Panorama renders for every size.
 for (const homes of [-1, 0, 1, 2, 3]) {
   const svg = renderPanorama({ id: "p", name: "P", tracks: { homes, faith: 3, walls: 2, food: 1 }, pinnacles: homes === 3 ? ["faith"] : [], waterside: true }, { terrain: "forest" });
-  if (!svg.startsWith("<svg") || svg.includes("NaN") || svg.includes("undefined")) ok(false, `panorama homes ${homes}`);
+  if (!svg.startsWith("<div class=\"ukm-panorama-px\"") || !svg.includes("<svg") || svg.includes("NaN") || svg.includes("undefined")) ok(false, `panorama homes ${homes}`);
 }
 ok(true, "panorama renders at every size");

@@ -1,4 +1,6 @@
+import { MODULE_ID } from "../constants.js";
 import { NONE, PINNACLE, trackStage } from "../realm/tracks.js";
+import { ART_SIZES } from "./panorama-art.js";
 
 /*
  * The settlement panorama: a far-off landscape view of a settlement, drawn as SVG from its tracks.
@@ -233,7 +235,7 @@ function drawPinnacle(trackId, x, y) {
  * The SVG for one settlement.
  * settlement: the realm record (tracks, pinnacles, waterside, id); terrain: the hex's terrain if known.
  */
-export function renderPanorama(settlement, { terrain: terrainName = null, title = "" } = {}) {
+function renderPanoramaSvg(settlement, { terrain: terrainName = null, title = "" } = {}) {
   const rnd = seeded(settlement.id ?? settlement.name ?? "x");
   const key = terrainKey(terrainName);
   const homes = trackStage(settlement, "homes");
@@ -265,8 +267,67 @@ export function renderPanorama(settlement, { terrain: terrainName = null, title 
     const x = side < 0 ? 70 + i * 40 : W - 70 - i * 40;
     art += drawPinnacle(trackId, x, GROUND + 2);
   });
+  return `<svg class="ukm-panorama-svg" viewBox="0 ${TOP} ${W} ${H - TOP}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${art}</svg>`;
+}
+
+/*
+ * The pixel-art panorama. Sprites from art/panorama sit on a 576 x 120 grid, one art pixel per grid
+ * pixel, ground line at y 92, each standing on its bottom edge. Every sprite is a CSS background on an
+ * absolutely placed box sized in percent of the grid, so the whole picture scales with the sheet and
+ * stays pixel-sharp. The old SVG drawing sits underneath: if the art files are missing, the boxes stay
+ * empty and the drawing shows through.
+ */
+const PX_W = 576;
+const PX_H = 120;
+export const PX_GROUND = 92;
+/** Villages and towns are shown at 2x: the middle 288 x 60 of the grid, from this row down. */
+const PX_CROP_TOP = 44;
+const artUrl = (name) => `modules/${MODULE_ID}/art/panorama/${name}.png`;
+const pct = (v, of) => `${+((v / of) * 100).toFixed(4)}%`;
+
+/** One sprite box. x and y are grid pixels: x is the left edge, y the bottom edge. */
+export function pxSprite(name, x, y, { flip = false, cls = "" } = {}) {
+  const size = ART_SIZES[name];
+  if (!size) return "";
+  const [w, h] = size;
+  const style = [
+    `left:${pct(Math.round(x), PX_W)}`,
+    `top:${pct(Math.round(y) - h, PX_H)}`,
+    `width:${pct(w, PX_W)}`,
+    `height:${pct(h, PX_H)}`,
+    `background-image:url('${artUrl(name)}')`
+  ];
+  if (flip) style.push("transform:scaleX(-1)");
+  return `<i class="ukm-px${cls ? ` ${cls}` : ""}" style="${style.join(";")}"></i>`;
+}
+
+/** 2 for villages and towns (Homes up to stage 1), 1 for cities and metropolises. */
+export function pxZoom(settlement) {
+  return trackStage(settlement, "homes") <= 1 ? 2 : 1;
+}
+
+/** The far layer: the terrain's background and, for a waterside settlement, the river along the bottom. */
+function pxBackdrop(settlement, key) {
+  let out = pxSprite(`bg-${key}`, 0, PX_H, { cls: "ukm-px-bg" });
+  if (settlement.waterside) out += pxSprite("water", 0, PX_H, { cls: "ukm-px-water" });
+  return out;
+}
+
+/**
+ * The panorama for one settlement.
+ * settlement: the realm record (tracks, pinnacles, waterside, id); terrain: the hex's terrain if known.
+ */
+export function renderPanorama(settlement, { terrain: terrainName = null, title = "" } = {}) {
+  const key = terrainKey(terrainName);
+  const zoom = pxZoom(settlement);
+  const stage = zoom === 1
+    ? "left:0;top:0;width:100%;height:100%"
+    : `left:-50%;top:-${pct(PX_CROP_TOP * 2, PX_H)};width:200%;height:200%`;
+  const layers = pxBackdrop(settlement, key);
   const label = Handlebars.escapeExpression(title || settlement.name || "");
-  return `<svg class="ukm-panorama-svg" viewBox="0 ${TOP} ${W} ${H - TOP}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${label}">${art}</svg>`;
+  return `<div class="ukm-panorama-px" role="img" aria-label="${label}" data-terrain="${key}" data-zoom="${zoom}">`
+    + renderPanoramaSvg(settlement, { terrain: terrainName, title })
+    + `<div class="ukm-px-stage" style="${stage}">${layers}</div></div>`;
 }
 
 export { PINNACLE };
