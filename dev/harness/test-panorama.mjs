@@ -36,7 +36,7 @@ ok(["faith-2", "governance-3", "commerce-1", "army-0", "food-3", "publicworks-2"
 ok(b.indexOf("governance-3") < b.indexOf("faith-2") && b.indexOf("faith-2") < b.indexOf("commerce-1"), "far rows drawn before near rows");
 ok(!renderPanorama({ id: "e", tracks: { homes: 0 } }).includes("faith-"), "unbuilt tracks not drawn");
 const gp = pxPlot(busy, "governance", 3), cp = pxPlot(busy, "commerce", 1);
-ok(gp.y < 92 && cp.y > 92, `back row raised (${gp.y}), near row lowered (${cp.y})`);
+ok(gp.y < cp.y && cp.y <= 92, `back rows stand highest (${gp.y}), near rows just behind the front houses (${cp.y})`);
 const vx = pxPlot({ tracks: { homes: 0 } }, "army", 0).x;
 ok(vx >= 144 && vx + 20 <= 432, `village buildings inside the 2x crop (army at ${vx})`);
 const tx = pxPlot({ tracks: { homes: 1 } }, "industry", 2).x, tg = pxPlot({ tracks: { homes: 1 } }, "governance", 2);
@@ -55,7 +55,9 @@ ok(pxHomes({ id: "h", tracks: { homes: 2 } }) === pxHomes({ id: "h", tracks: { h
 ok(pxHomes({ id: "h", tracks: { homes: 2 } }) !== pxHomes({ id: "k", tracks: { homes: 2 } }), "different settlements, different houses");
 ok(pxHomes({ id: "h", tracks: {} }) === "", "no Homes, no houses");
 const hb = renderPanorama({ id: "q", tracks: { homes: 2, governance: 2, commerce: 2 } });
-ok(hb.indexOf("governance-2") < hb.indexOf("ukm-px-home") && hb.indexOf("ukm-px-home") < hb.indexOf("commerce-2"), "houses between the back and near rows");
+ok(hb.indexOf("commerce-2") < hb.indexOf("ukm-px-home") && hb.indexOf("governance-2") < hb.indexOf("ukm-px-home"), "houses drawn over every building");
+const hw = renderPanorama({ id: "q", tracks: { homes: 0, walls: 0, food: 0, army: 0 } });
+ok(hw.lastIndexOf("ukm-px-home") < hw.indexOf("walls-0-tile") && hw.indexOf("food-0") < hw.indexOf("ukm-px-home"), "village: campfire behind the huts, palisade in front");
 const lefts = [...hm.matchAll(/left:([\d.-]+)%/g)].map((m) => Number(m[1]));
 ok(lefts.every((l) => l >= 0 && l <= 100), "metropolis houses stay in frame");
 

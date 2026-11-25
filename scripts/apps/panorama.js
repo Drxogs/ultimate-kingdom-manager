@@ -316,7 +316,7 @@ function pxBackdrop(settlement, key) {
 /** How far either side of the middle the track buildings spread, by Homes stage (none, huts..boroughs). */
 const PX_SPREAD = [56, 56, 110, 170, 236];
 /** Rows up from the ground line for each plot depth: back rows stand higher so they show over the houses. */
-const PX_DEPTH = { 2: 8, 1: 4, 0: 0, [-1]: -2 };
+const PX_DEPTH = { 2: 8, 1: 4, 0: 3, [-1]: 2 };
 /** The houses in front leave room for the back rows, so they only need to clear the front row's eaves. */
 const PX_DEPTH_SCALE = [1, 1, 1, 1, 1.5];
 
@@ -326,7 +326,8 @@ export function pxPlot(settlement, trackId, stage) {
   const homes = trackStage(settlement, "homes");
   const [w] = ART_SIZES[`${trackId}-${stage}`] ?? [0];
   const cx = PX_W / 2 + plot.x * PX_SPREAD[homes + 1];
-  const depth = (PX_DEPTH[plot.back] ?? 0) * (plot.back > 0 ? PX_DEPTH_SCALE[homes + 1] : 1);
+  // In a village everything stands a little further back, so small things peek over the huts' roofs.
+  const depth = (PX_DEPTH[plot.back] ?? 0) * (plot.back > 0 ? PX_DEPTH_SCALE[homes + 1] : 1) + (homes <= 0 ? 6 : 0);
   return { x: Math.round(cx - w / 2), y: PX_GROUND - Math.round(depth) };
 }
 
@@ -354,7 +355,7 @@ export function pxHomes(settlement, { left = PX_W / 2 - 40, right = PX_W / 2 + 4
   const shape = PX_HOMES[homes];
   const rnd = seeded(`${settlement.id ?? settlement.name ?? "x"}:px-homes`);
   const names = Object.keys(ART_SIZES).filter((n) => n.startsWith(`homes-${homes}-`));
-  // In front of a big back-row building, the front row uses the smaller houses of the stage below.
+  // In front of a building, the front row uses the smaller houses of the stage below.
   const low = homes >= 2 ? Object.keys(ART_SIZES).filter((n) => n.startsWith(`homes-${homes - 1}-`)) : names;
   const mid = PX_W / 2;
   let out = "";
@@ -476,15 +477,14 @@ export function pxTown(settlement) {
   let right = Math.max(PX_W / 2 + base, ...things.map((t) => t.x + t.w + 4));
   left = Math.max(left, viewLeft + 2);
   right = Math.min(right, PX_W - viewLeft - 2);
-  const keepClear = [...tracks.filter((t) => t.back > 0), ...pinnacles, ...(keep ? [keep] : [])]
+  const keepClear = [...tracks, ...pinnacles, ...(keep ? [keep] : [])]
     .map((t) => [t.x - 4, t.x + t.w + 4]);
   return {
     left,
     right,
     html: pinnacles.map((p) => p.html).join("") + (keep?.html ?? "")
-      + tracks.filter((t) => t.back > 0).map((t) => t.html).join("")
+      + tracks.map((t) => t.html).join("")
       + pxHomes(settlement, { left, right, keepClear })
-      + tracks.filter((t) => t.back <= 0).map((t) => t.html).join("")
       + pxWalls(settlement, { left: left + 2, right: right - 2 })
   };
 }
