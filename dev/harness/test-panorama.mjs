@@ -101,3 +101,9 @@ for (const [label, s] of [
   const floating = raised.filter((b) => !front.some((f) => f.x <= b.x + b.w / 2 && f.x + f.w >= b.x + b.w / 2));
   ok(floating.length === 0, `${label}: nothing floating (${raised.length} raised)`);
 }
+
+const vt = pxTown({ id: "pal", tracks: { homes: 0, walls: 0, food: 0, army: 0, watch: 0, performance: 0 } });
+const vb = (cls) => [...vt.html.matchAll(new RegExp(`class="ukm-px ${cls}" style="left:([\\d.-]+)%;top:[\\d.-]+%;width:([\\d.-]+)%`, "g"))].map((m) => [Number(m[1]) * 5.76, Number(m[2]) * 5.76]);
+const hutL = Math.min(...vb("ukm-px-home").map(([l]) => l)), hutR = Math.max(...vb("ukm-px-home").map(([l, w]) => l + w));
+const palL = Math.min(...vb("ukm-px-wall").map(([l]) => l)), palR = Math.max(...vb("ukm-px-wall").map(([l, w]) => l + w));
+ok(palL <= hutL - 10 && palR >= hutR - 10 + 20, `palisade reaches about a hut past the village (${palL.toFixed(0)}-${palR.toFixed(0)} vs huts ${hutL.toFixed(0)}-${hutR.toFixed(0)})`);

@@ -480,6 +480,9 @@ export function pxTown(settlement) {
   let right = Math.max(PX_W / 2 + base, ...things.map((t) => t.x + t.w + 4));
   left = Math.max(left, viewLeft + 2);
   right = Math.min(right, PX_W - viewLeft - 2);
+  // The wall runs a little past the outermost building so the town sits inside it: about a hut's width for
+  // the palisade, a few pixels for stone (the earthworks' sloping ends already reach past).
+  const pad = [16, 0, 6, 6][Math.min(trackStage(settlement, "walls"), 3)] ?? 0;
   const keepClear = [...tracks, ...pinnacles, ...(keep ? [keep] : [])]
     .map((t) => [t.x - 4, t.x + t.w + 4]);
   return {
@@ -488,7 +491,7 @@ export function pxTown(settlement) {
     html: pinnacles.map((p) => p.html).join("") + (keep?.html ?? "")
       + tracks.map((t) => t.html).join("")
       + pxHomes(settlement, { left, right, keepClear })
-      + pxWalls(settlement, { left: left + 2, right: right - 2 })
+      + pxWalls(settlement, { left: Math.max(2, left + 2 - pad), right: Math.min(PX_W - 2, right - 2 + pad) })
   };
 }
 
