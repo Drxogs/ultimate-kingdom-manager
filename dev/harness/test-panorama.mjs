@@ -55,3 +55,23 @@ const hb = renderPanorama({ id: "q", tracks: { homes: 2, governance: 2, commerce
 ok(hb.indexOf("governance-2") < hb.indexOf("ukm-px-home") && hb.indexOf("ukm-px-home") < hb.indexOf("commerce-2"), "houses between the back and near rows");
 const lefts = [...hm.matchAll(/left:([\d.-]+)%/g)].map((m) => Number(m[1]));
 ok(lefts.every((l) => l >= 0 && l <= 100), "metropolis houses stay in frame");
+
+const { pxWalls, pxPinnacles } = await import(`${R}/apps/panorama.js`);
+ok(pxWalls({ tracks: { homes: 1 } }).wall === "", "no walls, no wall");
+const w0 = pxWalls({ tracks: { homes: 0, walls: 0 } }).wall;
+ok(w0.includes("walls-0-tile") && !w0.includes("tower"), "palisade: tiles only");
+const w1 = pxWalls({ tracks: { homes: 1, walls: 1 } }).wall;
+ok(w1.includes("walls-1-cap-left") && w1.includes("walls-1-cap-right"), "stage 1: end caps");
+const w2 = pxWalls({ tracks: { homes: 2, walls: 2 } });
+ok((w2.wall.match(/walls-2-tower/g) ?? []).length === 4 && w2.keep === "", "stage 2: four towers, no keep");
+const w3 = pxWalls({ tracks: { homes: 3, walls: 3 } });
+ok(w3.keep.includes("walls-3-keep") && w3.wall.includes("walls-3-tower"), "stage 3: towers and a keep");
+const full = renderPanorama({ id: "m", tracks: { homes: 3, walls: 3, commerce: 3 }, pinnacles: ["faith", "publicworks", "walls"] });
+ok(full.lastIndexOf("walls-3-tile") > full.lastIndexOf("commerce-3"), "wall drawn in front of the town");
+ok(full.indexOf("faith-pinnacle") < full.indexOf("ukm-px-home"), "pinnacles behind the town");
+const pins = pxPinnacles({ tracks: { homes: 3 }, pinnacles: ["faith", "publicworks", "walls", "army"] });
+const pl = [...pins.matchAll(/left:([\d.-]+)%;top:[\d.-]+%;width:([\d.-]+)%/g)].map((m) => [Number(m[1]), Number(m[2])]);
+ok(pl.length === 4 && pl.every(([l, w]) => l >= 0 && l + w <= 100.01), "four pinnacles, all in frame");
+const vp = pxPinnacles({ tracks: { homes: 0 }, pinnacles: ["food"] });
+ok(Number(vp.match(/left:([\d.]+)%/)[1]) >= 25, "village pinnacle inside the 2x view");
+ok(!pxPinnacles({ tracks: { homes: 3 }, pinnacles: ["nonsense"] }).includes("ukm-px"), "unknown pinnacle skipped");

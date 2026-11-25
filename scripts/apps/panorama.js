@@ -389,6 +389,55 @@ function pxTracks(settlement) {
   return { behind: draw(plotted.filter((p) => p.back > 0)), front: draw(plotted.filter((p) => p.back <= 0)), clear };
 }
 
+/** The wall's ground row: across the front of the town, in front of everything else. */
+const PX_WALL_Y = PX_GROUND + 8;
+
+/**
+ * The walls by stage: palisade, earth-and-timber wall with end caps, stone wall with towers, citadel
+ * wall with taller towers and a keep behind. Returns the keep (drawn with the back row) and the wall.
+ */
+export function pxWalls(settlement) {
+  const stage = Math.min(trackStage(settlement, "walls"), 3);
+  if (stage === NONE) return { keep: "", wall: "" };
+  const homes = trackStage(settlement, "homes");
+  const half = PX_SPREAD[homes + 1] + 14;
+  const left = Math.round(PX_W / 2 - half);
+  const right = Math.round(PX_W / 2 + half);
+  const tile = `walls-${stage}-tile`;
+  const [tw] = ART_SIZES[tile];
+  let wall = "";
+  for (let x = left; x < right; x += tw) wall += pxSprite(tile, Math.min(x, right - tw), PX_WALL_Y, { cls: "ukm-px-wall" });
+  if (stage === 1) {
+    wall += pxSprite("walls-1-cap-left", left - ART_SIZES["walls-1-cap-left"][0] + 2, PX_WALL_Y, { cls: "ukm-px-wall" });
+    wall += pxSprite("walls-1-cap-right", right - 2, PX_WALL_Y, { cls: "ukm-px-wall" });
+  }
+  if (stage >= 2) {
+    const tower = `walls-${stage}-tower`;
+    const [ow] = ART_SIZES[tower];
+    for (const x of [left, PX_W / 2 - half * 0.5, PX_W / 2 + half * 0.5, right]) {
+      wall += pxSprite(tower, x - ow / 2, PX_WALL_Y + 1, { cls: "ukm-px-tower" });
+    }
+  }
+  const keep = stage === 3
+    ? pxSprite("walls-3-keep", PX_W / 2 - half * 0.8 - 16, PX_GROUND - Math.round(6 * PX_DEPTH_SCALE[homes + 1]), { cls: "ukm-px-keep" })
+    : "";
+  return { keep, wall };
+}
+
+/** The landmarks: pinnacles stand at the edges of the view, alternating left and right, behind the town. */
+export function pxPinnacles(settlement) {
+  const { zoom } = pxView(settlement);
+  const edge = PX_W / 2 - PX_W / (2 * zoom);
+  return (settlement.pinnacles ?? []).map((trackId, i) => {
+    const name = ART_SIZES[`${trackId}-pinnacle`] ? `${trackId}-pinnacle` : null;
+    if (!name) return "";
+    const [w] = ART_SIZES[name];
+    const step = Math.floor(i / 2) * 60;
+    const x = i % 2 === 0 ? edge + 4 + step : PX_W - edge - 4 - w - step;
+    return pxSprite(name, x, PX_GROUND + 3, { cls: "ukm-px-pinnacle" });
+  }).join("");
+}
+
 /**
  * The panorama for one settlement.
  * settlement: the realm record (tracks, pinnacles, waterside, id); terrain: the hex's terrain if known.
@@ -399,7 +448,9 @@ export function renderPanorama(settlement, { terrain: terrainName = null, title 
   // The stage is the whole grid enlarged; shift it so the middle columns and the chosen rows fill the frame.
   const stage = `left:${pct(-(zoom - 1) * PX_W / 2, PX_W)};top:${pct(-top * zoom, PX_H)};width:${pct(zoom * PX_W, PX_W)};height:${pct(zoom * PX_H, PX_H)}`;
   const tracks = pxTracks(settlement);
-  const layers = pxBackdrop(settlement, key) + tracks.behind + pxHomes(settlement, tracks.clear) + tracks.front;
+  const walls = pxWalls(settlement);
+  const layers = pxBackdrop(settlement, key) + pxPinnacles(settlement) + walls.keep + tracks.behind
+    + pxHomes(settlement, tracks.clear) + tracks.front + walls.wall;
   const label = Handlebars.escapeExpression(title || settlement.name || "");
   return `<div class="ukm-panorama-px" role="img" aria-label="${label}" data-terrain="${key}" data-zoom="${zoom}">`
     + renderPanoramaSvg(settlement, { terrain: terrainName, title })
